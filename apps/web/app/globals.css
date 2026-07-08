@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+/* Theme toggle sets data-theme on <html>; default follows system. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  /* Brand — "Registan at dusk": deep indigo, warm sand, turquoise tile. */
+  --color-brand-50: #eef1fd;
+  --color-brand-100: #dde2fb;
+  --color-brand-200: #bcc5f6;
+  --color-brand-300: #93a0ee;
+  --color-brand-400: #6b78e3;
+  --color-brand-500: #4f56d3;
+  --color-brand-600: #3f3fb4;
+  --color-brand-700: #35328f;
+  --color-brand-800: #2b2a6e;
+  --color-brand-900: #1f1f4e;
+  --color-brand-950: #0f1021;
+
+  --color-accent-300: #5eead4;
+  --color-accent-400: #2dd4bf;
+  --color-accent-500: #14b8a6;
+  --color-accent-600: #0d9488;
+
+  --color-sand-50: #faf7f2;
+  --color-sand-100: #f3ede2;
+  --color-sand-200: #e7dcc8;
+
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-xl2: 1.25rem;
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Semantic surface tokens — flip together in dark mode. */
+:root {
+  --surface-page: var(--color-sand-50);
+  --surface-card: #ffffff;
+  --surface-raised: #ffffff;
+  --border-subtle: rgb(31 31 78 / 0.1);
+  --text-primary: #1c1c2e;
+  --text-secondary: #55556d;
+  --text-inverse: #ffffff;
+}
+
+[data-theme="dark"] {
+  --surface-page: #0c0d1c;
+  --surface-card: #16172b;
+  --surface-raised: #1d1e36;
+  --border-subtle: rgb(255 255 255 / 0.1);
+  --text-primary: #eef0ff;
+  --text-secondary: #9ea3c0;
+  --text-inverse: #0f1021;
+}
+
+@theme inline {
+  --color-page: var(--surface-page);
+  --color-card: var(--surface-card);
+  --color-raised: var(--surface-raised);
+  --color-line: var(--border-subtle);
+  --color-ink: var(--text-primary);
+  --color-ink-soft: var(--text-secondary);
+  --color-ink-inverse: var(--text-inverse);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--surface-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-brand-500);
+  color: #fff;
+}
+
+/* Focus visibility for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* Glass panels used sparingly (stats overlays, header). */
+.glass {
+  background: color-mix(in srgb, var(--surface-card) 72%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
