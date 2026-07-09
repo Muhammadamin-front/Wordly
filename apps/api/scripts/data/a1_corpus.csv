@@ -1,0 +1,307 @@
+headword,pos,cefr_level,translation_uz,translation_ru,definition_en,ipa,frequency_rank,category,example_en,example_uz,synonyms,antonyms
+and,conjunction,A1,va,и,A word that joins two things together.,ənd,3,basics,I like tea and coffee.,Men choy va qahvani yaxshi ko'raman.,,
+but,conjunction,A1,lekin,но,A word that shows something different.,bʌt,22,basics,The bag is small but heavy.,Sumka kichkina lekin og'ir.,,
+or,conjunction,A1,yoki,или,A word that shows a choice between things.,ɔː,30,basics,Do you want tea or coffee?,Choy ichasizmi yoki qahva?,,
+in,preposition,A1,ichida,в,Inside a place or thing.,ɪn,6,basics,The keys are in my bag.,Kalitlar sumkamning ichida.,,
+on,preposition,A1,ustida,на,Touching the top of something.,ɒn,14,basics,The book is on the table.,Kitob stol ustida.,,
+at,preposition,A1,-da,у,A word that shows a place or time.,æt,20,basics,We meet at the school.,Biz maktabda uchrashamiz.,,
+with,preposition,A1,bilan,с,Together with a person or thing.,wɪð,16,basics,I walk with my friend.,Men do'stim bilan yuraman.,,
+from,preposition,A1,-dan,из,A word that shows where something starts.,frɒm,25,basics,She is from Samarkand.,U Samarqanddan.,,
+this,pronoun,A1,bu,это,The thing that is near you.,ðɪs,21,basics,This is my house.,Bu mening uyim.,,that,
+here,adverb,A1,bu yerda,здесь,In this place.,hɪə,90,basics,Please come here.,Iltimos bu yerga keling.,,there
+there,adverb,A1,u yerda,там,In that place.,ðeə,53,basics,The shop is over there.,Do'kon ana u yerda.,,here
+yes,adverb,A1,ha,да,A word that shows you agree.,jes,150,basics,Yes I like this song.,Ha bu qo'shiq menga yoqadi.,,no
+no,adverb,A1,yo'q,нет,A word that shows you do not agree.,nəʊ,60,basics,No thank you.,Yo'q rahmat.,,yes
+very,adverb,A1,juda,очень,A word that makes another word stronger.,ˈveri,80,basics,The tea is very hot.,Choy juda issiq.,really,
+also,adverb,A1,ham,тоже,A word that adds more information.,ˈɔːlsəʊ,95,basics,I also speak Russian.,Men rus tilida ham gaplashaman.,too,
+mother,noun,A1,ona,мама,A woman who has a child.,ˈmʌðə,320,people-family,My mother cooks very well.,Onam juda yaxshi ovqat pishiradi.,mum,father
+father,noun,A1,ota,папа,A man who has a child.,ˈfɑːðə,350,people-family,My father works in a bank.,Otam bankda ishlaydi.,dad,mother
+parent,noun,A1,ota-ona,родитель,A mother or a father.,ˈpeərənt,600,people-family,My parents live in Bukhara.,Ota-onam Buxoroda yashaydi.,,
+brother,noun,A1,aka yoki uka,брат,A boy or man with the same parents as you.,ˈbrʌðə,700,people-family,My brother is ten years old.,Ukam o'n yoshda.,,sister
+sister,noun,A1,opa yoki singil,сестра,A girl or woman with the same parents as you.,ˈsɪstə,750,people-family,My sister likes music.,Singlim musiqani yaxshi ko'radi.,,brother
+son,noun,A1,o'g'il,сын,A male child of a mother or father.,sʌn,800,people-family,Their son is a doctor.,Ularning o'g'li shifokor.,,daughter
+daughter,noun,A1,qiz (farzand),дочь,A female child of a mother or father.,ˈdɔːtə,850,people-family,Her daughter goes to school.,Uning qizi maktabga boradi.,,son
+baby,noun,A1,chaqaloq,малыш,A very young child.,ˈbeɪbi,900,people-family,The baby is sleeping now.,Chaqaloq hozir uxlayapti.,,
+child,noun,A1,bola,ребёнок,A young boy or girl.,tʃaɪld,280,people-family,Every child likes games.,Har bir bola o'yinni yaxshi ko'radi.,kid,adult
+family,noun,A1,oila,семья,Parents and their children together.,ˈfæməli,260,people-family,I love my family.,Men oilamni yaxshi ko'raman.,,
+friend,noun,A1,do'st,друг,A person you like and know well.,frend,240,people-family,My best friend lives near me.,Eng yaqin do'stim yaqinimda yashaydi.,,enemy
+man,noun,A1,erkak,мужчина,An adult male person.,mæn,120,people-family,That man is my teacher.,Anavi erkak mening o'qituvchim.,,woman
+woman,noun,A1,ayol,женщина,An adult female person.,ˈwʊmən,190,people-family,The woman has two children.,Bu ayolning ikkita farzandi bor.,,man
+boy,noun,A1,o'g'il bola,мальчик,A male child.,bɔɪ,400,people-family,The boy plays football.,O'g'il bola futbol o'ynaydi.,,girl
+girl,noun,A1,qiz bola,девочка,A female child.,ɡɜːl,380,people-family,The girl reads a book.,Qiz bola kitob o'qiyapti.,,boy
+people,noun,A1,odamlar,люди,More than one person.,ˈpiːpəl,100,people-family,Many people live in Tashkent.,Toshkentda ko'p odamlar yashaydi.,,
+name,noun,A1,ism,имя,The word that people call you.,neɪm,220,people-family,My name is Aziz.,Mening ismim Aziz.,,
+grandmother,noun,A1,buvi,бабушка,The mother of your mother or father.,ˈɡrænmʌðə,1100,people-family,My grandmother tells nice stories.,Buvim chiroyli ertaklar aytadi.,,grandfather
+grandfather,noun,A1,buva,дедушка,The father of your mother or father.,ˈɡrænfɑːðə,1150,people-family,My grandfather is eighty years old.,Buvam sakson yoshda.,,grandmother
+husband,noun,A1,er,муж,The man that a woman is married to.,ˈhʌzbənd,950,people-family,Her husband is a driver.,Uning eri haydovchi.,,wife
+wife,noun,A1,xotin,жена,The woman that a man is married to.,waɪf,920,people-family,His wife works at a school.,Uning xotini maktabda ishlaydi.,,husband
+apple,noun,A1,olma,яблоко,A round fruit with red or green skin.,ˈæpəl,1500,food-drink,I eat an apple every day.,Men har kuni olma yeyman.,,
+banana,noun,A1,banan,банан,A long yellow fruit.,bəˈnɑːnə,2000,food-drink,The banana is sweet.,Banan shirin.,,
+bread,noun,A1,non,хлеб,A basic food made from flour.,bred,1200,food-drink,We buy fresh bread every morning.,Biz har kuni ertalab issiq non olamiz.,,
+butter,noun,A1,sariyog',масло,A soft yellow food made from milk.,ˈbʌtə,1900,food-drink,Put some butter on the bread.,Nonga ozgina sariyog' surting.,,
+cake,noun,A1,tort,торт,A sweet food for birthdays and parties.,keɪk,1800,food-drink,My mother makes a tasty cake.,Onam mazali tort tayyorlaydi.,,
+cheese,noun,A1,pishloq,сыр,A yellow or white food made from milk.,tʃiːz,1700,food-drink,I like cheese with bread.,Men nonni pishloq bilan yaxshi ko'raman.,,
+chicken,noun,A1,tovuq,курица,A bird that people keep for food.,ˈtʃɪkɪn,1400,food-drink,We cook chicken with rice.,Biz tovuqni guruch bilan pishiramiz.,,
+coffee,noun,A1,qahva,кофе,A hot brown drink that wakes you up.,ˈkɒfi,1000,food-drink,He drinks coffee in the morning.,U ertalab qahva ichadi.,,
+cook,verb,A1,pishirmoq,готовить,To make food ready to eat.,kʊk,1300,food-drink,I cook dinner for my family.,Men oilamga kechki ovqat pishiraman.,prepare,
+cup,noun,A1,piyola,чашка,A small round thing for drinking tea.,kʌp,1600,food-drink,Would you like a cup of tea?,Bir piyola choy ichasizmi?,,
+dinner,noun,A1,kechki ovqat,ужин,The food you eat in the evening.,ˈdɪnə,1250,food-drink,We have dinner at seven.,Biz soat yettida kechki ovqat qilamiz.,supper,breakfast
+breakfast,noun,A1,nonushta,завтрак,The food you eat in the morning.,ˈbrekfəst,1350,food-drink,I have breakfast with my family.,Men nonushtani oilam bilan qilaman.,,dinner
+lunch,noun,A1,tushlik,обед,The food you eat in the middle of the day.,lʌntʃ,1450,food-drink,We eat lunch at school.,Biz tushlikni maktabda yeymiz.,,
+drink,verb,A1,ichmoq,пить,To take water or tea into your mouth.,drɪŋk,700,food-drink,Drink more water in summer.,Yozda ko'proq suv iching.,,
+eat,verb,A1,yemoq,есть,To take food into your mouth.,iːt,500,food-drink,We eat fruit every day.,Biz har kuni meva yeymiz.,,
+egg,noun,A1,tuxum,яйцо,A round food that comes from a chicken.,eɡ,1550,food-drink,I want two eggs for breakfast.,Nonushtaga ikkita tuxum xohlayman.,,
+food,noun,A1,ovqat,еда,Things that people eat.,fuːd,450,food-drink,Uzbek food is very tasty.,O'zbek taomlari juda mazali.,meal,
+fruit,noun,A1,meva,фрукт,Sweet food from trees like apples.,fruːt,1650,food-drink,Fruit is good for your health.,Meva sog'liq uchun foydali.,,
+juice,noun,A1,sharbat,сок,A drink made from fruit.,dʒuːs,2100,food-drink,I drink orange juice.,Men apelsin sharbatini ichaman.,,
+meat,noun,A1,go'sht,мясо,Food that comes from animals.,miːt,1500,food-drink,We buy meat at the market.,Biz go'shtni bozordan olamiz.,,
+milk,noun,A1,sut,молоко,A white drink that comes from cows.,mɪlk,1400,food-drink,Children drink milk every day.,Bolalar har kuni sut ichadi.,,
+orange,noun,A1,apelsin,апельсин,A round sweet fruit with orange skin.,ˈɒrɪndʒ,2200,food-drink,This orange is very sweet.,Bu apelsin juda shirin.,,
+plate,noun,A1,likopcha,тарелка,A flat round thing for food.,pleɪt,2300,food-drink,Put the food on the plate.,Ovqatni likopchaga soling.,dish,
+potato,noun,A1,kartoshka,картошка,A white vegetable that grows under the ground.,pəˈteɪtəʊ,1900,food-drink,My brother likes fried potatoes.,Ukam qovurilgan kartoshkani yaxshi ko'radi.,,
+rice,noun,A1,guruch,рис,Small white food that people cook.,raɪs,1700,food-drink,Plov is made from rice.,Palov guruchdan tayyorlanadi.,,
+salt,noun,A1,tuz,соль,White powder that makes food tasty.,sɒlt,2000,food-drink,There is too much salt in the soup.,Sho'rvada tuz juda ko'p.,,sugar
+sugar,noun,A1,shakar,сахар,Sweet white powder for tea and cakes.,ˈʃʊɡə,1850,food-drink,I drink tea without sugar.,Men choyni shakarsiz ichaman.,,salt
+tea,noun,A1,choy,чай,A hot drink that is very popular in Uzbekistan.,tiː,1100,food-drink,Green tea is good in hot weather.,Issiq havoda ko'k choy yaxshi.,,
+vegetable,noun,A1,sabzavot,овощ,A plant that people eat like carrots.,ˈvedʒtəbəl,1950,food-drink,Eat vegetables to be healthy.,Sog'lom bo'lish uchun sabzavot yeng.,,
+water,noun,A1,suv,вода,A clear liquid that people drink.,ˈwɔːtə,300,food-drink,Please give me some water.,Iltimos menga suv bering.,,
+hungry,adjective,A1,och,голодный,Wanting to eat food.,ˈhʌŋɡri,2400,food-drink,I am hungry after school.,Maktabdan keyin qornim och bo'ladi.,,thirsty
+thirsty,adjective,A1,chanqagan,хочется пить,Wanting to drink something.,ˈθɜːsti,2600,food-drink,Runners are always thirsty.,Yuguruvchilar doim chanqaydi.,,hungry
+bathroom,noun,A1,hammom,ванная,The room where you wash.,ˈbɑːθruːm,2500,home,The bathroom is next to the kitchen.,Hammom oshxona yonida.,,
+bed,noun,A1,karavot,кровать,The thing you sleep on.,bed,1300,home,I go to bed at ten.,Men soat o'nda uxlashga yotaman.,,
+bedroom,noun,A1,yotoqxona,спальня,The room where you sleep.,ˈbedruːm,2450,home,My bedroom is small but nice.,Yotoqxonam kichkina lekin shinam.,,
+chair,noun,A1,stul,стул,A thing you sit on.,tʃeə,1750,home,Please sit on this chair.,Iltimos bu stulga o'tiring.,seat,
+clean,verb,A1,tozalamoq,убирать,To take dirt away from something.,kliːn,1600,home,We clean the house on Sunday.,Biz yakshanba kuni uyni tozalaymiz.,wash,
+door,noun,A1,eshik,дверь,You open it to go into a room.,dɔː,1050,home,Please close the door.,Iltimos eshikni yoping.,,
+floor,noun,A1,pol,пол,The part of a room you walk on.,flɔː,1500,home,The child sits on the floor.,Bola polda o'tiribdi.,,
+garden,noun,A1,bog',сад,A place with flowers and trees near a house.,ˈɡɑːdən,1800,home,My grandmother grows flowers in the garden.,Buvim bog'da gul o'stiradi.,,
+house,noun,A1,uy,дом,A building where people live.,haʊs,350,home,They live in a big house.,Ular katta uyda yashaydi.,home,
+home,noun,A1,uy (xonadon),дом,The place where you live.,həʊm,330,home,I go home after work.,Ishdan keyin uyga boraman.,house,
+key,noun,A1,kalit,ключ,A small metal thing that opens a door.,kiː,2100,home,I cannot find my keys.,Kalitlarimni topa olmayapman.,,
+kitchen,noun,A1,oshxona,кухня,The room where you cook food.,ˈkɪtʃɪn,1900,home,My mother is in the kitchen.,Onam oshxonada.,,
+lamp,noun,A1,chiroq,лампа,A thing that gives light in a room.,læmp,2700,home,Turn on the lamp please.,Iltimos chiroqni yoqing.,light,
+live,verb,A1,yashamoq,жить,To have your home in a place.,lɪv,400,home,We live in Tashkent.,Biz Toshkentda yashaymiz.,,
+room,noun,A1,xona,комната,One part of a house with walls.,ruːm,800,home,This room is very light.,Bu xona juda yorug'.,,
+table,noun,A1,stol,стол,A thing with four legs where you eat or work.,ˈteɪbəl,1200,home,The food is on the table.,Ovqat stol ustida.,,
+wall,noun,A1,devor,стена,The side of a room or building.,wɔːl,1550,home,There is a picture on the wall.,Devorda rasm bor.,,
+window,noun,A1,deraza,окно,You look through it to see outside.,ˈwɪndəʊ,1450,home,Open the window please.,Iltimos derazani oching.,,
+flat,noun,A1,kvartira,квартира,Rooms for living inside a big building.,flæt,2200,home,Our flat is on the third floor.,Kvartiramiz uchinchi qavatda.,apartment,
+answer,verb,A1,javob bermoq,отвечать,To say something when someone asks you.,ˈɑːnsə,1100,school,Please answer my question.,Iltimos savolimga javob bering.,reply,ask
+ask,verb,A1,so'ramoq,спрашивать,To say a question to someone.,ɑːsk,600,school,Students ask many questions.,O'quvchilar ko'p savol so'raydi.,,answer
+book,noun,A1,kitob,книга,Pages with words that you read.,bʊk,500,school,This book is very interesting.,Bu kitob juda qiziqarli.,,
+class,noun,A1,dars,урок,A time when a teacher teaches students.,klɑːs,900,school,English class starts at nine.,Ingliz tili darsi to'qqizda boshlanadi.,lesson,
+classroom,noun,A1,sinf xonasi,класс,The room where students learn.,ˈklɑːsruːm,2800,school,Our classroom is big and clean.,Sinf xonamiz katta va toza.,,
+desk,noun,A1,parta,парта,A table for working or studying.,desk,2600,school,The student sits at the desk.,O'quvchi partada o'tiradi.,,
+homework,noun,A1,uy vazifasi,домашнее задание,School work that you do at home.,ˈhəʊmwɜːk,2300,school,I do my homework in the evening.,Uy vazifamni kechqurun qilaman.,,
+learn,verb,A1,o'rganmoq,учить,To get new knowledge.,lɜːn,650,school,We learn ten new words every day.,Biz har kuni o'nta yangi so'z o'rganamiz.,study,
+lesson,noun,A1,dars,урок,A time when you learn something.,ˈlesən,1150,school,The lesson is forty minutes long.,Dars qirq daqiqa davom etadi.,class,
+letter,noun,A1,harf,буква,One sign like A or B in writing.,ˈletə,1700,school,The English alphabet has 26 letters.,Ingliz alifbosida 26 ta harf bor.,,
+listen,verb,A1,tinglamoq,слушать,To use your ears to hear something.,ˈlɪsən,850,school,Listen to the teacher carefully.,O'qituvchini diqqat bilan tinglang.,hear,
+pen,noun,A1,ruchka,ручка,A thing you write with using ink.,pen,2400,school,Write your name with a pen.,Ismingizni ruchka bilan yozing.,,
+pencil,noun,A1,qalam,карандаш,A thing you write or draw with.,ˈpensəl,2900,school,Draw a picture with a pencil.,Qalam bilan rasm chizing.,,
+question,noun,A1,savol,вопрос,Words that you say to get an answer.,ˈkwestʃən,550,school,Can I ask a question?,Savol bersam bo'ladimi?,,answer
+read,verb,A1,o'qimoq,читать,To look at words and understand them.,riːd,600,school,I read books before sleep.,Uxlashdan oldin kitob o'qiyman.,,write
+school,noun,A1,maktab,школа,A place where children learn.,skuːl,320,school,Our school has a big library.,Maktabimizda katta kutubxona bor.,,
+student,noun,A1,o'quvchi,ученик,A person who studies at school.,ˈstjuːdənt,480,school,She is a good student.,U yaxshi o'quvchi.,pupil,teacher
+teacher,noun,A1,o'qituvchi,учитель,A person who helps students learn.,ˈtiːtʃə,520,school,Our teacher explains everything well.,O'qituvchimiz hammasini yaxshi tushuntiradi.,,student
+word,noun,A1,so'z,слово,A group of letters with a meaning.,wɜːd,420,school,What does this word mean?,Bu so'z nimani anglatadi?,,
+write,verb,A1,yozmoq,писать,To put words on paper.,raɪt,580,school,Write a short text about your family.,Oilangiz haqida qisqa matn yozing.,,read
+paper,noun,A1,qog'oz,бумага,Thin white material for writing.,ˈpeɪpə,1600,school,Take a piece of paper.,Bir varaq qog'oz oling.,,
+study,verb,A1,o'qimoq (ta'lim olmoq),учиться,To spend time learning.,ˈstʌdi,700,school,My sister studies at university.,Opam universitetda o'qiydi.,learn,
+boss,noun,A1,boshliq,начальник,The person you work for.,bɒs,2500,work,My boss is very kind.,Boshlig'im juda mehribon.,,
+busy,adjective,A1,band,занятый,Having many things to do.,ˈbɪzi,1400,work,I am busy on Mondays.,Dushanba kunlari bandman.,,free
+doctor,noun,A1,shifokor,врач,A person who helps sick people.,ˈdɒktə,800,work,The doctor works at the hospital.,Shifokor kasalxonada ishlaydi.,,
+driver,noun,A1,haydovchi,водитель,A person who drives a car or bus.,ˈdraɪvə,1900,work,The taxi driver knows the city well.,Taksi haydovchisi shaharni yaxshi biladi.,,
+job,noun,A1,ish (kasb),работа,The work you do for money.,dʒɒb,650,work,She has a new job at a bank.,Uning bankda yangi ishi bor.,work,
+money,noun,A1,pul,деньги,You use it to buy things.,ˈmʌni,380,work,Save your money for books.,Pulingizni kitoblar uchun jamg'aring.,,
+office,noun,A1,ofis,офис,A room where people work at desks.,ˈɒfɪs,1100,work,My father works in an office.,Otam ofisda ishlaydi.,,
+police,noun,A1,politsiya,полиция,People whose job is to keep us safe.,pəˈliːs,1300,work,Call the police for help.,Yordam uchun politsiyani chaqiring.,,
+work,verb,A1,ishlamoq,работать,To do a job.,wɜːk,250,work,I work from nine to six.,Men to'qqizdan oltigacha ishlayman.,,rest
+worker,noun,A1,ishchi,рабочий,A person who works.,ˈwɜːkə,1800,work,The workers build a new road.,Ishchilar yangi yo'l qurmoqda.,,
+nurse,noun,A1,hamshira,медсестра,A person who helps doctors and sick people.,nɜːs,2100,work,The nurse gives medicine to patients.,Hamshira bemorlarga dori beradi.,,
+farmer,noun,A1,fermer,фермер,A person who grows food on a farm.,ˈfɑːmə,2400,work,The farmer grows cotton and wheat.,Fermer paxta va bug'doy yetishtiradi.,,
+airport,noun,A1,aeroport,аэропорт,The place where planes go up and come down.,ˈeəpɔːt,2800,travel,We arrive at the airport at six.,Biz aeroportga oltida yetib boramiz.,,
+bag,noun,A1,sumka,сумка,A thing you carry your things in.,bæɡ,1500,travel,My bag is very heavy.,Sumkam juda og'ir.,,
+bicycle,noun,A1,velosiped,велосипед,A thing with two wheels that you ride.,ˈbaɪsɪkəl,2900,travel,He goes to school by bicycle.,U maktabga velosipedda boradi.,bike,
+bus,noun,A1,avtobus,автобус,A big car that carries many people.,bʌs,1400,travel,The bus comes every ten minutes.,Avtobus har o'n daqiqada keladi.,,
+car,noun,A1,mashina,машина,A road vehicle with four wheels.,kɑː,600,travel,My uncle has a white car.,Amakimning oq mashinasi bor.,,
+city,noun,A1,shahar,город,A big place with many people and buildings.,ˈsɪti,550,travel,Tashkent is a big city.,Toshkent katta shahar.,town,village
+country,noun,A1,mamlakat,страна,A land with its own people like Uzbekistan.,ˈkʌntri,450,travel,Uzbekistan is a beautiful country.,O'zbekiston go'zal mamlakat.,,
+go,verb,A1,bormoq,идти,To move from one place to another.,ɡəʊ,50,travel,We go to the bazaar on Sunday.,Biz yakshanba kuni bozorga boramiz.,,come
+holiday,noun,A1,ta'til,отпуск,Days when you do not work or study.,ˈhɒlədeɪ,1900,travel,We visit Samarkand on holiday.,Ta'tilda Samarqandga boramiz.,vacation,
+hotel,noun,A1,mehmonxona,гостиница,A place where you pay to sleep.,həʊˈtel,1700,travel,The hotel is near the station.,Mehmonxona vokzal yaqinida.,,
+map,noun,A1,xarita,карта,A picture that shows roads and places.,mæp,2500,travel,Look at the map to find the street.,Ko'chani topish uchun xaritaga qarang.,,
+plane,noun,A1,samolyot,самолёт,A machine that flies in the sky.,pleɪn,2000,travel,The plane flies to Istanbul.,Samolyot Istanbulga uchadi.,airplane,
+road,noun,A1,yo'l,дорога,A way that cars travel on.,rəʊd,900,travel,This road goes to Fergana.,Bu yo'l Farg'onaga boradi.,way,
+station,noun,A1,bekat,вокзал,A place where trains or buses stop.,ˈsteɪʃən,1800,travel,The train station is old and beautiful.,Temir yo'l vokzali eski va chiroyli.,,
+stop,verb,A1,to'xtamoq,останавливаться,To not move any more.,stɒp,800,travel,The bus stops here.,Avtobus shu yerda to'xtaydi.,,start
+street,noun,A1,ko'cha,улица,A road in a city with houses.,striːt,1000,travel,Our street is very quiet.,Ko'chamiz juda tinch.,road,
+taxi,noun,A1,taksi,такси,A car that you pay to ride in.,ˈtæksi,2600,travel,Take a taxi to the airport.,Aeroportga taksida boring.,,
+ticket,noun,A1,chipta,билет,A paper that lets you ride or enter.,ˈtɪkɪt,2100,travel,Buy two tickets for the train.,Poyezdga ikkita chipta oling.,,
+train,noun,A1,poyezd,поезд,A long vehicle that runs on rails.,treɪn,1300,travel,The fast train goes to Samarkand.,Tezyurar poyezd Samarqandga boradi.,,
+travel,verb,A1,sayohat qilmoq,путешествовать,To go to other places or countries.,ˈtrævəl,1600,travel,I want to travel around the world.,Men dunyo bo'ylab sayohat qilishni xohlayman.,,
+walk,verb,A1,piyoda yurmoq,ходить пешком,To move on your feet.,wɔːk,750,travel,We walk in the park every evening.,Biz har kuni kechqurun bog'da yuramiz.,,
+trip,noun,A1,safar,поездка,A short travel to a place.,trɪp,2200,travel,Our school trip is on Friday.,Maktab sayohatimiz juma kuni.,journey,
+cloud,noun,A1,bulut,облако,A white or grey thing in the sky.,klaʊd,2700,nature,There are dark clouds in the sky.,Osmonda qora bulutlar bor.,,
+cold,adjective,A1,sovuq,холодный,Having a low temperature like winter.,kəʊld,700,nature,Winter is very cold here.,Bu yerda qish juda sovuq.,,hot
+flower,noun,A1,gul,цветок,The beautiful colored part of a plant.,ˈflaʊə,1800,nature,She gives flowers to her mother.,U onasiga gul sovg'a qiladi.,,
+grass,noun,A1,o't (maysa),трава,The green plant that covers the ground.,ɡrɑːs,2400,nature,Children play on the grass.,Bolalar maysada o'ynaydi.,,
+hot,adjective,A1,issiq,горячий,Having a high temperature like fire.,hɒt,650,nature,Summer in Uzbekistan is very hot.,O'zbekistonda yoz juda issiq.,warm,cold
+moon,noun,A1,oy,луна,The round light in the sky at night.,muːn,2300,nature,The moon is bright tonight.,Bugun kechasi oy yorug'.,,sun
+mountain,noun,A1,tog',гора,A very high part of the land.,ˈmaʊntɪn,1500,nature,The mountains are white in winter.,Qishda tog'lar oppoq bo'ladi.,,
+rain,noun,A1,yomg'ir,дождь,Water that falls from the sky.,reɪn,1600,nature,The rain is strong today.,Bugun yomg'ir kuchli.,,
+river,noun,A1,daryo,река,A long line of water that moves to the sea.,ˈrɪvə,1400,nature,The Amu Darya is a big river.,Amudaryo katta daryo.,,
+sea,noun,A1,dengiz,море,A very big area of salt water.,siː,1100,nature,Children love swimming in the sea.,Bolalar dengizda suzishni yaxshi ko'radi.,,
+sky,noun,A1,osmon,небо,The blue space above the earth.,skaɪ,1700,nature,The sky is clear and blue.,Osmon tiniq va ko'm-ko'k.,,
+snow,noun,A1,qor,снег,Soft white water that falls in winter.,snəʊ,2000,nature,Snow falls in January.,Yanvarda qor yog'adi.,,
+star,noun,A1,yulduz,звезда,A small light in the sky at night.,stɑː,1900,nature,We count stars at night.,Kechasi yulduzlarni sanaymiz.,,
+sun,noun,A1,quyosh,солнце,The big hot light in the sky in the day.,sʌn,1200,nature,The sun rises early in summer.,Yozda quyosh erta chiqadi.,,moon
+tree,noun,A1,daraxt,дерево,A tall plant with leaves and branches.,triː,1300,nature,Birds sing in the trees.,Qushlar daraxtlarda sayraydi.,,
+weather,noun,A1,ob-havo,погода,How hot or cold or rainy it is outside.,ˈweðə,1500,nature,The weather is nice today.,Bugun ob-havo yaxshi.,,
+wind,noun,A1,shamol,ветер,Air that moves fast outside.,wɪnd,2100,nature,A cold wind blows from the mountains.,Tog'lardan sovuq shamol esadi.,,
+warm,adjective,A1,iliq,тёплый,A little hot in a nice way.,wɔːm,1400,nature,Spring days are warm.,Bahor kunlari iliq bo'ladi.,,cold
+animal,noun,A1,hayvon,животное,A living thing like a cat or horse.,ˈænɪməl,1100,animals,Wild animals live in the mountains.,Yovvoyi hayvonlar tog'larda yashaydi.,,
+bird,noun,A1,qush,птица,An animal with wings that can fly.,bɜːd,1500,animals,The birds fly to warm countries.,Qushlar issiq mamlakatlarga uchib ketadi.,,
+cat,noun,A1,mushuk,кошка,A small soft animal that says meow.,kæt,1800,animals,Our cat sleeps all day.,Mushugimiz kun bo'yi uxlaydi.,,
+cow,noun,A1,sigir,корова,A big farm animal that gives milk.,kaʊ,2400,animals,The cow gives us milk.,Sigir bizga sut beradi.,,
+dog,noun,A1,it,собака,An animal that is a good friend to people.,dɒɡ,1600,animals,The dog plays in the garden.,It bog'da o'ynayapti.,,
+duck,noun,A1,o'rdak,утка,A bird that swims on water.,dʌk,3000,animals,Ducks swim in the lake.,O'rdaklar ko'lda suzadi.,,
+elephant,noun,A1,fil,слон,A very big grey animal with a long nose.,ˈelɪfənt,3200,animals,The elephant is the biggest land animal.,Fil quruqlikdagi eng katta hayvon.,,
+fish,noun,A1,baliq,рыба,An animal that lives and swims in water.,fɪʃ,1400,animals,There are many fish in this river.,Bu daryoda baliq ko'p.,,
+horse,noun,A1,ot,лошадь,A big animal that people ride.,hɔːs,1900,animals,He rides a horse very well.,U otda juda yaxshi yuradi.,,
+lion,noun,A1,sher,лев,A big wild cat that is called the king of animals.,ˈlaɪən,3100,animals,The lion is a strong animal.,Sher kuchli hayvon.,,
+mouse,noun,A1,sichqon,мышь,A very small animal with a long tail.,maʊs,2900,animals,The cat runs after the mouse.,Mushuk sichqonning orqasidan yuguradi.,,
+sheep,noun,A1,qo'y,овца,A farm animal with soft white wool.,ʃiːp,2600,animals,The sheep eat grass on the hill.,Qo'ylar tepalikda o't yeydi.,,
+arm,noun,A1,qo'l (yelkadan panjagacha),рука,The part of the body from shoulder to hand.,ɑːm,1700,body-health,My arm hurts after sport.,Sportdan keyin qo'lim og'riyapti.,,
+back,noun,A1,orqa (bel),спина,The part of the body behind you.,bæk,1300,body-health,Sit straight to help your back.,Belingiz uchun tik o'tiring.,,
+body,noun,A1,tana,тело,All of a person from head to feet.,ˈbɒdi,1200,body-health,Sport is good for the body.,Sport tana uchun foydali.,,
+ear,noun,A1,quloq,ухо,The part of the body you hear with.,ɪə,2200,body-health,Rabbits have long ears.,Quyonlarning quloqlari uzun.,,
+eye,noun,A1,ko'z,глаз,The part of the body you see with.,aɪ,900,body-health,She has beautiful brown eyes.,Uning chiroyli qo'ng'ir ko'zlari bor.,,
+face,noun,A1,yuz,лицо,The front part of the head.,feɪs,1000,body-health,Wash your face every morning.,Har kuni ertalab yuzingizni yuving.,,
+foot,noun,A1,oyoq panjasi,ступня,The part of the body you stand on.,fʊt,1500,body-health,My left foot hurts.,Chap oyog'im og'riyapti.,,
+hair,noun,A1,soch,волосы,It grows on your head.,heə,1400,body-health,Her hair is long and black.,Uning sochlari uzun va qora.,,
+hand,noun,A1,qo'l (panja),рука,The part of the body you hold things with.,hænd,800,body-health,Wash your hands before eating.,Ovqatdan oldin qo'lingizni yuving.,,
+head,noun,A1,bosh,голова,The top part of the body with eyes and mouth.,hed,700,body-health,Put the hat on your head.,Boshingizga do'ppi kiying.,,
+health,noun,A1,salomatlik,здоровье,How well your body is.,helθ,1600,body-health,Fruit and sport are good for health.,Meva va sport salomatlik uchun foydali.,,
+ill,adjective,A1,kasal,больной,Not healthy or well.,ɪl,1900,body-health,He is ill and stays at home.,U kasal va uyda qolyapti.,sick,healthy
+leg,noun,A1,oyoq,нога,The long part of the body you walk with.,leɡ,1450,body-health,Football players have strong legs.,Futbolchilarning oyoqlari kuchli.,,
+mouth,noun,A1,og'iz,рот,The part of the face you eat and speak with.,maʊθ,1650,body-health,Open your mouth and say aaa.,Og'zingizni oching va aaa deng.,,
+nose,noun,A1,burun,нос,The part of the face you smell with.,nəʊz,2100,body-health,My nose is cold in winter.,Qishda burnim sovqotadi.,,
+tooth,noun,A1,tish,зуб,The white hard things in your mouth.,tuːθ,1950,body-health,Clean your teeth two times a day.,Tishlaringizni kuniga ikki marta yuving.,,
+sick,adjective,A1,kasal (behol),больной,Not well in your body.,sɪk,1800,body-health,She feels sick after the long trip.,Uzoq safardan keyin u o'zini yomon his qilyapti.,ill,healthy
+tired,adjective,A1,charchagan,усталый,Wanting to rest or sleep.,taɪəd,1550,body-health,I am tired after work.,Ishdan keyin charchayman.,,
+strong,adjective,A1,kuchli,сильный,Having a lot of power in the body.,strɒŋ,1350,body-health,My grandfather is still strong.,Buvam hali ham kuchli.,,weak
+clothes,noun,A1,kiyimlar,одежда,Things that you wear like shirts.,kləʊðz,1500,clothes,She buys new clothes for Navruz.,U Navro'zga yangi kiyimlar oladi.,,
+coat,noun,A1,palto,пальто,A warm thing you wear outside in winter.,kəʊt,2300,clothes,Wear your coat because it is cold.,Sovuq bo'lgani uchun paltongizni kiying.,,
+dress,noun,A1,ko'ylak (ayollar),платье,A piece of clothes for women or girls.,dres,2000,clothes,Her new dress is beautiful.,Uning yangi ko'ylagi chiroyli.,,
+hat,noun,A1,shlyapa,шляпа,A thing you wear on your head.,hæt,2500,clothes,He wears a hat in the sun.,U quyoshda shlyapa kiyadi.,,
+jacket,noun,A1,kurtka,куртка,A short coat.,ˈdʒækɪt,2400,clothes,Take your jacket in the evening.,Kechqurun kurtkangizni oling.,,
+shirt,noun,A1,ko'ylak (erkaklar),рубашка,A piece of clothes for the top of the body.,ʃɜːt,2100,clothes,My father wears a white shirt to work.,Otam ishga oq ko'ylak kiyadi.,,
+shoe,noun,A1,tufli,туфля,A thing you wear on your foot.,ʃuː,1800,clothes,These shoes are very comfortable.,Bu tuflilar juda qulay.,,
+sock,noun,A1,paypoq,носок,A soft thing you wear inside your shoe.,sɒk,3000,clothes,Wear warm socks in winter.,Qishda issiq paypoq kiying.,,
+trousers,noun,A1,shim,брюки,Clothes for your legs.,ˈtraʊzəz,2600,clothes,His trousers are black.,Uning shimi qora.,pants,
+T-shirt,noun,A1,futbolka,футболка,A soft shirt with short arms.,ˈtiːʃɜːt,2700,clothes,I wear a T-shirt in summer.,Yozda futbolka kiyaman.,,
+wear,verb,A1,kiymoq,носить,To have clothes on your body.,weə,1100,clothes,Students wear a uniform at school.,O'quvchilar maktabda forma kiyadi.,,
+afternoon,noun,A1,tushdan keyin,после полудня,The time between morning and evening.,ˌɑːftəˈnuːn,1600,time,We play football in the afternoon.,Tushdan keyin futbol o'ynaymiz.,,morning
+always,adverb,A1,doim,всегда,Every time.,ˈɔːlweɪz,500,time,She always helps her mother.,U doim onasiga yordam beradi.,,never
+day,noun,A1,kun,день,Twenty-four hours.,deɪ,200,time,Monday is the first day of the week.,Dushanba haftaning birinchi kuni.,,night
+evening,noun,A1,kechqurun,вечер,The time before night.,ˈiːvnɪŋ,1300,time,We drink tea in the evening.,Kechqurun choy ichamiz.,,morning
+hour,noun,A1,soat (60 daqiqa),час,Sixty minutes.,aʊə,800,time,The lesson is one hour long.,Dars bir soat davom etadi.,,
+late,adjective,A1,kech,поздний,After the right time.,leɪt,1200,time,Do not be late for school.,Maktabga kechikmang.,,early
+early,adjective,A1,erta,ранний,Before the right time.,ˈɜːli,1100,time,I wake up early every day.,Har kuni erta uyg'onaman.,,late
+minute,noun,A1,daqiqa,минута,Sixty seconds.,ˈmɪnɪt,900,time,Wait five minutes please.,Iltimos besh daqiqa kuting.,,
+month,noun,A1,oy (30 kun),месяц,About thirty days like January.,mʌnθ,700,time,There are twelve months in a year.,Bir yilda o'n ikki oy bor.,,
+morning,noun,A1,ertalab,утро,The first part of the day.,ˈmɔːnɪŋ,1000,time,I do exercises in the morning.,Ertalab badantarbiya qilaman.,,evening
+never,adverb,A1,hech qachon,никогда,Not at any time.,ˈnevə,600,time,He never eats fast food.,U hech qachon tez tayyor ovqat yemaydi.,,always
+night,noun,A1,tun,ночь,The dark time when people sleep.,naɪt,650,time,Stars shine at night.,Yulduzlar tunda porlaydi.,,day
+now,adverb,A1,hozir,сейчас,At this time.,naʊ,150,time,I am busy now.,Hozir bandman.,,
+often,adverb,A1,tez-tez,часто,Many times.,ˈɒfən,850,time,We often visit our grandmother.,Biz buvimiznikiga tez-tez boramiz.,,never
+sometimes,adverb,A1,ba'zan,иногда,Not always but at some times.,ˈsʌmtaɪmz,950,time,Sometimes we watch films together.,Ba'zan birga kino ko'ramiz.,,
+today,adverb,A1,bugun,сегодня,On this day.,təˈdeɪ,550,time,Today is a beautiful day.,Bugun go'zal kun.,,
+tomorrow,adverb,A1,ertaga,завтра,On the day after today.,təˈmɒrəʊ,1050,time,We have an English test tomorrow.,Ertaga ingliz tilidan test bor.,,yesterday
+week,noun,A1,hafta,неделя,Seven days together.,wiːk,600,time,I do sport three times a week.,Haftasiga uch marta sport bilan shug'ullanaman.,,
+year,noun,A1,yil,год,Twelve months.,jɪə,300,time,My sister is seven years old.,Singlim yetti yoshda.,,
+yesterday,adverb,A1,kecha,вчера,On the day before today.,ˈjestədeɪ,1150,time,Yesterday we cooked plov.,Kecha palov pishirdik.,,tomorrow
+time,noun,A1,vaqt,время,Minutes and hours and days.,taɪm,100,time,What time is it now?,Hozir soat necha?,,
+beautiful,adjective,A1,go'zal,красивый,Very nice to look at.,ˈbjuːtɪfəl,1000,describing,Samarkand is a beautiful city.,Samarqand go'zal shahar.,pretty,ugly
+good,adjective,A1,yaxshi,хороший,Of high quality or nice.,ɡʊd,90,describing,She is a good doctor.,U yaxshi shifokor.,,bad
+bad,adjective,A1,yomon,плохой,Not good.,bæd,400,describing,The weather is bad today.,Bugun ob-havo yomon.,,good
+new,adjective,A1,yangi,новый,Made a short time ago.,njuː,180,describing,I have a new phone.,Yangi telefonim bor.,,old
+old,adjective,A1,eski (qari),старый,Made or born a long time ago.,əʊld,250,describing,This is a very old building.,Bu juda eski bino.,,new
+young,adjective,A1,yosh,молодой,Not old.,jʌŋ,800,describing,The young man helps his neighbors.,Yosh yigit qo'shnilariga yordam beradi.,,old
+big,adjective,A1,katta,большой,Large in size.,bɪɡ,300,describing,They live in a big house.,Ular katta uyda yashaydi.,large,small
+small,adjective,A1,kichkina,маленький,Little in size.,smɔːl,350,describing,A small cat sits at the door.,Kichkina mushuk eshik oldida o'tiribdi.,little,big
+long,adjective,A1,uzun,длинный,Not short in size or time.,lɒŋ,450,describing,The Amu Darya is a long river.,Amudaryo uzun daryo.,,short
+short,adjective,A1,qisqa (kalta),короткий,Not long.,ʃɔːt,900,describing,Write a short answer.,Qisqa javob yozing.,,long
+fast,adjective,A1,tez,быстрый,Moving quickly.,fɑːst,1100,describing,The Afrosiyob train is very fast.,Afrosiyob poyezdi juda tez.,quick,slow
+slow,adjective,A1,sekin,медленный,Not fast.,sləʊ,1500,describing,The old bus is slow.,Eski avtobus sekin yuradi.,,fast
+easy,adjective,A1,oson,лёгкий,Not difficult to do.,ˈiːzi,950,describing,This exercise is easy.,Bu mashq oson.,simple,difficult
+difficult,adjective,A1,qiyin,трудный,Not easy to do.,ˈdɪfɪkəlt,1050,describing,The test was difficult.,Test qiyin edi.,hard,easy
+expensive,adjective,A1,qimmat,дорогой,Costing a lot of money.,ɪkˈspensɪv,1700,describing,This phone is too expensive.,Bu telefon juda qimmat.,,cheap
+cheap,adjective,A1,arzon,дешёвый,Costing little money.,tʃiːp,1900,describing,Vegetables are cheap at the bazaar.,Bozorda sabzavotlar arzon.,,expensive
+red,adjective,A1,qizil,красный,The color of blood and tomatoes.,red,1200,describing,She has a red dress.,Uning qizil ko'ylagi bor.,,
+blue,adjective,A1,ko'k,синий,The color of the sky.,bluː,1300,describing,The sky is blue today.,Bugun osmon ko'm-ko'k.,,
+green,adjective,A1,yashil,зелёный,The color of grass.,ɡriːn,1400,describing,Green tea is popular in Uzbekistan.,Ko'k choy O'zbekistonda mashhur.,,
+black,adjective,A1,qora,чёрный,The color of night.,blæk,1000,describing,He wears black shoes.,U qora tufli kiyadi.,,white
+white,adjective,A1,oq,белый,The color of snow and milk.,waɪt,1100,describing,The walls are white.,Devorlar oq rangda.,,black
+yellow,adjective,A1,sariq,жёлтый,The color of the sun and lemons.,ˈjeləʊ,1800,describing,The leaves are yellow in autumn.,Kuzda barglar sariq bo'ladi.,,
+happy,adjective,A1,baxtli (xursand),счастливый,Feeling very good.,ˈhæpi,700,feelings,I am happy to see you.,Sizni ko'rganimdan xursandman.,glad,sad
+sad,adjective,A1,xafa,грустный,Feeling not happy.,sæd,1300,feelings,The film has a sad ending.,Filmning oxiri g'amgin.,,happy
+angry,adjective,A1,jahli chiqqan,злой,Feeling very strong and not happy.,ˈæŋɡri,1600,feelings,The teacher is angry about the noise.,O'qituvchi shovqindan jahli chiqdi.,,calm
+afraid,adjective,A1,qo'rqqan,испуганный,Feeling fear.,əˈfreɪd,1500,feelings,The child is afraid of dogs.,Bola itlardan qo'rqadi.,scared,brave
+love,verb,A1,sevmoq,любить,To like someone or something very much.,lʌv,350,feelings,I love my country.,Men vatanimni sevaman.,,hate
+like,verb,A1,yoqtirmoq,нравиться,To feel that something is nice.,laɪk,120,feelings,Do you like green tea?,Ko'k choyni yoqtirasizmi?,enjoy,hate
+laugh,verb,A1,kulmoq,смеяться,To make sounds when something is funny.,lɑːf,1700,feelings,The children laugh at the cartoon.,Bolalar multfilmga kulishyapti.,,cry
+cry,verb,A1,yig'lamoq,плакать,To have water come from your eyes.,kraɪ,1800,feelings,The baby cries at night.,Chaqaloq kechasi yig'laydi.,,laugh
+smile,verb,A1,jilmaymoq,улыбаться,To make your mouth show you are happy.,smaɪl,1400,feelings,She smiles at everyone.,U hammaga jilmayadi.,,
+feel,verb,A1,his qilmoq,чувствовать,To have a feeling inside.,fiːl,400,feelings,I feel tired today.,Bugun o'zimni charchagan his qilyapman.,,
+buy,verb,A1,sotib olmoq,покупать,To get something by paying money.,baɪ,700,actions,We buy fruit at the bazaar.,Biz mevani bozordan sotib olamiz.,,sell
+sell,verb,A1,sotmoq,продавать,To give something for money.,sel,1000,actions,Farmers sell melons in summer.,Fermerlar yozda qovun sotadi.,,buy
+call,verb,A1,qo'ng'iroq qilmoq,звонить,To speak with someone by phone.,kɔːl,600,actions,Call me in the evening.,Kechqurun menga qo'ng'iroq qiling.,phone,
+close,verb,A1,yopmoq,закрывать,To shut something like a door.,kləʊz,1100,actions,Close your books please.,Iltimos kitoblaringizni yoping.,shut,open
+open,verb,A1,ochmoq,открывать,To make something not closed.,ˈəʊpən,800,actions,Open the window please.,Iltimos derazani oching.,,close
+come,verb,A1,kelmoq,приходить,To move to this place.,kʌm,100,actions,Come to my birthday party.,Tug'ilgan kunimga keling.,,go
+dance,verb,A1,raqsga tushmoq,танцевать,To move your body to music.,dɑːns,1900,actions,People dance at weddings.,To'ylarda odamlar raqsga tushadi.,,
+do,verb,A1,qilmoq,делать,To make an action.,duː,20,actions,I do my homework every day.,Har kuni uy vazifamni qilaman.,,
+find,verb,A1,topmoq,находить,To see something after looking for it.,faɪnd,300,actions,I cannot find my pen.,Ruchkamni topa olmayapman.,,lose
+finish,verb,A1,tugatmoq,заканчивать,To end something.,ˈfɪnɪʃ,1200,actions,Finish your work before six.,Ishingizni oltigacha tugating.,end,start
+get,verb,A1,olmoq,получать,To receive or take something.,ɡet,60,actions,I get good marks in English.,Ingliz tilidan yaxshi baho olaman.,receive,
+give,verb,A1,bermoq,давать,To put something in another person's hand.,ɡɪv,150,actions,Give me the salt please.,Iltimos menga tuzni bering.,,take
+have,verb,A1,ega bo'lmoq,иметь,To own something.,hæv,10,actions,I have two brothers.,Mening ikkita ukam bor.,,
+help,verb,A1,yordam bermoq,помогать,To do something good for someone.,help,450,actions,Children help their parents.,Bolalar ota-onasiga yordam beradi.,,
+know,verb,A1,bilmoq,знать,To have information in your head.,nəʊ,80,actions,I know the answer.,Men javobni bilaman.,,
+look,verb,A1,qaramoq,смотреть,To use your eyes to see.,lʊk,200,actions,Look at the board please.,Iltimos doskaga qarang.,watch,
+make,verb,A1,yasamoq,делать (создавать),To create something.,meɪk,70,actions,My mother makes tasty somsa.,Onam mazali somsa tayyorlaydi.,create,
+need,verb,A1,kerak bo'lmoq,нуждаться,To must have something.,niːd,250,actions,Plants need water and sun.,O'simliklarga suv va quyosh kerak.,,
+play,verb,A1,o'ynamoq,играть,To do something fun like a game.,pleɪ,500,actions,Boys play football after school.,O'g'il bolalar maktabdan keyin futbol o'ynaydi.,,
+put,verb,A1,qo'ymoq,класть,To move something to a place.,pʊt,350,actions,Put the books on the desk.,Kitoblarni partaga qo'ying.,place,
+run,verb,A1,yugurmoq,бегать,To move very fast on your feet.,rʌn,900,actions,I run in the park every morning.,Har kuni ertalab bog'da yuguraman.,,walk
+say,verb,A1,aytmoq,сказать,To speak words.,seɪ,40,actions,Say your name please.,Iltimos ismingizni ayting.,tell,
+see,verb,A1,ko'rmoq,видеть,To use your eyes.,siː,110,actions,I see the mountains from my window.,Derazamdan tog'larni ko'raman.,look,
+sing,verb,A1,qo'shiq aytmoq,петь,To make music with your voice.,sɪŋ,1600,actions,She sings beautiful songs.,U chiroyli qo'shiqlar aytadi.,,
+sit,verb,A1,o'tirmoq,сидеть,To rest on a chair.,sɪt,750,actions,Please sit down.,Iltimos o'tiring.,,stand
+sleep,verb,A1,uxlamoq,спать,To rest with closed eyes at night.,sliːp,850,actions,Children sleep ten hours.,Bolalar o'n soat uxlaydi.,,
+speak,verb,A1,gapirmoq,говорить,To say words to someone.,spiːk,550,actions,Do you speak English?,Ingliz tilida gaplashasizmi?,talk,
+stand,verb,A1,turmoq (tik),стоять,To be on your feet.,stænd,950,actions,Students stand when the teacher comes.,O'qituvchi kelganda o'quvchilar o'rnidan turadi.,,sit
+start,verb,A1,boshlamoq,начинать,To begin something.,stɑːt,650,actions,The film starts at eight.,Kino sakkizda boshlanadi.,begin,finish
+swim,verb,A1,suzmoq,плавать,To move in water.,swɪm,2000,actions,We swim in the river in summer.,Yozda daryoda suzamiz.,,
+take,verb,A1,olmoq (olib ketmoq),брать,To get something with your hand.,teɪk,130,actions,Take your umbrella today.,Bugun soyaboningizni oling.,,give
+talk,verb,A1,suhbatlashmoq,разговаривать,To speak with someone.,tɔːk,700,actions,We talk about films with friends.,Do'stlar bilan kinolar haqida suhbatlashamiz.,speak,
+tell,verb,A1,aytib bermoq,рассказывать,To give information by speaking.,tel,320,actions,Grandmother tells us old stories.,Buvim bizga eski ertaklarni aytib beradi.,say,
+think,verb,A1,o'ylamoq,думать,To use your mind.,θɪŋk,90,actions,I think English is interesting.,Menimcha ingliz tili qiziqarli.,,
+understand,verb,A1,tushunmoq,понимать,To know what something means.,ˌʌndəˈstænd,480,actions,Do you understand this word?,Bu so'zni tushunasizmi?,,
+use,verb,A1,ishlatmoq,использовать,To do something with a thing.,juːz,280,actions,We use phones every day.,Biz har kuni telefondan foydalanamiz.,,
+want,verb,A1,xohlamoq,хотеть,To wish to have or do something.,wɒnt,170,actions,I want to learn English well.,Ingliz tilini yaxshi o'rganishni xohlayman.,wish,
+watch,verb,A1,tomosha qilmoq,смотреть (фильм),To look at something for some time.,wɒtʃ,1000,actions,We watch football on TV.,Televizorda futbol tomosha qilamiz.,look,
+bank,noun,A1,bank,банк,A place where people keep money.,bæŋk,1300,places,My father works at a bank.,Otam bankda ishlaydi.,,
+cafe,noun,A1,kafe,кафе,A small place where you buy tea and food.,ˈkæfeɪ,2400,places,We sit in a cafe near the park.,Bog' yonidagi kafeda o'tiramiz.,,
+cinema,noun,A1,kinoteatr,кинотеатр,A place where you watch films.,ˈsɪnəmə,2500,places,The new film is at the cinema.,Yangi kino kinoteatrda.,,
+hospital,noun,A1,kasalxona,больница,A place where doctors help sick people.,ˈhɒspɪtəl,1400,places,The hospital is open all night.,Kasalxona tun bo'yi ochiq.,,
+library,noun,A1,kutubxona,библиотека,A place with many books to read.,ˈlaɪbrəri,2200,places,I study at the library.,Kutubxonada dars qilaman.,,
+market,noun,A1,bozor,рынок,A place where people buy and sell things.,ˈmɑːkɪt,1200,places,Chorsu is a famous market in Tashkent.,Chorsu Toshkentdagi mashhur bozor.,bazaar,
+museum,noun,A1,muzey,музей,A place with old and interesting things.,mjuˈziːəm,2600,places,The museum has very old books.,Muzeyda juda qadimiy kitoblar bor.,,
+park,noun,A1,istirohat bog'i,парк,A green place in a city for walking.,pɑːk,1600,places,Children play in the park.,Bolalar bog'da o'ynaydi.,,
+restaurant,noun,A1,restoran,ресторан,A place where you pay to eat food.,ˈrestrɒnt,1900,places,This restaurant cooks good plov.,Bu restoranda yaxshi palov pishiradi.,,
+shop,noun,A1,do'kon,магазин,A place where you buy things.,ʃɒp,1000,places,The shop opens at nine.,Do'kon to'qqizda ochiladi.,store,
+town,noun,A1,shaharcha,городок,A place smaller than a city.,taʊn,800,places,My grandparents live in a small town.,Buvim va buvam kichik shaharchada yashaydi.,,city
+village,noun,A1,qishloq,деревня,A very small place in the country.,ˈvɪlɪdʒ,1500,places,The village is quiet and green.,Qishloq tinch va ko'kalamzor.,,city

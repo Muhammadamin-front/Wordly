@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -34,8 +35,7 @@ export function DashboardView({
     );
   }
 
-  const modules = [
-    { icon: "📚", title: dict.dashboard.cardVocabulary, desc: dict.dashboard.cardVocabularyDesc },
+  const comingModules = [
     { icon: "🃏", title: dict.dashboard.cardReview, desc: dict.dashboard.cardReviewDesc },
     { icon: "🎮", title: dict.dashboard.cardGames, desc: dict.dashboard.cardGamesDesc },
   ];
@@ -80,7 +80,21 @@ export function DashboardView({
       </section>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
-        {modules.map((module) => (
+        <Link
+          href={`/${lang}/vocabulary`}
+          className="block rounded-xl2 border border-brand-400/50 bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        >
+          <span aria-hidden className="text-2xl">
+            📚
+          </span>
+          <CardTitle className="mt-2 text-base text-brand-600 dark:text-brand-300">
+            {dict.dashboard.cardVocabulary} →
+          </CardTitle>
+          <CardDescription className="text-xs">
+            {dict.dashboard.cardVocabularyDesc}
+          </CardDescription>
+        </Link>
+        {comingModules.map((module) => (
           <Card key={module.title} className="relative overflow-hidden opacity-80">
             <span className="absolute right-3 top-3 rounded-full bg-line/70 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-ink-soft">
               {dict.dashboard.comingSoon}

@@ -1,0 +1,170 @@
+// Vocabulary types + fetchers. Public fetchers run on the server (RSC);
+// admin fetchers run in the browser with the in-memory access token.
+import { API_URL, apiFetch } from "@/lib/api";
+
+export interface Category {
+  id: string;
+  slug: string;
+  name_en: string;
+  name_uz: string;
+  name_ru: string;
+  emoji: string | null;
+}
+
+export interface WordListItem {
+  id: string;
+  headword: string;
+  slug: string;
+  pos: string;
+  ipa: string | null;
+  cefr_level: string;
+  frequency_rank: number | null;
+  status: string;
+  category: Category | null;
+  primary_translation_uz: string | null;
+  primary_translation_ru: string | null;
+}
+
+export interface WordPage {
+  items: WordListItem[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
+export interface Example {
+  id?: string;
+  text_en: string;
+  text_uz: string | null;
+  text_ru: string | null;
+}
+
+export interface Sense {
+  id?: string;
+  sense_order?: number;
+  definition_en: string;
+  translation_uz: string;
+  translation_ru: string;
+  definition_uz?: string | null;
+  definition_ru?: string | null;
+  usage_note?: string | null;
+  examples: Example[];
+}
+
+export interface Relation {
+  id?: string;
+  relation_type: string;
+  related_text: string;
+  related_word_id?: string | null;
+}
+
+export interface Word {
+  id: string;
+  headword: string;
+  slug: string;
+  pos: string;
+  ipa: string | null;
+  audio_url: string | null;
+  image_url: string | null;
+  cefr_level: string;
+  frequency_rank: number | null;
+  word_family: string | null;
+  common_mistake: string | null;
+  status: string;
+  category: Category | null;
+  senses: Sense[];
+  relations: Relation[];
+}
+
+export interface WordInput {
+  headword: string;
+  pos: string;
+  cefr_level: string;
+  ipa?: string | null;
+  frequency_rank?: number | null;
+  common_mistake?: string | null;
+  category_slug?: string | null;
+  status: string;
+  senses: Omit<Sense, "id" | "sense_order">[];
+  relations?: Omit<Relation, "id" | "related_word_id">[];
+}
+
+export interface ImportReport {
+  created: number;
+  updated: number;
+  errors: string[];
+}
+
+export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+export const WORD_STATUSES = ["draft", "review", "published"] as const;
+
+function buildQuery(params: Record<string, string | number | undefined>): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") search.set(key, String(value));
+  }
+  const encoded = search.toString();
+  return encoded ? `?${encoded}` : "";
+}
+
+// --- public (server-side) ---------------------------------------------------
+
+export async function fetchCategories(): Promise<Category[]> {
+  const response = await fetch(`${API_URL}/api/v1/categories`, { cache: "no-store" });
+  if (!response.ok) throw new Error("categories fetch failed");
+  return response.json();
+}
+
+export async function fetchWords(params: {
+  page?: number;
+  level?: string;
+  category?: string;
+  q?: string;
+}): Promise<WordPage> {
+  const response = await fetch(`${API_URL}/api/v1/words${buildQuery(params)}`, {
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error("words fetch failed");
+  return response.json();
+}
+
+export async function fetchWord(slug: string): Promise<Word | null> {
+  const response = await fetch(`${API_URL}/api/v1/words/${encodeURIComponent(slug)}`, {
+    cache: "no-store",
+  });
+  if (response.status === 404) return null;
+  if (!response.ok) throw new Error("word fetch failed");
+  return response.json();
+}
+
+// --- admin (browser, Bearer-authenticated) ----------------------------------
+
+export const adminVocabApi = {
+  list: (params: { page?: number; status?: string; level?: string; q?: string }) =>
+    apiFetch<WordPage>(`/admin/words${buildQuery(params)}`, { auth: true }),
+
+  get: (id: string) => apiFetch<Word>(`/admin/words/${id}`, { auth: true }),
+
+  create: (body: WordInput) =>
+    apiFetch<Word>("/admin/words", { method: "POST", body, auth: true }),
+
+  update: (id: string, body: Partial<WordInput>) =>
+    apiFetch<Word>(`/admin/words/${id}`, { method: "PATCH", body, auth: true }),
+
+  remove: (id: string) =>
+    apiFetch<{ message: string }>(`/admin/words/${id}`, { method: "DELETE", auth: true }),
+};
+
+// CSV upload needs multipart, so it bypasses the JSON apiFetch helper.
+export async function adminImportCsv(file: File, accessToken: string): Promise<ImportReport> {
+  const form = new FormData();
+  form.append("file", file);
+  const response = await fetch(`${API_URL}/api/v1/admin/words/import`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+    body: form,
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error(`import failed: ${response.status}`);
+  return response.json();
+}

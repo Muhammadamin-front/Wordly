@@ -1,0 +1,205 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+
+import { SiteHeader } from "@/components/site/header";
+import { Card } from "@/components/ui/card";
+import { fetchCategories, fetchWords, CEFR_LEVELS, type Category } from "@/lib/vocab";
+import type { Locale } from "@/lib/locales";
+import { cn } from "@/lib/utils";
+import { getDictionary, hasLocale } from "../dictionaries";
+
+export const dynamic = "force-dynamic";
+
+function categoryName(category: Category, lang: string): string {
+  if (lang === "uz") return category.name_uz;
+  if (lang === "ru") return category.name_ru;
+  return category.name_en;
+}
+
+function filterHref(
+  lang: string,
+  params: { level?: string; category?: string; q?: string; page?: number }
+): string {
+  const search = new URLSearchParams();
+  if (params.level) search.set("level", params.level);
+  if (params.category) search.set("category", params.category);
+  if (params.q) search.set("q", params.q);
+  if (params.page && params.page > 1) search.set("page", String(params.page));
+  const query = search.toString();
+  return `/${lang}/vocabulary${query ? `?${query}` : ""}`;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return { title: dict.vocab.title, description: dict.vocab.subtitle };
+}
+
+export default async function VocabularyPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ lang: string }>;
+  searchParams: Promise<{ level?: string; category?: string; q?: string; page?: string }>;
+}) {
+  const { lang } = await params;
+  if (!hasLocale(lang)) notFound();
+  const dict = await getDictionary(lang);
+  const { vocab } = dict;
+
+  const { level, category, q, page: pageParam } = await searchParams;
+  const page = Math.max(1, Number(pageParam) || 1);
+
+  const [categories, words] = await Promise.all([
+    fetchCategories(),
+    fetchWords({ page, level, category, q }),
+  ]);
+  const lastPage = Math.max(1, Math.ceil(words.total / words.page_size));
+
+  return (
+    <>
+      <SiteHeader lang={lang as Locale} nav={dict.nav} />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink">{vocab.title}</h1>
+        <p className="mt-1 text-sm text-ink-soft">{vocab.subtitle}</p>
+
+        {/* Search (plain GET form — works without JS, SEO-crawlable) */}
+        <form action={`/${lang}/vocabulary`} method="GET" className="mt-6 flex gap-2">
+          {level && <input type="hidden" name="level" value={level} />}
+          {category && <input type="hidden" name="category" value={category} />}
+          <input
+            type="search"
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder={vocab.searchPlaceholder}
+            className="h-11 w-full max-w-md rounded-xl border border-line bg-card px-4 text-sm text-ink placeholder:text-ink-soft/60 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30"
+          />
+          <button
+            type="submit"
+            className="h-11 rounded-xl bg-brand-600 px-5 text-sm font-semibold text-white transition-colors hover:bg-brand-500"
+          >
+            {vocab.searchButton}
+          </button>
+        </form>
+
+        {/* Level tabs */}
+        <div className="mt-5 flex flex-wrap gap-1.5">
+          <Link
+            href={filterHref(lang, { category, q })}
+            className={cn(
+              "rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
+              !level ? "bg-brand-600 text-white" : "border border-line text-ink-soft hover:text-ink"
+            )}
+          >
+            {vocab.allLevels}
+          </Link>
+          {CEFR_LEVELS.map((cefr) => (
+            <Link
+              key={cefr}
+              href={filterHref(lang, { level: cefr, category, q })}
+              className={cn(
+                "rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
+                level === cefr
+                  ? "bg-brand-600 text-white"
+                  : "border border-line text-ink-soft hover:text-ink"
+              )}
+            >
+              {cefr}
+            </Link>
+          ))}
+        </div>
+
+        {/* Category chips */}
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          <Link
+            href={filterHref(lang, { level, q })}
+            className={cn(
+              "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              !category
+                ? "bg-accent-500/15 text-accent-600 dark:text-accent-300"
+                : "text-ink-soft hover:text-ink"
+            )}
+          >
+            {vocab.allCategories}
+          </Link>
+          {categories.map((cat) => (
+            <Link
+              key={cat.slug}
+              href={filterHref(lang, { level, q, category: cat.slug })}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                category === cat.slug
+                  ? "bg-accent-500/15 text-accent-600 dark:text-accent-300"
+                  : "text-ink-soft hover:text-ink"
+              )}
+            >
+              {cat.emoji} {categoryName(cat, lang)}
+            </Link>
+          ))}
+        </div>
+
+        <p className="mt-6 text-sm text-ink-soft">
+          <strong className="text-ink">{words.total}</strong> {vocab.resultCount}
+        </p>
+
+        {words.items.length === 0 ? (
+          <Card className="mt-4 text-center text-ink-soft">{vocab.empty}</Card>
+        ) : (
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {words.items.map((word) => (
+              <li key={word.id}>
+                <Link
+                  href={`/${lang}/words/${word.slug}`}
+                  className="block h-full rounded-xl2 border border-line bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:shadow-md"
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-lg font-bold text-ink">{word.headword}</span>
+                    <span className="rounded-md bg-brand-600/10 px-1.5 py-0.5 text-[11px] font-bold text-brand-600 dark:text-brand-300">
+                      {word.cefr_level}
+                    </span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-ink-soft">
+                    {word.pos}
+                    {word.ipa ? ` · /${word.ipa}/` : ""}
+                  </p>
+                  <p className="mt-2 text-sm font-medium text-ink">
+                    {lang === "ru" ? word.primary_translation_ru : word.primary_translation_uz}
+                    {lang !== "ru" && word.primary_translation_ru ? (
+                      <span className="font-normal text-ink-soft"> · {word.primary_translation_ru}</span>
+                    ) : null}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {/* Pagination */}
+        {lastPage > 1 && (
+          <nav className="mt-8 flex items-center justify-center gap-3 text-sm font-medium">
+            {page > 1 && (
+              <Link
+                href={filterHref(lang, { level, category, q, page: page - 1 })}
+                className="rounded-lg border border-line px-3.5 py-2 text-ink-soft transition-colors hover:text-ink"
+              >
+                ← {vocab.prev}
+              </Link>
+            )}
+            <span className="text-ink-soft">
+              {vocab.pageOf} {page} / {lastPage}
+            </span>
+            {page < lastPage && (
+              <Link
+                href={filterHref(lang, { level, category, q, page: page + 1 })}
+                className="rounded-lg border border-line px-3.5 py-2 text-ink-soft transition-colors hover:text-ink"
+              >
+                {vocab.next} →
+              </Link>
+            )}
+          </nav>
+        )}
+      </main>
+    </>
+  );
+}

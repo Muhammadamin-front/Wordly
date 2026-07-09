@@ -56,5 +56,6 @@ npm run build:web
 |---|---|---|
 | M0 | Market research, product spec, roadmap | ✅ `docs/` |
 | M1 | Monorepo, auth (email + Google), i18n web shell, CI | ✅ `docs/milestones/M1.md` |
-| M2 | Vocabulary core + admin CMS + A1 corpus | next |
-| M3+ | SRS engine, gamification, games, AI tutor, payments… | `docs/03-roadmap.md` |
+| M2 | Vocabulary core, admin CMS + CSV import, 306-word A1 corpus | ✅ `docs/milestones/M2.md` |
+| M3 | Flashcards & SRS engine | next |
+| M4+ | Gamification, games, AI tutor, payments… | `docs/03-roadmap.md` |

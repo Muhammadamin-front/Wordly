@@ -41,3 +41,9 @@ def refresh_token_from_request(request: Request, body_token: Optional[str]) -> O
     """Web clients carry the refresh token in an httpOnly cookie;
     non-browser clients may send it in the request body."""
     return body_token or request.cookies.get(REFRESH_COOKIE_NAME)
+
+
+async def require_admin(user: User = Depends(get_current_user)) -> User:
+    if user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    return user

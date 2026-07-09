@@ -8,7 +8,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.db.base import Base
-from app.models import user  # noqa: F401  — register all model tables
+from app.models import user, vocabulary  # noqa: F401  — register all model tables
 
 config = context.config
 
