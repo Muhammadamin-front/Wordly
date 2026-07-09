@@ -24,14 +24,24 @@ WORD_PAYLOAD = {
 
 
 async def make_admin(client) -> dict:
-    data = await register_user(client, email="admin@words.uz")
+    """Idempotent: registers admin@words.uz on first call, logs in afterwards."""
+    from tests.conftest import REGISTER_PAYLOAD
+
+    response = await client.post(
+        "/api/v1/auth/register", json={**REGISTER_PAYLOAD, "email": "admin@words.uz"}
+    )
+    if response.status_code == 409:
+        response = await client.post(
+            "/api/v1/auth/login",
+            json={"email": "admin@words.uz", "password": REGISTER_PAYLOAD["password"]},
+        )
+    assert response.status_code in (200, 201), response.text
     async with db_session.get_session_factory()() as session:
         await session.execute(
             update(User).where(User.email == "admin@words.uz").values(role="admin")
         )
         await session.commit()
-    # Re-login so /auth/me style flows see the new role (token itself is id-based).
-    return {"Authorization": "Bearer " + data["access_token"]}
+    return {"Authorization": "Bearer " + response.json()["access_token"]}
 
 
 async def test_admin_endpoints_require_admin_role(client):

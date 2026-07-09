@@ -154,7 +154,7 @@ export function WordsAdmin({ lang, admin }: { lang: string; admin: Dictionary["a
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-xl2 border border-line">
-        <table className="w-full min-w-[640px] text-left text-sm">
+        <table className="w-full min-w-160 text-left text-sm">
           <thead className="bg-line/40 text-xs font-bold uppercase tracking-wide text-ink-soft">
             <tr>
               <th className="px-4 py-3">{admin.headword}</th>
