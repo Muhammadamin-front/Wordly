@@ -22,14 +22,17 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         <nav className="hidden items-center gap-6 text-sm font-medium text-ink-soft sm:flex">
           {ready && user ? (
             <>
-              <Link href={`/${lang}/decks`} className="transition-colors hover:text-ink">
+              <Link href={`/${lang}/decks`} className="transition-colors hover:text-ink" title="Decks">
                 🃏
               </Link>
-              <Link href={`/${lang}/leaderboard`} className="transition-colors hover:text-ink">
+              <Link href={`/${lang}/games`} className="transition-colors hover:text-ink" title="Games">
+                🎮
+              </Link>
+              <Link href={`/${lang}/leaderboard`} className="transition-colors hover:text-ink" title="League">
                 🏆
               </Link>
-              <Link href={`/${lang}/achievements`} className="transition-colors hover:text-ink">
-                🏅
+              <Link href={`/${lang}/statistics`} className="transition-colors hover:text-ink" title="Stats">
+                📊
               </Link>
             </>
           ) : (

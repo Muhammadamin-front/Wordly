@@ -59,5 +59,6 @@ npm run build:web
 | M2 | Vocabulary core, admin CMS + CSV import, 306-word A1 corpus | ✅ `docs/milestones/M2.md` |
 | M3 | Flashcards & SRS engine (SM-2, decks, review UI, import/export) | ✅ `docs/milestones/M3.md` |
 | M4 | Gamification (XP/levels, streaks+freezes, achievements, weekly leagues) | ✅ `docs/milestones/M4.md` |
-| M5 | Games (wave 1) + statistics | next |
-| M6+ | AI tutor, monetization, teacher/admin panels… | `docs/03-roadmap.md` |
+| M5 | Games (6, feeding SRS) + statistics dashboard | ✅ `docs/milestones/M5.md` |
+| M6 | AI tutor | next |
+| M7+ | Monetization, teacher/admin panels… | `docs/03-roadmap.md` |

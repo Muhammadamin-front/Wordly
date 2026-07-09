@@ -92,7 +92,8 @@
     "reviewHeroTitle": "Bugungi mashqqa tayyormisiz?",
     "reviewHeroBody": "So'zlar qo'shing va har kuni 5 daqiqa takrorlang — natija o'zi keladi.",
     "dueToday": "ta karta bugun sizni kutmoqda",
-    "startReview": "Takrorlashni boshlash"
+    "startReview": "Takrorlashni boshlash",
+    "statsLink": "Statistika"
   },
   "vocab": {
     "title": "So'z boyligi",
@@ -303,5 +304,73 @@
       "d": "Kunlik maqsadni bajardingiz",
       "i": "🎯"
     }
+  },
+  "games": {
+    "title": "O'yinlar",
+    "subtitle": "So'zlaringizni o'ynab mustahkamlang — har bir javob takrorlash hisoblanadi",
+    "needWords": "O'ynash uchun kamida 4 ta so'z qo'shing.",
+    "addWords": "So'z qo'shish",
+    "score": "Ball",
+    "correct": "To'g'ri!",
+    "wrong": "Xato",
+    "next": "Keyingi",
+    "playAgain": "Yana o'ynash",
+    "exit": "Chiqish",
+    "roundComplete": "O'yin tugadi!",
+    "yourScore": "Sizning natijangiz",
+    "tapToHear": "Eshitish uchun bosing",
+    "typeAnswer": "Javobni yozing...",
+    "check": "Tekshirish",
+    "matchPairs": "Juftlarni toping",
+    "loading": "O'yin yuklanmoqda...",
+    "word_match": {
+      "name": "So'z jufti",
+      "desc": "So'zni tarjimasi bilan bog'lang"
+    },
+    "speed_quiz": {
+      "name": "Tezkor viktorina",
+      "desc": "To'g'ri tarjimani tez tanlang"
+    },
+    "fill_blank": {
+      "name": "Bo'sh joyni to'ldiring",
+      "desc": "Gapdagi yetishmayotgan so'zni toping"
+    },
+    "audio_guess": {
+      "name": "Eshit va top",
+      "desc": "So'zni eshitib, tarjimasini tanlang"
+    },
+    "typing_race": {
+      "name": "Yozish poygasi",
+      "desc": "So'zni tez va to'g'ri yozing"
+    },
+    "memory": {
+      "name": "Xotira",
+      "desc": "Yashirin juftlarni yodda tuting"
+    }
+  },
+  "stats": {
+    "title": "Statistika",
+    "subtitle": "O'rganish jarayoningiz",
+    "mastered": "O'zlashtirilgan",
+    "accuracy": "Aniqlik",
+    "matureAccuracy": "Uzoq muddatli eslab qolish",
+    "timeSpent": "Sarflangan vaqt",
+    "totalReviews": "Jami takrorlash",
+    "cards": "Kartalar",
+    "activity": "Faollik",
+    "reviewsByDay": "Kunlik takrorlash",
+    "ratingBreakdown": "Baholar taqsimoti",
+    "weakCategories": "Zaif mavzular",
+    "forgotten": "Unutilayotgan so'zlar",
+    "masteredWords": "O'zlashtirilgan so'zlar",
+    "new": "Yangi",
+    "learning": "O'rganilmoqda",
+    "review": "Takrorlashda",
+    "empty": "Hali ma'lumot yo'q. Bir nechta so'zni takrorlang!",
+    "lapses": "marta unutilgan",
+    "minutes": "daqiqa",
+    "hours": "soat",
+    "noWeakCategories": "Zaif mavzu topilmadi — barakalla!",
+    "last30": "So'nggi 30 kun"
   }
 }

@@ -213,16 +213,33 @@ export function DashboardView({
           <CardDescription className="text-xs">{dict.dashboard.cardReviewDesc}</CardDescription>
         </Link>
 
-        <Card className="relative overflow-hidden opacity-80">
-          <span className="absolute right-3 top-3 rounded-full bg-line/70 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-ink-soft">
-            {dict.dashboard.comingSoon}
-          </span>
+        <Link
+          href={`/${lang}/games`}
+          className="block rounded-xl2 border border-rose-400/40 bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+        >
           <span aria-hidden className="text-2xl">
             🎮
           </span>
-          <CardTitle className="mt-2 text-base">{dict.dashboard.cardGames}</CardTitle>
+          <CardTitle className="mt-2 text-base text-rose-500">
+            {dict.dashboard.cardGames} →
+          </CardTitle>
           <CardDescription className="text-xs">{dict.dashboard.cardGamesDesc}</CardDescription>
-        </Card>
+        </Link>
+      </section>
+
+      <section className="mt-4">
+        <Link
+          href={`/${lang}/statistics`}
+          className="flex items-center justify-between rounded-xl2 border border-line bg-card px-5 py-4 transition-colors hover:border-brand-400/60"
+        >
+          <span className="flex items-center gap-3">
+            <span aria-hidden className="text-2xl">
+              📊
+            </span>
+            <span className="font-bold text-ink">{dict.dashboard.statsLink}</span>
+          </span>
+          <span className="text-ink-soft">→</span>
+        </Link>
       </section>
     </main>
   );

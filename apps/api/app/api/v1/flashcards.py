@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models.flashcards import Card, Deck, ReviewLog
+from app.models.flashcards import Card, Deck
 from app.models.user import User
 from app.models.vocabulary import Category, Word
 from app.schemas.auth import MessageOut
@@ -29,33 +29,10 @@ from app.schemas.flashcards import (
     ReviewResult,
 )
 from app.schemas.gamification import RewardOut
-from app.services.gamification import apply_review_rewards, get_or_create_stats
-from app.services.srs import SrsState, get_scheduler
+from app.services.review import record_review
 from app.core.security import utcnow
 
 router = APIRouter(tags=["flashcards"], dependencies=[Depends(get_current_user)])
-
-
-def card_state(card: Card) -> SrsState:
-    return SrsState(
-        state=card.srs_state,
-        step=card.srs_step,
-        ease_factor=card.ease_factor,
-        interval_days=card.interval_days,
-        repetitions=card.repetitions,
-        lapses=card.lapses,
-        due_at=card.due_at,
-    )
-
-
-def apply_state(card: Card, state: SrsState) -> None:
-    card.srs_state = state.state
-    card.srs_step = state.step
-    card.ease_factor = state.ease_factor
-    card.interval_days = state.interval_days
-    card.repetitions = state.repetitions
-    card.lapses = state.lapses
-    card.due_at = state.due_at
 
 
 async def get_own_deck(db: AsyncSession, user: User, deck_id: UUID) -> Deck:
@@ -389,26 +366,7 @@ async def review_card(
     db: AsyncSession = Depends(get_db),
 ):
     card = await get_own_card(db, user, card_id)
-    before = card_state(card)
-    after = get_scheduler().schedule(before, payload.rating, utcnow())
-    apply_state(card, after)
-
-    db.add(
-        ReviewLog(
-            user_id=user.id,
-            card_id=card.id,
-            rating=payload.rating,
-            state_before=before.state,
-            interval_before=before.interval_days,
-            interval_after=after.interval_days,
-            ease_before=before.ease_factor,
-            ease_after=after.ease_factor,
-            duration_ms=payload.duration_ms,
-        )
-    )
-
-    stats = await get_or_create_stats(db, user)
-    reward = await apply_review_rewards(db, user, stats, payload.rating)
+    after, reward = await record_review(db, user, card, payload.rating, payload.duration_ms)
     await db.commit()
     return ReviewResult(
         card=CardOut.model_validate(card),

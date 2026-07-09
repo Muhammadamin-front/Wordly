@@ -92,7 +92,8 @@
     "reviewHeroTitle": "Ready for today's practice?",
     "reviewHeroBody": "Add words and review 5 minutes a day — results will follow.",
     "dueToday": "cards are waiting for you today",
-    "startReview": "Start review"
+    "startReview": "Start review",
+    "statsLink": "Statistics"
   },
   "vocab": {
     "title": "Vocabulary",
@@ -303,5 +304,73 @@
       "d": "Reached your daily goal",
       "i": "🎯"
     }
+  },
+  "games": {
+    "title": "Games",
+    "subtitle": "Reinforce your words through play — every answer is a review",
+    "needWords": "Add at least 4 words to play.",
+    "addWords": "Add words",
+    "score": "Score",
+    "correct": "Correct!",
+    "wrong": "Wrong",
+    "next": "Next",
+    "playAgain": "Play again",
+    "exit": "Exit",
+    "roundComplete": "Round complete!",
+    "yourScore": "Your score",
+    "tapToHear": "Tap to hear",
+    "typeAnswer": "Type the answer...",
+    "check": "Check",
+    "matchPairs": "Match the pairs",
+    "loading": "Loading game...",
+    "word_match": {
+      "name": "Word Match",
+      "desc": "Connect the word to its translation"
+    },
+    "speed_quiz": {
+      "name": "Speed Quiz",
+      "desc": "Pick the correct translation fast"
+    },
+    "fill_blank": {
+      "name": "Fill the Blank",
+      "desc": "Find the missing word in the sentence"
+    },
+    "audio_guess": {
+      "name": "Listen & Guess",
+      "desc": "Hear the word and pick its translation"
+    },
+    "typing_race": {
+      "name": "Typing Race",
+      "desc": "Type the word quickly and correctly"
+    },
+    "memory": {
+      "name": "Memory",
+      "desc": "Remember the hidden pairs"
+    }
+  },
+  "stats": {
+    "title": "Statistics",
+    "subtitle": "Your learning journey",
+    "mastered": "Mastered",
+    "accuracy": "Accuracy",
+    "matureAccuracy": "Long-term retention",
+    "timeSpent": "Time spent",
+    "totalReviews": "Total reviews",
+    "cards": "Cards",
+    "activity": "Activity",
+    "reviewsByDay": "Reviews by day",
+    "ratingBreakdown": "Rating breakdown",
+    "weakCategories": "Weak topics",
+    "forgotten": "Words you're forgetting",
+    "masteredWords": "Mastered words",
+    "new": "New",
+    "learning": "Learning",
+    "review": "Review",
+    "empty": "No data yet. Review a few words!",
+    "lapses": "times forgotten",
+    "minutes": "min",
+    "hours": "h",
+    "noWeakCategories": "No weak topics — great job!",
+    "last30": "Last 30 days"
   }
 }
