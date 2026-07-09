@@ -37,6 +37,9 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
               <Link href={`/${lang}/statistics`} className="transition-colors hover:text-ink" title="Stats">
                 📊
               </Link>
+              <Link href={`/${lang}/billing`} className="transition-colors hover:text-ink" title="Subscription">
+                💎
+              </Link>
             </>
           ) : (
             <>

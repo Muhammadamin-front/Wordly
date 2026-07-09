@@ -23,6 +23,7 @@ from app.schemas.auth import (
     VerifyEmailRequest,
 )
 from app.services import auth as auth_service
+from app.services import referrals
 from app.services.emailer import Emailer, get_emailer
 from app.services.google_oauth import GoogleVerifier, get_google_verifier
 
@@ -99,6 +100,10 @@ async def register(
     user.profile = Profile(display_name=payload.display_name.strip(), ui_locale=payload.ui_locale)
     db.add(user)
     await db.flush()
+
+    await referrals.ensure_code(db, user)
+    if payload.referral_code:
+        await referrals.link_referral(db, user, payload.referral_code)
 
     verify_token = await auth_service.create_one_time_token(
         db, user, "verify_email", settings.EMAIL_TOKEN_TTL_SECONDS

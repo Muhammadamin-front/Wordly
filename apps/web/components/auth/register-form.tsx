@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -16,6 +16,7 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["auth"] }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { applySession } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,12 +26,14 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
     setError(null);
     setLoading(true);
     const form = new FormData(event.currentTarget);
+    const ref = searchParams.get("ref") ?? undefined;
     try {
       const pair = await authApi.register({
         email: String(form.get("email")),
         password: String(form.get("password")),
         display_name: String(form.get("display_name")),
         ui_locale: lang,
+        referral_code: ref,
       });
       applySession(pair);
       router.push(`/${lang}/dashboard`);

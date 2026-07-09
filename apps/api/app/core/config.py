@@ -37,10 +37,24 @@ class Settings(BaseSettings):
     AI_MODEL: str = "claude-opus-4-8"
     AI_MAX_TOKENS: int = 1024
     AI_FREE_DAILY_QUOTA: int = 5  # AI actions/day on the free tier
+    AI_PREMIUM_DAILY_QUOTA: int = 200  # effectively unlimited for a human
 
     @property
     def ai_enabled(self) -> bool:
         return bool(self.ANTHROPIC_API_KEY)
+
+    # Payments (Uzbek rails). Merchant creds are injected in production; the
+    # gateway endpoints run without them but reject unsigned/unauth'd calls.
+    PAYME_MERCHANT_ID: Optional[str] = None
+    PAYME_MERCHANT_KEY: Optional[str] = None
+    PAYME_CHECKOUT_URL: str = "https://checkout.paycom.uz"
+    CLICK_SERVICE_ID: Optional[str] = None
+    CLICK_MERCHANT_ID: Optional[str] = None
+    CLICK_SECRET_KEY: Optional[str] = None
+    CLICK_CHECKOUT_URL: str = "https://my.click.uz/services/pay"
+    # Dev/demo only: lets a user self-activate premium without a real gateway.
+    PAYMENTS_SANDBOX: bool = True
+    REFERRAL_REWARD_DAYS: int = 30
 
     # Rate limits: "<max_requests>/<window_seconds>"
     RATE_LIMIT_ENABLED: bool = True

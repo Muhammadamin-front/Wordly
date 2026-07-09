@@ -9,6 +9,7 @@ class RegisterRequest(BaseModel):
     password: str = Field(min_length=8, max_length=128)
     display_name: str = Field(min_length=1, max_length=80)
     ui_locale: str = Field(default="uz", pattern="^(uz|ru|en)$")
+    referral_code: Optional[str] = Field(default=None, max_length=12)
 
 
 class LoginRequest(BaseModel):

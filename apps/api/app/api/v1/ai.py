@@ -98,7 +98,7 @@ def _word_brief(word: Word) -> str:
 async def quota(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     return QuotaOut(
         remaining=await ai_quota.remaining_today(db, user),
-        daily_quota=ai_quota.daily_quota(user),
+        daily_quota=await ai_quota.daily_quota(db, user),
         enabled=get_settings().ai_enabled,
     )
 

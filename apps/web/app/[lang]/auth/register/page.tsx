@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { AuthCard } from "@/components/auth/auth-card";
 import { RegisterForm } from "@/components/auth/register-form";
@@ -11,7 +12,9 @@ export default async function RegisterPage({ params }: { params: Promise<{ lang:
 
   return (
     <AuthCard lang={lang} title={dict.auth.registerTitle} subtitle={dict.auth.registerSubtitle}>
-      <RegisterForm lang={lang} auth={dict.auth} />
+      <Suspense>
+        <RegisterForm lang={lang} auth={dict.auth} />
+      </Suspense>
     </AuthCard>
   );
 }

@@ -61,5 +61,6 @@ npm run build:web
 | M4 | Gamification (XP/levels, streaks+freezes, achievements, weekly leagues) | ✅ `docs/milestones/M4.md` |
 | M5 | Games (6, feeding SRS) + statistics dashboard | ✅ `docs/milestones/M5.md` |
 | M6 | AI Tutor (explain/mnemonic/story/quiz/chat/writing, quotas) | ✅ `docs/milestones/M6.md` |
-| M7 | Monetization (Payme/Click, subscriptions) | next |
-| M8+ | Teacher & admin panels, more games… | `docs/03-roadmap.md` |
+| M7 | Monetization (Payme + Click, subscriptions, referrals) | ✅ `docs/milestones/M7.md` |
+| M8 | Teacher & admin panels | next |
+| M9+ | Games wave 2, social, hardening… | `docs/03-roadmap.md` |

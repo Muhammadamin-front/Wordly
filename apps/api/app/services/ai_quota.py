@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.models.ai import AiUsage
 from app.models.user import User
+from app.services import subscriptions
 from app.services.leveling import local_today
 
 
@@ -18,9 +19,11 @@ async def _get_or_create_usage(db: AsyncSession, user: User, day) -> AiUsage:
     return usage
 
 
-def daily_quota(user: User) -> int:
-    # Everyone is on the free tier until M7 introduces plans.
-    return get_settings().AI_FREE_DAILY_QUOTA
+async def daily_quota(db: AsyncSession, user: User) -> int:
+    settings = get_settings()
+    if await subscriptions.is_premium(db, user):
+        return settings.AI_PREMIUM_DAILY_QUOTA
+    return settings.AI_FREE_DAILY_QUOTA
 
 
 async def remaining_today(db: AsyncSession, user: User) -> int:
@@ -29,7 +32,7 @@ async def remaining_today(db: AsyncSession, user: User) -> int:
         select(AiUsage).where(AiUsage.user_id == user.id, AiUsage.day == today)
     )
     used = usage.count if usage else 0
-    return max(0, daily_quota(user) - used)
+    return max(0, await daily_quota(db, user) - used)
 
 
 async def has_quota(db: AsyncSession, user: User) -> bool:

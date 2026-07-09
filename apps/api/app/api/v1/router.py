@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import ai, auth, flashcards, gamification, games, statistics, users, vocabulary
+from app.api.v1 import ai, auth, flashcards, gamification, games, payments, statistics, users, vocabulary
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
@@ -12,3 +12,5 @@ api_router.include_router(gamification.router)
 api_router.include_router(games.router)
 api_router.include_router(statistics.router)
 api_router.include_router(ai.router)
+api_router.include_router(payments.router)
+api_router.include_router(payments.gateway_router)

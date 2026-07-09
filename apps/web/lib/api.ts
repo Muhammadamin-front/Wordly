@@ -79,6 +79,7 @@ export const authApi = {
     password: string;
     display_name: string;
     ui_locale: string;
+    referral_code?: string;
   }) => apiFetch<TokenPair>("/auth/register", { method: "POST", body }),
 
   login: (body: { email: string; password: string }) =>
