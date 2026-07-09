@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut, type Queue, type Rating } from "@/lib/flashcards";
+import { notifyStatsChanged, type Reward } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -25,10 +26,14 @@ const RATING_STYLES: Record<Rating, string> = {
 export function ReviewSession({
   lang,
   review,
+  gam,
+  ach,
   deckId,
 }: {
   lang: string;
   review: Dictionary["review"];
+  gam: Dictionary["gam"];
+  ach: Dictionary["ach"];
   deckId?: string;
 }) {
   const { user, ready } = useAuth();
@@ -37,6 +42,9 @@ export function ReviewSession({
   const [index, setIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("loading");
   const [reviewedCount, setReviewedCount] = useState(0);
+  const [sessionXp, setSessionXp] = useState(0);
+  const [sessionAchievements, setSessionAchievements] = useState<string[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const shownAt = useRef<number>(0);
@@ -67,13 +75,37 @@ export function ReviewSession({
     setPhase((current) => (current === "front" ? "back" : current));
   }, []);
 
+  const announce = useCallback(
+    (reward: Reward) => {
+      if (reward.leveled_up) setToast(`⚡ ${gam.levelUp} ${reward.level}`);
+      else if (reward.new_achievements.length > 0) {
+        const meta = ach[reward.new_achievements[0] as keyof Dictionary["ach"]];
+        setToast(`${meta.i} ${gam.newAchievement}`);
+      } else if (reward.freeze_used) setToast(`🧊 ${gam.freezeUsed}`);
+      else if (reward.goal_reached) setToast(`🎯 ${gam.goalDone}`);
+      else setToast(`+${reward.xp_gained} XP`);
+      window.setTimeout(() => setToast(null), 1600);
+    },
+    [gam, ach]
+  );
+
   const rate = useCallback(
     async (rating: Rating) => {
       if (!card || submitting.current) return;
       submitting.current = true;
       try {
-        await flashcardsApi.review(card.id, rating, Date.now() - shownAt.current);
+        const { reward } = await flashcardsApi.review(
+          card.id,
+          rating,
+          Date.now() - shownAt.current
+        );
         setReviewedCount((count) => count + 1);
+        setSessionXp((xp) => xp + reward.xp_gained);
+        if (reward.new_achievements.length > 0) {
+          setSessionAchievements((prev) => [...prev, ...reward.new_achievements]);
+        }
+        announce(reward);
+        notifyStatsChanged();
         setNote("");
         if (queue && index + 1 < queue.cards.length) {
           setIndex(index + 1);
@@ -88,7 +120,7 @@ export function ReviewSession({
         submitting.current = false;
       }
     },
-    [card, queue, index]
+    [card, queue, index, announce]
   );
 
   // Keyboard: Space/Enter flips; 1-4 rate when the back is visible.
@@ -145,11 +177,33 @@ export function ReviewSession({
         <p className="mt-2 text-ink-soft">
           {isDone ? review.doneBody : review.emptyBody}
         </p>
+
         {isDone && reviewedCount > 0 && (
-          <p className="mt-3 text-sm font-semibold text-brand-600 dark:text-brand-300">
-            {reviewedCount} {review.reviewedCount}
-          </p>
+          <div className="mx-auto mt-5 max-w-xs rounded-xl2 border border-line bg-card p-5">
+            <p className="text-3xl font-extrabold text-brand-600 dark:text-brand-300">
+              +{sessionXp} XP
+            </p>
+            <p className="mt-1 text-sm text-ink-soft">
+              {reviewedCount} {review.reviewedCount}
+            </p>
+            {sessionAchievements.length > 0 && (
+              <div className="mt-3 flex flex-wrap justify-center gap-2 border-t border-line pt-3">
+                {sessionAchievements.map((code) => {
+                  const meta = ach[code as keyof Dictionary["ach"]];
+                  return (
+                    <span
+                      key={code}
+                      className="rounded-full bg-accent-500/10 px-2.5 py-1 text-xs font-semibold text-accent-600 dark:text-accent-300"
+                    >
+                      {meta.i} {meta.t}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
+
         <Link href={isDone ? `/${lang}/dashboard` : `/${lang}/decks`} className="mt-8 inline-block">
           <Button>{isDone ? review.title : review.addWords}</Button>
         </Link>
@@ -166,7 +220,19 @@ export function ReviewSession({
   const progress = queue.cards.length ? (index / queue.cards.length) * 100 : 0;
 
   return (
-    <div className="mx-auto w-full max-w-xl">
+    <div className="relative mx-auto w-full max-w-xl">
+      {/* Reward toast */}
+      {toast && (
+        <motion.div
+          key={toast}
+          initial={reduced ? false : { opacity: 0, y: -12, scale: 0.9 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          className="pointer-events-none absolute -top-2 left-1/2 z-20 -translate-x-1/2 rounded-full bg-brand-600 px-4 py-1.5 text-sm font-bold text-white shadow-lg"
+        >
+          {toast}
+        </motion.div>
+      )}
+
       {/* Progress */}
       <div
         role="progressbar"
@@ -177,7 +243,7 @@ export function ReviewSession({
         className="h-1.5 w-full overflow-hidden rounded-full bg-line"
       >
         <div
-          className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-500 transition-all duration-300"
+          className="h-full rounded-full bg-linear-to-r from-brand-500 to-accent-500 transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>

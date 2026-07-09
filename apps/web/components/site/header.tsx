@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { StatsWidget } from "@/components/gamification/stats-widget";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
@@ -19,15 +20,32 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         <Logo lang={lang} />
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-ink-soft sm:flex">
-          <Link href={`/${lang}#features`} className="transition-colors hover:text-ink">
-            {nav.features}
-          </Link>
-          <Link href={`/${lang}#pricing`} className="transition-colors hover:text-ink">
-            {nav.pricing}
-          </Link>
+          {ready && user ? (
+            <>
+              <Link href={`/${lang}/decks`} className="transition-colors hover:text-ink">
+                🃏
+              </Link>
+              <Link href={`/${lang}/leaderboard`} className="transition-colors hover:text-ink">
+                🏆
+              </Link>
+              <Link href={`/${lang}/achievements`} className="transition-colors hover:text-ink">
+                🏅
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href={`/${lang}#features`} className="transition-colors hover:text-ink">
+                {nav.features}
+              </Link>
+              <Link href={`/${lang}#pricing`} className="transition-colors hover:text-ink">
+                {nav.pricing}
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
+          {ready && user && <StatsWidget lang={lang} />}
           <LocaleSwitcher current={lang} />
           <ThemeToggle />
           {ready && user ? (

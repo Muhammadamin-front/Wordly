@@ -190,5 +190,118 @@
     "addedResult": "new words added",
     "imported": "created",
     "skipped": "duplicates skipped"
+  },
+  "gam": {
+    "streak": "day streak",
+    "day": "day",
+    "days": "days",
+    "xp": "XP",
+    "level": "Level",
+    "coins": "coins",
+    "freezes": "freezes",
+    "xpToNext": "to next level",
+    "dailyGoal": "Daily goal",
+    "goalReviews": "cards",
+    "setGoal": "Change goal",
+    "goalDone": "Daily goal reached!",
+    "buyFreeze": "Buy streak freeze",
+    "freezeHint": "Saves your streak if you miss a day",
+    "notEnoughCoins": "Not enough coins",
+    "maxFreezes": "Freezes are full",
+    "levelUp": "Level up!",
+    "newAchievement": "New achievement!",
+    "freezeUsed": "Freeze used — streak saved!",
+    "xpGained": "XP earned",
+    "sessionXp": "This session"
+  },
+  "achievementsPage": {
+    "title": "Achievements",
+    "subtitle": "Practice and unlock badges",
+    "unlocked": "unlocked",
+    "locked": "locked",
+    "reward": "reward",
+    "catVolume": "Activity",
+    "catStreak": "Streak",
+    "catMastery": "Mastery",
+    "catLevel": "Level",
+    "catGoal": "Goal"
+  },
+  "leaderboard": {
+    "title": "League",
+    "subtitle": "This week's most active learners",
+    "thisWeek": "This week",
+    "you": "You",
+    "rank": "rank",
+    "myRank": "Your rank",
+    "promotionZone": "Promotion zone",
+    "relegationZone": "Relegation zone",
+    "empty": "Nobody has earned XP yet. Be the first!",
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold",
+      "sapphire": "Sapphire",
+      "ruby": "Ruby",
+      "emerald": "Emerald",
+      "amethyst": "Amethyst",
+      "pearl": "Pearl"
+    }
+  },
+  "ach": {
+    "first_steps": {
+      "t": "First steps",
+      "d": "Reviewed your first card",
+      "i": "👟"
+    },
+    "getting_serious": {
+      "t": "Getting serious",
+      "d": "Reviewed 100 cards",
+      "i": "📈"
+    },
+    "word_machine": {
+      "t": "Word machine",
+      "d": "Reviewed 1000 cards",
+      "i": "🚀"
+    },
+    "committed": {
+      "t": "Committed",
+      "d": "7-day streak",
+      "i": "🔥"
+    },
+    "unstoppable": {
+      "t": "Unstoppable",
+      "d": "30-day streak",
+      "i": "⚡"
+    },
+    "legendary": {
+      "t": "Legendary",
+      "d": "100-day streak",
+      "i": "👑"
+    },
+    "collector": {
+      "t": "Collector",
+      "d": "Mastered 50 words",
+      "i": "💎"
+    },
+    "curator": {
+      "t": "Curator",
+      "d": "Mastered 250 words",
+      "i": "🏆"
+    },
+    "rising_star": {
+      "t": "Rising star",
+      "d": "Reached level 5",
+      "i": "⭐"
+    },
+    "scholar": {
+      "t": "Scholar",
+      "d": "Reached level 10",
+      "i": "🎓"
+    },
+    "goal_getter": {
+      "t": "Goal getter",
+      "d": "Reached your daily goal",
+      "i": "🎯"
+    }
   }
 }

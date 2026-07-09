@@ -28,6 +28,8 @@ from app.schemas.flashcards import (
     ReviewRequest,
     ReviewResult,
 )
+from app.schemas.gamification import RewardOut
+from app.services.gamification import apply_review_rewards, get_or_create_stats
 from app.services.srs import SrsState, get_scheduler
 from app.core.security import utcnow
 
@@ -404,5 +406,12 @@ async def review_card(
             duration_ms=payload.duration_ms,
         )
     )
+
+    stats = await get_or_create_stats(db, user)
+    reward = await apply_review_rewards(db, user, stats, payload.rating)
     await db.commit()
-    return ReviewResult(card=CardOut.model_validate(card), next_due_at=after.due_at)
+    return ReviewResult(
+        card=CardOut.model_validate(card),
+        next_due_at=after.due_at,
+        reward=RewardOut(**reward.__dict__),
+    )

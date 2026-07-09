@@ -1,4 +1,5 @@
 import { API_URL, apiFetch, getAccessToken } from "@/lib/api";
+import type { Reward } from "@/lib/gamification";
 import type { Word } from "@/lib/vocab";
 
 export interface Deck {
@@ -54,7 +55,7 @@ export const flashcardsApi = {
     apiFetch<Queue>(`/review/queue${deckId ? `?deck_id=${deckId}` : ""}`, { auth: true }),
 
   review: (cardId: string, rating: Rating, durationMs?: number) =>
-    apiFetch<{ card: CardOut; next_due_at: string }>(`/review/${cardId}`, {
+    apiFetch<{ card: CardOut; next_due_at: string; reward: Reward }>(`/review/${cardId}`, {
       method: "POST",
       body: { rating, duration_ms: durationMs },
       auth: true,

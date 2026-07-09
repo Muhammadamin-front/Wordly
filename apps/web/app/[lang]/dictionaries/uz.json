@@ -190,5 +190,118 @@
     "addedResult": "ta yangi so'z qo'shildi",
     "imported": "yaratildi",
     "skipped": "takrorlangani o'tkazildi"
+  },
+  "gam": {
+    "streak": "kunlik seriya",
+    "day": "kun",
+    "days": "kun",
+    "xp": "XP",
+    "level": "Daraja",
+    "coins": "tanga",
+    "freezes": "muzlatish",
+    "xpToNext": "keyingi darajagacha",
+    "dailyGoal": "Kunlik maqsad",
+    "goalReviews": "ta karta",
+    "setGoal": "Maqsadni o'zgartirish",
+    "goalDone": "Bugungi maqsad bajarildi!",
+    "buyFreeze": "Muzlatish sotib olish",
+    "freezeHint": "Bir kun o'tkazib yuborsangiz, seriyangizni saqlaydi",
+    "notEnoughCoins": "Tanga yetarli emas",
+    "maxFreezes": "Muzlatishlar to'la",
+    "levelUp": "Yangi daraja!",
+    "newAchievement": "Yangi yutuq!",
+    "freezeUsed": "Muzlatish ishlatildi — seriya saqlandi!",
+    "xpGained": "XP olindi",
+    "sessionXp": "Ushbu mashqda"
+  },
+  "achievementsPage": {
+    "title": "Yutuqlar",
+    "subtitle": "Mashq qiling va nishonlarni oching",
+    "unlocked": "ochildi",
+    "locked": "yopiq",
+    "reward": "mukofot",
+    "catVolume": "Faollik",
+    "catStreak": "Seriya",
+    "catMastery": "Mahorat",
+    "catLevel": "Daraja",
+    "catGoal": "Maqsad"
+  },
+  "leaderboard": {
+    "title": "Liga",
+    "subtitle": "Shu haftadagi eng faol o'quvchilar",
+    "thisWeek": "Bu hafta",
+    "you": "Siz",
+    "rank": "o'rin",
+    "myRank": "Sizning o'rningiz",
+    "promotionZone": "Ko'tarilish zonasi",
+    "relegationZone": "Tushish zonasi",
+    "empty": "Hali hech kim XP to'plamagan. Birinchi bo'ling!",
+    "tiers": {
+      "bronze": "Bronza",
+      "silver": "Kumush",
+      "gold": "Oltin",
+      "sapphire": "Sapfir",
+      "ruby": "Yoqut",
+      "emerald": "Zumrad",
+      "amethyst": "Ametist",
+      "pearl": "Marvarid"
+    }
+  },
+  "ach": {
+    "first_steps": {
+      "t": "Birinchi qadamlar",
+      "d": "Birinchi kartani takrorladingiz",
+      "i": "👟"
+    },
+    "getting_serious": {
+      "t": "Jiddiy kirishdingiz",
+      "d": "100 ta karta takrorladingiz",
+      "i": "📈"
+    },
+    "word_machine": {
+      "t": "So'z mashinasi",
+      "d": "1000 ta karta takrorladingiz",
+      "i": "🚀"
+    },
+    "committed": {
+      "t": "Sadoqatli",
+      "d": "7 kunlik seriya",
+      "i": "🔥"
+    },
+    "unstoppable": {
+      "t": "To'xtovsiz",
+      "d": "30 kunlik seriya",
+      "i": "⚡"
+    },
+    "legendary": {
+      "t": "Afsonaviy",
+      "d": "100 kunlik seriya",
+      "i": "👑"
+    },
+    "collector": {
+      "t": "Kollektsioner",
+      "d": "50 ta so'zni mukammal o'zlashtirdingiz",
+      "i": "💎"
+    },
+    "curator": {
+      "t": "Bilimdon",
+      "d": "250 ta so'zni mukammal o'zlashtirdingiz",
+      "i": "🏆"
+    },
+    "rising_star": {
+      "t": "Yulduzcha",
+      "d": "5-darajaga yetdingiz",
+      "i": "⭐"
+    },
+    "scholar": {
+      "t": "Olim",
+      "d": "10-darajaga yetdingiz",
+      "i": "🎓"
+    },
+    "goal_getter": {
+      "t": "Maqsadli",
+      "d": "Kunlik maqsadni bajardingiz",
+      "i": "🎯"
+    }
   }
 }

@@ -58,5 +58,6 @@ npm run build:web
 | M1 | Monorepo, auth (email + Google), i18n web shell, CI | ✅ `docs/milestones/M1.md` |
 | M2 | Vocabulary core, admin CMS + CSV import, 306-word A1 corpus | ✅ `docs/milestones/M2.md` |
 | M3 | Flashcards & SRS engine (SM-2, decks, review UI, import/export) | ✅ `docs/milestones/M3.md` |
-| M4 | Gamification (XP, streaks, leagues) | next |
-| M5+ | Games, statistics, AI tutor, payments… | `docs/03-roadmap.md` |
+| M4 | Gamification (XP/levels, streaks+freezes, achievements, weekly leagues) | ✅ `docs/milestones/M4.md` |
+| M5 | Games (wave 1) + statistics | next |
+| M6+ | AI tutor, monetization, teacher/admin panels… | `docs/03-roadmap.md` |

@@ -22,7 +22,13 @@ export default async function ReviewPage({
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
         <Suspense>
-          <ReviewSession lang={lang} review={dict.review} deckId={deck} />
+          <ReviewSession
+            lang={lang}
+            review={dict.review}
+            gam={dict.gam}
+            ach={dict.ach}
+            deckId={deck}
+          />
         </Suspense>
       </main>
     </>

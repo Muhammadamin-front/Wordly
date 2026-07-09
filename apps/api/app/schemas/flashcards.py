@@ -4,6 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.schemas.gamification import RewardOut
 from app.schemas.vocabulary import WordOut
 
 RATING_PATTERN = "^(again|hard|good|easy)$"
@@ -80,6 +81,7 @@ class ReviewRequest(BaseModel):
 class ReviewResult(BaseModel):
     card: CardOut
     next_due_at: datetime
+    reward: "RewardOut"
 
 
 class AddByLevelRequest(BaseModel):

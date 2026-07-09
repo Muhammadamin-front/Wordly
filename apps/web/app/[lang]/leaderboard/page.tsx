@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 
-import { DashboardView } from "@/components/dashboard/dashboard-view";
+import { LeaderboardView } from "@/components/gamification/leaderboard-view";
 import { SiteHeader } from "@/components/site/header";
 import type { Locale } from "@/lib/locales";
 import { getDictionary, hasLocale } from "../dictionaries";
 
-export default async function DashboardPage({
+export default async function LeaderboardPage({
   params,
 }: {
   params: Promise<{ lang: string }>;
@@ -17,11 +17,7 @@ export default async function DashboardPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <DashboardView
-        lang={lang}
-        dict={{ dashboard: dict.dashboard, nav: dict.nav, common: dict.common }}
-        gam={dict.gam}
-      />
+      <LeaderboardView lang={lang} t={dict.leaderboard} />
     </>
   );
 }

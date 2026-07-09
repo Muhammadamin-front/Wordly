@@ -9,18 +9,24 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { flashcardsApi } from "@/lib/flashcards";
+import { gamificationApi, STATS_CHANGED_EVENT, type Stats } from "@/lib/gamification";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+const GOAL_OPTIONS = [10, 20, 30, 50];
 
 export function DashboardView({
   lang,
   dict,
+  gam,
 }: {
   lang: string;
   dict: Pick<Dictionary, "dashboard" | "nav" | "common">;
+  gam: Dictionary["gam"];
 }) {
   const { user, ready, logout } = useAuth();
   const router = useRouter();
   const [dueCount, setDueCount] = useState<number | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -29,18 +35,26 @@ export function DashboardView({
   useEffect(() => {
     if (!ready || !user) return;
     let cancelled = false;
+    const loadStats = () =>
+      gamificationApi.stats().then((s) => !cancelled && setStats(s)).catch(() => {});
     flashcardsApi
       .queue()
       .then((queue) => {
         if (!cancelled) setDueCount(queue.due_count + queue.new_count);
       })
-      .catch(() => {
-        // Non-blocking: the dashboard renders without the badge.
-      });
+      .catch(() => {});
+    loadStats();
+    window.addEventListener(STATS_CHANGED_EVENT, loadStats);
     return () => {
       cancelled = true;
+      window.removeEventListener(STATS_CHANGED_EVENT, loadStats);
     };
   }, [ready, user]);
+
+  async function changeGoal(goal: number) {
+    const updated = await gamificationApi.setDailyGoal(goal);
+    setStats(updated);
+  }
 
   if (!ready || !user) {
     return (
@@ -80,8 +94,37 @@ export function DashboardView({
         </Alert>
       )}
 
+      {/* Stats strip */}
+      {stats && (
+        <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
+            <p className="text-2xl font-extrabold text-orange-500">🔥 {stats.current_streak}</p>
+            <p className="mt-0.5 text-xs text-ink-soft">{gam.streak}</p>
+          </div>
+          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
+            <p className="text-2xl font-extrabold text-brand-600 dark:text-brand-300">
+              ⚡ {stats.level}
+            </p>
+            <p className="mt-0.5 text-xs text-ink-soft">
+              {stats.xp_into_level}/{stats.xp_for_next_level} XP
+            </p>
+          </div>
+          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
+            <p className="text-2xl font-extrabold text-amber-500">🪙 {stats.coins}</p>
+            <p className="mt-0.5 text-xs text-ink-soft">{gam.coins}</p>
+          </div>
+          <Link
+            href={`/${lang}/leaderboard`}
+            className="rounded-xl2 border border-line bg-card p-4 text-center transition-colors hover:border-brand-400/60"
+          >
+            <p className="text-2xl font-extrabold text-ink">🏆</p>
+            <p className="mt-0.5 text-xs capitalize text-ink-soft">{stats.league_tier}</p>
+          </Link>
+        </section>
+      )}
+
       {/* Today's review hero */}
-      <section className="mt-8">
+      <section className="mt-4">
         <Card className="bg-linear-to-br from-brand-600/10 to-accent-500/5 text-center">
           <p className="text-4xl" aria-hidden>
             🐆
@@ -92,6 +135,44 @@ export function DashboardView({
               ? `${dueCount} ${dict.dashboard.dueToday}`
               : dict.dashboard.reviewHeroBody}
           </CardDescription>
+
+          {stats && (
+            <div className="mx-auto mt-4 max-w-xs">
+              <div className="flex items-center justify-between text-xs text-ink-soft">
+                <span>{gam.dailyGoal}</span>
+                <span>
+                  {stats.reviews_today}/{stats.daily_goal} {gam.goalReviews}
+                </span>
+              </div>
+              <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-line">
+                <div
+                  className="h-full rounded-full bg-linear-to-r from-brand-500 to-accent-500 transition-all"
+                  style={{
+                    width: `${Math.min(100, (stats.reviews_today / stats.daily_goal) * 100)}%`,
+                  }}
+                />
+              </div>
+              <div className="mt-2 flex items-center justify-center gap-1">
+                <span className="text-xs text-ink-soft">{gam.setGoal}:</span>
+                {GOAL_OPTIONS.map((goal) => (
+                  <button
+                    key={goal}
+                    type="button"
+                    onClick={() => void changeGoal(goal)}
+                    className={
+                      "rounded-md px-2 py-0.5 text-xs font-bold transition-colors " +
+                      (stats.daily_goal === goal
+                        ? "bg-brand-600 text-white"
+                        : "text-ink-soft hover:bg-line")
+                    }
+                  >
+                    {goal}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Link href={`/${lang}/review`} className="mt-5 inline-block">
             <Button>{dict.dashboard.startReview}</Button>
           </Link>
