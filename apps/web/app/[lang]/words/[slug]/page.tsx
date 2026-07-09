@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AiExplain } from "@/components/ai/ai-explain";
 import { SiteHeader } from "@/components/site/header";
 import { Card, CardTitle } from "@/components/ui/card";
 import { fetchWord, type Word } from "@/lib/vocab";
@@ -136,6 +137,8 @@ export default async function WordPage({
             <p className="mt-1 text-sm text-ink-soft">{word.common_mistake}</p>
           </Card>
         )}
+
+        <AiExplain wordId={word.id} ai={dict.ai} />
       </main>
     </>
   );

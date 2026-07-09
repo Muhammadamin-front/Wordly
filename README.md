@@ -60,5 +60,6 @@ npm run build:web
 | M3 | Flashcards & SRS engine (SM-2, decks, review UI, import/export) | ✅ `docs/milestones/M3.md` |
 | M4 | Gamification (XP/levels, streaks+freezes, achievements, weekly leagues) | ✅ `docs/milestones/M4.md` |
 | M5 | Games (6, feeding SRS) + statistics dashboard | ✅ `docs/milestones/M5.md` |
-| M6 | AI tutor | next |
-| M7+ | Monetization, teacher/admin panels… | `docs/03-roadmap.md` |
+| M6 | AI Tutor (explain/mnemonic/story/quiz/chat/writing, quotas) | ✅ `docs/milestones/M6.md` |
+| M7 | Monetization (Payme/Click, subscriptions) | next |
+| M8+ | Teacher & admin panels, more games… | `docs/03-roadmap.md` |

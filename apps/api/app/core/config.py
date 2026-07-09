@@ -32,6 +32,16 @@ class Settings(BaseSettings):
     # OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
 
+    # AI (Claude). AI features are disabled gracefully when the key is unset.
+    ANTHROPIC_API_KEY: Optional[str] = None
+    AI_MODEL: str = "claude-opus-4-8"
+    AI_MAX_TOKENS: int = 1024
+    AI_FREE_DAILY_QUOTA: int = 5  # AI actions/day on the free tier
+
+    @property
+    def ai_enabled(self) -> bool:
+        return bool(self.ANTHROPIC_API_KEY)
+
     # Rate limits: "<max_requests>/<window_seconds>"
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_LOGIN: str = "10/60"

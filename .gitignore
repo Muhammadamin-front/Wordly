@@ -49,3 +49,6 @@ __pycache__/
 # workspace node_modules anywhere
 node_modules/
 !.env.example
+
+# API .env (keep real keys out of git)
+apps/api/.env

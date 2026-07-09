@@ -372,5 +372,30 @@
     "hours": "soat",
     "noWeakCategories": "Zaif mavzu topilmadi — barakalla!",
     "last30": "So'nggi 30 kun"
+  },
+  "ai": {
+    "title": "AI ustoz",
+    "subtitle": "Zukko bilan ingliz tilini mashq qiling",
+    "chatTab": "Suhbat",
+    "writingTab": "Yozuvni tekshirish",
+    "chatPlaceholder": "Inglizcha yozing...",
+    "send": "Yuborish",
+    "chatIntro": "Salom! Men Zukko. Keling, ingliz tilida suhbatlashamiz. Bugun nima qildingiz?",
+    "level": "Daraja",
+    "writingPlaceholder": "Inglizcha matn yozing, men tuzataman...",
+    "checkWriting": "Tekshirish",
+    "corrected": "Tuzatilgan",
+    "feedback": "Izoh",
+    "explain": "AI tushuntirsin",
+    "mnemonic": "Eslab qolish uchun",
+    "explaining": "O'ylayapman...",
+    "quotaLeft": "ta AI amali qoldi",
+    "quotaOut": "Bugungi AI limiti tugadi. Ertaga qaytadi.",
+    "notConfigured": "AI hozircha ishlamayapti.",
+    "report": "Xato haqida xabar berish",
+    "reported": "Rahmat, tekshiramiz.",
+    "aiLabel": "AI tomonidan yaratilgan",
+    "premiumUpsell": "Cheksiz AI uchun Premium oling",
+    "error": "Xatolik yuz berdi. Qayta urinib ko'ring."
   }
 }

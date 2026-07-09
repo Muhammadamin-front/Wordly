@@ -20,7 +20,7 @@ export function DashboardView({
   gam,
 }: {
   lang: string;
-  dict: Pick<Dictionary, "dashboard" | "nav" | "common">;
+  dict: Pick<Dictionary, "dashboard" | "nav" | "common" | "ai">;
   gam: Dictionary["gam"];
 }) {
   const { user, ready, logout } = useAuth();
@@ -227,7 +227,7 @@ export function DashboardView({
         </Link>
       </section>
 
-      <section className="mt-4">
+      <section className="mt-4 grid gap-3 sm:grid-cols-2">
         <Link
           href={`/${lang}/statistics`}
           className="flex items-center justify-between rounded-xl2 border border-line bg-card px-5 py-4 transition-colors hover:border-brand-400/60"
@@ -237,6 +237,20 @@ export function DashboardView({
               📊
             </span>
             <span className="font-bold text-ink">{dict.dashboard.statsLink}</span>
+          </span>
+          <span className="text-ink-soft">→</span>
+        </Link>
+        <Link
+          href={`/${lang}/ai`}
+          className="flex items-center justify-between rounded-xl2 border border-brand-400/40 bg-linear-to-br from-brand-600/10 to-accent-500/5 px-5 py-4 transition-colors hover:border-brand-400/70"
+        >
+          <span className="flex items-center gap-3">
+            <span aria-hidden className="text-2xl">
+              ✨
+            </span>
+            <span className="font-bold text-brand-600 dark:text-brand-300">
+              {dict.ai.title}
+            </span>
           </span>
           <span className="text-ink-soft">→</span>
         </Link>

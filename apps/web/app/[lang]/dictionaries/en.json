@@ -372,5 +372,30 @@
     "hours": "h",
     "noWeakCategories": "No weak topics — great job!",
     "last30": "Last 30 days"
+  },
+  "ai": {
+    "title": "AI Tutor",
+    "subtitle": "Practice English with Zukko",
+    "chatTab": "Chat",
+    "writingTab": "Writing check",
+    "chatPlaceholder": "Write in English...",
+    "send": "Send",
+    "chatIntro": "Hi! I'm Zukko. Let's chat in English. What did you do today?",
+    "level": "Level",
+    "writingPlaceholder": "Write some English text and I'll correct it...",
+    "checkWriting": "Check",
+    "corrected": "Corrected",
+    "feedback": "Feedback",
+    "explain": "Explain with AI",
+    "mnemonic": "Memory hook",
+    "explaining": "Thinking...",
+    "quotaLeft": "AI actions left",
+    "quotaOut": "Daily AI limit reached. It resets tomorrow.",
+    "notConfigured": "AI is currently unavailable.",
+    "report": "Report an issue",
+    "reported": "Thanks, we'll review it.",
+    "aiLabel": "AI-generated",
+    "premiumUpsell": "Go Premium for unlimited AI",
+    "error": "Something went wrong. Please try again."
   }
 }
