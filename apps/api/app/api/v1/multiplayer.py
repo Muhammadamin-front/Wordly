@@ -75,11 +75,15 @@ async def quiz_socket(websocket: WebSocket):
                 level = data.get("level", "A1")
                 if level not in CEFR_PATTERN:
                     level = "A1"
+                mode = data.get("mode", "vocab")
+                if mode not in games.QUIZ_MODES:
+                    mode = "vocab"
                 async with get_session_factory()() as db:
-                    questions = await games.build_public_quiz(db, level, count=8)
+                    questions = await games.build_quiz(db, mode, level, count=8)
                 if not questions:
                     await send({"type": "error", "error": "not_enough_words"})
                     continue
+                room.mode = mode
                 room.start(questions)
                 await broadcast(room, {"type": "question", **room.current_question()})
 

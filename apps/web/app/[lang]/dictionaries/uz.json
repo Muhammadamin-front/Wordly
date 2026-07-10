@@ -588,7 +588,12 @@
     "connecting": "Ulanmoqda...",
     "notEnoughWords": "So'z yetarli emas",
     "correct": "To'g'ri!",
-    "shareRoom": "Kodni ulashing"
+    "shareRoom": "Kodni ulashing",
+    "category": "Kategoriya",
+    "mode_vocab": "Lug'at",
+    "mode_grammar": "Grammatika",
+    "mode_pairs": "Juft so'zlar",
+    "mode_mixed": "Aralash"
   },
   "skills": {
     "title": "Ko'nikmalar",

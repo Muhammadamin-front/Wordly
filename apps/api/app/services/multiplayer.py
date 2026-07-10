@@ -30,6 +30,7 @@ class Room:
         self.questions: List[dict] = []
         self.phase = "lobby"  # lobby | playing | finished
         self.current = 0
+        self.mode = "vocab"  # vocab | grammar | pairs | mixed
 
     # --- membership ---
     def add_player(self, player: Player) -> None:
@@ -57,6 +58,7 @@ class Room:
             "total": len(self.questions),
             "prompt": q["prompt"],
             "options": q["options"],
+            "mode": self.mode,
         }
 
     def submit_answer(self, user_id: UUID, round_index: int, option_index: int) -> bool:

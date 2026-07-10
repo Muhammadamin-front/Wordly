@@ -10,7 +10,9 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import {
   openQuizSocket,
+  QUIZ_MODES,
   sendAction,
+  type QuizMode,
   type RoomPlayer,
   type ScoreRow,
   type ServerMessage,
@@ -18,6 +20,13 @@ import {
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const LEVELS = ["A1", "A2", "B1", "B2"] as const;
+
+const MODE_ICONS: Record<QuizMode, string> = {
+  vocab: "📖",
+  grammar: "🧩",
+  pairs: "🔗",
+  mixed: "🎲",
+};
 
 interface RoomState {
   code: string;
@@ -29,6 +38,7 @@ interface Question {
   total: number;
   prompt: string;
   options: string[];
+  mode?: QuizMode;
 }
 type Phase = "menu" | "connecting" | "lobby" | "question" | "reveal" | "finished";
 
@@ -45,6 +55,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
   const [scoreboard, setScoreboard] = useState<ScoreRow[]>([]);
   const [joinCode, setJoinCode] = useState("");
   const [level, setLevel] = useState<string>("A1");
+  const [mode, setMode] = useState<QuizMode>("vocab");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -110,7 +121,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
     withSocket((s) => sendAction(s, { action: "join", code }));
   };
   const start = () => {
-    if (socketRef.current) sendAction(socketRef.current, { action: "start", level });
+    if (socketRef.current) sendAction(socketRef.current, { action: "start", level, mode });
   };
   const answer = (option: number) => {
     if (!question || selected !== null || !socketRef.current) return;
@@ -199,7 +210,27 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
 
           {isHost ? (
             <div className="mt-6">
-              <div className="flex justify-center gap-2">
+              <p className="text-center text-xs font-bold uppercase tracking-wide text-ink-soft">
+                {mp.category}
+              </p>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {QUIZ_MODES.map((m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => setMode(m)}
+                    className={cn(
+                      "rounded-xl border-2 px-3 py-2.5 text-sm font-bold transition-colors",
+                      mode === m
+                        ? "border-brand-400 bg-brand-500/10 text-ink"
+                        : "border-line bg-card text-ink-soft hover:border-brand-400/50"
+                    )}
+                  >
+                    {MODE_ICONS[m]} {mp[`mode_${m}`]}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-4 flex justify-center gap-2">
                 {LEVELS.map((l) => (
                   <button
                     key={l}
@@ -232,6 +263,11 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
       {(phase === "question" || phase === "reveal") && question && (
         <div className="mt-6">
           <p className="text-center text-xs font-bold uppercase tracking-wide text-ink-soft">
+            {question.mode && (
+              <span className="mr-2 rounded-full bg-brand-600/10 px-2 py-0.5 text-brand-600 dark:text-brand-300">
+                {MODE_ICONS[question.mode]} {mp[`mode_${question.mode}`]}
+              </span>
+            )}
             {question.index + 1} / {question.total}
           </p>
           <div className="mt-3 rounded-xl2 border border-line bg-card p-8 text-center">

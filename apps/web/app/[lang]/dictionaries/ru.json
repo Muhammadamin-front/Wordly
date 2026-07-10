@@ -588,7 +588,12 @@
     "connecting": "Подключение...",
     "notEnoughWords": "Недостаточно слов",
     "correct": "Верно!",
-    "shareRoom": "Поделитесь кодом"
+    "shareRoom": "Поделитесь кодом",
+    "category": "Категория",
+    "mode_vocab": "Словарь",
+    "mode_grammar": "Грамматика",
+    "mode_pairs": "Пары слов",
+    "mode_mixed": "Смешанный"
   },
   "skills": {
     "title": "Навыки",

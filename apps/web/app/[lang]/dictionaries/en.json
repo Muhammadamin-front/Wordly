@@ -588,7 +588,12 @@
     "connecting": "Connecting...",
     "notEnoughWords": "Not enough words",
     "correct": "Correct!",
-    "shareRoom": "Share the code"
+    "shareRoom": "Share the code",
+    "category": "Category",
+    "mode_vocab": "Vocabulary",
+    "mode_grammar": "Grammar",
+    "mode_pairs": "Word pairs",
+    "mode_mixed": "Mixed"
   },
   "skills": {
     "title": "Skills",

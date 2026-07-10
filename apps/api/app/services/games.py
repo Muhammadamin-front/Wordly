@@ -11,7 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import utcnow
 from app.models.flashcards import Card
 from app.models.user import User
-from app.models.vocabulary import Word, WordSense
+from app.models.vocabulary import Word, WordRelation, WordSense
+from app.services.grammar import grammar_questions
 
 GAME_TYPES = (
     "word_match",
@@ -157,6 +158,81 @@ async def build_public_quiz(db: AsyncSession, cefr_level: str, count: int) -> Li
             {"prompt": word.headword, "options": options, "answer_index": options.index(answer)}
         )
     return questions
+
+
+QUIZ_MODES = ("vocab", "grammar", "pairs", "mixed")
+
+
+async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> List[dict]:
+    """Synonym/antonym questions from corpus word relations. Prompts use the
+    language-neutral symbols ≈ (synonym) and ≠ (antonym), so no locale text is
+    baked into shared multiplayer questions. Falls back to all levels when the
+    chosen level has too few relations."""
+
+    async def fetch(level_filter: bool) -> List:
+        query = (
+            select(WordRelation.relation_type, Word.headword, WordRelation.related_text)
+            .join(Word, Word.id == WordRelation.word_id)
+            .where(
+                Word.status == "published",
+                WordRelation.relation_type.in_(("synonym", "antonym")),
+            )
+        )
+        if level_filter:
+            query = query.where(Word.cefr_level == cefr_level)
+        return list((await db.execute(query.order_by(func.random()).limit(count * 4))).all())
+
+    rows = await fetch(level_filter=True)
+    if len(rows) < MIN_CARDS:
+        rows = await fetch(level_filter=False)
+    if len(rows) < MIN_CARDS:
+        return []
+
+    # Distractors drawn from other rows' answers of the same relation type.
+    answers_by_type = {"synonym": set(), "antonym": set()}
+    for relation_type, _, related_text in rows:
+        answers_by_type[relation_type].add(related_text.lower())
+
+    questions = []
+    seen_prompts = set()
+    for relation_type, headword, related_text in rows:
+        if len(questions) >= count:
+            break
+        symbol = "≈" if relation_type == "synonym" else "≠"
+        prompt = "{} {}".format(symbol, headword)
+        if prompt in seen_prompts:
+            continue
+        pool = [
+            a for a in answers_by_type[relation_type]
+            if a != related_text.lower() and a != headword.lower()
+        ]
+        if len(pool) < 3:
+            continue
+        seen_prompts.add(prompt)
+        options = [related_text] + random.sample(pool, 3)
+        random.shuffle(options)
+        questions.append(
+            {"prompt": prompt, "options": options, "answer_index": options.index(related_text)}
+        )
+    return questions if len(questions) >= MIN_CARDS else []
+
+
+async def build_quiz(db: AsyncSession, mode: str, cefr_level: str, count: int) -> List[dict]:
+    """Multiplayer question source for one round, by category."""
+    if mode == "grammar":
+        return grammar_questions(cefr_level, count)
+    if mode == "pairs":
+        return await build_pairs_quiz(db, cefr_level, count)
+    if mode == "mixed":
+        per_part = max(2, count // 3)
+        combined = (
+            grammar_questions(cefr_level, per_part)
+            + await build_pairs_quiz(db, cefr_level, per_part)
+            + await build_public_quiz(db, cefr_level, count)
+        )
+        random.shuffle(combined)
+        return combined[:count]
+    return await build_public_quiz(db, cefr_level, count)
 
 
 async def build_session(
