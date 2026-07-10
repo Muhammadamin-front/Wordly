@@ -120,3 +120,53 @@ async def test_speaking_session_targets_headwords(client):
     for q in body["questions"]:
         assert q["answer"].startswith("word")
         assert q["audio_text"] == q["answer"]
+
+
+async def test_grammar_round_never_leaks_answers(client):
+    headers = await auth_headers(client)
+    response = await client.get("/api/v1/skills/grammar?level=A2&count=10", headers=headers)
+    assert response.status_code == 200
+    questions = response.json()
+    assert len(questions) == 10
+    assert all(len(q["options"]) == 4 for q in questions)
+    assert "answer_index" not in response.text
+
+
+async def test_grammar_submit_grades_server_side(client):
+    from app.services.grammar import QUESTIONS
+
+    headers = await auth_headers(client)
+    bank = QUESTIONS["A1"]
+    right = bank[0]["options"][bank[0]["answer_index"]]
+    wrong = next(o for o in bank[1]["options"] if o != bank[1]["options"][bank[1]["answer_index"]])
+    response = await client.post(
+        "/api/v1/skills/grammar/submit",
+        headers=headers,
+        json={"level": "A1", "answers": [
+            {"prompt": bank[0]["prompt"], "answer": right},
+            {"prompt": bank[1]["prompt"], "answer": wrong},
+        ]},
+    )
+    body = response.json()
+    assert body["results"] == [True, False]
+    assert body["correct"] == 1 and body["xp_gained"] == 5
+
+
+async def test_grammar_submit_rejects_invented_and_repeated_prompts(client):
+    from app.services.grammar import QUESTIONS
+
+    headers = await auth_headers(client)
+    bank = QUESTIONS["A1"]
+    right = bank[0]["options"][bank[0]["answer_index"]]
+    response = await client.post(
+        "/api/v1/skills/grammar/submit",
+        headers=headers,
+        json={"level": "A1", "answers": [
+            {"prompt": "Invented ___ question?", "answer": "whatever"},
+            {"prompt": bank[0]["prompt"], "answer": right},
+            {"prompt": bank[0]["prompt"], "answer": right},  # repeat — no double XP
+        ]},
+    )
+    body = response.json()
+    assert body["results"] == [False, True, False]
+    assert body["xp_gained"] == 5

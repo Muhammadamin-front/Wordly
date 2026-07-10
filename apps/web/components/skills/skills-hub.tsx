@@ -12,6 +12,7 @@ const SECTIONS = [
   { key: "reading", icon: "📖", accent: "from-emerald-500/15" },
   { key: "writing", icon: "✍️", accent: "from-amber-500/15" },
   { key: "speaking", icon: "🗣️", accent: "from-orange-500/15" },
+  { key: "grammar", icon: "🧩", accent: "from-purple-500/15" },
 ] as const;
 
 export function SkillsHub({ lang, skills }: { lang: string; skills: Dictionary["skills"] }) {

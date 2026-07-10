@@ -6,10 +6,15 @@ that drives a Room and broadcasts its messages. Single-process only — a Redis
 pub/sub backplane is the scale-out path (see docs/milestones/M9.md).
 """
 import secrets
+import time
 from typing import Any, Callable, Dict, List, Optional
 from uuid import UUID
 
 CORRECT_POINTS = 10
+# Speed bonus: answering the moment a question appears is worth up to +5,
+# decaying by 1 every 2 seconds; nothing after SPEED_WINDOW seconds.
+SPEED_BONUS_MAX = 5
+SPEED_WINDOW = 10.0
 _ROOM_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
 
@@ -23,7 +28,7 @@ class Player:
 
 
 class Room:
-    def __init__(self, code: str, host_id: UUID):
+    def __init__(self, code: str, host_id: UUID, clock: Callable[[], float] = time.monotonic):
         self.code = code
         self.host_id = host_id
         self.players: Dict[UUID, Player] = {}
@@ -31,6 +36,8 @@ class Room:
         self.phase = "lobby"  # lobby | playing | finished
         self.current = 0
         self.mode = "vocab"  # vocab | grammar | pairs | mixed
+        self._clock = clock  # injectable for deterministic tests
+        self.round_started_at = 0.0
 
     # --- membership ---
     def add_player(self, player: Player) -> None:
@@ -44,6 +51,7 @@ class Room:
         self.questions = questions
         self.phase = "playing"
         self.current = 0
+        self.round_started_at = self._clock()
         for p in self.players.values():
             p.score = 0
             p.answered_round = -1
@@ -75,8 +83,15 @@ class Room:
         player.answered_round = self.current
         if 0 <= option_index < len(self.questions[self.current]["options"]):
             if option_index == self.questions[self.current]["answer_index"]:
-                player.score += CORRECT_POINTS
+                player.score += CORRECT_POINTS + self.speed_bonus()
         return self.all_answered()
+
+    def speed_bonus(self) -> int:
+        """Up to +SPEED_BONUS_MAX for fast answers, −1 every 2s, 0 after the window."""
+        elapsed = self._clock() - self.round_started_at
+        if elapsed >= SPEED_WINDOW:
+            return 0
+        return min(SPEED_BONUS_MAX, int((SPEED_WINDOW - elapsed) // 2))
 
     def all_answered(self) -> bool:
         return bool(self.players) and all(
@@ -92,6 +107,7 @@ class Room:
         if self.current >= len(self.questions):
             self.phase = "finished"
             return False
+        self.round_started_at = self._clock()
         return True
 
     def scoreboard(self) -> List[dict]:

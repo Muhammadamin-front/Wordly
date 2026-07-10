@@ -1,7 +1,14 @@
 """Unit tests for the multiplayer Room logic (no WebSocket transport)."""
 from uuid import uuid4
 
-from app.services.multiplayer import CORRECT_POINTS, Player, Room, RoomManager
+from app.services.multiplayer import (
+    CORRECT_POINTS,
+    SPEED_BONUS_MAX,
+    SPEED_WINDOW,
+    Player,
+    Room,
+    RoomManager,
+)
 
 QUESTIONS = [
     {"prompt": "apple", "options": ["olma", "non", "suv", "choy"], "answer_index": 0},
@@ -9,8 +16,38 @@ QUESTIONS = [
 ]
 
 
+class FakeClock:
+    """Deterministic clock; scoring tests advance it explicitly."""
+
+    def __init__(self) -> None:
+        self.now = 100.0
+
+    def __call__(self) -> float:
+        return self.now
+
+
+def slow_room(code: str) -> tuple[Room, FakeClock]:
+    """A room whose answers always arrive after the speed window (no bonus),
+    so base-scoring assertions stay exact."""
+    clock = FakeClock()
+    room = Room(code, host_id=uuid4(), clock=clock)
+    original_start, original_advance = room.start, room.advance
+
+    def start(questions):
+        original_start(questions)
+        clock.now += SPEED_WINDOW
+
+    def advance():
+        ok = original_advance()
+        clock.now += SPEED_WINDOW
+        return ok
+
+    room.start, room.advance = start, advance
+    return room, clock
+
+
 def test_room_lifecycle_and_scoring():
-    room = Room("ABCD", host_id=uuid4())
+    room, _ = slow_room("ABCD")
     alice, bob = Player(uuid4(), "Alice"), Player(uuid4(), "Bob")
     room.add_player(alice)
     room.add_player(bob)
@@ -42,13 +79,47 @@ def test_room_lifecycle_and_scoring():
 
 
 def test_double_answer_ignored():
-    room = Room("WXYZ", host_id=uuid4())
+    room, _ = slow_room("WXYZ")
     p = Player(uuid4(), "P")
     room.add_player(p)
     room.start(QUESTIONS)
     room.submit_answer(p.user_id, 0, 0)  # correct
     room.submit_answer(p.user_id, 0, 1)  # ignored — already answered
     assert p.score == CORRECT_POINTS
+
+
+def test_speed_bonus_decays_with_time():
+    clock = FakeClock()
+    room = Room("FAST", host_id=uuid4(), clock=clock)
+    room.add_player(Player(uuid4(), "P"))
+    room.start(QUESTIONS)
+
+    assert room.speed_bonus() == SPEED_BONUS_MAX  # instant answer
+    clock.now += 3.0
+    assert room.speed_bonus() == 3  # (10 - 3) // 2
+    clock.now += 4.0
+    assert room.speed_bonus() == 1  # (10 - 7) // 2
+    clock.now += SPEED_WINDOW
+    assert room.speed_bonus() == 0  # window expired
+
+
+def test_fast_correct_answer_scores_base_plus_bonus():
+    clock = FakeClock()
+    room = Room("BONS", host_id=uuid4(), clock=clock)
+    fast, slow = Player(uuid4(), "Fast"), Player(uuid4(), "Slow")
+    room.add_player(fast)
+    room.add_player(slow)
+    room.start(QUESTIONS)
+
+    room.submit_answer(fast.user_id, 0, 0)  # instant: full bonus
+    clock.now += SPEED_WINDOW
+    room.submit_answer(slow.user_id, 0, 0)  # too late for any bonus
+    assert fast.score == CORRECT_POINTS + SPEED_BONUS_MAX
+    assert slow.score == CORRECT_POINTS
+
+    # The clock resets on advance — the next round has a fresh window.
+    room.advance()
+    assert room.speed_bonus() == SPEED_BONUS_MAX
 
 
 def test_answer_for_wrong_round_ignored():

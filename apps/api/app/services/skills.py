@@ -15,6 +15,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.reading import ReadingPassage
 from app.models.user import User
 from app.services.gamification import RewardSummary, apply_skill_xp
+from app.services.grammar import QUESTIONS as GRAMMAR_BANK
+from app.services.grammar import grammar_questions
 
 XP_PER_CORRECT_ANSWER = 5
 
@@ -67,6 +69,34 @@ async def get_passage(db: AsyncSession, slug: str) -> Optional[ReadingPassage]:
             ReadingPassage.slug == slug, ReadingPassage.status == "published"
         )
     )
+
+
+def grammar_round(level: str, count: int) -> List[dict]:
+    """Sampled grammar questions with the answer stripped — grading happens
+    server-side in score_grammar (the bank is static, so no state to keep)."""
+    return [
+        {"prompt": q["prompt"], "options": q["options"]}
+        for q in grammar_questions(level, count)
+    ]
+
+
+async def score_grammar(
+    db: AsyncSession, user: User, level: str, answers: List[dict]
+) -> tuple[List[bool], RewardSummary]:
+    """Grade {prompt, answer} pairs against the static bank by option text.
+    Unknown prompts and repeats are wrong — the client can't invent questions."""
+    bank = GRAMMAR_BANK.get(level) or GRAMMAR_BANK["A1"]
+    correct_by_prompt = {q["prompt"]: q["options"][q["answer_index"]] for q in bank}
+    results: List[bool] = []
+    seen = set()
+    for item in answers:
+        prompt = item.get("prompt", "")
+        expected = correct_by_prompt.get(prompt)
+        ok = expected is not None and prompt not in seen and item.get("answer") == expected
+        seen.add(prompt)
+        results.append(ok)
+    reward = await apply_skill_xp(db, user, sum(results) * XP_PER_CORRECT_ANSWER)
+    return results, reward
 
 
 async def score_submission(

@@ -248,6 +248,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
               <Button fullWidth className="mt-4" onClick={start}>
                 {mp.start}
               </Button>
+              <p className="mt-2 text-center text-xs text-ink-soft">⚡ {mp.speedHint}</p>
             </div>
           ) : (
             <p className="mt-6 text-center text-sm text-ink-soft">{mp.waiting}</p>

@@ -593,7 +593,8 @@
     "mode_vocab": "Lug'at",
     "mode_grammar": "Grammatika",
     "mode_pairs": "Juft so'zlar",
-    "mode_mixed": "Aralash"
+    "mode_mixed": "Aralash",
+    "speedHint": "Tezroq javob — qo'shimcha ochko"
   },
   "skills": {
     "title": "Ko'nikmalar",
@@ -623,6 +624,11 @@
     "checkWriting": "Yozganimni tekshir",
     "corrected": "To'g'irlangan matn",
     "feedback": "Fikr-mulohaza",
-    "aiUnavailable": "AI tekshiruvi hozircha mavjud emas. Yozishni baribir mashq qilishingiz mumkin!"
+    "aiUnavailable": "AI tekshiruvi hozircha mavjud emas. Yozishni baribir mashq qilishingiz mumkin!",
+    "grammar": {
+      "name": "Grammatika",
+      "desc": "Darajangizga mos o'nta tezkor grammatika savoli."
+    },
+    "tryAgain": "Yangi tur"
   }
 }

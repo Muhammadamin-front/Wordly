@@ -44,3 +44,18 @@ class ReadingResult(BaseModel):
 class WritingPromptsOut(BaseModel):
     level: str
     prompts: List[str]
+
+
+class GrammarQuestionOut(BaseModel):
+    prompt: str
+    options: List[str]  # answer never sent; grading is server-side
+
+
+class GrammarAnswer(BaseModel):
+    prompt: str = Field(max_length=200)
+    answer: str = Field(max_length=100)
+
+
+class GrammarSubmit(BaseModel):
+    level: str = Field(pattern="^(A1|A2|B1|B2|C1|C2)$")
+    answers: List[GrammarAnswer] = Field(max_length=30)

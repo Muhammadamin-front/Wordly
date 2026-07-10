@@ -8,6 +8,8 @@ from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.skills import (
+    GrammarQuestionOut,
+    GrammarSubmit,
     PassageListItem,
     PassageOut,
     QuestionOut,
@@ -79,3 +81,28 @@ async def reading_submit(
 async def writing_prompts(level: str = Query("A1", pattern=CEFR_PATTERN)):
     prompts = skills.WRITING_PROMPTS.get(level) or skills.WRITING_PROMPTS["A1"]
     return WritingPromptsOut(level=level, prompts=prompts)
+
+
+@router.get("/grammar", response_model=List[GrammarQuestionOut])
+async def grammar_round(
+    level: str = Query("A1", pattern=CEFR_PATTERN),
+    count: int = Query(10, ge=1, le=20),
+):
+    return [GrammarQuestionOut(**q) for q in skills.grammar_round(level, count)]
+
+
+@router.post("/grammar/submit", response_model=ReadingResult)
+async def grammar_submit(
+    payload: GrammarSubmit,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    results, reward = await skills.score_grammar(
+        db, user, payload.level, [a.model_dump() for a in payload.answers]
+    )
+    await db.commit()
+    return ReadingResult(
+        correct=sum(results), total=len(results), results=results,
+        xp_gained=reward.xp_gained, total_xp=reward.total_xp,
+        level=reward.level, leveled_up=reward.leveled_up,
+    )

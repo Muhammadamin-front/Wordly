@@ -593,7 +593,8 @@
     "mode_vocab": "Vocabulary",
     "mode_grammar": "Grammar",
     "mode_pairs": "Word pairs",
-    "mode_mixed": "Mixed"
+    "mode_mixed": "Mixed",
+    "speedHint": "Faster answers earn bonus points"
   },
   "skills": {
     "title": "Skills",
@@ -623,6 +624,11 @@
     "checkWriting": "Check my writing",
     "corrected": "Corrected version",
     "feedback": "Feedback",
-    "aiUnavailable": "AI feedback is not available right now. You can still practise writing!"
+    "aiUnavailable": "AI feedback is not available right now. You can still practise writing!",
+    "grammar": {
+      "name": "Grammar",
+      "desc": "Ten quick grammar questions at your level."
+    },
+    "tryAgain": "New round"
   }
 }

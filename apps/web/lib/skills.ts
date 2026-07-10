@@ -38,6 +38,11 @@ export interface WritingPrompts {
   prompts: string[];
 }
 
+export interface GrammarQuestion {
+  prompt: string;
+  options: string[];
+}
+
 export const skillsApi = {
   passages: (level?: string) =>
     apiFetch<PassageListItem[]>(
@@ -56,4 +61,14 @@ export const skillsApi = {
 
   writingPrompts: (level: string) =>
     apiFetch<WritingPrompts>(`/skills/writing/prompts?level=${level}`, { auth: true }),
+
+  grammarRound: (level: string, count = 10) =>
+    apiFetch<GrammarQuestion[]>(`/skills/grammar?level=${level}&count=${count}`, { auth: true }),
+
+  submitGrammar: (level: string, answers: { prompt: string; answer: string }[]) =>
+    apiFetch<ReadingResult>("/skills/grammar/submit", {
+      method: "POST",
+      body: { level, answers },
+      auth: true,
+    }),
 };
