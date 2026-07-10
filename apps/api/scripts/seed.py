@@ -7,6 +7,7 @@ same CSV importer the admin panel uses. Add later CEFR levels by dropping a new
 CSV in data/ and appending it to CORPUS_FILES.
 """
 import asyncio
+import json
 import pathlib
 import sys
 
@@ -15,6 +16,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from sqlalchemy import select  # noqa: E402
 
 from app.db.session import get_session_factory  # noqa: E402
+from app.models.reading import ReadingPassage, ReadingQuestion  # noqa: E402
 from app.models.vocabulary import Category  # noqa: E402
 from app.services.vocabulary import import_csv  # noqa: E402
 
@@ -39,7 +41,7 @@ CATEGORIES = [
 ]
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
-CORPUS_FILES = ["a1_corpus.csv", "a2_corpus.csv"]
+CORPUS_FILES = ["a1_corpus.csv", "a2_corpus.csv", "b1_corpus.csv", "b2_corpus.csv"]
 
 
 async def main() -> None:
@@ -73,6 +75,36 @@ async def main() -> None:
             if report.errors:
                 raise SystemExit(1)
         print("total words created: {}, updated: {}".format(total_created, total_updated))
+
+        # Reading passages — upsert by slug, questions replaced wholesale.
+        passages = json.loads((DATA_DIR / "reading_passages.json").read_text(encoding="utf-8"))
+        created = updated = 0
+        for item in passages:
+            existing = await db.scalar(
+                select(ReadingPassage).where(ReadingPassage.slug == item["slug"])
+            )
+            if existing is None:
+                existing = ReadingPassage(slug=item["slug"])
+                db.add(existing)
+                created += 1
+            else:
+                existing.questions.clear()
+                updated += 1
+            existing.cefr_level = item["cefr_level"]
+            existing.title_en = item["title_en"]
+            existing.body_en = item["body_en"]
+            existing.summary_uz = item.get("summary_uz")
+            for order, q in enumerate(item["questions"], start=1):
+                existing.questions.append(
+                    ReadingQuestion(
+                        question_order=order,
+                        prompt_en=q["prompt_en"],
+                        options_json=json.dumps(q["options"], ensure_ascii=False),
+                        answer_index=q["answer_index"],
+                    )
+                )
+        await db.commit()
+        print("reading passages: created {}, updated {}".format(created, updated))
 
 
 if __name__ == "__main__":

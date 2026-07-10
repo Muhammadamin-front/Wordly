@@ -65,3 +65,4 @@ npm run build:web
 | M8 | Teacher panel (classes, homework, analytics) + admin panel | ✅ `docs/milestones/M8.md` |
 | M9 | Games wave 2 (5 games) + social (friends, profiles, real-time multiplayer quiz) | ✅ `docs/milestones/M9.md` |
 | M10 | Performance & hardening (cache, rate limits, observability, load test) + A2 corpus | ✅ `docs/milestones/M10.md` |
+| M11 | Content scale-out (513-word corpus) + four skills: listening, reading, writing, speaking | ✅ `docs/milestones/M11.md` |

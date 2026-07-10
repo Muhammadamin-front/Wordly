@@ -372,7 +372,12 @@
     "bossHp": "Boss jони",
     "buildSentence": "Gapni tuzing",
     "clear": "Tozalash",
-    "found": "topildi"
+    "found": "topildi",
+    "sayIt": "Mikrofonni bosing va so'zni ayting",
+    "heard": "Eshitildi",
+    "micUnsupported": "Brauzeringizda nutqni aniqlash yo'q — o'zingizni halol baholang.",
+    "saidIt": "Aytdim",
+    "notYet": "Hali emas"
   },
   "stats": {
     "title": "Statistika",
@@ -584,5 +589,35 @@
     "notEnoughWords": "So'z yetarli emas",
     "correct": "To'g'ri!",
     "shareRoom": "Kodni ulashing"
+  },
+  "skills": {
+    "title": "Ko'nikmalar",
+    "subtitle": "To'rt ko'nikmani mashq qiling — tinglash, o'qish, yozish va gapirish.",
+    "listening": {
+      "name": "Tinglash",
+      "desc": "Gapni eshiting va eshitganingizni yozing."
+    },
+    "reading": {
+      "name": "O'qish",
+      "desc": "Darajali qisqa hikoyalar va tushunish savollari."
+    },
+    "writing": {
+      "name": "Yozish",
+      "desc": "Mavzu bo'yicha yozing va AI'dan fikr oling."
+    },
+    "speaking": {
+      "name": "Gapirish",
+      "desc": "Inglizcha so'zni ovoz chiqarib ayting — brauzer tekshiradi."
+    },
+    "questions": "savol",
+    "submitAnswers": "Javoblarni tekshirish",
+    "backToList": "Hikoyalarga qaytish",
+    "newPrompt": "Boshqa mavzu",
+    "yourText": "Javobingizni shu yerga yozing…",
+    "words": "so'z",
+    "checkWriting": "Yozganimni tekshir",
+    "corrected": "To'g'irlangan matn",
+    "feedback": "Fikr-mulohaza",
+    "aiUnavailable": "AI tekshiruvi hozircha mavjud emas. Yozishni baribir mashq qilishingiz mumkin!"
   }
 }

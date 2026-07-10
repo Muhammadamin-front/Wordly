@@ -372,7 +372,12 @@
     "bossHp": "Boss HP",
     "buildSentence": "Build the sentence",
     "clear": "Clear",
-    "found": "found"
+    "found": "found",
+    "sayIt": "Tap the microphone and say the word",
+    "heard": "Heard",
+    "micUnsupported": "Your browser has no speech recognition — grade yourself honestly.",
+    "saidIt": "I said it",
+    "notYet": "Not yet"
   },
   "stats": {
     "title": "Statistics",
@@ -584,5 +589,35 @@
     "notEnoughWords": "Not enough words",
     "correct": "Correct!",
     "shareRoom": "Share the code"
+  },
+  "skills": {
+    "title": "Skills",
+    "subtitle": "Practise all four skills — listening, reading, writing, and speaking.",
+    "listening": {
+      "name": "Listening",
+      "desc": "Hear a sentence and type what you hear."
+    },
+    "reading": {
+      "name": "Reading",
+      "desc": "Short graded stories with comprehension questions."
+    },
+    "writing": {
+      "name": "Writing",
+      "desc": "Answer a prompt and get AI feedback on your text."
+    },
+    "speaking": {
+      "name": "Speaking",
+      "desc": "Say the English word out loud — the browser checks you."
+    },
+    "questions": "questions",
+    "submitAnswers": "Check answers",
+    "backToList": "Back to stories",
+    "newPrompt": "Another prompt",
+    "yourText": "Write your answer here…",
+    "words": "words",
+    "checkWriting": "Check my writing",
+    "corrected": "Corrected version",
+    "feedback": "Feedback",
+    "aiUnavailable": "AI feedback is not available right now. You can still practise writing!"
   }
 }

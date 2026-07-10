@@ -6,10 +6,12 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ChoiceGame } from "@/components/games/choice-game";
+import { DictationGame } from "@/components/games/dictation-game";
 import { HangmanGame } from "@/components/games/hangman-game";
 import { MatchGame } from "@/components/games/match-game";
 import { MemoryGame, type Tile } from "@/components/games/memory-game";
 import { SentenceGame, type SentenceItem } from "@/components/games/sentence-game";
+import { SpeakingGame } from "@/components/games/speaking-game";
 import { SpellingGame } from "@/components/games/spelling-game";
 import { TypingGame } from "@/components/games/typing-game";
 import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/games/word-search-game";
@@ -71,10 +73,12 @@ export function GamePlayer({
   lang,
   gameType,
   games,
+  exitPath = "games",
 }: {
   lang: string;
   gameType: GameType;
   games: Dictionary["games"];
+  exitPath?: string;
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
@@ -166,7 +170,7 @@ export function GamePlayer({
         <p className="mt-1 text-sm text-ink-soft">{games.yourScore}</p>
         <div className="mt-8 flex justify-center gap-3">
           <Button onClick={playAgain}>{games.playAgain}</Button>
-          <Link href={`/${lang}/games`}>
+          <Link href={`/${lang}/${exitPath}`}>
             <Button variant="secondary">{games.exit}</Button>
           </Link>
         </div>
@@ -193,6 +197,10 @@ export function GamePlayer({
         <SentenceGame {...shared} items={prepared.sentences} />
       ) : gameType === "word_search" ? (
         <WordSearchGame {...shared} search={prepared.wordSearch} />
+      ) : gameType === "listening" ? (
+        <DictationGame {...shared} questions={prepared.questions} />
+      ) : gameType === "speaking" ? (
+        <SpeakingGame {...shared} questions={prepared.questions} />
       ) : (
         <ChoiceGame
           {...shared}

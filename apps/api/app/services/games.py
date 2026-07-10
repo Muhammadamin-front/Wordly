@@ -25,6 +25,9 @@ GAME_TYPES = (
     "spelling_bee",
     "sentence_builder",
     "word_search",
+    # M11 skill drills — same session/answer plumbing, surfaced under /skills.
+    "listening",
+    "speaking",
 )
 
 # Games that show translation options need distractor translations; games that
@@ -164,8 +167,8 @@ async def build_session(
 
     cards = await _pick_cards(db, user, count)
     usable = [c for c in cards if c.word and c.word.senses]
-    # Sentence Builder needs example sentences to scramble.
-    if game_type == "sentence_builder":
+    # Sentence Builder scrambles an example; Listening dictates one.
+    if game_type in ("sentence_builder", "listening"):
         usable = [c for c in usable if _first_example(c)]
     if len(usable) < MIN_CARDS:
         return [], len(usable)
@@ -193,6 +196,14 @@ async def build_session(
         elif game_type == "sentence_builder":
             # answer is the sentence; the client scrambles it into word tiles.
             questions.append(GameQuestion(card.id, translation, _first_example(card), []))
+        elif game_type == "listening":
+            # Dictation: hear the sentence, type it. Prompt is the uz hint.
+            example = _first_example(card)
+            questions.append(GameQuestion(card.id, translation, example, [], audio_text=example))
+        elif game_type == "speaking":
+            # Pronunciation: see the uz word, say the English one; the client
+            # compares the SpeechRecognition transcript to the answer.
+            questions.append(GameQuestion(card.id, translation, headword, [], audio_text=headword))
         elif game_type == "fill_blank":
             example = _first_example(card)
             blanked = _blank_sentence(example, headword) if example else None

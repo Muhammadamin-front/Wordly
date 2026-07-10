@@ -1,0 +1,248 @@
+[
+  {
+    "slug": "my-family-a1",
+    "cefr_level": "A1",
+    "title_en": "My Family",
+    "body_en": "My name is Aziz. I am eleven years old and I live in Tashkent. There are five people in my family: my father, my mother, my two sisters, and me. My father is a doctor. He works at a big hospital. My mother is a teacher. She teaches English at a school near our house. My sisters are students. In the evening we eat dinner together and talk about our day. I love my family very much.",
+    "summary_uz": "Aziz o'z oilasi haqida gapiradi: otasi shifokor, onasi o'qituvchi, ikki opasi talaba. Kechqurun ular birga ovqatlanishadi.",
+    "questions": [
+      {
+        "prompt_en": "How many people are in Aziz's family?",
+        "options": ["Three", "Four", "Five", "Six"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What is his father's job?",
+        "options": ["Teacher", "Doctor", "Driver", "Student"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does the family do in the evening?",
+        "options": ["They watch TV", "They eat dinner together", "They play football", "They go to the hospital"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "at-the-market-a1",
+    "cefr_level": "A1",
+    "title_en": "At the Market",
+    "body_en": "On Sunday morning, Dilnoza goes to the market with her grandmother. The market is big and full of people. First, they buy apples and grapes. The fruit is fresh and cheap. Then they buy bread and cheese. Dilnoza's grandmother knows many sellers, and they always smile at her. Before they go home, Dilnoza drinks a cup of tea and eats a hot samsa. She likes Sundays at the market.",
+    "summary_uz": "Dilnoza yakshanba kuni buvisi bilan bozorga boradi. Ular meva, non va pishloq sotib olishadi, keyin Dilnoza choy ichib, somsa yeydi.",
+    "questions": [
+      {
+        "prompt_en": "When does Dilnoza go to the market?",
+        "options": ["On Monday", "On Friday evening", "On Sunday morning", "Every day"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What fruit do they buy?",
+        "options": ["Apples and grapes", "Bananas and oranges", "Melons", "Cherries"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does Dilnoza eat at the market?",
+        "options": ["Bread and cheese", "A hot samsa", "An apple", "Plov"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "my-school-day-a1",
+    "cefr_level": "A1",
+    "title_en": "My School Day",
+    "body_en": "I get up at seven o'clock. I wash my face, get dressed, and eat breakfast with my brother. School starts at eight thirty. My favourite lesson is English because our teacher plays word games with us. At twelve o'clock we have lunch in the school canteen. After school I do my homework, and then I play football with my friends in the yard. I go to bed at ten o'clock.",
+    "summary_uz": "O'quvchi o'z kun tartibini aytadi: soat 7 da turadi, 8:30 da dars boshlanadi, sevimli fani — ingliz tili, darsdan keyin futbol o'ynaydi.",
+    "questions": [
+      {
+        "prompt_en": "What time does school start?",
+        "options": ["At seven o'clock", "At eight thirty", "At twelve o'clock", "At ten o'clock"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why is English the writer's favourite lesson?",
+        "options": ["It is easy", "The teacher plays word games", "There is no homework", "It is the first lesson"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does the writer do after homework?",
+        "options": ["Watches TV", "Goes to bed", "Plays football with friends", "Eats lunch"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "a-trip-to-samarkand-a2",
+    "cefr_level": "A2",
+    "title_en": "A Trip to Samarkand",
+    "body_en": "Last month, our class travelled to Samarkand by fast train. The journey took about two hours, and we played cards and watched the fields go past the window. In Samarkand we visited Registan Square. Our guide told us that people built these beautiful madrasahs hundreds of years ago. The blue domes shone in the sun, and everyone took photos. At lunchtime we tried Samarkand bread, which is famous all over Uzbekistan. I bought a small painted plate for my mother. On the way home, everybody was tired but happy. I want to go back next year with my family.",
+    "summary_uz": "Sinf Samarqandga tez poyezdda sayohat qildi: Registon maydonini ko'rishdi, mashhur Samarqand nonini yeb ko'rishdi va esdalik sovg'alar olishdi.",
+    "questions": [
+      {
+        "prompt_en": "How did the class travel to Samarkand?",
+        "options": ["By bus", "By plane", "By fast train", "By car"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What did the guide say about the madrasahs?",
+        "options": ["They are new buildings", "People built them hundreds of years ago", "They are closed to visitors", "They were built last year"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What did the writer buy?",
+        "options": ["Samarkand bread", "A painted plate", "A photo album", "A train ticket"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "How did everyone feel on the way home?",
+        "options": ["Bored and hungry", "Tired but happy", "Angry", "Afraid"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "the-new-cafe-a2",
+    "cefr_level": "A2",
+    "title_en": "The New Café",
+    "body_en": "A new café opened near my office last week, so my colleague Malika and I decided to try it on Friday. The café is small but very modern, with green plants on every table and quiet music. I ordered coffee and a piece of honey cake; Malika chose green tea because she doesn't drink coffee in the afternoon. The waiter was friendly and brought our order quickly. The cake was delicious, but the coffee was a little bitter for me. The prices are cheaper than at the old café on the corner. We agreed to come back next week and bring our manager.",
+    "summary_uz": "Muallif hamkasbi bilan yangi kafega boradi: kafe zamonaviy, xizmat tez, tort mazali, narxlar esa eski kafedagidan arzon.",
+    "questions": [
+      {
+        "prompt_en": "When did the writer visit the café?",
+        "options": ["On Monday", "On Friday", "Last month", "Yesterday morning"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did Malika choose green tea?",
+        "options": ["She doesn't drink coffee in the afternoon", "The coffee was expensive", "The café had no coffee", "She doesn't like cake"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What did the writer think of the coffee?",
+        "options": ["It was perfect", "It was too sweet", "It was a little bitter", "It was cold"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "How are the prices compared to the old café?",
+        "options": ["More expensive", "The same", "Cheaper", "The text doesn't say"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "grandfathers-garden-a2",
+    "cefr_level": "A2",
+    "title_en": "Grandfather's Garden",
+    "body_en": "My grandfather has a large garden behind his house in the village. Every spring he plants tomatoes, cucumbers, and peppers, and in summer the whole family helps him water the plants. He wakes up before sunrise because he says the garden is quietest in the early morning. Last year the weather was very dry, and he was worried about his vegetables. Luckily, it rained in July, and the harvest was better than ever. My grandfather always gives boxes of tomatoes to his neighbours. \"A good garden makes good friends,\" he likes to say.",
+    "summary_uz": "Buvaning qishloqdagi bog'i haqida: u erta turib bog'ini parvarish qiladi, hosilni qo'shnilari bilan bo'lishadi.",
+    "questions": [
+      {
+        "prompt_en": "What does grandfather plant in spring?",
+        "options": ["Apples and grapes", "Tomatoes, cucumbers, and peppers", "Flowers only", "Potatoes and onions"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why does he wake up before sunrise?",
+        "options": ["He can't sleep", "The garden is quietest in the early morning", "He goes to work", "The neighbours visit him"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why was he worried last year?",
+        "options": ["The weather was very dry", "The plants were sick", "He lost his tools", "It rained too much"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does he do with part of his harvest?",
+        "options": ["He sells it at the market", "He gives it to his neighbours", "He throws it away", "He keeps everything"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "learning-online-b1",
+    "cefr_level": "B1",
+    "title_en": "Learning Online",
+    "body_en": "Five years ago, most students in my town had never taken an online course. Today, almost everyone I know studies something on the internet: languages, programming, design, or even cooking. The main advantage is flexibility — you can watch a lesson at midnight or during your lunch break, and repeat difficult parts as many times as you need. However, online learning also has a serious weakness: without a teacher watching, it is easy to lose motivation. Research suggests that most people who start a free online course never finish it. In my experience, the students who succeed set a fixed time for study, turn off their phone notifications, and find a friend to learn with. Technology gives us the door, but we still have to walk through it ourselves.",
+    "summary_uz": "Onlayn ta'lim qulay va moslashuvchan, ammo motivatsiyani saqlash qiyin. Muvaffaqiyat qozonganlar aniq jadval tuzadi va do'st bilan birga o'qiydi.",
+    "questions": [
+      {
+        "prompt_en": "What is the main advantage of online learning, according to the writer?",
+        "options": ["It is always free", "Flexibility", "It is easier than school", "You get a certificate"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What serious weakness does the writer mention?",
+        "options": ["Bad internet connections", "Expensive courses", "Losing motivation without a teacher", "Too much homework"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What does research suggest about free online courses?",
+        "options": ["Most people never finish them", "They are better than universities", "They are only for programmers", "Everyone finishes them quickly"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does the final sentence mean?",
+        "options": ["Technology solves everything for us", "Doors are important in education", "Success still depends on our own effort", "Online courses should be closed"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "the-old-bicycle-b1",
+    "cefr_level": "B1",
+    "title_en": "The Old Bicycle",
+    "body_en": "When Karim turned sixteen, his father gave him an old bicycle instead of the new smartphone he had asked for. At first, Karim was disappointed and left the bicycle in the yard for weeks. One rainy afternoon, bored and offline, he decided to repair it. He cleaned the rusty chain, pumped the tyres, and painted the frame dark green. The work took three weekends, but when he finally rode it through the neighbourhood, he felt strangely proud. Soon he was cycling to school every day, saving the bus money, and exploring streets he had never seen. A year later, Karim told his father the bicycle was the best present he had ever received — not because of what it was, but because of what it had taught him.",
+    "summary_uz": "Karim otasi sovg'a qilgan eski velosipedni avval yoqtirmaydi, keyin uni o'zi ta'mirlab, undan faxrlanadi va muhim saboq oladi.",
+    "questions": [
+      {
+        "prompt_en": "How did Karim feel about the present at first?",
+        "options": ["Excited", "Disappointed", "Proud", "Surprised and happy"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What made him start repairing the bicycle?",
+        "options": ["His father asked him to", "He wanted to sell it", "He was bored on a rainy afternoon", "His friends laughed at him"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "How long did the repair work take?",
+        "options": ["One afternoon", "Three weekends", "A whole year", "Two days"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did Karim call it the best present he had ever received?",
+        "options": ["It was expensive", "It looked new after painting", "Because of what it taught him", "Because he could sell it later"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "water-in-the-desert-b1",
+    "cefr_level": "B1",
+    "title_en": "Water in the Desert",
+    "body_en": "Uzbekistan is a country of sunshine, but that sunshine comes at a price: water is precious here. Farmers in the Aral Sea region remember when the sea reached their villages; today the shore lies many kilometres away. Scientists say that old irrigation methods wasted enormous amounts of water, because open canals lose much of it to the sun before it ever reaches the fields. Modern drip irrigation, which delivers water directly to each plant's roots through thin pipes, can cut water use by more than half. The technology is not cheap, and many small farms cannot afford it without help. Still, every year more fields switch to the new system. Saving water, experts argue, is no longer a choice for the region — it is the only way to keep farming alive for the next generation.",
+    "summary_uz": "Orol dengizi mintaqasida suv tanqisligi haqida: eski sug'orish usullari suvni isrof qiladi, tomchilatib sug'orish esa suvni yarmidan ko'proq tejaydi.",
+    "questions": [
+      {
+        "prompt_en": "What problem does the passage describe?",
+        "options": ["Too much rain", "Water shortage", "Cold winters", "Expensive electricity"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why do open canals waste water?",
+        "options": ["Much of it is lost to the sun", "The pipes are too thin", "Farmers forget to close them", "Animals drink from them"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "How much water can drip irrigation save?",
+        "options": ["About ten percent", "More than half", "Almost none", "All of it"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why don't all farms use drip irrigation?",
+        "options": ["It is illegal", "It is not cheap", "It doesn't work in deserts", "Farmers prefer canals"],
+        "answer_index": 1
+      }
+    ]
+  }
+]

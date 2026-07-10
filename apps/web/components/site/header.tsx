@@ -28,6 +28,9 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
               <Link href={`/${lang}/games`} className="transition-colors hover:text-ink" title="Games">
                 🎮
               </Link>
+              <Link href={`/${lang}/skills`} className="transition-colors hover:text-ink" title="Skills">
+                📚
+              </Link>
               <Link href={`/${lang}/ai`} className="transition-colors hover:text-ink" title="AI Tutor">
                 ✨
               </Link>

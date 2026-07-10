@@ -1,0 +1,122 @@
+"""M11 — skills: reading passages, writing prompts, listening/speaking drills."""
+import json
+
+import app.db.session as db_session
+from app.models.reading import ReadingPassage, ReadingQuestion
+from tests.conftest import register_user
+from tests.test_games import learner_with_cards
+
+
+async def seed_passage(slug="little-story-a1", level="A1") -> None:
+    async with db_session._session_factory() as db:
+        passage = ReadingPassage(
+            slug=slug, cefr_level=level, title_en="A Little Story",
+            body_en="Aziz has a red bicycle. He rides it to school every day.",
+            summary_uz="Aziz velosipedda maktabga boradi.",
+        )
+        passage.questions = [
+            ReadingQuestion(
+                question_order=1, prompt_en="What colour is the bicycle?",
+                options_json=json.dumps(["Red", "Blue", "Green"]), answer_index=0,
+            ),
+            ReadingQuestion(
+                question_order=2, prompt_en="Where does Aziz ride?",
+                options_json=json.dumps(["To the park", "To school", "To the market"]),
+                answer_index=1,
+            ),
+        ]
+        db.add(passage)
+        await db.commit()
+
+
+async def auth_headers(client) -> dict:
+    data = await register_user(client, email="reader@words.uz")
+    return {"Authorization": "Bearer " + data["access_token"]}
+
+
+async def test_reading_list_and_level_filter(client):
+    await seed_passage()
+    await seed_passage(slug="harder-b1", level="B1")
+    headers = await auth_headers(client)
+
+    all_items = (await client.get("/api/v1/skills/reading", headers=headers)).json()
+    assert len(all_items) == 2
+    assert all_items[0]["question_count"] == 2
+
+    only_b1 = (await client.get("/api/v1/skills/reading?level=B1", headers=headers)).json()
+    assert [p["slug"] for p in only_b1] == ["harder-b1"]
+
+
+async def test_reading_detail_never_leaks_answers(client):
+    await seed_passage()
+    headers = await auth_headers(client)
+    response = await client.get("/api/v1/skills/reading/little-story-a1", headers=headers)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["title_en"] == "A Little Story"
+    assert len(body["questions"]) == 2
+    assert body["questions"][0]["options"] == ["Red", "Blue", "Green"]
+    assert "answer_index" not in response.text
+
+
+async def test_reading_submit_scores_and_awards_xp(client):
+    await seed_passage()
+    headers = await auth_headers(client)
+    response = await client.post(
+        "/api/v1/skills/reading/little-story-a1/submit",
+        json={"answers": [0, 1]},
+        headers=headers,
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["correct"] == 2 and body["total"] == 2
+    assert body["results"] == [True, True]
+    assert body["xp_gained"] == 10  # 2 correct × 5 XP
+
+    stats = (await client.get("/api/v1/me/stats", headers=headers)).json()
+    assert stats["xp"] >= 10
+
+
+async def test_reading_submit_partial_and_missing_answers(client):
+    await seed_passage()
+    headers = await auth_headers(client)
+    response = await client.post(
+        "/api/v1/skills/reading/little-story-a1/submit",
+        json={"answers": [2]},  # wrong, second unanswered
+        headers=headers,
+    )
+    body = response.json()
+    assert body["correct"] == 0
+    assert body["results"] == [False, False]
+    assert body["xp_gained"] == 0
+
+
+async def test_reading_unknown_slug_404(client):
+    headers = await auth_headers(client)
+    response = await client.get("/api/v1/skills/reading/no-such", headers=headers)
+    assert response.status_code == 404
+
+
+async def test_writing_prompts_by_level(client):
+    headers = await auth_headers(client)
+    body = (await client.get("/api/v1/skills/writing/prompts?level=B1", headers=headers)).json()
+    assert body["level"] == "B1"
+    assert len(body["prompts"]) >= 3
+
+
+async def test_listening_session_dictates_examples(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    body = (await client.get("/api/v1/games/listening", headers=headers)).json()
+    assert len(body["questions"]) >= 4
+    for q in body["questions"]:
+        assert " " in q["answer"]  # a sentence, not a single word
+        assert q["audio_text"] == q["answer"]  # the client speaks the answer
+
+
+async def test_speaking_session_targets_headwords(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    body = (await client.get("/api/v1/games/speaking", headers=headers)).json()
+    assert len(body["questions"]) >= 4
+    for q in body["questions"]:
+        assert q["answer"].startswith("word")
+        assert q["audio_text"] == q["answer"]

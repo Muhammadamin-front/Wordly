@@ -130,6 +130,26 @@ async def _check_achievements(
     return newly
 
 
+async def apply_skill_xp(db: AsyncSession, user: User, xp_gain: int) -> RewardSummary:
+    """Award XP for non-review learning (reading passages, writing practice).
+    Counts toward level, daily XP, and the weekly league — but not review
+    streaks/goals, which stay tied to actual SRS reviews."""
+    today = local_today(user.profile.timezone or "UTC")
+    stats = await get_or_create_stats(db, user)
+    level_before = level_for_xp(stats.xp)
+
+    stats.xp += xp_gain
+    activity = await _get_or_create_activity(db, user, today)
+    activity.xp_earned += xp_gain
+    await leagues.add_xp(db, user.id, iso_week(today), xp_gain)
+
+    summary = RewardSummary(xp_gained=xp_gain, total_xp=stats.xp)
+    summary.level = level_for_xp(stats.xp)
+    summary.leveled_up = summary.level > level_before
+    summary.current_streak = stats.current_streak
+    return summary
+
+
 async def apply_review_rewards(
     db: AsyncSession, user: User, stats: UserStats, rating: str
 ) -> RewardSummary:

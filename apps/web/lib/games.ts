@@ -15,7 +15,10 @@ export const GAME_TYPES = [
   "word_search",
 ] as const;
 
-export type GameType = (typeof GAME_TYPES)[number];
+/** M11 skill drills — same session/answer API, surfaced under /skills. */
+export const SKILL_DRILLS = ["listening", "speaking"] as const;
+
+export type GameType = (typeof GAME_TYPES)[number] | (typeof SKILL_DRILLS)[number];
 
 export interface GameQuestion {
   card_id: string;
