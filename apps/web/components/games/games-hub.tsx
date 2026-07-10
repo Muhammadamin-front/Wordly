@@ -15,6 +15,11 @@ const GAME_ICONS: Record<GameType, string> = {
   audio_guess: "🎧",
   typing_race: "⌨️",
   memory: "🧠",
+  boss_battle: "🐉",
+  hangman: "🪢",
+  spelling_bee: "🐝",
+  sentence_builder: "🧩",
+  word_search: "🔍",
 };
 
 const GAME_ACCENT: Record<GameType, string> = {
@@ -24,6 +29,11 @@ const GAME_ACCENT: Record<GameType, string> = {
   audio_guess: "from-purple-500/15",
   typing_race: "from-sky-500/15",
   memory: "from-rose-500/15",
+  boss_battle: "from-red-500/15",
+  hangman: "from-slate-500/15",
+  spelling_bee: "from-yellow-500/15",
+  sentence_builder: "from-emerald-500/15",
+  word_search: "from-cyan-500/15",
 };
 
 export function GamesHub({ lang, games }: { lang: string; games: Dictionary["games"] }) {

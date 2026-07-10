@@ -63,5 +63,5 @@ npm run build:web
 | M6 | AI Tutor (explain/mnemonic/story/quiz/chat/writing, quotas) | ✅ `docs/milestones/M6.md` |
 | M7 | Monetization (Payme + Click, subscriptions, referrals) | ✅ `docs/milestones/M7.md` |
 | M8 | Teacher panel (classes, homework, analytics) + admin panel | ✅ `docs/milestones/M8.md` |
-| M9 | Games wave 2 + social | next |
-| M10 | Content scale-out, performance & hardening | `docs/03-roadmap.md` |
+| M9 | Games wave 2 (5 games) + social (friends, profiles, real-time multiplayer quiz) | ✅ `docs/milestones/M9.md` |
+| M10 | Content scale-out, performance & hardening | next |

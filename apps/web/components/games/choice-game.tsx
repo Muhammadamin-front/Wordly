@@ -6,16 +6,18 @@ import type { ChoiceItem, GameProps } from "@/components/games/game-player";
 import { speak } from "@/lib/games";
 import { cn } from "@/lib/utils";
 
-/** Speed Quiz, Fill the Blank, and Listen & Guess — all multiple-choice. */
+/** Speed Quiz, Fill the Blank, Listen & Guess, and Boss Battle — multiple-choice. */
 export function ChoiceGame({
   items,
   games,
   isAudio,
   fill,
+  boss = false,
   onAnswer,
   onComplete,
-}: GameProps & { items: ChoiceItem[]; isAudio: boolean; fill: boolean }) {
+}: GameProps & { items: ChoiceItem[]; isAudio: boolean; fill: boolean; boss?: boolean }) {
   const [index, setIndex] = useState(0);
+  const [hits, setHits] = useState(0);
   const item = items[index];
 
   function resolve() {
@@ -25,6 +27,22 @@ export function ChoiceGame({
 
   return (
     <div>
+      {boss && (
+        <div className="mb-3">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-2xl" aria-hidden>
+              {hits >= items.length ? "💥" : "🐉"}
+            </span>
+            <span className="text-xs font-bold text-danger">{games.bossHp}</span>
+          </div>
+          <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-line">
+            <div
+              className="h-full rounded-full bg-linear-to-r from-red-500 to-red-700 transition-all duration-500"
+              style={{ width: `${Math.max(0, 100 - (hits / items.length) * 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
       <Progress index={index} total={items.length} />
       <ChoiceQuestion
         key={index}
@@ -33,6 +51,7 @@ export function ChoiceGame({
         isAudio={isAudio}
         fill={fill}
         onResolved={(correct, durationMs) => {
+          if (correct && boss) setHits((h) => h + 1);
           onAnswer(item.question.card_id, correct, durationMs);
           window.setTimeout(resolve, 850);
         }}

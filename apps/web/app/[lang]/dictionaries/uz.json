@@ -346,7 +346,33 @@
     "memory": {
       "name": "Xotira",
       "desc": "Yashirin juftlarni yodda tuting"
-    }
+    },
+    "boss_battle": {
+      "name": "Boss jangi",
+      "desc": "Boshni mag'lub eting — har xato uni tiriltiradi"
+    },
+    "hangman": {
+      "name": "Osma odam",
+      "desc": "Harflarni toping, so'zni yeching"
+    },
+    "spelling_bee": {
+      "name": "Imlo asalarisi",
+      "desc": "So'zni eshiting va to'g'ri yozing"
+    },
+    "sentence_builder": {
+      "name": "Gap tuzish",
+      "desc": "So'zlarni to'g'ri tartibda joylang"
+    },
+    "word_search": {
+      "name": "So'z izlash",
+      "desc": "Panjarada yashiringan so'zlarni toping"
+    },
+    "guess": "Toping",
+    "yourWord": "Sizning javobingiz",
+    "bossHp": "Boss jони",
+    "buildSentence": "Gapni tuzing",
+    "clear": "Tozalash",
+    "found": "topildi"
   },
   "stats": {
     "title": "Statistika",
@@ -516,5 +542,47 @@
     "premium": "Premium",
     "joined": "Qo'shildi",
     "email": "Pochta"
+  },
+  "social": {
+    "friends": "Do'stlar",
+    "title": "Do'stlar",
+    "friendCode": "Do'st kodingiz",
+    "addFriend": "Do'st qo'shish",
+    "enterCode": "Do'st kodini kiriting",
+    "send": "Yuborish",
+    "pending": "Kutilmoqda",
+    "accept": "Qabul qilish",
+    "decline": "Rad etish",
+    "noFriends": "Hali do'stlaringiz yo'q. Kodingizni ulashing!",
+    "leaderboard": "Do'stlar reytingi",
+    "copy": "Nusxalash",
+    "copied": "Nusxalandi!",
+    "you": "Siz",
+    "level": "daraja",
+    "invalidCode": "Kod noto'g'ri",
+    "sent": "So'rov yuborildi",
+    "remove": "O'chirish",
+    "multiplayer": "Ko'p o'yinchi",
+    "profile": "Profil",
+    "achievements": "yutuq",
+    "shareProfile": "Profilni ulashish"
+  },
+  "mp": {
+    "title": "Ko'p o'yinchi viktorina",
+    "create": "Xona yaratish",
+    "join": "Qo'shilish",
+    "roomCode": "Xona kodi",
+    "waiting": "O'yinchilar kutilmoqda...",
+    "players": "O'yinchilar",
+    "start": "Boshlash",
+    "level": "Daraja",
+    "youAreHost": "Siz xost siz",
+    "next": "Keyingi",
+    "finalScore": "Yakuniy natija",
+    "playAgain": "Yana",
+    "connecting": "Ulanmoqda...",
+    "notEnoughWords": "So'z yetarli emas",
+    "correct": "To'g'ri!",
+    "shareRoom": "Kodni ulashing"
   }
 }

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import admin, ai, auth, flashcards, gamification, games, payments, statistics, teacher, users, vocabulary
+from app.api.v1 import admin, ai, auth, flashcards, gamification, games, multiplayer, payments, social, statistics, teacher, users, vocabulary
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
@@ -16,3 +16,5 @@ api_router.include_router(payments.router)
 api_router.include_router(payments.gateway_router)
 api_router.include_router(teacher.router)
 api_router.include_router(admin.router)
+api_router.include_router(social.router)
+api_router.include_router(multiplayer.router)

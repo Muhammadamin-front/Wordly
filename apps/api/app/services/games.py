@@ -20,14 +20,20 @@ GAME_TYPES = (
     "audio_guess",
     "typing_race",
     "memory",
+    "boss_battle",
+    "hangman",
+    "spelling_bee",
+    "sentence_builder",
+    "word_search",
 )
 
 # Games that show translation options need distractor translations; games that
 # ask for the English word need distractor headwords.
-ANSWER_IS_TRANSLATION = {"word_match", "speed_quiz", "audio_guess", "memory"}
+ANSWER_IS_TRANSLATION = {"word_match", "speed_quiz", "audio_guess", "memory", "boss_battle"}
+BOARD_GAMES = {"word_match", "memory", "word_search"}
 MIN_CARDS = 4
 DEFAULT_COUNT = 10
-BOARD_GAME_MAX = 6  # word_match / memory board size (pairs)
+BOARD_GAME_MAX = 6  # board size (pairs) for match / memory / word_search
 
 
 class GameQuestion:
@@ -112,14 +118,55 @@ def _card_translation(card: Card) -> Optional[str]:
     return None
 
 
+def _first_example(card: Card) -> Optional[str]:
+    sense = card.word.senses[0]
+    return sense.examples[0].text_en if sense.examples else None
+
+
+async def build_public_quiz(db: AsyncSession, cefr_level: str, count: int) -> List[dict]:
+    """Multiple-choice questions from the shared published corpus (not tied to
+    any user's cards) — used for real-time multiplayer where all players see the
+    same questions. Returns dicts with a resolved answer_index."""
+    words = list(
+        (
+            await db.scalars(
+                select(Word)
+                .where(Word.status == "published", Word.cefr_level == cefr_level)
+                .order_by(func.random())
+                .limit(count)
+            )
+        ).unique()
+    )
+    if len(words) < MIN_CARDS:
+        return []
+
+    correct = {w.senses[0].translation_uz for w in words if w.senses}
+    pool = [p for p in await _distractor_pool(db, [], want_translation=True) if p not in correct]
+
+    questions = []
+    for word in words:
+        if not word.senses:
+            continue
+        answer = word.senses[0].translation_uz
+        options = [answer] + random.sample(pool, min(3, len(pool)))
+        random.shuffle(options)
+        questions.append(
+            {"prompt": word.headword, "options": options, "answer_index": options.index(answer)}
+        )
+    return questions
+
+
 async def build_session(
     db: AsyncSession, user: User, game_type: str, count: int = DEFAULT_COUNT
 ) -> Tuple[List[GameQuestion], int]:
-    if game_type in ("word_match", "memory"):
+    if game_type in BOARD_GAMES:
         count = min(count, BOARD_GAME_MAX)
 
     cards = await _pick_cards(db, user, count)
     usable = [c for c in cards if c.word and c.word.senses]
+    # Sentence Builder needs example sentences to scramble.
+    if game_type == "sentence_builder":
+        usable = [c for c in usable if _first_example(c)]
     if len(usable) < MIN_CARDS:
         return [], len(usable)
 
@@ -129,6 +176,9 @@ async def build_session(
         answers.add(_card_translation(card) if want_translation else card.word.headword)
     pool = [p for p in await _distractor_pool(db, [], want_translation) if p not in answers]
 
+    def sample_distractors() -> List[str]:
+        return random.sample(pool, min(3, len(pool)))
+
     questions: List[GameQuestion] = []
     for card in usable:
         headword = card.word.headword
@@ -136,21 +186,25 @@ async def build_session(
 
         if game_type == "typing_race":
             questions.append(GameQuestion(card.id, translation, headword, []))
+        elif game_type == "hangman":
+            questions.append(GameQuestion(card.id, translation, headword, []))
+        elif game_type == "spelling_bee":
+            questions.append(GameQuestion(card.id, translation, headword, [], audio_text=headword))
+        elif game_type == "sentence_builder":
+            # answer is the sentence; the client scrambles it into word tiles.
+            questions.append(GameQuestion(card.id, translation, _first_example(card), []))
         elif game_type == "fill_blank":
-            example = card.word.senses[0].examples[0].text_en if card.word.senses[0].examples else None
+            example = _first_example(card)
             blanked = _blank_sentence(example, headword) if example else None
             prompt = blanked or "“{}”".format(card.word.senses[0].definition_en)
-            distractors = random.sample(pool, min(3, len(pool)))
-            questions.append(GameQuestion(card.id, prompt, headword, distractors))
+            questions.append(GameQuestion(card.id, prompt, headword, sample_distractors()))
         elif game_type == "audio_guess":
-            distractors = random.sample(pool, min(3, len(pool)))
             questions.append(
-                GameQuestion(card.id, "", translation, distractors, audio_text=headword)
+                GameQuestion(card.id, "", translation, sample_distractors(), audio_text=headword)
             )
-        elif game_type in ("word_match", "memory"):
+        elif game_type in ("word_match", "memory", "word_search"):
             questions.append(GameQuestion(card.id, headword, translation, []))
-        else:  # speed_quiz
-            distractors = random.sample(pool, min(3, len(pool)))
-            questions.append(GameQuestion(card.id, headword, translation, distractors))
+        else:  # speed_quiz, boss_battle
+            questions.append(GameQuestion(card.id, headword, translation, sample_distractors()))
 
     return questions, len(usable)

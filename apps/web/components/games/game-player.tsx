@@ -6,9 +6,13 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ChoiceGame } from "@/components/games/choice-game";
+import { HangmanGame } from "@/components/games/hangman-game";
 import { MatchGame } from "@/components/games/match-game";
 import { MemoryGame, type Tile } from "@/components/games/memory-game";
+import { SentenceGame, type SentenceItem } from "@/components/games/sentence-game";
+import { SpellingGame } from "@/components/games/spelling-game";
 import { TypingGame } from "@/components/games/typing-game";
+import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/games/word-search-game";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
@@ -29,21 +33,29 @@ interface Prepared {
   matchLeft: GameQuestion[];
   matchRight: GameQuestion[];
   tiles: Tile[];
+  sentences: SentenceItem[];
+  wordSearch: WordSearch;
 }
 
-function prepare(questions: GameQuestion[]): Prepared {
+function prepare(questions: GameQuestion[], gameType: GameType): Prepared {
   const tiles: Tile[] = shuffle(
     questions.flatMap((q) => [
       { key: q.card_id + ":w", cardId: q.card_id, text: q.prompt },
       { key: q.card_id + ":t", cardId: q.card_id, text: q.answer },
     ])
   );
+  const sentences: SentenceItem[] = questions.map((q) => {
+    const words = q.answer.replace(/[.!?]$/, "").split(/\s+/);
+    return { cardId: q.card_id, prompt: q.prompt, words, scrambled: shuffle(words.map((w, i) => ({ w, i }))) };
+  });
   return {
     questions,
     choice: questions.map((question) => ({ question, options: buildOptions(question) })),
     matchLeft: shuffle(questions),
     matchRight: shuffle(questions),
     tiles,
+    sentences,
+    wordSearch: gameType === "word_search" ? buildWordSearch(questions) : { size: 0, grid: [], targets: [] },
   };
 }
 
@@ -81,7 +93,7 @@ export function GamePlayer({
     gamesApi
       .session(gameType)
       .then((session) => {
-        setPrepared(prepare(session.questions));
+        setPrepared(prepare(session.questions, gameType));
         setTotal(session.questions.length);
         setScore(0);
         setPhase("playing");
@@ -173,8 +185,22 @@ export function GamePlayer({
         <MatchGame {...shared} left={prepared.matchLeft} right={prepared.matchRight} />
       ) : gameType === "memory" ? (
         <MemoryGame {...shared} tiles={prepared.tiles} pairCount={prepared.questions.length} />
+      ) : gameType === "hangman" ? (
+        <HangmanGame {...shared} questions={prepared.questions} />
+      ) : gameType === "spelling_bee" ? (
+        <SpellingGame {...shared} questions={prepared.questions} />
+      ) : gameType === "sentence_builder" ? (
+        <SentenceGame {...shared} items={prepared.sentences} />
+      ) : gameType === "word_search" ? (
+        <WordSearchGame {...shared} search={prepared.wordSearch} />
       ) : (
-        <ChoiceGame {...shared} items={prepared.choice} isAudio={gameType === "audio_guess"} fill={gameType === "fill_blank"} />
+        <ChoiceGame
+          {...shared}
+          items={prepared.choice}
+          isAudio={gameType === "audio_guess"}
+          fill={gameType === "fill_blank"}
+          boss={gameType === "boss_battle"}
+        />
       )}
     </div>
   );

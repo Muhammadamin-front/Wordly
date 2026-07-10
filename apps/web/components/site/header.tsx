@@ -34,6 +34,9 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
               <Link href={`/${lang}/leaderboard`} className="transition-colors hover:text-ink" title="League">
                 🏆
               </Link>
+              <Link href={`/${lang}/friends`} className="transition-colors hover:text-ink" title="Friends">
+                🤝
+              </Link>
               <Link href={`/${lang}/statistics`} className="transition-colors hover:text-ink" title="Stats">
                 📊
               </Link>

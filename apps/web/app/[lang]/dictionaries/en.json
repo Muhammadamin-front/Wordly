@@ -346,7 +346,33 @@
     "memory": {
       "name": "Memory",
       "desc": "Remember the hidden pairs"
-    }
+    },
+    "boss_battle": {
+      "name": "Boss Battle",
+      "desc": "Defeat the boss — every wrong answer heals it"
+    },
+    "hangman": {
+      "name": "Hangman",
+      "desc": "Guess letters to solve the word"
+    },
+    "spelling_bee": {
+      "name": "Spelling Bee",
+      "desc": "Hear the word and spell it correctly"
+    },
+    "sentence_builder": {
+      "name": "Sentence Builder",
+      "desc": "Put the words in the right order"
+    },
+    "word_search": {
+      "name": "Word Search",
+      "desc": "Find the words hidden in the grid"
+    },
+    "guess": "Guess",
+    "yourWord": "Your answer",
+    "bossHp": "Boss HP",
+    "buildSentence": "Build the sentence",
+    "clear": "Clear",
+    "found": "found"
   },
   "stats": {
     "title": "Statistics",
@@ -516,5 +542,47 @@
     "premium": "Premium",
     "joined": "Joined",
     "email": "Email"
+  },
+  "social": {
+    "friends": "Friends",
+    "title": "Friends",
+    "friendCode": "Your friend code",
+    "addFriend": "Add friend",
+    "enterCode": "Enter a friend code",
+    "send": "Send",
+    "pending": "Pending",
+    "accept": "Accept",
+    "decline": "Decline",
+    "noFriends": "No friends yet. Share your code!",
+    "leaderboard": "Friends leaderboard",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "you": "You",
+    "level": "level",
+    "invalidCode": "Invalid code",
+    "sent": "Request sent",
+    "remove": "Remove",
+    "multiplayer": "Multiplayer",
+    "profile": "Profile",
+    "achievements": "achievements",
+    "shareProfile": "Share profile"
+  },
+  "mp": {
+    "title": "Multiplayer Quiz",
+    "create": "Create room",
+    "join": "Join",
+    "roomCode": "Room code",
+    "waiting": "Waiting for players...",
+    "players": "Players",
+    "start": "Start",
+    "level": "Level",
+    "youAreHost": "You are host",
+    "next": "Next",
+    "finalScore": "Final score",
+    "playAgain": "Again",
+    "connecting": "Connecting...",
+    "notEnoughWords": "Not enough words",
+    "correct": "Correct!",
+    "shareRoom": "Share the code"
   }
 }
