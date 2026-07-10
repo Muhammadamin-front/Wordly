@@ -1,6 +1,8 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import select
 
+from app.core.config import get_settings
+from app.core.rate_limit import parse_rule
 from app.core.security import decode_access_token
 from app.db.session import get_session_factory
 from app.models.user import Profile, User
@@ -46,6 +48,16 @@ async def quiz_socket(websocket: WebSocket):
             action = data.get("action")
 
             if action == "create":
+                settings = get_settings()
+                if settings.RATE_LIMIT_ENABLED:
+                    limit, window = parse_rule(settings.RATE_LIMIT_MULTIPLAYER)
+                    ip = websocket.client.host if websocket.client else "unknown"
+                    allowed, _ = await websocket.app.state.rate_limit_storage.hit(
+                        "mp_create:{}".format(ip), limit, window
+                    )
+                    if not allowed:
+                        await send({"type": "error", "error": "rate_limited"})
+                        continue
                 room = manager.create(user_id)
                 room.add_player(player)
                 await send({"type": "created", **room.lobby_state()})

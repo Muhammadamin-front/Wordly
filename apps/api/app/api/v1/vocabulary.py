@@ -1,11 +1,13 @@
 from typing import List, Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_admin
+from app.core.cache import cached_response
+from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.vocabulary import Category, Word
 from app.schemas.auth import MessageOut
@@ -37,14 +39,24 @@ def to_list_item(word: Word) -> WordListItem:
     return item
 
 
+# Public corpus reads are cached (published data only, no per-user content) with
+# Cache-Control + ETag/304; staleness after an admin edit is bounded by the TTL.
+
+
 @router.get("/categories", response_model=List[CategoryOut])
-async def list_categories(db: AsyncSession = Depends(get_db)):
-    rows = await db.scalars(select(Category).order_by(Category.sort_order, Category.slug))
-    return [CategoryOut.model_validate(c) for c in rows]
+async def list_categories(request: Request, db: AsyncSession = Depends(get_db)):
+    async def produce():
+        rows = await db.scalars(select(Category).order_by(Category.sort_order, Category.slug))
+        return [CategoryOut.model_validate(c) for c in rows]
+
+    return await cached_response(
+        request, "categories", get_settings().CACHE_TTL_CATEGORIES, produce
+    )
 
 
 @router.get("/words", response_model=WordPage)
 async def browse_words(
+    request: Request,
     page: int = Query(1, ge=1),
     page_size: int = Query(24, ge=1, le=100),
     level: Optional[str] = Query(None, pattern=CEFR_QUERY_PATTERN),
@@ -52,23 +64,32 @@ async def browse_words(
     q: Optional[str] = Query(None, max_length=80),
     db: AsyncSession = Depends(get_db),
 ):
-    words, total = await vocab_service.list_words(
-        db, page=page, page_size=page_size, level=level, category_slug=category, q=q,
-        status="published",
-    )
-    return WordPage(
-        items=[to_list_item(w) for w in words], total=total, page=page, page_size=page_size
-    )
+    async def produce():
+        words, total = await vocab_service.list_words(
+            db, page=page, page_size=page_size, level=level, category_slug=category, q=q,
+            status="published",
+        )
+        return WordPage(
+            items=[to_list_item(w) for w in words], total=total, page=page, page_size=page_size
+        )
+
+    key = "words:{}:{}:{}:{}:{}".format(page, page_size, level or "", category or "", q or "")
+    return await cached_response(request, key, get_settings().CACHE_TTL_WORDS, produce)
 
 
 @router.get("/words/{slug}", response_model=WordOut)
-async def word_detail(slug: str, db: AsyncSession = Depends(get_db)):
-    word = await db.scalar(
-        select(Word).where(Word.slug == slug, Word.status == "published")
+async def word_detail(slug: str, request: Request, db: AsyncSession = Depends(get_db)):
+    async def produce():
+        word = await db.scalar(
+            select(Word).where(Word.slug == slug, Word.status == "published")
+        )
+        if word is None:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found")
+        return WordOut.model_validate(word)
+
+    return await cached_response(
+        request, "word:{}".format(slug), get_settings().CACHE_TTL_WORD_DETAIL, produce
     )
-    if word is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found")
-    return WordOut.model_validate(word)
 
 
 # --- Admin CMS -------------------------------------------------------------

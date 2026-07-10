@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.core.config import get_settings
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.ai import AiReport
 from app.models.flashcards import Card
@@ -30,7 +31,11 @@ from app.schemas.ai import (
 from app.services import ai_quota
 from app.services.ai_client import AiClient, AiError, get_ai_client
 
-router = APIRouter(prefix="/ai", tags=["ai"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    prefix="/ai",
+    tags=["ai"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("ai"))],
+)
 
 LANGUAGE_NAMES = {"uz": "Uzbek (o'zbek tilida)", "ru": "Russian (на русском)", "en": "English"}
 

@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.social import (
@@ -16,7 +17,10 @@ from app.schemas.social import (
 )
 from app.services import referrals, social
 
-router = APIRouter(tags=["social"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    tags=["social"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("social"))],
+)
 
 
 @router.get("/friends", response_model=list[FriendOut])

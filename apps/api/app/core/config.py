@@ -61,7 +61,22 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "10/60"
     RATE_LIMIT_REGISTER: str = "5/60"
     RATE_LIMIT_FORGOT_PASSWORD: str = "3/60"
+    RATE_LIMIT_AI: str = "20/60"  # AI calls are expensive (tokens + latency)
+    RATE_LIMIT_GAMES: str = "90/60"  # a session + rapid answers
+    RATE_LIMIT_SOCIAL: str = "30/60"  # friend requests / profile lookups
+    RATE_LIMIT_MULTIPLAYER: str = "20/60"  # room creation
     RATE_LIMIT_DEFAULT: str = "120/60"
+
+    # Response cache (public corpus reads). TTLs in seconds.
+    CACHE_ENABLED: bool = True
+    CACHE_TTL_CATEGORIES: int = 300
+    CACHE_TTL_WORDS: int = 60
+    CACHE_TTL_WORD_DETAIL: int = 120
+
+    # Hardening & observability
+    MAX_REQUEST_BYTES: int = 5 * 1024 * 1024  # reject oversized bodies (413)
+    HSTS_MAX_AGE: int = 63072000  # 2 years; sent only in production (HTTPS)
+    SLOW_REQUEST_MS: int = 1000  # log a warning above this
 
     @property
     def cors_origins(self) -> List[str]:

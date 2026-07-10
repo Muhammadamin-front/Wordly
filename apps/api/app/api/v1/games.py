@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.flashcards import Card
 from app.models.user import User
@@ -18,7 +19,11 @@ from app.schemas.games import (
 from app.services import games as games_service
 from app.services.review import record_review
 
-router = APIRouter(prefix="/games", tags=["games"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    prefix="/games",
+    tags=["games"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("games"))],
+)
 
 # Fast correct answers earn "good"; slow-but-correct earn "hard"; wrong earns "again".
 FAST_ANSWER_MS = 6000

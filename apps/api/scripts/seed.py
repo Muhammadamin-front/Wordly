@@ -1,9 +1,10 @@
-"""Seed categories and the A1 starter corpus.
+"""Seed categories and the A1 + A2 starter corpus.
 
 Usage:  .venv/bin/python -m scripts.seed  (from apps/api, respects DATABASE_URL)
 
 Idempotent: categories upsert by slug; words upsert by (headword, pos) via the
-same CSV importer the admin panel uses.
+same CSV importer the admin panel uses. Add later CEFR levels by dropping a new
+CSV in data/ and appending it to CORPUS_FILES.
 """
 import asyncio
 import pathlib
@@ -37,7 +38,8 @@ CATEGORIES = [
     ("places", "Places in town", "Shahardagi joylar", "Места в городе", "🏙"),
 ]
 
-CSV_PATH = pathlib.Path(__file__).parent / "data" / "a1_corpus.csv"
+DATA_DIR = pathlib.Path(__file__).parent / "data"
+CORPUS_FILES = ["a1_corpus.csv", "a2_corpus.csv"]
 
 
 async def main() -> None:
@@ -57,14 +59,20 @@ async def main() -> None:
                 existing.emoji, existing.sort_order = emoji, sort_order
         await db.commit()
 
-        report = await import_csv(db, CSV_PATH.read_text(encoding="utf-8"), default_status="published")
-        await db.commit()
         print("categories: {}".format(len(CATEGORIES)))
-        print("words created: {}, updated: {}".format(report.created, report.updated))
-        for error in report.errors:
-            print("ERROR", error)
-        if report.errors:
-            raise SystemExit(1)
+        total_created = total_updated = 0
+        for filename in CORPUS_FILES:
+            csv_text = (DATA_DIR / filename).read_text(encoding="utf-8")
+            report = await import_csv(db, csv_text, default_status="published")
+            await db.commit()
+            total_created += report.created
+            total_updated += report.updated
+            print("{}: created {}, updated {}".format(filename, report.created, report.updated))
+            for error in report.errors:
+                print("ERROR", filename, error)
+            if report.errors:
+                raise SystemExit(1)
+        print("total words created: {}, updated: {}".format(total_created, total_updated))
 
 
 if __name__ == "__main__":
