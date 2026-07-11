@@ -224,12 +224,24 @@ async def build_quiz(db: AsyncSession, mode: str, cefr_level: str, count: int) -
     if mode == "pairs":
         return await build_pairs_quiz(db, cefr_level, count)
     if mode == "mixed":
+        # Interleave sources so every available category is represented in the
+        # final `count` questions (a plain shuffle-and-truncate could drop a
+        # whole source by chance). Each source is capped at ~1/3 of the round.
         per_part = max(2, count // 3)
-        combined = (
-            grammar_questions(cefr_level, per_part)
-            + await build_pairs_quiz(db, cefr_level, per_part)
-            + await build_public_quiz(db, cefr_level, count)
-        )
+        buckets = [
+            grammar_questions(cefr_level, per_part),
+            await build_pairs_quiz(db, cefr_level, per_part),
+            await build_public_quiz(db, cefr_level, count),
+        ]
+        for bucket in buckets:
+            random.shuffle(bucket)
+        combined: List[dict] = []
+        while len(combined) < count and any(buckets):
+            for bucket in buckets:
+                if bucket:
+                    combined.append(bucket.pop())
+                    if len(combined) >= count:
+                        break
         random.shuffle(combined)
         return combined[:count]
     return await build_public_quiz(db, cefr_level, count)
