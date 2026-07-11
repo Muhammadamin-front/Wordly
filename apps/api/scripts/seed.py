@@ -54,6 +54,7 @@ CORPUS_FILES = [
     "ielts_301_400.csv",
     "ielts_401_500.csv",
     "ielts_501_600.csv",
+    "ielts_601_700.csv",
 ]
 
 

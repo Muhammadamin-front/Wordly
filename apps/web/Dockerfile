@@ -34,6 +34,7 @@ RUN addgroup -S app && adduser -S app -G app
 # Standalone output keeps the monorepo layout: server.js under apps/web/.
 COPY --from=build --chown=app:app /app/apps/web/.next/standalone ./
 COPY --from=build --chown=app:app /app/apps/web/.next/static ./apps/web/.next/static
+COPY --from=build --chown=app:app /app/apps/web/public ./apps/web/public
 USER app
 EXPOSE 3000
 CMD ["node", "apps/web/server.js"]

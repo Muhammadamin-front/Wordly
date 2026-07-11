@@ -1,0 +1,27 @@
+import type { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "Words.uz — Ingliz tili so'z boyligi",
+    short_name: "Words.uz",
+    description:
+      "Inglizcha so'zlarni o'zbek tilida o'rganing: flashcardlar, o'yinlar, IELTS lug'ati.",
+    id: "/uz",
+    start_url: "/uz",
+    display: "standalone",
+    orientation: "portrait",
+    background_color: "#f7f6f3",
+    theme_color: "#3f3fb4",
+    categories: ["education"],
+    icons: [
+      { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+      {
+        src: "/icons/icon-512-maskable.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+  };
+}

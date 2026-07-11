@@ -1,11 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import "../globals.css";
 
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { PwaRegister } from "@/components/site/pwa-register";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#3f3fb4" },
+    { media: "(prefers-color-scheme: dark)", color: "#191927" },
+  ],
+};
 
 // latin-ext covers Uzbek Latin (oʻ, gʻ); cyrillic covers Russian.
 const manrope = Manrope({
@@ -31,6 +39,14 @@ export async function generateMetadata({
       template: `%s · ${dict.common.appName}`,
     },
     description: dict.landing.heroSubtitle,
+    appleWebApp: {
+      capable: true,
+      title: dict.common.appName,
+      statusBarStyle: "default",
+    },
+    icons: {
+      apple: "/icons/apple-touch-icon.png",
+    },
   };
 }
 
@@ -54,6 +70,7 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-dvh flex-col">
         <AuthProvider>{children}</AuthProvider>
+        <PwaRegister />
       </body>
     </html>
   );
