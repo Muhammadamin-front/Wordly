@@ -39,9 +39,17 @@ CATEGORIES = [
     ("actions", "Common actions", "Harakatlar", "Действия", "⚡"),
     ("places", "Places in town", "Shahardagi joylar", "Места в городе", "🏙"),
     ("ielts", "IELTS Academic", "IELTS so'zlari", "Слова IELTS", "🎓"),
+    ("phrasal", "Phrasal Verbs", "Frazeologik fe'llar", "Фразовые глаголы", "🔗"),
+    ("idioms", "Idioms", "Idiomalar", "Идиомы", "💬"),
 ]
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
+# Extra example sentences: one row per example (headword,pos,example_en,example_uz),
+# appended to the word's first sense when not already present. Idempotent.
+EXAMPLE_FILES = [
+    "examples_a1_batch1.csv",
+]
+
 CORPUS_FILES = [
     "a1_corpus.csv",
     "a2_corpus.csv",
@@ -55,6 +63,7 @@ CORPUS_FILES = [
     "ielts_401_500.csv",
     "ielts_501_600.csv",
     "ielts_601_700.csv",
+    "phrasal_idioms_starter.csv",
 ]
 
 
@@ -89,6 +98,39 @@ async def main() -> None:
             if report.errors:
                 raise SystemExit(1)
         print("total words created: {}, updated: {}".format(total_created, total_updated))
+
+        # Extra examples — append when the sentence isn't there yet.
+        import csv as _csv
+        from app.models.vocabulary import Word, WordExample  # noqa: E402
+        ex_added = ex_skipped = 0
+        for filename in EXAMPLE_FILES:
+            path = DATA_DIR / filename
+            if not path.exists():
+                continue
+            for row in _csv.DictReader(path.open(encoding="utf-8")):
+                word = await db.scalar(
+                    select(Word).where(
+                        Word.headword == row["headword"], Word.pos == row["pos"]
+                    )
+                )
+                if word is None or not word.senses:
+                    ex_skipped += 1
+                    continue
+                sense = word.senses[0]
+                texts = {e.text_en.strip().lower() for e in sense.examples}
+                if row["example_en"].strip().lower() in texts:
+                    ex_skipped += 1
+                    continue
+                sense.examples.append(
+                    WordExample(
+                        example_order=len(sense.examples) + 1,
+                        text_en=row["example_en"].strip(),
+                        text_uz=(row.get("example_uz") or "").strip() or None,
+                    )
+                )
+                ex_added += 1
+            await db.commit()
+        print("extra examples: added {}, skipped {}".format(ex_added, ex_skipped))
 
         # Reading passages — upsert by slug, questions replaced wholesale.
         passages = json.loads((DATA_DIR / "reading_passages.json").read_text(encoding="utf-8"))

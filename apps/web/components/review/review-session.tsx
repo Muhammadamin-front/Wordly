@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut, type Queue, type Rating } from "@/lib/flashcards";
+import { speak } from "@/lib/games";
 import { notifyStatsChanged, type Reward } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -74,6 +75,13 @@ export function ReviewSession({
   const flip = useCallback(() => {
     setPhase((current) => (current === "front" ? "back" : current));
   }, []);
+
+  // Hear every word as its card appears — pronunciation is part of learning.
+  useEffect(() => {
+    if (phase !== "front") return;
+    const headword = queue?.cards[index]?.word?.headword;
+    if (headword) speak(headword);
+  }, [phase, index, queue]);
 
   const announce = useCallback(
     (reward: Reward) => {
@@ -216,7 +224,7 @@ export function ReviewSession({
   const isBack = phase === "back";
   const word = card.word;
   const sense = word?.senses[0];
-  const example = sense?.examples[0];
+  const examples = sense?.examples.slice(0, 3) ?? [];
   const progress = queue.cards.length ? (index / queue.cards.length) * 100 : 0;
 
   return (
@@ -270,7 +278,20 @@ export function ReviewSession({
       >
         {word ? (
           <>
-            <p className="text-4xl font-extrabold tracking-tight text-ink">{word.headword}</p>
+            <p className="flex items-center justify-center gap-3 text-4xl font-extrabold tracking-tight text-ink">
+              {word.headword}
+              <button
+                type="button"
+                aria-label="🔊"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  speak(word.headword);
+                }}
+                className="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-600/10 text-xl text-brand-600 transition-transform hover:scale-110 dark:text-brand-300"
+              >
+                🔊
+              </button>
+            </p>
             <p className="mt-2 text-ink-soft">
               <em>{word.pos}</em>
               {word.ipa && <span className="ml-2 font-mono text-sm">/{word.ipa}/</span>}
@@ -291,12 +312,29 @@ export function ReviewSession({
                   </span>
                 </p>
                 <p className="mt-3 text-center text-sm text-ink-soft">{sense.definition_en}</p>
-                {example && (
-                  <div className="mt-4 rounded-lg bg-page px-4 py-3">
-                    <p className="text-sm font-medium text-ink">{example.text_en}</p>
-                    {example.text_uz && (
-                      <p className="mt-0.5 text-xs text-ink-soft">{example.text_uz}</p>
-                    )}
+                {examples.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {examples.map((ex) => (
+                      <div key={ex.text_en} className="flex items-start gap-2 rounded-lg bg-page px-4 py-3">
+                        <button
+                          type="button"
+                          aria-label="🔊"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            speak(ex.text_en);
+                          }}
+                          className="mt-0.5 shrink-0 text-sm opacity-70 transition-opacity hover:opacity-100"
+                        >
+                          🔊
+                        </button>
+                        <div>
+                          <p className="text-sm font-medium text-ink">{ex.text_en}</p>
+                          {ex.text_uz && (
+                            <p className="mt-0.5 text-xs text-ink-soft">{ex.text_uz}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </>

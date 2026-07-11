@@ -35,8 +35,8 @@ export const SHELVES: ShelfMeta[] = [
   { slug: "ielts", key: "ielts", category: "ielts", gradient: "from-orange-500/20 to-orange-500/5", bar: "bg-orange-500", text: "text-orange-600 dark:text-orange-400", ring: "ring-orange-500/30" },
   { slug: "toefl", key: "toefl", gradient: "from-red-500/20 to-red-500/5", bar: "bg-red-500", text: "text-red-600 dark:text-red-400", ring: "ring-red-500/30", soon: true },
   { slug: "sat", key: "sat", gradient: "from-slate-500/20 to-slate-500/5", bar: "bg-slate-600", text: "text-slate-600 dark:text-slate-300", ring: "ring-slate-500/30", soon: true },
-  { slug: "phrasal", key: "phrasal", gradient: "from-yellow-500/20 to-yellow-500/5", bar: "bg-yellow-500", text: "text-yellow-600 dark:text-yellow-400", ring: "ring-yellow-500/30", soon: true },
-  { slug: "idioms", key: "idioms", gradient: "from-amber-600/20 to-amber-600/5", bar: "bg-amber-600", text: "text-amber-700 dark:text-amber-400", ring: "ring-amber-600/30", soon: true },
+  { slug: "phrasal", key: "phrasal", category: "phrasal", gradient: "from-yellow-500/20 to-yellow-500/5", bar: "bg-yellow-500", text: "text-yellow-600 dark:text-yellow-400", ring: "ring-yellow-500/30" },
+  { slug: "idioms", key: "idioms", category: "idioms", gradient: "from-amber-600/20 to-amber-600/5", bar: "bg-amber-600", text: "text-amber-700 dark:text-amber-400", ring: "ring-amber-600/30" },
   { slug: "business", key: "business", gradient: "from-cyan-500/20 to-cyan-500/5", bar: "bg-cyan-500", text: "text-cyan-600 dark:text-cyan-400", ring: "ring-cyan-500/30", soon: true },
 ];
 
