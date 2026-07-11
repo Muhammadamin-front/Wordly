@@ -247,17 +247,20 @@ async def add_cards_by_level(
 ):
     """Bulk-start learning: adds the next `limit` published words of a level
     (by frequency rank) that the user doesn't have yet."""
+    if payload.cefr_level is None and payload.category_slug is None:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Provide cefr_level or category_slug",
+        )
     already = select(Card.word_id).where(Card.user_id == user.id, Card.word_id.isnot(None))
     query = (
         select(Word.id)
-        .where(
-            Word.status == "published",
-            Word.cefr_level == payload.cefr_level,
-            Word.id.not_in(already),
-        )
+        .where(Word.status == "published", Word.id.not_in(already))
         .order_by(Word.frequency_rank.asc().nulls_last(), Word.headword)
         .limit(payload.limit)
     )
+    if payload.cefr_level is not None:
+        query = query.where(Word.cefr_level == payload.cefr_level)
     if payload.category_slug:
         query = query.join(Category, Word.category_id == Category.id).where(
             Category.slug == payload.category_slug
@@ -267,13 +270,14 @@ async def add_cards_by_level(
         db.add(Card(user_id=user.id, word_id=word_id))
     await db.commit()
 
-    total_available = (
-        await db.scalar(
-            select(func.count(Word.id)).where(
-                Word.status == "published", Word.cefr_level == payload.cefr_level
-            )
-        )
-    ) or 0
+    availability = select(func.count(Word.id)).where(Word.status == "published")
+    if payload.cefr_level is not None:
+        availability = availability.where(Word.cefr_level == payload.cefr_level)
+    if payload.category_slug:
+        availability = availability.join(
+            Category, Word.category_id == Category.id
+        ).where(Category.slug == payload.category_slug)
+    total_available = (await db.scalar(availability)) or 0
     total_added_before = total_available - len(word_ids)
     return AddByLevelResult(added=len(word_ids), already_added=max(0, total_added_before))
 

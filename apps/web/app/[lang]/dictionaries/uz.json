@@ -169,29 +169,6 @@
     "notePlaceholder": "O'zingizga eslatma yozing...",
     "progress": "Jarayon"
   },
-  "decks": {
-    "title": "Kartalar to'plami",
-    "mainDeck": "Asosiy to'plam",
-    "mainDeckDesc": "CEFR kutubxonasidan qo'shilgan so'zlar",
-    "newDeck": "Yangi to'plam",
-    "deckName": "To'plam nomi",
-    "deckDesc": "Izoh (ixtiyoriy)",
-    "createDeck": "Yaratish",
-    "cards": "karta",
-    "due": "navbatda",
-    "startReview": "Takrorlashni boshlash",
-    "importCsv": "CSV/Quizlet import",
-    "importHint": "Ikki ustun: old tomoni, orqa tomoni. Quizlet va Anki eksportlari mos keladi.",
-    "exportCsv": "Eksport",
-    "deleteDeck": "O'chirish",
-    "deleteConfirm": "To'plam va undagi barcha kartalar o'chiriladi. Davom etasizmi?",
-    "addByLevel": "Darajadan so'z qo'shish",
-    "addByLevelHint": "chastota bo'yicha eng muhim so'zlar",
-    "addButton": "Qo'shish",
-    "addedResult": "ta yangi so'z qo'shildi",
-    "imported": "yaratildi",
-    "skipped": "takrorlangani o'tkazildi"
-  },
   "gam": {
     "streak": "kunlik seriya",
     "day": "kun",
@@ -630,5 +607,91 @@
       "desc": "Darajangizga mos o'nta tezkor grammatika savoli."
     },
     "tryAgain": "Yangi tur"
+  },
+  "library": {
+    "title": "So'z boyligi kutubxonasi",
+    "subtitle": "Darajani tanlang va eng muhim inglizcha so'zlarni o'rganishni boshlang.",
+    "words": "so'z",
+    "learned": "o'rganildi",
+    "continue": "Davom etish",
+    "start": "Boshlash",
+    "soon": "Tez kunda",
+    "collections": "Sizning to'plamlaringiz",
+    "collectionsDesc": "Shaxsiy to'plamlar — Quizlet yoki Anki'dan import qiling yoki o'zingiz tuzing.",
+    "newCollection": "Yangi to'plam yaratish",
+    "cards": "karta",
+    "due": "navbatda",
+    "review": "Takrorlash",
+    "importCsv": "CSV import",
+    "exportCsv": "CSV eksport",
+    "delete": "O'chirish",
+    "deleteConfirm": "Bu to'plam va undagi barcha kartalar o'chirilsinmi?",
+    "deckName": "To'plam nomi",
+    "deckDesc": "Izoh (ixtiyoriy)",
+    "create": "Yaratish",
+    "imported": "import qilindi",
+    "skipped": "o'tkazib yuborildi",
+    "back": "Kutubxona",
+    "study": "O'rganish",
+    "learn": "Ko'rish",
+    "quiz": "Viktorina",
+    "writing": "Yozish",
+    "listening": "Tinglash",
+    "searchPlaceholder": "So'z qidirish…",
+    "addWord": "Kartalarimga qo'shish",
+    "addedWord": "Qo'shildi",
+    "listen": "Tinglash",
+    "loadMore": "Yana yuklash",
+    "noResults": "Hech narsa topilmadi",
+    "shelves": {
+      "a1": {
+        "name": "A1 · Boshlang'ich",
+        "desc": "Ilk zarur inglizcha so'zlaringiz."
+      },
+      "a2": {
+        "name": "A2 · Elementar",
+        "desc": "Kundalik hayot uchun so'zlar."
+      },
+      "b1": {
+        "name": "B1 · O'rta",
+        "desc": "Erkin suhbat uchun so'zlar."
+      },
+      "b2": {
+        "name": "B2 · O'rtadan yuqori",
+        "desc": "Ravon nutq uchun boy lug'at."
+      },
+      "c1": {
+        "name": "C1 · Ilg'or",
+        "desc": "Akademik va professional ingliz tili."
+      },
+      "c2": {
+        "name": "C2 · Mukammal",
+        "desc": "Ona tili darajasidagi aniqlik."
+      },
+      "ielts": {
+        "name": "IELTS Akademik",
+        "desc": "Har bir IELTS nomzodiga kerak so'zlar."
+      },
+      "toefl": {
+        "name": "TOEFL",
+        "desc": "Kampus va akademik lug'at."
+      },
+      "sat": {
+        "name": "SAT",
+        "desc": "Yuqori ball uchun lug'at."
+      },
+      "phrasal": {
+        "name": "Frazeologik fe'llar",
+        "desc": "Get up, carry on, figure out…"
+      },
+      "idioms": {
+        "name": "Idiomalar",
+        "desc": "Ona tilidagidek gapiring."
+      },
+      "business": {
+        "name": "Biznes ingliz tili",
+        "desc": "Uchrashuvlar, xatlar, muzokaralar."
+      }
+    }
   }
 }

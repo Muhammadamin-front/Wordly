@@ -64,12 +64,15 @@ export const flashcardsApi = {
   updateCard: (cardId: string, body: { memory_note?: string; is_favorite?: boolean }) =>
     apiFetch<CardOut>(`/cards/${cardId}`, { method: "PATCH", body, auth: true }),
 
-  addByLevel: (level: string, limit = 20) =>
+  addByLevel: (opts: { level?: string; category?: string; limit?: number }) =>
     apiFetch<{ added: number; already_added: number }>("/cards/add-by-level", {
       method: "POST",
-      body: { cefr_level: level, limit },
+      body: { cefr_level: opts.level, category_slug: opts.category, limit: opts.limit ?? 20 },
       auth: true,
     }),
+
+  createCard: (wordId: string) =>
+    apiFetch<CardOut>("/cards", { method: "POST", body: { word_id: wordId }, auth: true }),
 };
 
 export async function importDeckCsv(deckId: string, file: File): Promise<DeckImportReport> {

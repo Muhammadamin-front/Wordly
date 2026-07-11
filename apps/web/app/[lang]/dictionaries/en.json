@@ -169,29 +169,6 @@
     "notePlaceholder": "Write a reminder for yourself...",
     "progress": "Progress"
   },
-  "decks": {
-    "title": "Card decks",
-    "mainDeck": "Main deck",
-    "mainDeckDesc": "Words added from the CEFR library",
-    "newDeck": "New deck",
-    "deckName": "Deck name",
-    "deckDesc": "Description (optional)",
-    "createDeck": "Create",
-    "cards": "cards",
-    "due": "due",
-    "startReview": "Start review",
-    "importCsv": "Import CSV/Quizlet",
-    "importHint": "Two columns: front, back. Quizlet and Anki exports work.",
-    "exportCsv": "Export",
-    "deleteDeck": "Delete",
-    "deleteConfirm": "The deck and all its cards will be deleted. Continue?",
-    "addByLevel": "Add words by level",
-    "addByLevelHint": "the most important words by frequency",
-    "addButton": "Add",
-    "addedResult": "new words added",
-    "imported": "created",
-    "skipped": "duplicates skipped"
-  },
   "gam": {
     "streak": "day streak",
     "day": "day",
@@ -630,5 +607,91 @@
       "desc": "Ten quick grammar questions at your level."
     },
     "tryAgain": "New round"
+  },
+  "library": {
+    "title": "Vocabulary Library",
+    "subtitle": "Choose a vocabulary level and start learning the most important English words.",
+    "words": "words",
+    "learned": "learned",
+    "continue": "Continue",
+    "start": "Start",
+    "soon": "Coming soon",
+    "collections": "Your Collections",
+    "collectionsDesc": "Personal decks — import from Quizlet or Anki, or build your own.",
+    "newCollection": "Create new collection",
+    "cards": "cards",
+    "due": "due",
+    "review": "Review",
+    "importCsv": "Import CSV",
+    "exportCsv": "Export CSV",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this collection and all its cards?",
+    "deckName": "Collection name",
+    "deckDesc": "Description (optional)",
+    "create": "Create",
+    "imported": "imported",
+    "skipped": "skipped",
+    "back": "Library",
+    "study": "Study",
+    "learn": "Browse",
+    "quiz": "Quiz",
+    "writing": "Writing",
+    "listening": "Listening",
+    "searchPlaceholder": "Search words…",
+    "addWord": "Add to my cards",
+    "addedWord": "Added",
+    "listen": "Listen",
+    "loadMore": "Load more",
+    "noResults": "Nothing found",
+    "shelves": {
+      "a1": {
+        "name": "A1 · Beginner",
+        "desc": "Your first essential English words."
+      },
+      "a2": {
+        "name": "A2 · Elementary",
+        "desc": "Everyday words for daily life."
+      },
+      "b1": {
+        "name": "B1 · Intermediate",
+        "desc": "Words for confident conversation."
+      },
+      "b2": {
+        "name": "B2 · Upper-Intermediate",
+        "desc": "Rich vocabulary for fluent speech."
+      },
+      "c1": {
+        "name": "C1 · Advanced",
+        "desc": "Academic and professional English."
+      },
+      "c2": {
+        "name": "C2 · Mastery",
+        "desc": "Native-level precision."
+      },
+      "ielts": {
+        "name": "IELTS Academic",
+        "desc": "The words every IELTS candidate needs."
+      },
+      "toefl": {
+        "name": "TOEFL",
+        "desc": "Campus and academic vocabulary."
+      },
+      "sat": {
+        "name": "SAT",
+        "desc": "High-score verbal vocabulary."
+      },
+      "phrasal": {
+        "name": "Phrasal Verbs",
+        "desc": "Get up, carry on, figure out…"
+      },
+      "idioms": {
+        "name": "Idioms",
+        "desc": "Speak like a native."
+      },
+      "business": {
+        "name": "Business English",
+        "desc": "Meetings, emails, negotiations."
+      }
+    }
   }
 }

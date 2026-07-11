@@ -85,7 +85,8 @@ class ReviewResult(BaseModel):
 
 
 class AddByLevelRequest(BaseModel):
-    cefr_level: str = Field(pattern="^(A1|A2|B1|B2|C1|C2)$")
+    # At least one of cefr_level / category_slug (validated in the endpoint).
+    cefr_level: Optional[str] = Field(default=None, pattern="^(A1|A2|B1|B2|C1|C2)$")
     limit: int = Field(default=20, ge=1, le=100)
     category_slug: Optional[str] = None
 

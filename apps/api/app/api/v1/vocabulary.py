@@ -36,6 +36,8 @@ def to_list_item(word: Word) -> WordListItem:
     if word.senses:
         item.primary_translation_uz = word.senses[0].translation_uz
         item.primary_translation_ru = word.senses[0].translation_ru
+        if word.senses[0].examples:
+            item.primary_example_en = word.senses[0].examples[0].text_en
     return item
 
 
