@@ -43,6 +43,21 @@ class Settings(BaseSettings):
     def ai_enabled(self) -> bool:
         return bool(self.ANTHROPIC_API_KEY)
 
+    # Text-to-speech (ElevenLabs). Pronunciation audio is proxied through the
+    # API (the key never reaches the browser) and disk-cached, so each unique
+    # text costs ElevenLabs credits exactly once. Off gracefully when unset —
+    # the web client falls back to the browser's built-in voice.
+    ELEVENLABS_API_KEY: Optional[str] = None
+    ELEVENLABS_VOICE_ID: str = "pNInz6obpgDQGcFmaJgB"  # "Adam" — free-tier OK
+    ELEVENLABS_MODEL: str = "eleven_flash_v2_5"
+    TTS_CACHE_DIR: str = "./tts_cache"
+    TTS_MAX_TEXT_LENGTH: int = 200
+    RATE_LIMIT_TTS: str = "30/60"
+
+    @property
+    def tts_enabled(self) -> bool:
+        return bool(self.ELEVENLABS_API_KEY)
+
     # Payments (Uzbek rails). Merchant creds are injected in production; the
     # gateway endpoints run without them but reject unsigned/unauth'd calls.
     PAYME_MERCHANT_ID: Optional[str] = None

@@ -1,4 +1,4 @@
-import { apiFetch } from "@/lib/api";
+import { API_URL, apiFetch, getAccessToken } from "@/lib/api";
 import type { Reward } from "@/lib/gamification";
 
 export const GAME_TYPES = [
@@ -69,12 +69,44 @@ export function normalize(text: string): string {
   return text.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-/** Speak text using the browser's built-in TTS (no server audio needed). */
-export function speak(text: string) {
+// Natural voice via the API's ElevenLabs proxy (server-side cached). Audio for
+// a given text never changes, so blob URLs are memoized per session. When the
+// server has no TTS key (503) we stop asking and use the browser voice.
+const ttsCache = new Map<string, string>();
+let serverTts = true;
+let playing: HTMLAudioElement | null = null;
+
+async function playServerVoice(text: string): Promise<void> {
+  if (!serverTts) throw new Error("server tts off");
+  let url = ttsCache.get(text);
+  if (!url) {
+    const token = getAccessToken();
+    if (!token) throw new Error("not authenticated");
+    const response = await fetch(`${API_URL}/api/v1/tts?text=${encodeURIComponent(text)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) {
+      if (response.status === 503) serverTts = false;
+      throw new Error(`tts ${response.status}`);
+    }
+    url = URL.createObjectURL(await response.blob());
+    ttsCache.set(text, url);
+  }
+  playing?.pause();
+  playing = new Audio(url);
+  await playing.play();
+}
+
+function speakBrowser(text: string) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "en-US";
   utterance.rate = 0.9;
   window.speechSynthesis.speak(utterance);
+}
+
+/** Speak text — natural server voice when available, browser TTS otherwise. */
+export function speak(text: string) {
+  playServerVoice(text).catch(() => speakBrowser(text));
 }
