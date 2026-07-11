@@ -8,7 +8,7 @@
  *  - Page navigations: network-first with cache fallback, so recently visited
  *    pages open offline.
  */
-const VERSION = "words-v1";
+const VERSION = "wordly-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 

@@ -70,8 +70,8 @@ def verification_email_body(display_name: str, token: str, settings: Settings) -
     link = "{}/auth/verify-email?token={}".format(settings.FRONTEND_ORIGIN, token)
     return (
         "Assalomu alaykum, {}!\n\n"
-        "Words.uz hisobingizni tasdiqlash uchun havola / "
-        "Confirm your Words.uz account:\n{}\n".format(display_name, link)
+        "Wordly hisobingizni tasdiqlash uchun havola / "
+        "Confirm your Wordly account:\n{}\n".format(display_name, link)
     )
 
 
@@ -110,7 +110,7 @@ async def register(
     )
     await emailer.send(
         to=user.email,
-        subject="Words.uz — hisobni tasdiqlash / Verify your account",
+        subject="Wordly — hisobni tasdiqlash / Verify your account",
         body=verification_email_body(user.profile.display_name, verify_token, settings),
     )
     return await build_token_pair(db, user, request, response)
@@ -253,7 +253,7 @@ async def forgot_password(
         link = "{}/auth/reset-password?token={}".format(settings.FRONTEND_ORIGIN, token)
         await emailer.send(
             to=user.email,
-            subject="Words.uz — parolni tiklash / Reset your password",
+            subject="Wordly — parolni tiklash / Reset your password",
             body="Parolni tiklash havolasi / Reset link:\n{}\n".format(link),
         )
     # Identical response either way: no account enumeration.

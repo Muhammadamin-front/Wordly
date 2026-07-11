@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Words.uz — Ingliz tili so'z boyligi",
-    short_name: "Words.uz",
+    name: "Wordly — Ingliz tili so'z boyligi",
+    short_name: "Wordly",
     description:
       "Inglizcha so'zlarni o'zbek tilida o'rganing: flashcardlar, o'yinlar, IELTS lug'ati.",
     id: "/uz",
