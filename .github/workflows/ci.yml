@@ -72,6 +72,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # npm workspace `ci` skips platform-specific optional deps when the
+      # lockfile was written on another OS (npm/cli#4828) — reinstall the
+      # native bindings Tailwind v4 needs (same workaround as apps/web/Dockerfile).
+      - run: npm install --no-save lightningcss @tailwindcss/oxide
       - run: npx tsc --noEmit
         working-directory: apps/web
       - run: npm run lint --workspace web
