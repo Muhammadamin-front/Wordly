@@ -1,0 +1,80 @@
+# Deploying Words.uz
+
+The stack is two containers plus managed state: **api** (FastAPI/uvicorn),
+**web** (Next.js standalone), **Postgres 16**, **Redis 7**. A single VM with
+docker compose is enough to launch; the WebSocket multiplayer is in-process, so
+run **one API replica** until the Redis pub/sub backplane lands (see M9 notes).
+
+## 1. Environment
+
+Create a `.env` next to `docker-compose.yml` (compose reads it automatically):
+
+```bash
+ENVIRONMENT=production
+SECRET_KEY=<python -c "import secrets; print(secrets.token_urlsafe(48))">
+FRONTEND_ORIGIN=https://words.uz
+COOKIE_SECURE=true
+NEXT_PUBLIC_API_URL=https://api.words.uz   # baked into the web bundle at build
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
+GOOGLE_CLIENT_ID=...                        # same client id, API side
+ANTHROPIC_API_KEY=...                       # optional: AI tutor (off without it)
+PAYMENTS_SANDBOX=false                      # real Payme/Click creds via api env
+```
+
+Notes that will bite you if skipped:
+
+- `SECRET_KEY` — the API **refuses to boot** in production with the dev default.
+- `NEXT_PUBLIC_*` are **build-time** args: changing them means rebuilding the
+  web image, not just restarting it.
+- `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
+  cookies (`COOKIE_SECURE=true`).
+
+## 2. Build & run
+
+```bash
+docker compose build
+docker compose up -d
+docker compose exec api python -m scripts.seed   # idempotent: corpus + passages
+```
+
+The API container runs `alembic upgrade head` on boot, so schema upgrades are
+a `git pull && docker compose build api && docker compose up -d api`.
+
+## 3. TLS / reverse proxy
+
+Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
+
+- `api.words.uz` → `:8000` — **must** proxy WebSockets (`/api/v1/ws/quiz`);
+  for nginx set `proxy_set_header Upgrade $http_upgrade; Connection "upgrade"`.
+- `words.uz` → `:3000`.
+- Enforce a request-body limit at the proxy (the API's 5 MB cap is a backstop,
+  not a substitute).
+- Forward `X-Forwarded-For` — rate limiting keys on it.
+
+## 4. Health & observability
+
+- `GET /health` — liveness (cheap, no dependencies).
+- `GET /health/detail` — readiness: DB ping, version, uptime, and whether the
+  cache/rate-limit backend is `redis` (it must be, in production) — this is the
+  compose healthcheck.
+- Every response carries `X-Request-ID` (honoured if the proxy sends one) and
+  `X-Response-Time-ms`; slow requests (>1s) log at WARNING.
+- `python -m scripts.loadtest --base https://api.words.uz` for a read-path
+  smoke after deploy.
+
+## 5. Backups & state
+
+All durable state is in Postgres (`pgdata` volume): users, SRS history, corpus,
+payments. `review_logs` is append-only — size it accordingly. Redis holds only
+rate-limit counters and response cache — safe to lose. Multiplayer rooms are
+in-process memory — a deploy drops live quiz rooms (players just rejoin).
+
+```bash
+docker compose exec postgres pg_dump -U words words | gzip > backup-$(date +%F).sql.gz
+```
+
+## 6. CI
+
+`.github/workflows/ci.yml` gates every push/PR on three jobs: pytest on SQLite,
+pytest **plus migrations & seed on Postgres 16** (dialect drift is caught here,
+not on the VM), and web typecheck/lint/vitest/build.

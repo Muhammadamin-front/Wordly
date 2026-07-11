@@ -37,9 +37,12 @@ to customize (Google OAuth, Postgres, Redis).
 ## Production-parity stack
 
 ```bash
-docker compose up      # Postgres 16 + Redis 7 + API (migrations run on boot)
-npm run dev:web
+docker compose up --build   # Postgres 16 + Redis 7 + API + web (migrations run on boot)
+docker compose exec api python -m scripts.seed   # 609-word corpus + reading passages
 ```
+
+Web on `:3000`, API on `:8000`. If a local Postgres already uses 5432, prefix with
+`POSTGRES_PORT=5433`. See `docs/deploy.md` for a real deployment.
 
 ## Tests
 
@@ -66,3 +69,4 @@ npm run build:web
 | M9 | Games wave 2 (5 games) + social (friends, profiles, real-time multiplayer quiz) | ✅ `docs/milestones/M9.md` |
 | M10 | Performance & hardening (cache, rate limits, observability, load test) + A2 corpus | ✅ `docs/milestones/M10.md` |
 | M11 | Content scale-out (513-word corpus) + four skills: listening, reading, writing, speaking | ✅ `docs/milestones/M11.md` |
+| M12 | Production readiness: Postgres+Redis validated, web+api containers, CI matrix, deploy guide | ✅ `docs/milestones/M12.md` |

@@ -21,12 +21,24 @@ from app.main import app
 from app.services.emailer import ConsoleEmailer
 
 
+# Tests default to in-memory SQLite. Point TEST_DATABASE_URL at Postgres
+# (e.g. postgresql+asyncpg://words:words@localhost:5433/words_test) to run the
+# same suite against the production engine — CI does this in a second job.
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "sqlite+aiosqlite://")
+
+
 @pytest.fixture
 async def client() -> AsyncIterator[AsyncClient]:
-    engine = create_async_engine(
-        "sqlite+aiosqlite://", poolclass=StaticPool, connect_args={"check_same_thread": False}
-    )
+    if TEST_DATABASE_URL.startswith("sqlite"):
+        engine = create_async_engine(
+            TEST_DATABASE_URL, poolclass=StaticPool, connect_args={"check_same_thread": False}
+        )
+    else:
+        engine = create_async_engine(TEST_DATABASE_URL)
     async with engine.begin() as conn:
+        # On a shared server database, drop_all gives each test a clean slate
+        # (a no-op for the throwaway in-memory SQLite engine).
+        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     db_session._engine = engine

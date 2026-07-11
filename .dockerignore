@@ -1,0 +1,10 @@
+# Context for apps/web/Dockerfile (built from the repo root).
+node_modules
+apps/web/node_modules
+apps/web/.next
+apps/api
+docs
+.git
+.github
+*.md
+.env*
