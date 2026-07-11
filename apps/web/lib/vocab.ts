@@ -24,6 +24,7 @@ export interface WordListItem {
   primary_translation_uz: string | null;
   primary_translation_ru: string | null;
   primary_example_en?: string | null;
+  image_url?: string | null;
 }
 
 export interface WordPage {

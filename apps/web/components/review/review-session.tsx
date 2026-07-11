@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -305,6 +306,18 @@ export function ReviewSession({
           <div className="mt-6 border-t border-line pt-6 text-left">
             {word && sense ? (
               <>
+                {word.image_url && (
+                  <div className="mb-4 flex justify-center">
+                    <Image
+                      src={word.image_url}
+                      alt={word.headword}
+                      width={112}
+                      height={112}
+                      unoptimized
+                      className="size-28 rounded-2xl object-cover shadow-sm"
+                    />
+                  </div>
+                )}
                 <p className="text-center text-2xl font-bold text-ink">
                   🇺🇿 {sense.translation_uz}
                   <span className="ml-3 text-lg font-semibold text-ink-soft">

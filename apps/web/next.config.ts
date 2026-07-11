@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
   // apps/web (npm workspace scripts and the Dockerfile both do), so cwd is
   // the project directory.
   outputFileTracingRoot: path.join(process.cwd(), "../../"),
+  images: {
+    // Serper word thumbnails live on Google's stable thumbnail CDN.
+    remotePatterns: [{ protocol: "https", hostname: "**.gstatic.com" }],
+  },
 };
 
 export default nextConfig;

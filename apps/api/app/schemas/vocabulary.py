@@ -118,6 +118,7 @@ class WordListItem(BaseModel):
     primary_translation_uz: Optional[str] = None
     primary_translation_ru: Optional[str] = None
     primary_example_en: Optional[str] = None
+    image_url: Optional[str] = None
 
 
 class WordOut(BaseModel):

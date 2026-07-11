@@ -39,9 +39,14 @@ class Settings(BaseSettings):
     AI_FREE_DAILY_QUOTA: int = 5  # AI actions/day on the free tier
     AI_PREMIUM_DAILY_QUOTA: int = 200  # effectively unlimited for a human
 
+    # Fallback LLM (Google Gemini). When the primary provider runs out of
+    # credits or errors, the chain fails over silently (see services/ai_client).
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-flash-latest"
+
     @property
     def ai_enabled(self) -> bool:
-        return bool(self.ANTHROPIC_API_KEY)
+        return bool(self.ANTHROPIC_API_KEY or self.GEMINI_API_KEY)
 
     # Text-to-speech (ElevenLabs). Pronunciation audio is proxied through the
     # API (the key never reaches the browser) and disk-cached, so each unique
@@ -57,6 +62,10 @@ class Settings(BaseSettings):
     @property
     def tts_enabled(self) -> bool:
         return bool(self.ELEVENLABS_API_KEY)
+
+    # Serper (Google Images) — used by scripts/enrich_images.py to attach a
+    # representative picture to corpus words. Never exposed to clients.
+    SERPER_API_KEY: Optional[str] = None
 
     # Payments (Uzbek rails). Merchant creds are injected in production; the
     # gateway endpoints run without them but reject unsigned/unauth'd calls.

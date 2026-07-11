@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Check, Plus, Volume2 } from "lucide-react";
 
 import { speak } from "@/lib/games";
@@ -32,7 +33,17 @@ export function WordCard({
       className="flex h-full flex-col rounded-2xl border border-line/60 bg-card/70 p-5 shadow-sm backdrop-blur-sm transition-shadow hover:shadow-md"
     >
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
+        {word.image_url && (
+          <Image
+            src={word.image_url}
+            alt={word.headword}
+            width={56}
+            height={56}
+            unoptimized
+            className="size-14 shrink-0 rounded-xl object-cover"
+          />
+        )}
+        <div className="min-w-0 flex-1">
           <h3 className="truncate text-lg font-extrabold tracking-tight text-ink">
             {word.headword}
           </h3>

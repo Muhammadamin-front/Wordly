@@ -8,8 +8,11 @@ os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite://")
 os.environ.setdefault("RATE_LIMIT_REGISTER", "100/60")
 os.environ.setdefault("RATE_LIMIT_LOGIN", "100/60")
 os.environ.setdefault("RATE_LIMIT_FORGOT_PASSWORD", "100/60")
-# Env vars beat the .env file, so a real local key never leaks into tests.
+# Env vars beat the .env file, so real local keys never leak into tests.
 os.environ["ELEVENLABS_API_KEY"] = ""
+os.environ["GEMINI_API_KEY"] = ""
+os.environ["ANTHROPIC_API_KEY"] = ""
+os.environ["SERPER_API_KEY"] = ""
 
 import pytest
 from httpx import ASGITransport, AsyncClient
