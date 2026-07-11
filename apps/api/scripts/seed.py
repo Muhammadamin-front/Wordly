@@ -38,10 +38,18 @@ CATEGORIES = [
     ("feelings", "Feelings", "His-tuyg'ular", "Чувства", "😊"),
     ("actions", "Common actions", "Harakatlar", "Действия", "⚡"),
     ("places", "Places in town", "Shahardagi joylar", "Места в городе", "🏙"),
+    ("ielts", "IELTS Academic", "IELTS so'zlari", "Слова IELTS", "🎓"),
 ]
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
-CORPUS_FILES = ["a1_corpus.csv", "a2_corpus.csv", "b1_corpus.csv", "b2_corpus.csv"]
+CORPUS_FILES = [
+    "a1_corpus.csv",
+    "a2_corpus.csv",
+    "b1_corpus.csv",
+    "b2_corpus.csv",
+    "categories_boost.csv",
+    "ielts_top100.csv",
+]
 
 
 async def main() -> None:
