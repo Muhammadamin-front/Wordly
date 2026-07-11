@@ -41,7 +41,8 @@
     "pricingNote": "Pay with Payme, Click, or Uzum — no Visa card needed.",
     "ctaTitle": "10 words today. 3,650 in a year.",
     "ctaBody": "Signing up takes a minute. No credit card required.",
-    "footerRights": "All rights reserved."
+    "footerRights": "All rights reserved.",
+    "heroCtaContinue": "Continue learning"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -692,6 +693,8 @@
         "name": "Business English",
         "desc": "Meetings, emails, negotiations."
       }
-    }
+    },
+    "myCards": "My cards",
+    "wordsAdded": "words added"
   }
 }

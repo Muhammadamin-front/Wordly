@@ -41,7 +41,8 @@
     "pricingNote": "To'lov Payme, Click yoki Uzum orqali — kartasiz ham.",
     "ctaTitle": "Bugun 10 ta so'z. Bir yilda — 3650 ta.",
     "ctaBody": "Ro'yxatdan o'tish bir daqiqa. Kredit karta shart emas.",
-    "footerRights": "Barcha huquqlar himoyalangan."
+    "footerRights": "Barcha huquqlar himoyalangan.",
+    "heroCtaContinue": "O'rganishni davom ettirish"
   },
   "auth": {
     "loginTitle": "Qaytganingizdan xursandmiz",
@@ -692,6 +693,8 @@
         "name": "Biznes ingliz tili",
         "desc": "Uchrashuvlar, xatlar, muzokaralar."
       }
-    }
+    },
+    "myCards": "Mening kartalarim",
+    "wordsAdded": "so'z qo'shilgan"
   }
 }

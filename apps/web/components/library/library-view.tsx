@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { Plus, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
@@ -18,6 +19,7 @@ import {
   importDeckCsv,
   type Deck,
   type DeckImportReport,
+  type Queue,
 } from "@/lib/flashcards";
 import { libraryApi, SHELVES, type Shelf } from "@/lib/library";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -27,6 +29,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
   const router = useRouter();
   const [shelves, setShelves] = useState<Record<string, Shelf> | null>(null);
   const [decks, setDecks] = useState<Deck[] | null>(null);
+  const [queue, setQueue] = useState<Queue | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [report, setReport] = useState<DeckImportReport | null>(null);
   const [creating, setCreating] = useState(false);
@@ -40,10 +43,15 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
   useEffect(() => {
     if (!ready || !user) return;
     let cancelled = false;
-    Promise.all([libraryApi.overview(), flashcardsApi.decks()]).then(([overview, deckList]) => {
+    Promise.all([
+      libraryApi.overview(),
+      flashcardsApi.decks(),
+      flashcardsApi.queue(),
+    ]).then(([overview, deckList, q]) => {
       if (cancelled) return;
       setShelves(Object.fromEntries(overview.shelves.map((s) => [s.key, s])));
       setDecks(deckList);
+      setQueue(q);
     }).catch(() => {});
     return () => {
       cancelled = true;
@@ -77,6 +85,11 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
     );
   }
 
+  // CEFR levels partition the corpus exactly once (category shelves overlap).
+  const totalAdded = ["A1", "A2", "B1", "B2", "C1", "C2"].reduce(
+    (sum, key) => sum + (shelves[key]?.added ?? 0),
+    0
+  );
   const shelfStrings = t.shelves as Record<string, { name: string; desc: string }>;
   const labels = {
     words: t.words,
@@ -115,6 +128,34 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         className="hidden"
         onChange={(e) => e.target.files?.[0] && void onImportFile(e.target.files[0])}
       />
+
+      {/* My cards — everything added via "Add to my cards" lands here */}
+      {queue && totalAdded > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-400/40 bg-gradient-to-r from-brand-600/10 to-transparent p-5 sm:p-6"
+        >
+          <div className="flex items-center gap-4">
+            <span className="flex size-12 items-center justify-center rounded-xl bg-brand-600/15 text-2xl">
+              🃏
+            </span>
+            <div>
+              <h2 className="text-lg font-extrabold text-ink">{t.myCards}</h2>
+              <p className="text-sm text-ink-soft">
+                <strong className="text-ink">{totalAdded}</strong> {t.wordsAdded} ·{" "}
+                <strong className="text-brand-600 dark:text-brand-300">
+                  {queue.due_count + queue.new_count}
+                </strong>{" "}
+                {t.due}
+              </p>
+            </div>
+          </div>
+          <Link href={`/${lang}/review`}>
+            <Button>{t.review} →</Button>
+          </Link>
+        </motion.section>
+      )}
 
       {/* Level shelves */}
       <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">

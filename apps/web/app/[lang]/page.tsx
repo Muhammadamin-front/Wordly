@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Reveal } from "@/components/site/reveal";
+import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -52,9 +53,11 @@ export default async function LandingPage({
             </Reveal>
             <Reveal delay={0.2}>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link href={`/${lang}/auth/register`}>
-                  <Button size="lg">{landing.heroCta}</Button>
-                </Link>
+                <HeroCta
+                  lang={lang}
+                  guestLabel={landing.heroCta}
+                  userLabel={landing.heroCtaContinue}
+                />
                 <Link href={`/${lang}#features`}>
                   <Button size="lg" variant="secondary">
                     {landing.heroSecondary}
@@ -140,11 +143,14 @@ export default async function LandingPage({
                 {landing.ctaTitle}
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-brand-100">{landing.ctaBody}</p>
-              <Link href={`/${lang}/auth/register`} className="mt-8 inline-block">
-                <Button size="lg" variant="accent">
-                  {landing.heroCta}
-                </Button>
-              </Link>
+              <div className="mt-8 inline-block">
+                <HeroCta
+                  lang={lang}
+                  guestLabel={landing.heroCta}
+                  userLabel={landing.heroCtaContinue}
+                  variant="accent"
+                />
+              </div>
             </div>
           </Reveal>
         </section>

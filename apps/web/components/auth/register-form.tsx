@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { GoogleButton } from "@/components/auth/google-button";
@@ -17,8 +17,13 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["auth"] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { applySession } = useAuth();
+  const { applySession, user, ready } = useAuth();
   const [error, setError] = useState<string | null>(null);
+
+  // Already signed in? These pages have nothing to offer — go to the app.
+  useEffect(() => {
+    if (ready && user) router.replace(`/${lang}/dashboard`);
+  }, [ready, user, router, lang]);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
