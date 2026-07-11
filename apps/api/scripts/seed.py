@@ -66,6 +66,9 @@ CORPUS_FILES = [
     "phrasal_idioms_starter.csv",
     "levels_boost2.csv",
     "phrasal_idioms_2.csv",
+    "ielts_733_832.csv",
+    "ielts_833_932.csv",
+    "ielts_933_1000.csv",
 ]
 
 
