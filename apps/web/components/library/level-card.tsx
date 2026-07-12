@@ -17,9 +17,9 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
-import { ProgressBar } from "@/components/library/progress-bar";
 import type { ShelfMeta } from "@/lib/library";
 import { cn } from "@/lib/utils";
 
@@ -67,56 +67,68 @@ export function LevelCard({
       whileHover={locked ? undefined : { y: -6 }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-line/60",
-        "bg-gradient-to-br backdrop-blur-sm",
-        meta.gradient,
-        "bg-card/60 p-6 shadow-sm transition-shadow",
-        locked ? "opacity-70" : "hover:shadow-xl hover:ring-2",
-        meta.ring
+        "group relative flex aspect-4/5 flex-col justify-end overflow-hidden rounded-2xl",
+        "shadow-md ring-1 ring-black/5",
+        locked ? "grayscale-[0.4]" : "hover:shadow-2xl"
       )}
     >
-      <div className="flex items-start justify-between">
-        <span
-          className={cn(
-            "flex size-12 items-center justify-center rounded-xl bg-white/70 shadow-sm dark:bg-white/10",
-            meta.text
-          )}
-        >
-          <Icon className="size-6" strokeWidth={2.2} />
+      {/* Hero art */}
+      <Image
+        src={`/heroes/${meta.slug}.jpg`}
+        alt={strings.name}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+      />
+      {/* Readability scrim + level-tinted bottom gradient */}
+      <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+      <div className={cn("absolute inset-0 bg-linear-to-t to-transparent", meta.overlay)} />
+
+      {/* Top chips */}
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
+        <span className="flex size-10 items-center justify-center rounded-xl bg-white/90 text-ink shadow-sm backdrop-blur-sm">
+          <Icon className="size-5" strokeWidth={2.4} />
         </span>
         {locked && (
-          <span className="flex items-center gap-1 rounded-full bg-ink/5 px-2.5 py-1 text-xs font-semibold text-ink-soft dark:bg-white/10">
+          <span className="flex items-center gap-1 rounded-full bg-black/50 px-2.5 py-1 text-xs font-semibold text-white/90 backdrop-blur-sm">
             <Lock className="size-3" /> {labels.soon}
           </span>
         )}
       </div>
 
-      <h3 className="mt-4 text-xl font-extrabold tracking-tight text-ink">{strings.name}</h3>
-      <p className="mt-1 text-sm leading-relaxed text-ink-soft">{strings.desc}</p>
+      {/* Bottom content */}
+      <div className="relative z-10 p-5">
+        <h3 className="text-xl font-extrabold tracking-tight text-white drop-shadow-sm">
+          {strings.name}
+        </h3>
+        <p className="mt-1 line-clamp-2 text-sm text-white/75">{strings.desc}</p>
 
-      {!locked && (
-        <>
-          <p className="mt-4 text-sm font-semibold text-ink">
-            {learned} / {total}{" "}
-            <span className="font-normal text-ink-soft">{labels.learned}</span>
-          </p>
-          <div className="mt-2">
-            <ProgressBar value={pct} barClass={meta.bar} />
-          </div>
-          <div className="mt-3 flex items-center justify-between">
-            <span className={cn("text-sm font-bold", meta.text)}>{pct}%</span>
-            <span
-              className={cn(
-                "flex items-center gap-1 text-sm font-semibold transition-transform group-hover:translate-x-1",
-                meta.text
-              )}
-            >
-              {learned > 0 ? labels.continue : labels.start}
-              <ArrowRight className="size-4" />
-            </span>
-          </div>
-        </>
-      )}
+        {!locked && (
+          <>
+            <p className="mt-3 text-sm font-semibold text-white">
+              {learned} / {total}{" "}
+              <span className="font-normal text-white/60">{labels.learned}</span>
+            </p>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/25">
+              <div
+                className={cn("h-full rounded-full", meta.bar)}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+            <div className="mt-2.5 flex items-center justify-between">
+              <span className={cn("text-sm font-bold", meta.accent)}>{pct}%</span>
+              <span
+                className={cn(
+                  "flex items-center gap-1 text-sm font-semibold text-white transition-transform group-hover:translate-x-1"
+                )}
+              >
+                {learned > 0 ? labels.continue : labels.start}
+                <ArrowRight className="size-4" />
+              </span>
+            </div>
+          </>
+        )}
+      </div>
     </motion.div>
   );
 
