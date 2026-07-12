@@ -261,7 +261,11 @@ async def import_csv(db: AsyncSession, content: str, default_status: str = "revi
                 await update_word(
                     db,
                     existing,
-                    WordUpdate(**payload.model_dump(exclude={"status"})),
+                    # Never reset enrichment fields (image_url/audio_url) that
+                    # corpus CSVs don't carry — a re-import must preserve them.
+                    WordUpdate(**payload.model_dump(
+                        exclude={"status", "image_url", "audio_url"}
+                    )),
                 )
                 updated += 1
             else:

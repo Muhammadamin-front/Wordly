@@ -48,6 +48,7 @@ DATA_DIR = pathlib.Path(__file__).parent / "data"
 # appended to the word's first sense when not already present. Idempotent.
 EXAMPLE_FILES = [
     "examples_a1_batch1.csv",
+    "examples_a2_batch1.csv",
 ]
 
 CORPUS_FILES = [
@@ -137,6 +138,23 @@ async def main() -> None:
                 ex_added += 1
             await db.commit()
         print("extra examples: added {}, skipped {}".format(ex_added, ex_skipped))
+
+        # Word images (headword,pos,image_url) — set when the word has none yet,
+        # so pictures survive a DB reset without re-spending Serper credits.
+        img_path = DATA_DIR / "word_images.csv"
+        if img_path.exists():
+            img_set = 0
+            for row in _csv.DictReader(img_path.open(encoding="utf-8")):
+                word = await db.scalar(
+                    select(Word).where(
+                        Word.headword == row["headword"], Word.pos == row["pos"]
+                    )
+                )
+                if word is not None and not word.image_url and row.get("image_url"):
+                    word.image_url = row["image_url"].strip()
+                    img_set += 1
+            await db.commit()
+            print("word images: set {}".format(img_set))
 
         # Reading passages — upsert by slug, questions replaced wholesale.
         passages = json.loads((DATA_DIR / "reading_passages.json").read_text(encoding="utf-8"))

@@ -185,3 +185,33 @@ async def test_csv_import_rejects_missing_columns(client):
     )
     assert response.json()["created"] == 0
     assert "Missing columns" in response.json()["errors"][0]
+
+
+async def test_csv_reimport_preserves_image_url(client):
+    """Enrichment fields (image_url) aren't in corpus CSVs, so a re-import must
+    not wipe them (regression: re-seeding used to blank every picture)."""
+    headers = await make_admin(client)
+    created = await client.post(
+        "/api/v1/admin/words", json={**WORD_PAYLOAD, "headword": "melon"}, headers=headers
+    )
+    word_id = created.json()["id"]
+    # Enrich the word with an image, as scripts/enrich_images does.
+    await client.patch(
+        f"/api/v1/admin/words/{word_id}",
+        json={"image_url": "https://example.com/melon.jpg"},
+        headers=headers,
+    )
+    # Re-import the same word via CSV (no image column).
+    csv_text = (
+        "headword,pos,cefr_level,definition_en,translation_uz,translation_ru,"
+        "ipa,frequency_rank,status\n"
+        "melon,noun,A1,A sweet fruit,qovun,дыня,,130,published\n"
+    )
+    report = await client.post(
+        "/api/v1/admin/words/import",
+        files={"file": ("w.csv", csv_text.encode(), "text/csv")},
+        headers=headers,
+    )
+    assert report.json()["updated"] == 1
+    detail = await client.get(f"/api/v1/admin/words/{word_id}", headers=headers)
+    assert detail.json()["image_url"] == "https://example.com/melon.jpg"
