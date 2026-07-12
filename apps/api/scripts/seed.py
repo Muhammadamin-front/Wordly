@@ -49,6 +49,8 @@ DATA_DIR = pathlib.Path(__file__).parent / "data"
 EXAMPLE_FILES = [
     "examples_a1_batch1.csv",
     "examples_a2_batch1.csv",
+    "examples_a2_batch2.csv",
+    "examples_b1_batch1.csv",
 ]
 
 CORPUS_FILES = [
