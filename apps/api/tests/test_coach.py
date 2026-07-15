@@ -55,8 +55,60 @@ async def learner(client, email="coach-learner@words.uz") -> dict:
     return {"Authorization": "Bearer " + data["access_token"]}
 
 
+class FakeStreamAi:
+    async def text(self, *, system, prompt, max_tokens) -> str:
+        return "That sounds lovely! What did you enjoy most? Tell me more."
+
+
 async def test_coach_requires_auth(client):
     assert (await client.get("/api/v1/coach/characters")).status_code == 401
+
+
+async def test_stream_turn_persists_across_session_boundary(client, monkeypatch):
+    # The streaming body runs after the request handler returns; it must use its
+    # own DB session (regression test for the closed-session bug).
+    import app.services.coach_streaming as streaming
+
+    monkeypatch.setattr(streaming, "get_ai_client", lambda: FakeStreamAi())
+    headers = await learner(client, email="stream@words.uz")
+    created = await client.post(
+        "/api/v1/coach/sessions", json={"character": "alex", "mode": "chat"}, headers=headers
+    )
+    session_id = created.json()["id"]
+
+    resp = await client.post(
+        f"/api/v1/coach/sessions/{session_id}/stream-turn",
+        json={"text": "I went hiking on Sunday"},
+        headers=headers,
+    )
+    assert resp.status_code == 200
+    body = resp.text
+    assert '"type": "token"' in body
+    assert '"type": "done"' in body
+    assert '"xp_gained"' in body
+
+    # The turn was actually persisted by the streaming body's own session.
+    detail = (await client.get(f"/api/v1/coach/sessions/{session_id}", headers=headers)).json()
+    assert detail["turns"] == 1
+    assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
+
+
+async def test_stream_turn_without_ai_emits_error_event(client, monkeypatch):
+    import app.services.coach_streaming as streaming
+
+    monkeypatch.setattr(streaming, "get_ai_client", lambda: None)
+    headers = await learner(client, email="stream-noai@words.uz")
+    created = await client.post(
+        "/api/v1/coach/sessions", json={"character": "mochi", "mode": "chat"}, headers=headers
+    )
+    session_id = created.json()["id"]
+    resp = await client.post(
+        f"/api/v1/coach/sessions/{session_id}/stream-turn",
+        json={"text": "Hello"},
+        headers=headers,
+    )
+    assert resp.status_code == 200  # stream opens, then emits an error event
+    assert '"type": "error"' in resp.text
 
 
 async def test_characters_lists_four_personas(client):

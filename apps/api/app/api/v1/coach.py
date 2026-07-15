@@ -32,7 +32,7 @@ from app.schemas.coach import (
 )
 from app.services import ai_quota, coach
 from app.services.ai_client import AiClient, AiError, get_ai_client
-from app.services.coach_streaming import stream_turn
+from app.services.coach_streaming import stream_turn as stream_turn_stream
 from app.services.gamification import RewardSummary
 
 router = APIRouter(
@@ -246,10 +246,12 @@ async def stream_turn(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Stream the coach's response via Server-Sent Events (SSE).
+    """Stream the coach's reply via Server-Sent Events for real-time TTS.
 
-    The client sends STT-transcribed text and receives the response
-    token-by-token for real-time TTS playback.
+    The client sends STT-transcribed text and receives the reply in sentence
+    chunks. Validation (ownership, not-finished, quota) happens here while the
+    request session is alive; generation/persistence happens in the streaming
+    body, which opens its OWN session and charges quota only on success.
     """
     session = await _load_session(db, user, session_id)
     if session.status == "done":
@@ -262,12 +264,8 @@ async def stream_turn(
             detail="Daily AI limit reached. Upgrade to Premium for unlimited AI.",
         )
 
-    # Consume quota once at the start of the stream.
-    await ai_quota.consume(db, user)
-    await db.commit()
-
     return StreamingResponse(
-        stream_turn(db, user, session, payload.text),
+        stream_turn_stream(user.id, session.id, payload.text),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
