@@ -85,7 +85,9 @@ async def game_answer(
     if card is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Card not found")
 
-    if not payload.correct:
+    # Grade server-side from the submitted answer — never from a client flag.
+    correct = games_service.grade_answer(card, payload.game_type, payload.answer)
+    if not correct:
         rating = "again"
     elif payload.duration_ms is not None and payload.duration_ms <= FAST_ANSWER_MS:
         rating = "good"

@@ -30,8 +30,8 @@ export function TypingGame({
         key={index}
         question={question}
         games={games}
-        onResolved={(correct, durationMs) => {
-          onAnswer(question.card_id, correct, durationMs);
+        onResolved={(correct, durationMs, submitted) => {
+          onAnswer(question.card_id, correct, durationMs, submitted);
           window.setTimeout(resolve, 950);
         }}
       />
@@ -46,7 +46,7 @@ function TypingQuestion({
 }: {
   question: GameQuestion;
   games: GameProps["games"];
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const [value, setValue] = useState("");
   const [result, setResult] = useState<"correct" | "wrong" | null>(null);
@@ -63,7 +63,7 @@ function TypingQuestion({
     if (result) return;
     const correct = normalize(value) === normalize(question.answer);
     setResult(correct ? "correct" : "wrong");
-    onResolved(correct, Date.now() - shownAt.current);
+    onResolved(correct, Date.now() - shownAt.current, value);
   }
 
   return (

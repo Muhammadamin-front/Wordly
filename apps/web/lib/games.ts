@@ -53,10 +53,11 @@ export const gamesApi = {
     return apiFetch<GameSession>(`/games/${gameType}?${params}`, { auth: true });
   },
 
-  answer: (cardId: string, correct: boolean, durationMs?: number) =>
+  // The server grades `answer` against the card — never trusts a client flag.
+  answer: (cardId: string, gameType: GameType, answer: string, durationMs?: number) =>
     apiFetch<GameAnswerResult>("/games/answer", {
       method: "POST",
-      body: { card_id: cardId, correct, duration_ms: durationMs },
+      body: { card_id: cardId, game_type: gameType, answer, duration_ms: durationMs },
       auth: true,
     }),
 };

@@ -64,7 +64,8 @@ function prepare(questions: GameQuestion[], gameType: GameType): Prepared {
 
 export interface GameProps {
   games: Dictionary["games"];
-  onAnswer: (cardId: string, correct: boolean, durationMs: number) => void;
+  // `submitted` is the learner's raw answer text — the server grades it.
+  onAnswer: (cardId: string, correct: boolean, durationMs: number, submitted: string) => void;
   onComplete: () => void;
 }
 
@@ -143,10 +144,15 @@ export function GamePlayer({
   const playAgain = () => fetchSession(source);
   const changeSource = () => setPhase("choosing");
 
-  const onAnswer = useCallback((cardId: string, correct: boolean, durationMs: number) => {
-    if (correct) setScore((s) => s + 1);
-    gamesApi.answer(cardId, correct, durationMs).then(notifyStatsChanged).catch(() => {});
-  }, []);
+  const onAnswer = useCallback(
+    (cardId: string, correct: boolean, durationMs: number, submitted: string) => {
+      // `correct` drives only the cosmetic on-screen score; the server grades
+      // `submitted` for XP/streak/league so those can't be farmed.
+      if (correct) setScore((s) => s + 1);
+      gamesApi.answer(cardId, gameType, submitted, durationMs).then(notifyStatsChanged).catch(() => {});
+    },
+    [gameType]
+  );
 
   const onComplete = useCallback(() => setPhase("done"), []);
 

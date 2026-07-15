@@ -37,7 +37,9 @@ export function MemoryGame({
         setMatched(done);
         setFlipped([]);
         setBusy(false);
-        onAnswer(a.cardId, true, 2500);
+        const translation =
+          tiles.find((t) => t.key === a.cardId + ":t")?.text ?? a.text;
+        onAnswer(a.cardId, true, 2500, translation);
         if (done.size === pairCount) window.setTimeout(onComplete, 400);
       }, 450);
     } else {

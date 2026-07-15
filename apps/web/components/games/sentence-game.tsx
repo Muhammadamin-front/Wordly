@@ -36,8 +36,8 @@ export function SentenceGame({
         key={index}
         item={item}
         games={games}
-        onResolved={(correct, ms) => {
-          onAnswer(item.cardId, correct, ms);
+        onResolved={(correct, ms, submitted) => {
+          onAnswer(item.cardId, correct, ms, submitted);
           window.setTimeout(resolve, 1100);
         }}
       />
@@ -52,7 +52,7 @@ function SentenceRound({
 }: {
   item: SentenceItem;
   games: GameProps["games"];
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const [built, setBuilt] = useState<number[]>([]); // positions in `scrambled`
   const [result, setResult] = useState<"correct" | "wrong" | null>(null);
@@ -69,7 +69,7 @@ function SentenceRound({
     const attempt = built.map((pos) => item.scrambled[pos].w).join(" ");
     const correct = attempt === item.words.join(" ");
     setResult(correct ? "correct" : "wrong");
-    onResolved(correct, Date.now() - shownAt.current);
+    onResolved(correct, Date.now() - shownAt.current, attempt);
   }
 
   return (

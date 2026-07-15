@@ -29,8 +29,8 @@ export function HangmanGame({
       <HangmanRound
         key={index}
         question={question}
-        onResolved={(correct, ms) => {
-          onAnswer(question.card_id, correct, ms);
+        onResolved={(correct, ms, submitted) => {
+          onAnswer(question.card_id, correct, ms, submitted);
           window.setTimeout(resolve, 1100);
         }}
       />
@@ -43,7 +43,7 @@ function HangmanRound({
   onResolved,
 }: {
   question: GameQuestion;
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const answer = question.answer.toUpperCase();
   const [guessed, setGuessed] = useState<Set<string>>(new Set());
@@ -69,7 +69,7 @@ function HangmanRound({
       done.current = true;
       // Difficulty-based duration (more wrong guesses = slower) keeps this pure —
       // no Date.now() during a mapped click handler.
-      onResolved(nowSolved, 1500 + nowWrong * 800);
+      onResolved(nowSolved, 1500 + nowWrong * 800, nowSolved ? answer : "");
     }
   }
 

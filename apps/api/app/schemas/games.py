@@ -21,7 +21,9 @@ class GameSessionOut(BaseModel):
 
 class GameAnswerRequest(BaseModel):
     card_id: UUID
-    correct: bool
+    game_type: str = Field(max_length=30)
+    # The learner's actual submission — graded server-side, never trusted as-is.
+    answer: str = Field(default="", max_length=500)
     duration_ms: Optional[int] = Field(default=None, ge=0, le=10 * 60 * 1000)
 
 

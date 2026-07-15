@@ -55,8 +55,8 @@ export function SpeakingGame({
         key={index}
         question={question}
         games={games}
-        onResolved={(correct, ms) => {
-          onAnswer(question.card_id, correct, ms);
+        onResolved={(correct, ms, submitted) => {
+          onAnswer(question.card_id, correct, ms, submitted);
           window.setTimeout(resolve, 1400);
         }}
       />
@@ -71,7 +71,7 @@ function SpeakingRound({
 }: {
   question: GameQuestion;
   games: GameProps["games"];
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const [listening, setListening] = useState(false);
   const [heard, setHeard] = useState<string | null>(null);
@@ -89,7 +89,7 @@ function SpeakingRound({
     if (result) return;
     setHeard(transcript);
     setResult(correct ? "correct" : "wrong");
-    onResolved(correct, Date.now() - shownAt.current);
+    onResolved(correct, Date.now() - shownAt.current, transcript ?? (correct ? question.answer : ""));
   }
 
   function startListening() {

@@ -36,6 +36,18 @@ async def learner_with_cards(client, count: int = 6) -> tuple[dict, list[str]]:
     return headers, [c["id"] for c in queue["cards"]]
 
 
+async def card_submission(client, headers, card_id, game_type="speed_quiz"):
+    """The correct answer string a client would submit for this card + game."""
+    page = (await client.get("/api/v1/cards", headers=headers)).json()
+    card = next(c for c in page["items"] if c["id"] == card_id)
+    sense = card["word"]["senses"][0]
+    if game_type in ("word_match", "memory", "speed_quiz", "boss_battle", "audio_guess"):
+        return sense["translation_uz"]
+    if game_type in ("sentence_builder", "listening"):
+        return sense["examples"][0]["text_en"]
+    return card["word"]["headword"]
+
+
 async def test_game_needs_minimum_cards(client):
     # learner with only 2 cards can't start a game (min 4)
     headers, _ = await learner_with_cards(client, count=2)
@@ -86,9 +98,10 @@ async def test_unknown_game_404(client):
 
 async def test_correct_answer_feeds_srs_and_rewards(client):
     headers, cards = await learner_with_cards(client, count=6)
+    answer = await card_submission(client, headers, cards[0])
     response = await client.post(
         "/api/v1/games/answer",
-        json={"card_id": cards[0], "correct": True, "duration_ms": 2000},
+        json={"card_id": cards[0], "game_type": "speed_quiz", "answer": answer, "duration_ms": 2000},
         headers=headers,
     )
     assert response.status_code == 200, response.text
@@ -103,7 +116,7 @@ async def test_wrong_answer_maps_to_again(client):
     body = (
         await client.post(
             "/api/v1/games/answer",
-            json={"card_id": cards[0], "correct": False, "duration_ms": 1000},
+            json={"card_id": cards[0], "game_type": "speed_quiz", "answer": "totally-wrong", "duration_ms": 1000},
             headers=headers,
         )
     ).json()
@@ -112,10 +125,11 @@ async def test_wrong_answer_maps_to_again(client):
 
 async def test_slow_correct_answer_maps_to_hard(client):
     headers, cards = await learner_with_cards(client, count=6)
+    answer = await card_submission(client, headers, cards[0])
     body = (
         await client.post(
             "/api/v1/games/answer",
-            json={"card_id": cards[0], "correct": True, "duration_ms": 9000},
+            json={"card_id": cards[0], "game_type": "speed_quiz", "answer": answer, "duration_ms": 9000},
             headers=headers,
         )
     ).json()
@@ -130,7 +144,49 @@ async def test_answer_other_users_card_404(client):
     other_headers = {"Authorization": "Bearer " + other["access_token"]}
     response = await client.post(
         "/api/v1/games/answer",
-        json={"card_id": cards[0], "correct": True},
+        json={"card_id": cards[0], "game_type": "speed_quiz", "answer": "x"},
         headers=other_headers,
     )
     assert response.status_code == 404
+
+
+async def test_faked_answer_cannot_farm_xp(client):
+    """The core anti-cheat: a bogus submission grades server-side as wrong
+    ('again'), so a client can no longer post a fake 'correct' to claim the
+    full 'good' XP + card progress. It only earns the minimal participation XP."""
+    headers, cards = await learner_with_cards(client, count=6)
+
+    wrong = (await client.post(
+        "/api/v1/games/answer",
+        json={"card_id": cards[0], "game_type": "speed_quiz", "answer": "not-the-answer", "duration_ms": 500},
+        headers=headers,
+    )).json()
+    assert wrong["rating"] == "again"  # graded wrong regardless of what the client claims
+
+    ok = (await client.post(
+        "/api/v1/games/answer",
+        json={"card_id": cards[1], "game_type": "speed_quiz",
+              "answer": await card_submission(client, headers, cards[1]), "duration_ms": 500},
+        headers=headers,
+    )).json()
+    assert ok["rating"] == "good"
+    # A real correct answer is worth strictly more than a faked one.
+    assert ok["reward"]["xp_gained"] > wrong["reward"]["xp_gained"]
+
+
+async def test_grade_answer_per_game_type():
+    """Unit-check the grader across game shapes (typing, sentence, speaking)."""
+    from types import SimpleNamespace
+    from app.services.games import grade_answer
+
+    ex = SimpleNamespace(text_en="I eat an apple.")
+    sense = SimpleNamespace(translation_uz="olma", examples=[ex])
+    word = SimpleNamespace(headword="apple", senses=[sense])
+    card = SimpleNamespace(word=word)
+
+    assert grade_answer(card, "typing_race", "Apple ") is True   # case/space lenient
+    assert grade_answer(card, "typing_race", "banana") is False
+    assert grade_answer(card, "speed_quiz", "olma") is True       # translation
+    assert grade_answer(card, "listening", "i eat an apple") is True  # punctuation lenient
+    assert grade_answer(card, "speaking", "the word is apple") is True  # includes match
+    assert grade_answer(card, "word_search", "APPLE") is True

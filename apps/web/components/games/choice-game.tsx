@@ -50,9 +50,9 @@ export function ChoiceGame({
         games={games}
         isAudio={isAudio}
         fill={fill}
-        onResolved={(correct, durationMs) => {
+        onResolved={(correct, durationMs, submitted) => {
           if (correct && boss) setHits((h) => h + 1);
-          onAnswer(item.question.card_id, correct, durationMs);
+          onAnswer(item.question.card_id, correct, durationMs, submitted);
           window.setTimeout(resolve, 850);
         }}
       />
@@ -71,7 +71,7 @@ function ChoiceQuestion({
   games: GameProps["games"];
   isAudio: boolean;
   fill: boolean;
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const [picked, setPicked] = useState<string | null>(null);
   const shownAt = useRef(0);
@@ -91,7 +91,7 @@ function ChoiceQuestion({
     if (picked) return;
     const option = event.currentTarget.dataset.option ?? "";
     setPicked(option);
-    onResolved(option === question.answer, Date.now() - shownAt.current);
+    onResolved(option === question.answer, Date.now() - shownAt.current, option);
   }
 
   return (

@@ -1,5 +1,5 @@
 from tests.conftest import register_user
-from tests.test_games import learner_with_cards
+from tests.test_games import card_submission, learner_with_cards
 
 
 async def test_statistics_empty_for_new_user(client):
@@ -16,14 +16,15 @@ async def test_statistics_after_reviews(client):
     headers, cards = await learner_with_cards(client, count=6)
     # 3 correct (fast -> good), 1 wrong (-> again)
     for card_id in cards[:3]:
+        answer = await card_submission(client, headers, card_id)
         await client.post(
             "/api/v1/games/answer",
-            json={"card_id": card_id, "correct": True, "duration_ms": 1500},
+            json={"card_id": card_id, "game_type": "speed_quiz", "answer": answer, "duration_ms": 1500},
             headers=headers,
         )
     await client.post(
         "/api/v1/games/answer",
-        json={"card_id": cards[3], "correct": False, "duration_ms": 1000},
+        json={"card_id": cards[3], "game_type": "speed_quiz", "answer": "wrong", "duration_ms": 1000},
         headers=headers,
     )
 
@@ -39,9 +40,10 @@ async def test_statistics_after_reviews(client):
 
 async def test_statistics_time_spent_accumulates(client):
     headers, cards = await learner_with_cards(client, count=6)
+    answer = await card_submission(client, headers, cards[0])
     await client.post(
         "/api/v1/games/answer",
-        json={"card_id": cards[0], "correct": True, "duration_ms": 2500},
+        json={"card_id": cards[0], "game_type": "speed_quiz", "answer": answer, "duration_ms": 2500},
         headers=headers,
     )
     stats = (await client.get("/api/v1/me/statistics", headers=headers)).json()
@@ -51,10 +53,11 @@ async def test_statistics_time_spent_accumulates(client):
 async def test_statistics_forgotten_words(client):
     headers, cards = await learner_with_cards(client, count=6)
     # Graduate a card, then fail it to create a lapse.
-    for rating_correct in (True, True):
+    correct_answer = await card_submission(client, headers, cards[0])
+    for _ in range(2):
         await client.post(
             "/api/v1/games/answer",
-            json={"card_id": cards[0], "correct": rating_correct, "duration_ms": 1000},
+            json={"card_id": cards[0], "game_type": "speed_quiz", "answer": correct_answer, "duration_ms": 1000},
             headers=headers,
         )
     # Force it into review state via the flashcard endpoint (easy graduates fast),
@@ -64,7 +67,7 @@ async def test_statistics_forgotten_words(client):
     )
     await client.post(
         "/api/v1/games/answer",
-        json={"card_id": cards[0], "correct": False, "duration_ms": 1000},
+        json={"card_id": cards[0], "game_type": "speed_quiz", "answer": "wrong", "duration_ms": 1000},
         headers=headers,
     )
     stats = (await client.get("/api/v1/me/statistics", headers=headers)).json()

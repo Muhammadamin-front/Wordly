@@ -116,7 +116,7 @@ export function WordSearchGame({
     if (match) {
       const next = new Set(found).add(match.cardId);
       setFound(next);
-      onAnswer(match.cardId, true, 3000);
+      onAnswer(match.cardId, true, 3000, match.word);
       if (next.size === search.targets.length) window.setTimeout(onComplete, 500);
     }
   }

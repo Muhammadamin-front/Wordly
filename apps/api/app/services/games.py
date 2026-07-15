@@ -2,6 +2,7 @@
 weak first) so playing a game *is* an SRS review — games are not a separate
 silo. Answers are recorded through services.review.record_review."""
 import random
+import re
 from typing import List, Optional, Tuple
 from uuid import UUID
 
@@ -186,6 +187,45 @@ def _card_translation(card: Card) -> Optional[str]:
     if card.word and card.word.senses:
         return card.word.senses[0].translation_uz
     return None
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"\s+", " ", (text or "").strip().lower())
+
+
+def _norm_sentence(text: str) -> str:
+    stripped = re.sub(r"[.,!?;:'\"‘’“”]", "", (text or "").lower())
+    return re.sub(r"\s+", " ", stripped).strip()
+
+
+def _expected_answer(card: Card, game_type: str) -> Optional[str]:
+    """The answer the server checks a submission against — derived from the card
+    the same way build_session derives each game's target, so honest clients and
+    the grader always agree."""
+    if not (card.word and card.word.senses):
+        return None
+    if game_type in ("word_match", "memory", "speed_quiz", "boss_battle", "audio_guess"):
+        return _card_translation(card)
+    if game_type in ("sentence_builder", "listening"):
+        return _first_example(card)
+    # typing_race, hangman, spelling_bee, speaking, fill_blank, word_search
+    return card.word.headword
+
+
+def grade_answer(card: Card, game_type: str, submitted: str) -> bool:
+    """Authoritatively grade a submitted answer server-side. Rewards must never
+    trust a client-reported `correct` flag — that let XP/streaks/leagues be
+    farmed by posting `correct: true`."""
+    expected = _expected_answer(card, game_type)
+    if not expected:
+        return False
+    if game_type in ("sentence_builder", "listening"):
+        return _norm_sentence(submitted) == _norm_sentence(expected)
+    if game_type == "speaking":
+        # SpeechRecognition transcripts may carry extra words around the target.
+        said, target = _norm(submitted), _norm(expected)
+        return bool(said) and (said == target or target in said)
+    return _norm(submitted) == _norm(expected)
 
 
 def _first_example(card: Card) -> Optional[str]:

@@ -30,7 +30,9 @@ export function MatchGame({
     if (cardId === selected) {
       const next = new Set(matched).add(cardId);
       setMatched(next);
-      onAnswer(cardId, !missed.has(cardId), 3000);
+      const matchedOk = !missed.has(cardId);
+      const translation = left.find((q) => q.card_id === cardId)?.answer ?? "";
+      onAnswer(cardId, matchedOk, 3000, matchedOk ? translation : "");
       setSelected(null);
       if (next.size === left.length) window.setTimeout(onComplete, 500);
     } else {

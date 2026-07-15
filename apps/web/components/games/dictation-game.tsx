@@ -40,8 +40,8 @@ export function DictationGame({
         key={index}
         question={question}
         games={games}
-        onResolved={(correct, ms) => {
-          onAnswer(question.card_id, correct, ms);
+        onResolved={(correct, ms, submitted) => {
+          onAnswer(question.card_id, correct, ms, submitted);
           window.setTimeout(resolve, 1400);
         }}
       />
@@ -56,7 +56,7 @@ function DictationRound({
 }: {
   question: GameQuestion;
   games: GameProps["games"];
-  onResolved: (correct: boolean, durationMs: number) => void;
+  onResolved: (correct: boolean, durationMs: number, submitted: string) => void;
 }) {
   const [value, setValue] = useState("");
   const [result, setResult] = useState<"correct" | "wrong" | null>(null);
@@ -73,7 +73,7 @@ function DictationRound({
     if (result) return;
     const correct = looseNormalize(value) === looseNormalize(question.answer);
     setResult(correct ? "correct" : "wrong");
-    onResolved(correct, Date.now() - shownAt.current);
+    onResolved(correct, Date.now() - shownAt.current, value);
   }
 
   return (
