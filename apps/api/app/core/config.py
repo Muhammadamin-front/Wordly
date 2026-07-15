@@ -69,6 +69,16 @@ class Settings(BaseSettings):
     def tts_enabled(self) -> bool:
         return bool(self.ELEVENLABS_API_KEY)
 
+    # Speech-to-text (Deepgram). Streaming STT for real-time voice conversation.
+    DEEPGRAM_API_KEY: Optional[str] = None
+
+    @property
+    def deepgram_enabled(self) -> bool:
+        return bool(self.DEEPGRAM_API_KEY)
+
+    # Call recording & analysis (Fireflies). Optional: records speaking sessions for review.
+    FIREFLIES_API_KEY: Optional[str] = None
+
     # Serper (Google Images) — used by scripts/enrich_images.py to attach a
     # representative picture to corpus words. Never exposed to clients.
     SERPER_API_KEY: Optional[str] = None

@@ -5,6 +5,7 @@ from typing import Awaitable, Callable, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -31,6 +32,7 @@ from app.schemas.coach import (
 )
 from app.services import ai_quota, coach
 from app.services.ai_client import AiClient, AiError, get_ai_client
+from app.services.coach_streaming import stream_turn
 from app.services.gamification import RewardSummary
 
 router = APIRouter(
@@ -234,6 +236,43 @@ async def send_message(
         reply=result.reply,
         corrections=[CorrectionOut(**c) for c in result.corrections],
         reward=_reward_out(result.reward),
+    )
+
+
+@router.post("/sessions/{session_id}/stream-turn")
+async def stream_turn(
+    session_id: UUID,
+    payload: TurnRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Stream the coach's response via Server-Sent Events (SSE).
+
+    The client sends STT-transcribed text and receives the response
+    token-by-token for real-time TTS playback.
+    """
+    session = await _load_session(db, user, session_id)
+    if session.status == "done":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="This session is already finished"
+        )
+    if not await ai_quota.has_quota(db, user):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Daily AI limit reached. Upgrade to Premium for unlimited AI.",
+        )
+
+    # Consume quota once at the start of the stream.
+    await ai_quota.consume(db, user)
+    await db.commit()
+
+    return StreamingResponse(
+        stream_turn(db, user, session, payload.text),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
     )
 
 
