@@ -214,3 +214,24 @@ async def test_deck_import_csv_and_tsv(client):
     assert export.status_code == 200
     assert "to run,yugurmoq" in export.text
     assert "to fly,uchmoq" in export.text
+
+
+async def test_list_cards_search_and_delete(client):
+    word = await seed_word(client)
+    headers = await learner(client)
+    created = await client.post("/api/v1/cards", json={"word_id": word["id"]}, headers=headers)
+    card_id = created.json()["id"]
+
+    # List shows the card.
+    page = (await client.get("/api/v1/cards", headers=headers)).json()
+    assert page["total"] == 1
+    assert page["items"][0]["word"]["headword"] == "apple"
+
+    # Search by headword finds it; a miss returns empty.
+    assert (await client.get("/api/v1/cards?q=app", headers=headers)).json()["total"] == 1
+    assert (await client.get("/api/v1/cards?q=zzz", headers=headers)).json()["total"] == 0
+
+    # Delete removes it.
+    deleted = await client.delete("/api/v1/cards/{}".format(card_id), headers=headers)
+    assert deleted.status_code == 200
+    assert (await client.get("/api/v1/cards", headers=headers)).json()["total"] == 0

@@ -73,6 +73,13 @@ class QueueOut(BaseModel):
     learning_count: int
 
 
+class CardPage(BaseModel):
+    items: List[CardOut]
+    total: int
+    page: int
+    page_size: int
+
+
 class ReviewRequest(BaseModel):
     rating: str = Field(pattern=RATING_PATTERN)
     duration_ms: Optional[int] = Field(default=None, ge=0, le=10 * 60 * 1000)

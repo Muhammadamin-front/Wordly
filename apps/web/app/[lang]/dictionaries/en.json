@@ -700,6 +700,10 @@
       }
     },
     "myCards": "My cards",
-    "wordsAdded": "words added"
+    "wordsAdded": "words added",
+    "searchAll": "Search any word…",
+    "searchMyCards": "Search your cards…",
+    "noCards": "No cards yet. Add words from the shelves or search above.",
+    "manage": "Manage"
   }
 }

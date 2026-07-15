@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { CollectionCard } from "@/components/library/collection-card";
 import { LevelCard } from "@/components/library/level-card";
+import { SearchPanel } from "@/components/library/search-panel";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,6 +115,9 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         <p className="mx-auto mt-3 max-w-xl text-base text-ink-soft sm:text-lg">{t.subtitle}</p>
       </motion.header>
 
+      {/* Corpus-wide search + add */}
+      <SearchPanel lang={lang} t={t} />
+
       {report && (
         <Alert tone={report.errors.length ? "error" : "success"} className="mt-6">
           {report.created} {t.imported} · {report.skipped} {t.skipped}
@@ -136,7 +140,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
           animate={{ opacity: 1, y: 0 }}
           className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-400/40 bg-gradient-to-r from-brand-600/10 to-transparent p-5 sm:p-6"
         >
-          <div className="flex items-center gap-4">
+          <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
             <span className="flex size-12 items-center justify-center rounded-xl bg-brand-600/15 text-2xl">
               🃏
             </span>
@@ -150,10 +154,15 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
                 {t.due}
               </p>
             </div>
-          </div>
-          <Link href={`/${lang}/review`}>
-            <Button>{t.review} →</Button>
           </Link>
+          <div className="flex gap-2">
+            <Link href={`/${lang}/library/my-cards`}>
+              <Button variant="secondary">{t.manage}</Button>
+            </Link>
+            <Link href={`/${lang}/review`}>
+              <Button>{t.review} →</Button>
+            </Link>
+          </div>
         </motion.section>
       )}
 

@@ -700,6 +700,10 @@
       }
     },
     "myCards": "Mening kartalarim",
-    "wordsAdded": "so'z qo'shilgan"
+    "wordsAdded": "so'z qo'shilgan",
+    "searchAll": "Istalgan so'zni qidiring…",
+    "searchMyCards": "Kartalaringizni qidiring…",
+    "noCards": "Hali karta yo'q. Tokchalardan yoki yuqoridagi qidiruvdan so'z qo'shing.",
+    "manage": "Boshqarish"
   }
 }

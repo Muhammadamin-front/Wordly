@@ -12,9 +12,10 @@ from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.flashcards import Card, Deck
 from app.models.user import User
-from app.models.vocabulary import Category, Word
+from app.models.vocabulary import Category, Word, WordSense
 from app.schemas.auth import MessageOut
 from app.schemas.flashcards import (
+    CardPage,
     AddByLevelRequest,
     AddByLevelResult,
     CardCreate,
@@ -297,6 +298,43 @@ async def update_card(
         setattr(card, field, value)
     await db.commit()
     return CardOut.model_validate(card)
+
+
+@router.get("/cards", response_model=CardPage)
+async def list_cards(
+    q: Optional[str] = Query(None, max_length=80),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(24, ge=1, le=100),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """The user's word-linked cards, newest first — for the My Cards manager."""
+    base = select(Card).where(Card.user_id == user.id, Card.word_id.isnot(None))
+    if q:
+        needle = "%{}%".format(q.lower())
+        base = (
+            base.join(Word, Word.id == Card.word_id)
+            .outerjoin(WordSense, WordSense.word_id == Word.id)
+            .where(
+                func.lower(Word.headword).like(needle)
+                | func.lower(WordSense.translation_uz).like(needle)
+            )
+            .distinct()
+        )
+    total = (await db.scalar(select(func.count()).select_from(base.subquery()))) or 0
+    cards = (
+        await db.scalars(
+            base.order_by(Card.created_at.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    ).unique().all()
+    return CardPage(
+        items=[CardOut.model_validate(c) for c in cards],
+        total=int(total),
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.delete("/cards/{card_id}", response_model=MessageOut)

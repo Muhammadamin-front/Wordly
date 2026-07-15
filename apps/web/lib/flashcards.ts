@@ -27,6 +27,13 @@ export interface CardOut {
   due_at: string;
 }
 
+export interface CardPage {
+  items: CardOut[];
+  total: number;
+  page: number;
+  page_size: number;
+}
+
 export interface Queue {
   cards: CardOut[];
   due_count: number;
@@ -70,6 +77,16 @@ export const flashcardsApi = {
       body: { cefr_level: opts.level, category_slug: opts.category, limit: opts.limit ?? 20 },
       auth: true,
     }),
+
+  listCards: (params: { q?: string; page?: number } = {}) => {
+    const s = new URLSearchParams();
+    if (params.q) s.set("q", params.q);
+    if (params.page) s.set("page", String(params.page));
+    return apiFetch<CardPage>(`/cards${s.toString() ? `?${s}` : ""}`, { auth: true });
+  },
+
+  deleteCard: (cardId: string) =>
+    apiFetch<{ message: string }>(`/cards/${cardId}`, { method: "DELETE", auth: true }),
 
   createCard: (wordId: string) =>
     apiFetch<CardOut>("/cards", { method: "POST", body: { word_id: wordId }, auth: true }),
