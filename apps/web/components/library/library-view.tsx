@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Plus, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { CollectionCard } from "@/components/library/collection-card";
@@ -25,6 +25,54 @@ import {
 } from "@/lib/flashcards";
 import { libraryApi, SHELVES, type Shelf } from "@/lib/library";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+/** Circular progress ring SVG. */
+function CircularProgress({ percent, size = 120 }: { percent: number; size?: number }) {
+  const radius = size / 2 - 8;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg]">
+      {/* Background ring */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        className="text-line/40"
+      />
+      {/* Progress ring */}
+      <motion.circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        className="text-brand-600 dark:text-brand-300"
+        initial={{ strokeDashoffset: circumference }}
+        animate={{ strokeDashoffset: offset }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+    </svg>
+  );
+}
+
+function StatTile({ icon, label, value }: { icon: string; label: string; value: string | number }) {
+  return (
+    <div className="rounded-xl border border-line/60 bg-card/40 px-4 py-3 backdrop-blur-sm">
+      <p className="text-2xl">{icon}</p>
+      <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{label}</p>
+      <p className="text-lg font-extrabold text-ink">{value}</p>
+    </div>
+  );
+}
 
 export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"] }) {
   const { user, ready } = useAuth();
@@ -62,13 +110,13 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
 
   const reload = () => setReloadKey((k) => k + 1);
 
-  async function onCreate(event: FormEvent<HTMLFormElement>) {
+  async function onCreate(event: { preventDefault: () => void; currentTarget: HTMLFormElement; target: HTMLFormElement }) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
     if (!name) return;
     await flashcardsApi.createDeck(name, String(form.get("description") ?? "") || undefined);
-    (event.target as HTMLFormElement).reset();
+    event.target.reset();
     setCreating(false);
     reload();
   }
@@ -98,6 +146,12 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
     (sum, key) => sum + (shelves[key]?.added ?? 0),
     0
   );
+  const totalLearned = ["A1", "A2", "B1", "B2", "C1", "C2"].reduce(
+    (sum, key) => sum + (shelves[key]?.learned ?? 0),
+    0
+  );
+  const progressPercent = totalAdded > 0 ? Math.round((totalLearned / totalAdded) * 100) : 0;
+
   const shelfStrings = t.shelves as Record<string, { name: string; desc: string }>;
   const labels = {
     words: t.words,
@@ -108,22 +162,47 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
-      {/* Hero */}
-      <motion.header
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+      {/* Hero with circular progress */}
+      <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="text-center"
+        className="rounded-3xl border border-brand-400/30 bg-linear-to-br from-brand-600/15 to-brand-600/5 p-8 sm:p-10"
       >
-        <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-          📚 {t.title}
-        </h1>
-        <p className="mx-auto mt-3 max-w-xl text-base text-ink-soft sm:text-lg">{t.subtitle}</p>
-      </motion.header>
+        <div className="grid gap-8 sm:grid-cols-2">
+          {/* Left: title + description */}
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+              📚 {t.title}
+            </h1>
+            <p className="mt-4 max-w-lg text-base text-ink-soft sm:text-lg">{t.subtitle}</p>
+
+            {/* Quick stats row */}
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              <StatTile icon="📖" label={t.words} value={totalAdded} />
+              <StatTile icon="✅" label={t.learned} value={totalLearned} />
+              <StatTile icon="🎯" label="Levels" value="6" />
+            </div>
+          </div>
+
+          {/* Right: circular progress */}
+          <div className="flex flex-col items-center justify-center gap-4">
+            <div className="text-brand-600 dark:text-brand-300">
+              <CircularProgress percent={progressPercent} size={140} />
+            </div>
+            <div className="text-center">
+              <p className="text-4xl font-extrabold text-ink">{progressPercent}%</p>
+              <p className="mt-1 text-sm font-semibold text-ink-soft">{t.continue.toLowerCase()}</p>
+            </div>
+          </div>
+        </div>
+      </motion.section>
 
       {/* Corpus-wide search + add */}
-      <SearchPanel lang={lang} t={t} />
+      <div className="mt-8">
+        <SearchPanel lang={lang} t={t} />
+      </div>
 
       {report && (
         <Alert tone={report.errors.length ? "error" : "success"} className="mt-6">
@@ -145,75 +224,93 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-5 sm:p-6"
+          className="mt-10 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-6 sm:p-7"
         >
           <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
-            <span className="flex size-12 items-center justify-center rounded-xl bg-brand-600/15 text-2xl">
+            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600/20 text-3xl">
               🃏
             </span>
-            <div>
+            <div className="min-w-0 flex-1">
               <h2 className="text-lg font-extrabold text-ink">{t.myCards}</h2>
-              <p className="text-sm text-ink-soft">
-                <strong className="text-ink">{totalAdded}</strong> {t.wordsAdded} ·{" "}
-                <strong className="text-brand-600 dark:text-brand-300">
-                  {queue.due_count + queue.new_count}
-                </strong>{" "}
-                {t.due}
+              <div className="mt-2 h-2 w-full rounded-full bg-line/40">
+                <div
+                  className="h-full rounded-full bg-linear-to-r from-brand-600 to-brand-500 transition-all"
+                  style={{
+                    width: `${queue.due_count + queue.new_count > 0 ? Math.min((queue.due_count + queue.new_count) / (totalAdded * 0.3) * 100, 100) : 0}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-ink-soft sm:text-sm">
+                <strong className="text-ink">{queue.due_count + queue.new_count}</strong> {t.due}{" "}
+                · <strong className="text-brand-600 dark:text-brand-300">{totalAdded}</strong> {t.words.toLowerCase()}
               </p>
             </div>
           </Link>
-          <div className="flex gap-2">
+          <div className="mt-4 flex gap-2">
             <Link href={`/${lang}/library/my-cards`}>
-              <Button variant="secondary">{t.manage}</Button>
+              <Button variant="secondary" size="sm">
+                {t.manage}
+              </Button>
             </Link>
             <Link href={`/${lang}/review`}>
-              <Button>{t.review} →</Button>
+              <Button size="sm">{t.review} →</Button>
             </Link>
           </div>
         </motion.section>
       )}
 
       {/* Level shelves */}
-      <section className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {SHELVES.map((meta, i) => {
-          const data = meta.soon ? undefined : shelves[meta.key];
-          return (
-            <motion.div
-              key={meta.slug}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i, duration: 0.35 }}
-            >
-              <LevelCard
-                lang={lang}
-                meta={meta}
-                strings={shelfStrings[meta.slug]}
-                total={data?.total ?? 0}
-                learned={data?.learned ?? 0}
-                labels={labels}
-              />
-            </motion.div>
-          );
-        })}
+      <section className="mt-12">
+        <div className="mb-6 flex items-center gap-2">
+          <span className="text-2xl">🎯</span>
+          <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.title}</h2>
+        </div>
+        <p className="mb-6 text-sm text-ink-soft">{t.subtitle}</p>
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {SHELVES.map((meta, i) => {
+            const data = meta.soon ? undefined : shelves[meta.key];
+            return (
+              <motion.div
+                key={meta.slug}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i, duration: 0.35 }}
+              >
+                <LevelCard
+                  lang={lang}
+                  meta={meta}
+                  strings={shelfStrings[meta.slug]}
+                  total={data?.total ?? 0}
+                  learned={data?.learned ?? 0}
+                  labels={labels}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
       </section>
 
       {/* Your collections */}
-      <section className="mt-14">
+      <section className="mt-16">
         <div className="flex items-center gap-2">
           <Sparkles className="size-5 text-brand-600 dark:text-brand-300" />
           <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.collections}</h2>
         </div>
         <p className="mt-1 text-sm text-ink-soft">{t.collectionsDesc}</p>
 
-        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {decks.map((deck) => (
             <CollectionCard
               key={deck.id}
               lang={lang}
               deck={deck}
               labels={{
-                cards: t.cards, due: t.due, review: t.review,
-                import: t.importCsv, export: t.exportCsv, delete: t.delete,
+                cards: t.cards,
+                due: t.due,
+                review: t.review,
+                import: t.importCsv,
+                export: t.exportCsv,
+                delete: t.delete,
               }}
               onImport={() => {
                 importTarget.current = deck.id;
@@ -245,7 +342,9 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
                   <Input id="description" name="description" maxLength={300} />
                 </div>
                 <div className="flex gap-2">
-                  <Button type="submit" size="sm">{t.create}</Button>
+                  <Button type="submit" size="sm">
+                    {t.create}
+                  </Button>
                   <Button type="button" size="sm" variant="ghost" onClick={() => setCreating(false)}>
                     ✕
                   </Button>
