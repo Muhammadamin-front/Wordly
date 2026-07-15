@@ -13,6 +13,7 @@ os.environ["ELEVENLABS_API_KEY"] = ""
 os.environ["GEMINI_API_KEY"] = ""
 os.environ["ANTHROPIC_API_KEY"] = ""
 os.environ["SERPER_API_KEY"] = ""
+os.environ["BEDROCK_API_KEY"] = ""
 
 import pytest
 from httpx import ASGITransport, AsyncClient

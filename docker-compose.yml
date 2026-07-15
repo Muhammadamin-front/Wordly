@@ -40,6 +40,9 @@ services:
       ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
       SERPER_API_KEY: ${SERPER_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      BEDROCK_API_KEY: ${BEDROCK_API_KEY:-}
+      BEDROCK_REGION: ${BEDROCK_REGION:-us-east-1}
+      BEDROCK_MODEL: ${BEDROCK_MODEL:-us.anthropic.claude-haiku-4-5-20251001-v1:0}
       PAYMENTS_SANDBOX: ${PAYMENTS_SANDBOX:-true}
     ports:
       - "8000:8000"

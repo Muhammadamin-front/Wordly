@@ -44,9 +44,15 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: Optional[str] = None
     GEMINI_MODEL: str = "gemini-flash-latest"
 
+    # AWS Bedrock (Converse API via a Bedrock API key / bearer token). Region +
+    # model are configurable; the model must be enabled on the AWS account.
+    BEDROCK_API_KEY: Optional[str] = None
+    BEDROCK_REGION: str = "us-east-1"
+    BEDROCK_MODEL: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+
     @property
     def ai_enabled(self) -> bool:
-        return bool(self.ANTHROPIC_API_KEY or self.GEMINI_API_KEY)
+        return bool(self.ANTHROPIC_API_KEY or self.BEDROCK_API_KEY or self.GEMINI_API_KEY)
 
     # Text-to-speech (ElevenLabs). Pronunciation audio is proxied through the
     # API (the key never reaches the browser) and disk-cached, so each unique

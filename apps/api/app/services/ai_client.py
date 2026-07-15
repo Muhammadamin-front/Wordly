@@ -204,6 +204,91 @@ class GeminiClient:
             raise AiError("model did not return valid JSON") from exc
 
 
+BEDROCK_URL = "https://bedrock-runtime.{region}.amazonaws.com/model/{model}/converse"
+
+
+class BedrockClient:
+    """AWS Bedrock via the Converse API with a Bedrock API key (bearer token).
+
+    The Converse shape is identical across Bedrock-hosted models (Claude, Nova,
+    Llama…), so one implementation serves whichever model the account enables —
+    set BEDROCK_MODEL/BEDROCK_REGION to switch. No AWS SDK / SigV4 needed."""
+
+    def __init__(self) -> None:
+        settings = get_settings()
+        self._key = settings.BEDROCK_API_KEY
+        self._region = settings.BEDROCK_REGION
+        self._model = settings.BEDROCK_MODEL
+
+    async def _converse(
+        self, *, system: str, messages: List[Dict[str, str]], max_tokens: int
+    ) -> str:
+        import httpx
+        from urllib.parse import quote
+
+        payload = {
+            "system": [{"text": system}],
+            "messages": [
+                {"role": m["role"], "content": [{"text": m["content"]}]} for m in messages
+            ],
+            "inferenceConfig": {"maxTokens": max_tokens},
+        }
+        url = BEDROCK_URL.format(region=self._region, model=quote(self._model, safe=""))
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    url,
+                    headers={
+                        "Authorization": "Bearer {}".format(self._key),
+                        "Content-Type": "application/json",
+                    },
+                    json=payload,
+                )
+        except Exception as exc:
+            raise AiError(str(exc)) from exc
+        if response.status_code != 200:
+            exc = Exception("bedrock {}: {}".format(response.status_code, response.text[:200]))
+            exc.status_code = response.status_code  # type: ignore[attr-defined]
+            raise _classify(exc)
+        try:
+            blocks = response.json()["output"]["message"]["content"]
+            text = "".join(b.get("text", "") for b in blocks).strip()
+        except (KeyError, IndexError, ValueError) as exc:
+            raise AiError("bedrock returned no content") from exc
+        if not text:
+            raise AiError("empty response")
+        return text
+
+    async def text(self, *, system: str, prompt: str, max_tokens: int) -> str:
+        return await self._converse(
+            system=system, messages=[{"role": "user", "content": prompt}], max_tokens=max_tokens
+        )
+
+    async def chat(
+        self, *, system: str, messages: List[Dict[str, str]], max_tokens: int
+    ) -> str:
+        return await self._converse(system=system, messages=messages, max_tokens=max_tokens)
+
+    async def json(
+        self, *, system: str, prompt: str, schema: Dict[str, Any], max_tokens: int
+    ) -> Any:
+        full_prompt = "{}\n\nRespond ONLY with JSON matching this schema:\n{}".format(
+            prompt, json.dumps(schema)
+        )
+        text = await self._converse(
+            system=system,
+            messages=[{"role": "user", "content": full_prompt}],
+            max_tokens=max_tokens,
+        )
+        # Models sometimes wrap JSON in prose/fences — extract the object.
+        start, end = text.find("{"), text.rfind("}")
+        candidate = text[start : end + 1] if start != -1 and end != -1 else text
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError as exc:
+            raise AiError("model did not return valid JSON") from exc
+
+
 class FailoverClient:
     """Tries providers in order; a failing provider is cooled down so the next
     requests go straight to the healthy one. Users never see the switch."""
@@ -266,9 +351,13 @@ def get_ai_client() -> Optional[AiClient]:
     if not settings.ai_enabled:
         return None
     if _client_singleton is None:
+        # Order = priority. Bedrock (Claude-class quality) leads when present;
+        # a direct Anthropic key, if set, takes precedence; Gemini backs them up.
         providers: List[tuple] = []
         if settings.ANTHROPIC_API_KEY:
             providers.append(("anthropic", AnthropicClient()))
+        if settings.BEDROCK_API_KEY:
+            providers.append(("bedrock", BedrockClient()))
         if settings.GEMINI_API_KEY:
             providers.append(("gemini", GeminiClient()))
         _client_singleton = FailoverClient(providers)

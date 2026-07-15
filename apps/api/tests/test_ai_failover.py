@@ -89,3 +89,27 @@ def test_classify_maps_quota_markers():
     exc = Exception("gemini 429: rate limited"); exc.status_code = 429
     assert isinstance(_classify(exc), AiQuotaError)
     assert not isinstance(_classify(Exception("connection reset")), AiQuotaError)
+
+
+async def test_bedrock_quota_fails_over_to_gemini():
+    """A Bedrock 429 ('too many tokens per day') is a quota error, so the chain
+    cools Bedrock down and answers from the next provider — invisibly to users."""
+    from app.services.ai_client import AiQuotaError, _classify
+
+    exc = Exception("bedrock 429: Too many tokens per day")
+    exc.status_code = 429
+    assert isinstance(_classify(exc), AiQuotaError)
+
+    bedrock = FakeProvider("bedrock", fail_with=AiQuotaError("bedrock 429"))
+    gemini = FakeProvider("gemini")
+    client = FailoverClient([("bedrock", bedrock), ("gemini", gemini)])
+    assert await client.text(system="s", prompt="p", max_tokens=10) == "answer from gemini"
+
+
+def test_bedrock_json_extracts_object_from_prose():
+    """Bedrock Converse has no universal JSON mode; the client extracts the
+    JSON object even when a model wraps it in prose or code fences."""
+    import json as _json
+    text = 'Sure! Here is the result:\n```json\n{"band": 6.5, "ok": true}\n```'
+    start, end = text.find("{"), text.rfind("}")
+    assert _json.loads(text[start : end + 1]) == {"band": 6.5, "ok": True}
