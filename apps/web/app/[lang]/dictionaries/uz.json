@@ -14,7 +14,19 @@
     "login": "Kirish",
     "register": "Ro'yxatdan o'tish",
     "dashboard": "Boshqaruv paneli",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "decks": "Kartalar",
+    "games": "O'yinlar",
+    "skills": "Ko'nikmalar",
+    "ai": "AI ustoz",
+    "coach": "Gapirish",
+    "leaderboard": "Liga",
+    "friends": "Do'stlar",
+    "statistics": "Statistika",
+    "classes": "Sinflar",
+    "billing": "Premium",
+    "menu": "Menyu",
+    "close": "Yopish"
   },
   "landing": {
     "heroTitle": "Ingliz tilini so'zma-so'z zabt eting",

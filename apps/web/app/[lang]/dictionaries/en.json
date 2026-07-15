@@ -14,7 +14,19 @@
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "Dashboard",
-    "logout": "Log out"
+    "logout": "Log out",
+    "decks": "Cards",
+    "games": "Games",
+    "skills": "Skills",
+    "ai": "AI Tutor",
+    "coach": "Speaking",
+    "leaderboard": "League",
+    "friends": "Friends",
+    "statistics": "Stats",
+    "classes": "Classes",
+    "billing": "Premium",
+    "menu": "Menu",
+    "close": "Close"
   },
   "landing": {
     "heroTitle": "Conquer English, one word at a time",
