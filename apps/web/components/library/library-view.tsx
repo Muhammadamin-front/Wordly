@@ -14,6 +14,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   exportDeckCsv,
   flashcardsApi,
@@ -80,8 +81,14 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
 
   if (!ready || !user || shelves === null || decks === null) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+        <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
+        <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-4/5 rounded-2xl" />
+          ))}
+        </div>
       </main>
     );
   }
@@ -138,7 +145,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-400/40 bg-gradient-to-r from-brand-600/10 to-transparent p-5 sm:p-6"
+          className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-5 sm:p-6"
         >
           <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
             <span className="flex size-12 items-center justify-center rounded-xl bg-brand-600/15 text-2xl">

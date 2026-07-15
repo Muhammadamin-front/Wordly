@@ -46,6 +46,13 @@
       transform: translateY(0);
     }
   }
+
+  /* Skeleton shimmer sweep (see components/ui/skeleton). */
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 
 /* Semantic surface tokens — flip together in dark mode. */

@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -222,14 +223,29 @@ export function GamePlayer({
   if (phase === "done") {
     const pct = total ? Math.round((score / total) * 100) : 0;
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <p className="text-6xl" aria-hidden>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="mx-auto max-w-md py-16 text-center"
+      >
+        <motion.p
+          className="text-6xl"
+          aria-hidden
+          initial={{ scale: 0, rotate: -20 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 260, damping: 14, delay: 0.05 }}
+        >
           {pct >= 80 ? "🏆" : pct >= 50 ? "🎉" : "💪"}
-        </p>
+        </motion.p>
         <h2 className="mt-4 text-2xl font-extrabold text-ink">{games.roundComplete}</h2>
-        <p className="mt-2 text-4xl font-extrabold text-brand-600 dark:text-brand-300">
+        <motion.p
+          className="mt-2 text-4xl font-extrabold text-brand-600 dark:text-brand-300"
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.2 }}
+        >
           {score}/{total}
-        </p>
+        </motion.p>
         <p className="mt-1 text-sm text-ink-soft">{games.yourScore}</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button onClick={playAgain}>{games.playAgain}</Button>
@@ -240,7 +256,7 @@ export function GamePlayer({
             <Button variant="ghost">{games.exit}</Button>
           </Link>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
