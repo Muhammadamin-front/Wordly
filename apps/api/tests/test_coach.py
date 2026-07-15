@@ -93,6 +93,54 @@ async def test_stream_turn_persists_across_session_boundary(client, monkeypatch)
     assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
 
 
+def test_deepgram_url_encodes_sample_rate():
+    from app.services.coach_live import deepgram_url
+
+    url = deepgram_url(16000)
+    assert url.startswith("wss://api.deepgram.com/v1/listen?")
+    assert "sample_rate=16000" in url
+    assert "encoding=linear16" in url
+    assert "endpointing=400" in url
+
+
+async def test_live_context_and_persist_turn(client, monkeypatch):
+    from app.core.security import decode_access_token
+    from app.services import coach_live
+
+    data = await register_user(client, email="live@words.uz")
+    headers = {"Authorization": "Bearer " + data["access_token"]}
+    user_id = decode_access_token(data["access_token"])
+    created = await client.post(
+        "/api/v1/coach/sessions", json={"character": "alex", "mode": "chat"}, headers=headers
+    )
+    session_id = created.json()["id"]
+    from uuid import UUID
+
+    # Valid context loads a system prompt + (empty) history.
+    system, history, error = await coach_live.load_live_context(user_id, UUID(session_id))
+    assert error is None
+    assert system and history == []
+
+    # A bogus session id is rejected.
+    _, _, err2 = await coach_live.load_live_context(user_id, UUID(int=0))
+    assert err2 == "not_found"
+
+    # Persisting a turn stores both messages, bumps turns, and awards XP.
+    reward = await coach_live.persist_turn(user_id, UUID(session_id), "I like coffee", "Lovely!")
+    assert reward is not None and reward["xp_gained"] > 0
+    detail = (await client.get(f"/api/v1/coach/sessions/{session_id}", headers=headers)).json()
+    assert detail["turns"] == 1
+    assert [m["role"] for m in detail["messages"]] == ["user", "assistant"]
+
+
+async def test_generate_reply_uses_ai_client(client, monkeypatch):
+    from app.services import coach_live
+
+    monkeypatch.setattr(coach_live, "get_ai_client", lambda: FakeStreamAi())
+    reply = await coach_live.generate_reply("system", [{"role": "user", "content": "hi"}])
+    assert "lovely" in reply.lower()
+
+
 async def test_stream_turn_without_ai_emits_error_event(client, monkeypatch):
     import app.services.coach_streaming as streaming
 

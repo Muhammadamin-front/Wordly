@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { CHARACTER_THEMES } from "@/components/coach/characters";
+import { LiveCall } from "@/components/coach/live-call";
 import { useSpeech, useSpeechRecognition } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -166,6 +167,7 @@ export function VoiceChat({
   const [error, setError] = useState<string | null>(null);
   const [autoSpeak, setAutoSpeak] = useState(true);
   const [xpToast, setXpToast] = useState<number | null>(null);
+  const [live, setLive] = useState(false);
 
   const recognition = useSpeechRecognition("en-US");
   const speech = useSpeech();
@@ -268,6 +270,13 @@ export function VoiceChat({
     ? `${recognition.transcript} ${recognition.interim}`.trim()
     : "";
 
+  // Real-time hands-free voice call (streams mic → Deepgram → coach reply).
+  if (live) {
+    return (
+      <LiveCall character={character} session={session} t={t} onExit={() => setLive(false)} />
+    );
+  }
+
   return (
     <div className="flex h-[calc(100vh-8rem)] flex-col">
       {/* Header */}
@@ -312,6 +321,20 @@ export function VoiceChat({
             )}
           </div>
         </div>
+        {!finished && (
+          <button
+            type="button"
+            onClick={() => {
+              speech.cancel();
+              recognition.stop();
+              setLive(true);
+            }}
+            className="flex items-center gap-1 rounded-full bg-danger/10 px-3 py-1.5 text-xs font-bold text-danger transition-colors hover:bg-danger/20"
+            title={t.liveCall}
+          >
+            ● {t.liveCall}
+          </button>
+        )}
         {speech.supported && (
           <button
             type="button"

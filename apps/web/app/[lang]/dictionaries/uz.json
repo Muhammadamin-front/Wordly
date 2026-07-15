@@ -461,7 +461,15 @@
     "latestBand": "So'nggi IELTS bali",
     "notConfigured": "AI murabbiy bu serverda hali sozlanmagan.",
     "error": "Nimadir xato ketdi. Qayta urinib ko'ring.",
-    "quotaOut": "Bugungi bepul AI navbatlarini ishlatib bo'ldingiz. Cheksiz mashq uchun Premiumga o'ting."
+    "quotaOut": "Bugungi bepul AI navbatlarini ishlatib bo'ldingiz. Cheksiz mashq uchun Premiumga o'ting.",
+    "liveCall": "Jonli",
+    "connecting": "Ulanmoqda…",
+    "endCall": "Tugatish",
+    "speakNow": "Gapiring — men tinglayapman",
+    "tapToStart": "Suhbatni boshlash uchun bosing",
+    "you": "Siz",
+    "callMicDenied": "Jonli suhbat uchun mikrofonga ruxsat kerak.",
+    "callUnavailable": "Jonli ovoz hozircha mavjud emas. Keyinroq urinib ko'ring."
   },
   "billing": {
     "title": "Narxlar",

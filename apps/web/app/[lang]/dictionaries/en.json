@@ -461,7 +461,15 @@
     "latestBand": "Latest IELTS band",
     "notConfigured": "The AI coach isn't set up on this server yet.",
     "error": "Something went wrong. Please try again.",
-    "quotaOut": "You've used today's free AI turns. Upgrade to Premium for unlimited practice."
+    "quotaOut": "You've used today's free AI turns. Upgrade to Premium for unlimited practice.",
+    "liveCall": "Live",
+    "connecting": "Connecting…",
+    "endCall": "End call",
+    "speakNow": "Speak now — I'm listening",
+    "tapToStart": "Tap to start the call",
+    "you": "You",
+    "callMicDenied": "Microphone access is needed for the live call.",
+    "callUnavailable": "Live voice isn't available right now. Try again later."
   },
   "billing": {
     "title": "Pricing",
