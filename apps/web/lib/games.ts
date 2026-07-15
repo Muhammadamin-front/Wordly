@@ -38,9 +38,20 @@ export interface GameAnswerResult {
   reward: Reward;
 }
 
+/** Where a game pulls its words from: the learner's own due cards, a CEFR
+ *  level, or a corpus category (ielts/phrasal/idioms). */
+export interface GameSource {
+  level?: string;
+  category?: string;
+}
+
 export const gamesApi = {
-  session: (gameType: GameType, count = 10) =>
-    apiFetch<GameSession>(`/games/${gameType}?count=${count}`, { auth: true }),
+  session: (gameType: GameType, count = 10, source: GameSource = {}) => {
+    const params = new URLSearchParams({ count: String(count) });
+    if (source.level) params.set("level", source.level);
+    if (source.category) params.set("category", source.category);
+    return apiFetch<GameSession>(`/games/${gameType}?${params}`, { auth: true });
+  },
 
   answer: (cardId: string, correct: boolean, durationMs?: number) =>
     apiFetch<GameAnswerResult>("/games/answer", {

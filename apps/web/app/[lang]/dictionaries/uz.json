@@ -355,7 +355,12 @@
     "heard": "Eshitildi",
     "micUnsupported": "Brauzeringizda nutqni aniqlash yo'q — o'zingizni halol baholang.",
     "saidIt": "Aytdim",
-    "notYet": "Hali emas"
+    "notYet": "Hali emas",
+    "chooseSource": "So'zlarni tanlang",
+    "sourceMine": "Kartalarim",
+    "sourcePhrasal": "Frazalar",
+    "sourceIdioms": "Idiomalar",
+    "sourceHint": "O'z kartalaringizni yoki istalgan daraja/to'plamni o'ynang — yangi so'zlar kartalaringizga qo'shiladi."
   },
   "stats": {
     "title": "Statistika",

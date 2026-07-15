@@ -355,7 +355,12 @@
     "heard": "Heard",
     "micUnsupported": "Your browser has no speech recognition — grade yourself honestly.",
     "saidIt": "I said it",
-    "notYet": "Not yet"
+    "notYet": "Not yet",
+    "chooseSource": "Choose words",
+    "sourceMine": "My cards",
+    "sourcePhrasal": "Phrasal",
+    "sourceIdioms": "Idioms",
+    "sourceHint": "Play your own cards, or practise any level or set — new words get added to your cards."
   },
   "stats": {
     "title": "Statistics",

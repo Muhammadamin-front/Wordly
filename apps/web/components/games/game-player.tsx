@@ -18,7 +18,7 @@ import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/g
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
-import { buildOptions, gamesApi, shuffle, type GameQuestion, type GameType } from "@/lib/games";
+import { buildOptions, gamesApi, shuffle, type GameQuestion, type GameSource, type GameType } from "@/lib/games";
 import { notifyStatsChanged } from "@/lib/gamification";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -67,7 +67,29 @@ export interface GameProps {
   onComplete: () => void;
 }
 
-type Phase = "loading" | "empty" | "error" | "playing" | "done";
+type Phase = "choosing" | "loading" | "empty" | "error" | "playing" | "done";
+
+interface SourceOption {
+  key: string; // stable id
+  label: string;
+  source: GameSource;
+  accent: string;
+}
+
+/** Word sources a player can pick before a game: their own cards, a CEFR
+ *  level, or a corpus category. */
+const SOURCE_OPTIONS = (games: Dictionary["games"]): SourceOption[] => [
+  { key: "mine", label: games.sourceMine, source: {}, accent: "border-brand-400 bg-brand-500/10 text-ink" },
+  { key: "A1", label: "A1", source: { level: "A1" }, accent: "border-green-400/50 text-green-600 dark:text-green-400" },
+  { key: "A2", label: "A2", source: { level: "A2" }, accent: "border-emerald-400/50 text-emerald-600 dark:text-emerald-400" },
+  { key: "B1", label: "B1", source: { level: "B1" }, accent: "border-blue-400/50 text-blue-600 dark:text-blue-400" },
+  { key: "B2", label: "B2", source: { level: "B2" }, accent: "border-indigo-400/50 text-indigo-600 dark:text-indigo-400" },
+  { key: "C1", label: "C1", source: { level: "C1" }, accent: "border-purple-400/50 text-purple-600 dark:text-purple-400" },
+  { key: "C2", label: "C2", source: { level: "C2" }, accent: "border-violet-400/50 text-violet-600 dark:text-violet-400" },
+  { key: "ielts", label: "🎓 IELTS", source: { category: "ielts" }, accent: "border-orange-400/50 text-orange-600 dark:text-orange-400" },
+  { key: "phrasal", label: `🔗 ${games.sourcePhrasal}`, source: { category: "phrasal" }, accent: "border-yellow-400/50 text-yellow-600 dark:text-yellow-400" },
+  { key: "idioms", label: `💬 ${games.sourceIdioms}`, source: { category: "idioms" }, accent: "border-amber-500/50 text-amber-700 dark:text-amber-400" },
+];
 
 export function GamePlayer({
   lang,
@@ -82,39 +104,43 @@ export function GamePlayer({
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const [phase, setPhase] = useState<Phase>("loading");
+  const [phase, setPhase] = useState<Phase>("choosing");
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
+  const [source, setSource] = useState<GameSource>({});
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
-  // No synchronous setState here — phase starts "loading" and only updates
-  // once the fetch resolves, keeping this safe to call from an effect.
-  const fetchSession = useCallback(() => {
-    gamesApi
-      .session(gameType)
-      .then((session) => {
-        setPrepared(prepare(session.questions, gameType));
-        setTotal(session.questions.length);
-        setScore(0);
-        setPhase("playing");
-      })
-      .catch((err) => {
-        setPhase(err instanceof ApiError && err.status === 409 ? "empty" : "error");
-      });
-  }, [gameType]);
+  // No synchronous setState here — phase transitions happen only once the
+  // fetch resolves, keeping this safe to call from an effect/handler.
+  const fetchSession = useCallback(
+    (chosen: GameSource) => {
+      setPhase("loading");
+      gamesApi
+        .session(gameType, 10, chosen)
+        .then((session) => {
+          setPrepared(prepare(session.questions, gameType));
+          setTotal(session.questions.length);
+          setScore(0);
+          setPhase("playing");
+        })
+        .catch((err) => {
+          setPhase(err instanceof ApiError && err.status === 409 ? "empty" : "error");
+        });
+    },
+    [gameType]
+  );
 
-  useEffect(() => {
-    if (ready && user) fetchSession();
-  }, [ready, user, fetchSession]);
-
-  const playAgain = () => {
-    setPhase("loading");
-    fetchSession();
+  const start = (chosen: GameSource) => {
+    setSource(chosen);
+    fetchSession(chosen);
   };
+
+  const playAgain = () => fetchSession(source);
+  const changeSource = () => setPhase("choosing");
 
   const onAnswer = useCallback((cardId: string, correct: boolean, durationMs: number) => {
     if (correct) setScore((s) => s + 1);
@@ -123,7 +149,41 @@ export function GamePlayer({
 
   const onComplete = useCallback(() => setPhase("done"), []);
 
-  if (!ready || phase === "loading") {
+  if (!ready || !user) {
+    return (
+      <div className="flex flex-1 items-center justify-center py-20">
+        <span
+          aria-label={games.loading}
+          className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent"
+        />
+      </div>
+    );
+  }
+
+  if (phase === "choosing") {
+    return (
+      <div className="mx-auto w-full max-w-md py-10 text-center">
+        <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
+          {games.chooseSource}
+        </p>
+        <div className="mt-5 grid grid-cols-3 gap-2.5">
+          {SOURCE_OPTIONS(games).map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => start(opt.source)}
+              className={`rounded-xl border-2 bg-card px-2 py-3 text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-md ${opt.accent}`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-4 text-xs text-ink-soft">{games.sourceHint}</p>
+      </div>
+    );
+  }
+
+  if (phase === "loading") {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <span
@@ -141,9 +201,12 @@ export function GamePlayer({
           🃏
         </p>
         <p className="mt-4 text-ink-soft">{games.needWords}</p>
-        <Link href={`/${lang}/decks`} className="mt-6 inline-block">
-          <Button>{games.addWords}</Button>
-        </Link>
+        <div className="mt-6 flex justify-center gap-3">
+          <Button onClick={changeSource}>{games.chooseSource}</Button>
+          <Link href={`/${lang}/decks`}>
+            <Button variant="secondary">{games.addWords}</Button>
+          </Link>
+        </div>
       </div>
     );
   }
@@ -168,10 +231,13 @@ export function GamePlayer({
           {score}/{total}
         </p>
         <p className="mt-1 text-sm text-ink-soft">{games.yourScore}</p>
-        <div className="mt-8 flex justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button onClick={playAgain}>{games.playAgain}</Button>
+          <Button variant="secondary" onClick={changeSource}>
+            {games.chooseSource}
+          </Button>
           <Link href={`/${lang}/${exitPath}`}>
-            <Button variant="secondary">{games.exit}</Button>
+            <Button variant="ghost">{games.exit}</Button>
           </Link>
         </div>
       </div>

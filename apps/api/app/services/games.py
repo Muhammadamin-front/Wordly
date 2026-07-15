@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import utcnow
 from app.models.flashcards import Card
 from app.models.user import User
-from app.models.vocabulary import Word, WordRelation, WordSense
+from app.models.vocabulary import Category, Word, WordRelation, WordSense
 from app.services.grammar import grammar_questions
 
 GAME_TYPES = (
@@ -114,6 +114,72 @@ async def _pick_cards(db: AsyncSession, user: User, count: int) -> List[Card]:
         if len(result) >= count:
             break
     return result
+
+
+async def _ensure_cards_for_source(
+    db: AsyncSession,
+    user: User,
+    count: int,
+    level: Optional[str],
+    category: Optional[str],
+    need_example: bool,
+) -> List[Card]:
+    """Cards for a chosen level/category source (A1-C2 or ielts/phrasal/idioms).
+
+    Pulls published corpus words for the filter and get-or-creates a Card per
+    word for this user, so playing a level you haven't started still feeds SRS
+    and any category (idioms, phrasal, IELTS) becomes playable. Prefers words
+    the user hasn't seen yet, then fills with the rest of the filter."""
+    query = (
+        select(Word)
+        .join(WordSense, WordSense.word_id == Word.id)
+        .where(Word.status == "published", WordSense.sense_order == 1)
+    )
+    if level:
+        query = query.where(Word.cefr_level == level)
+    if category:
+        query = query.join(Category, Word.category_id == Category.id).where(
+            Category.slug == category
+        )
+    # Oversample so we can skip words lacking an example when a game needs one.
+    words = list((await db.scalars(query.order_by(func.random()).limit(count * 4))).unique())
+
+    existing_ids = set(
+        (
+            await db.scalars(
+                select(Card.word_id).where(
+                    Card.user_id == user.id, Card.word_id.isnot(None)
+                )
+            )
+        ).all()
+    )
+    # New words first (fresh practice), then already-owned ones as filler.
+    words.sort(key=lambda w: w.id in existing_ids)
+
+    selected: List[Word] = []
+    for word in words:
+        if not word.senses:
+            continue
+        if need_example and not word.senses[0].examples:
+            continue
+        selected.append(word)
+        if len(selected) >= count:
+            break
+
+    for word in selected:
+        if word.id not in existing_ids:
+            db.add(Card(user_id=user.id, word_id=word.id))
+    await db.flush()
+
+    word_ids = [w.id for w in selected]
+    if not word_ids:
+        return []
+    cards = (
+        await db.scalars(
+            select(Card).where(Card.user_id == user.id, Card.word_id.in_(word_ids))
+        )
+    ).unique().all()
+    return list(cards)
 
 
 def _card_translation(card: Card) -> Optional[str]:
@@ -248,15 +314,28 @@ async def build_quiz(db: AsyncSession, mode: str, cefr_level: str, count: int) -
 
 
 async def build_session(
-    db: AsyncSession, user: User, game_type: str, count: int = DEFAULT_COUNT
+    db: AsyncSession,
+    user: User,
+    game_type: str,
+    count: int = DEFAULT_COUNT,
+    level: Optional[str] = None,
+    category: Optional[str] = None,
 ) -> Tuple[List[GameQuestion], int]:
     if game_type in BOARD_GAMES:
         count = min(count, BOARD_GAME_MAX)
 
-    cards = await _pick_cards(db, user, count)
+    need_example = game_type in ("sentence_builder", "listening")
+    if level or category:
+        # Practice a specific level/category from the shared corpus.
+        cards = await _ensure_cards_for_source(
+            db, user, count, level, category, need_example
+        )
+    else:
+        # Default: the learner's own due/weak cards (pure SRS review).
+        cards = await _pick_cards(db, user, count)
     usable = [c for c in cards if c.word and c.word.senses]
     # Sentence Builder scrambles an example; Listening dictates one.
-    if game_type in ("sentence_builder", "listening"):
+    if need_example:
         usable = [c for c in usable if _first_example(c)]
     if len(usable) < MIN_CARDS:
         return [], len(usable)

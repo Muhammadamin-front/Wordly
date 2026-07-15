@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -29,16 +30,24 @@ router = APIRouter(
 FAST_ANSWER_MS = 6000
 
 
+CEFR_PATTERN = "^(A1|A2|B1|B2|C1|C2)$"
+CATEGORY_PATTERN = "^[a-z-]{2,30}$"
+
+
 @router.get("/{game_type}", response_model=GameSessionOut)
 async def game_session(
     game_type: str,
     count: int = Query(games_service.DEFAULT_COUNT, ge=4, le=20),
+    level: Optional[str] = Query(None, pattern=CEFR_PATTERN),
+    category: Optional[str] = Query(None, pattern=CATEGORY_PATTERN),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     if game_type not in games_service.GAME_TYPES:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown game")
-    questions, usable = await games_service.build_session(db, user, game_type, count)
+    questions, usable = await games_service.build_session(
+        db, user, game_type, count, level=level, category=category
+    )
     if not questions:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -46,6 +55,9 @@ async def game_session(
                 games_service.MIN_CARDS, usable
             ),
         )
+    # A level/category session may have created cards for new words.
+    if level or category:
+        await db.commit()
     return GameSessionOut(
         game_type=game_type,
         questions=[
