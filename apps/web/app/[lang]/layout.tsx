@@ -50,8 +50,9 @@ export async function generateMetadata({
   };
 }
 
-// Applies saved/system theme before first paint to avoid a flash.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("words_theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
+// Applies the saved theme before first paint to avoid a flash. Dark is the
+// default brand look (deep navy); users can still switch to light.
+const themeInitScript = `(function(){try{var t=localStorage.getItem("words_theme")||"dark";document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 export default async function RootLayout({
   children,

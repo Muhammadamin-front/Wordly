@@ -17,7 +17,6 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import type { ShelfMeta } from "@/lib/library";
@@ -72,13 +71,12 @@ export function LevelCard({
         locked ? "grayscale-[0.4]" : "hover:shadow-2xl"
       )}
     >
-      {/* Hero art */}
-      <Image
-        src={`/heroes/${meta.slug}.jpg`}
-        alt={strings.name}
-        fill
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-        className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+      {/* Level-tinted gradient art (no image assets — copyright-safe) */}
+      <div className={cn("absolute inset-0 bg-linear-to-br", meta.art)} />
+      {/* Big faded icon watermark for character */}
+      <Icon
+        className="absolute -right-6 -top-4 size-44 rotate-12 text-white/10 transition-transform duration-500 group-hover:scale-110"
+        strokeWidth={1.5}
       />
       {/* Readability scrim + level-tinted bottom gradient */}
       <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
