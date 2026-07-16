@@ -1,9 +1,12 @@
 """IELTS practice endpoints — Reading, Writing, Listening (Speaking lives in the
 Coach). Generation and Writing scoring are AI calls (quota-guarded); grading a
 submitted Reading/Listening test is server-side and free."""
+import json
 from typing import Awaitable, Callable, Dict, List
+from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -24,7 +27,8 @@ from app.schemas.ielts import (
     WritingScoreRequest,
     WritingTask,
 )
-from app.services import ai_quota, coach, ielts
+from app.models.ielts import IeltsTest
+from app.services import ai_quota, coach, ielts, tts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
 from app.services.ielts_bank import bank_for
@@ -196,6 +200,44 @@ async def reading_submit(
     db: AsyncSession = Depends(get_db),
 ):
     return await _submit(payload, user, db)
+
+
+@router.get("/listening/{test_id}/audio")
+async def listening_audio(
+    test_id: UUID,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Natural ElevenLabs narration of an active listening test's script (MP3).
+
+    Keyed by the caller's own test row — the client never sends raw text, so
+    credits can't be burned on arbitrary input. Bank scripts are a finite set,
+    so their audio is served from the disk cache after the first synthesis."""
+    if not get_settings().tts_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="TTS is not configured"
+        )
+    test = await db.scalar(
+        select(IeltsTest).where(
+            IeltsTest.id == test_id,
+            IeltsTest.user_id == user.id,
+            IeltsTest.kind == "listening",
+        )
+    )
+    if test is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Test not found")
+    body = json.loads(test.payload_json)["body"]
+    try:
+        audio = await tts.synthesize(body[:3000])
+    except tts.TtsError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail="Speech synthesis failed"
+        )
+    return Response(
+        content=audio,
+        media_type="audio/mpeg",
+        headers={"Cache-Control": "private, max-age=3600"},
+    )
 
 
 @router.post("/listening/generate", response_model=GeneratedTestOut)

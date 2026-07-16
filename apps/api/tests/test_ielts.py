@@ -184,3 +184,40 @@ async def test_writing_score_returns_bands(client):
         assert ov["best_bands"]["writing"] == 6.5
     finally:
         app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_listening_audio_streams_tts(client, monkeypatch):
+    from types import SimpleNamespace
+
+    from app.api.v1 import ielts as ielts_api
+
+    headers = await learner(client, email="audio@words.uz")
+    started = (
+        await client.post("/api/v1/ielts/listening/bank/l1/start", headers=headers)
+    ).json()
+
+    # No ElevenLabs key in the test env → 503, and the client falls back.
+    resp = await client.get(f"/api/v1/ielts/listening/{started['test_id']}/audio", headers=headers)
+    assert resp.status_code == 503
+
+    # With TTS configured, the script body is synthesized and streamed as MP3.
+    spoken = {}
+
+    async def fake_synthesize(text):
+        spoken["text"] = text
+        return b"MP3BYTES"
+
+    monkeypatch.setattr(ielts_api, "get_settings", lambda: SimpleNamespace(tts_enabled=True))
+    monkeypatch.setattr(ielts_api.tts, "synthesize", fake_synthesize)
+    resp = await client.get(f"/api/v1/ielts/listening/{started['test_id']}/audio", headers=headers)
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "audio/mpeg"
+    assert resp.content == b"MP3BYTES"
+    assert spoken["text"].startswith("Receptionist:")
+
+    # Reading tests have no narration; other users' tests are invisible.
+    reading = (
+        await client.post("/api/v1/ielts/reading/bank/r1/start", headers=headers)
+    ).json()
+    resp = await client.get(f"/api/v1/ielts/listening/{reading['test_id']}/audio", headers=headers)
+    assert resp.status_code == 404

@@ -48,6 +48,8 @@ services:
       PAYMENTS_SANDBOX: ${PAYMENTS_SANDBOX:-true}
     ports:
       - "8000:8000"
+    volumes:
+      - tts_cache:/srv/api/tts_cache
     depends_on:
       postgres:
         condition: service_healthy
@@ -75,3 +77,4 @@ services:
 
 volumes:
   pgdata:
+  tts_cache:
