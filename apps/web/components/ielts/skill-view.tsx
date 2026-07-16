@@ -49,9 +49,11 @@ export function SkillView({
   }
 
   const sheet = cheatsheetFor(skill, lang);
+  // Reading practice uses an exam-style two-pane layout that needs width.
+  const wide = tab === "practice" && skill === "reading";
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main className={cn("mx-auto w-full flex-1 px-4 py-8 sm:px-6", wide ? "max-w-6xl" : "max-w-3xl")}>
       <div className="mb-5 flex items-center justify-between">
         <Link href={`/${lang}/ielts`} className="text-sm font-medium text-ink-soft hover:text-ink">
           ← IELTS

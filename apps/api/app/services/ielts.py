@@ -217,10 +217,13 @@ _COMPREHENSION_SCHEMA = {
 
 _READING_PROMPT = (
     "Create one IELTS Academic Reading practice item at band {band} difficulty. Write an "
-    "informative academic passage of 320-420 words on an interesting non-fiction topic (science, "
-    "history, environment, society). Then write {n} multiple-choice comprehension questions that "
-    "test main ideas, detail, inference and vocabulary. Each question has exactly 4 options with "
-    "one correct answer (answer_index is 0-based). Make distractors plausible."
+    "informative academic passage of 550-750 words with a title, split into 4-6 paragraphs "
+    "(separate them with blank lines), on an interesting non-fiction topic (science, history, "
+    "environment, society, technology). Then write {n} questions in authentic IELTS style: "
+    "the first half TRUE/FALSE/NOT GIVEN statements (options exactly "
+    "['TRUE', 'FALSE', 'NOT GIVEN'] — statement in the prompt, answer_index 0-based; include "
+    "at least one NOT GIVEN), the rest multiple-choice with exactly 4 plausible options "
+    "testing main ideas, detail, inference and vocabulary."
 )
 
 _LISTENING_PROMPT = (
@@ -237,16 +240,19 @@ async def generate_test(
 ) -> Tuple[UUID, Dict[str, Any]]:
     """Generate a Reading/Listening test, persist it with its answer key, and
     return (test_id, client_payload) where client_payload omits the answers."""
-    template = _READING_PROMPT if kind == "reading" else _LISTENING_PROMPT
+    if kind == "reading":
+        template, count = _READING_PROMPT, 8  # full-length passage, TFNG + MCQ
+    else:
+        template = _LISTENING_PROMPT
     system = (
         "You are an experienced IELTS test writer. Produce authentic, original IELTS-style "
         "material. Never reproduce copyrighted texts."
     )
     prompt = template.format(band=band, n=count)
-    # Generous limit: a 400-word passage + 6 questions as JSON easily exceeds
-    # 2000 tokens, and a truncated response fails JSON parsing (seen live).
+    # Generous limit: a 750-word passage + 8 questions as JSON runs to several
+    # thousand tokens, and a truncated response fails JSON parsing (seen live).
     data = await client.json(
-        system=system, prompt=prompt, schema=_COMPREHENSION_SCHEMA, max_tokens=4096
+        system=system, prompt=prompt, schema=_COMPREHENSION_SCHEMA, max_tokens=8192
     )
 
     questions = [

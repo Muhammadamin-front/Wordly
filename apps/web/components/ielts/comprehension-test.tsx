@@ -7,7 +7,7 @@ import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ApiError } from "@/lib/api";
+import { API_URL, ApiError, getAccessToken } from "@/lib/api";
 import {
   BAND_COLOR,
   ieltsApi,
@@ -22,6 +22,12 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 type Ielts = Dictionary["ielts"];
 
 const TIME_LIMIT: Record<ComprehensionKind, number> = { reading: 480, listening: 360 };
+
+/** Longer passages earn more time: ~300 words → 8 min, 700+ words → 20 min. */
+function readingSeconds(body: string): number {
+  const words = body.split(/\s+/).length;
+  return Math.min(1200, Math.max(TIME_LIMIT.reading, Math.round(words * 1.6)));
+}
 
 function fmt(sec: number): string {
   const m = Math.floor(sec / 60);
@@ -49,7 +55,44 @@ export function ComprehensionTest({
   const [loadingId, setLoadingId] = useState<string | null>(null); // bank id or "ai"
   const [error, setError] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
+
+  // Natural ElevenLabs narration when the server has TTS; falls back to the
+  // browser's speechSynthesis voice when it doesn't.
+  const stopAudio = () => {
+    audioRef.current?.pause();
+    speech.cancel();
+    setAudioPlaying(false);
+  };
+
+  async function playNarration(testId: string, body: string) {
+    try {
+      const token = getAccessToken();
+      const resp = await fetch(`${API_URL}/api/v1/ielts/listening/${testId}/audio`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: "include",
+      });
+      if (!resp.ok) throw new Error(String(resp.status));
+      const url = URL.createObjectURL(await resp.blob());
+      audioRef.current?.pause();
+      const audio = new Audio(url);
+      audio.onplay = () => setAudioPlaying(true);
+      audio.onpause = () => setAudioPlaying(false);
+      audio.onended = () => {
+        setAudioPlaying(false);
+        URL.revokeObjectURL(url);
+      };
+      audioRef.current = audio;
+      await audio.play();
+    } catch {
+      audioRef.current = null;
+      speech.speak(body, { rate: 0.98 }); // graceful fallback
+    }
+  }
+
+  useEffect(() => stopAudio, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     ieltsApi.bank(kind).then(setBank).catch(() => setBank([]));
@@ -74,10 +117,10 @@ export function ComprehensionTest({
   function begin(generated: GeneratedTest) {
     setTest(generated);
     setAnswers(new Array(generated.questions.length).fill(-1));
-    setSecondsLeft(TIME_LIMIT[kind]);
+    setSecondsLeft(kind === "reading" ? readingSeconds(generated.body) : TIME_LIMIT[kind]);
     if (kind === "listening") {
       // Play the recording once, automatically — like the real exam.
-      window.setTimeout(() => speech.speak(generated.body, { rate: 0.98 }), 400);
+      window.setTimeout(() => playNarration(generated.test_id, generated.body), 400);
     }
   }
 
@@ -85,7 +128,7 @@ export function ComprehensionTest({
     setLoadingId(source);
     setError(null);
     setResult(null);
-    speech.cancel();
+    stopAudio();
     try {
       begin(
         source === "ai" ? await ieltsApi.generate(kind, 6) : await ieltsApi.bankStart(kind, source)
@@ -105,7 +148,7 @@ export function ComprehensionTest({
 
   async function submit() {
     if (!test || result) return;
-    speech.cancel();
+    stopAudio();
     try {
       const graded = await ieltsApi.submit(kind, test.test_id, answers);
       setResult(graded);
@@ -120,7 +163,8 @@ export function ComprehensionTest({
   });
 
   function backToList() {
-    speech.cancel();
+    stopAudio();
+    audioRef.current = null;
     setTest(null);
     setResult(null);
     ieltsApi.bank(kind).then(setBank).catch(() => setBank([]));
@@ -175,9 +219,23 @@ export function ComprehensionTest({
                     {item.done && <span className="mr-1 text-success">✓</span>}
                     {item.title}
                   </p>
-                  <p className="text-xs text-ink-soft">
-                    {item.word_count} {t.words} · {item.question_count} {t.questionsShort}
-                  </p>
+                  <div className="mt-0.5 flex items-center gap-2 text-xs text-ink-soft">
+                    <span
+                      className={cn(
+                        "rounded-full px-1.5 py-0.5 font-bold tabular-nums",
+                        item.band >= 7.5
+                          ? "bg-danger/10 text-danger"
+                          : item.band >= 6.5
+                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                            : "bg-success/10 text-success"
+                      )}
+                    >
+                      {t.bandLabel} {item.band.toFixed(1)}
+                    </span>
+                    <span>
+                      {item.word_count} {t.words} · {item.question_count} {t.questionsShort}
+                    </span>
+                  </div>
                 </div>
                 <Button
                   size="sm"
@@ -218,66 +276,96 @@ export function ComprehensionTest({
             )}
           </div>
 
-          {kind === "reading" ? (
-            <article className="max-h-72 overflow-y-auto rounded-2xl border border-line bg-card p-5">
-              <h2 className="mb-2 text-lg font-bold text-ink">{test.title}</h2>
-              <p className="whitespace-pre-line text-sm leading-relaxed text-ink">{test.body}</p>
-            </article>
-          ) : (
-            <div className="flex items-center justify-center gap-3 rounded-2xl border border-line bg-card p-5">
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  speech.speaking ? speech.cancel() : speech.speak(test.body, { rate: 0.98 })
-                }
-              >
-                {speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
-              </Button>
-              <p className="text-xs text-ink-soft">{t.listeningHint}</p>
-            </div>
-          )}
+          {(() => {
+            const questionsBlock = (
+              <>
+                {test.questions.map((q, qi) => (
+                  <div key={qi} className="rounded-2xl border border-line bg-card p-4">
+                    <p className="flex items-start gap-2 font-semibold text-ink">
+                      <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded border border-line text-xs font-bold text-ink-soft">
+                        {qi + 1}
+                      </span>
+                      {q.prompt}
+                    </p>
+                    <div className="mt-2 space-y-1.5">
+                      {q.options.map((opt, oi) => {
+                        const chosen = answers[qi] === oi;
+                        const correct = result && result.answers[qi] === oi;
+                        const wrongChosen = result && chosen && result.answers[qi] !== oi;
+                        return (
+                          <button
+                            key={oi}
+                            type="button"
+                            disabled={!!result}
+                            onClick={() =>
+                              setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))
+                            }
+                            className={cn(
+                              "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
+                              correct && "border-success bg-success/10 text-success",
+                              wrongChosen && "border-danger bg-danger/10 text-danger",
+                              !result && chosen && "border-brand-500 bg-brand-600/10 text-ink",
+                              !result && !chosen && "border-line text-ink hover:bg-line/40",
+                              result && !correct && !wrongChosen && "border-line text-ink-soft"
+                            )}
+                          >
+                            <span className="font-bold">{String.fromCharCode(65 + oi)}</span>
+                            {opt}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+                {!result ? (
+                  <Button fullWidth onClick={submit} disabled={answers.some((a) => a === -1)}>
+                    {t.submitTest}
+                  </Button>
+                ) : (
+                  <ResultCard result={result} t={t} onBack={backToList} />
+                )}
+              </>
+            );
 
-          {test.questions.map((q, qi) => (
-            <div key={qi} className="rounded-2xl border border-line bg-card p-4">
-              <p className="font-semibold text-ink">
-                {qi + 1}. {q.prompt}
-              </p>
-              <div className="mt-2 space-y-1.5">
-                {q.options.map((opt, oi) => {
-                  const chosen = answers[qi] === oi;
-                  const correct = result && result.answers[qi] === oi;
-                  const wrongChosen = result && chosen && result.answers[qi] !== oi;
-                  return (
-                    <button
-                      key={oi}
-                      type="button"
-                      disabled={!!result}
-                      onClick={() => setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
-                        correct && "border-success bg-success/10 text-success",
-                        wrongChosen && "border-danger bg-danger/10 text-danger",
-                        !result && chosen && "border-brand-500 bg-brand-600/10 text-ink",
-                        !result && !chosen && "border-line text-ink hover:bg-line/40",
-                        result && !correct && !wrongChosen && "border-line text-ink-soft"
-                      )}
-                    >
-                      <span className="font-bold">{String.fromCharCode(65 + oi)}</span>
-                      {opt}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-
-          {!result ? (
-            <Button fullWidth onClick={submit} disabled={answers.some((a) => a === -1)}>
-              {t.submitTest}
-            </Button>
-          ) : (
-            <ResultCard result={result} t={t} onBack={backToList} />
-          )}
+            if (kind === "reading") {
+              // Exam-style split view: passage stays put on the left while the
+              // learner scrolls the questions on the right (stacked on mobile).
+              return (
+                <div className="gap-5 lg:grid lg:grid-cols-2 lg:items-start">
+                  <article className="max-h-80 overflow-y-auto rounded-2xl border border-line bg-card p-5 lg:sticky lg:top-4 lg:max-h-[calc(100vh-8rem)]">
+                    <h2 className="mb-3 text-lg font-bold text-ink">{test.title}</h2>
+                    <p className="whitespace-pre-line text-[15px] leading-7 text-ink">
+                      {test.body}
+                    </p>
+                  </article>
+                  <div className="mt-5 space-y-5 lg:mt-0">{questionsBlock}</div>
+                </div>
+              );
+            }
+            return (
+              <>
+                <div className="flex items-center justify-center gap-3 rounded-2xl border border-line bg-card p-5">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      if (audioRef.current) {
+                        if (audioPlaying) audioRef.current.pause();
+                        else void audioRef.current.play();
+                      } else if (speech.speaking) {
+                        speech.cancel();
+                      } else {
+                        void playNarration(test.test_id, test.body);
+                      }
+                    }}
+                  >
+                    {audioPlaying || speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
+                  </Button>
+                  <p className="text-xs text-ink-soft">{t.listeningHint}</p>
+                </div>
+                <div className="space-y-5">{questionsBlock}</div>
+              </>
+            );
+          })()}
         </div>
       )}
     </div>
