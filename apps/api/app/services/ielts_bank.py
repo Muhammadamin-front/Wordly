@@ -6,6 +6,9 @@ MCQs). Real Cambridge past papers are copyrighted, so the bank mirrors their
 format and difficulty without reproducing them. Answer keys stay server-side:
 starting a bank item creates a normal IeltsTest row, so grading, XP and band
 history reuse the existing pipeline.
+
+Each item carries an approximate difficulty ``band`` (guidance only), so the
+practice list can be sorted easy → hard as the bank grows.
 """
 from typing import Any, Dict, List, Optional
 
@@ -14,6 +17,7 @@ Item = Dict[str, Any]
 READING_BANK: List[Item] = [
     {
         "id": "r1",
+        "band": 6.5,
         "title": "The Quiet Rise of Urban Beekeeping",
         "body": (
             "City rooftops are not the first place most people would look for honey, yet urban "
@@ -51,6 +55,7 @@ READING_BANK: List[Item] = [
     },
     {
         "id": "r2",
+        "band": 6.0,
         "title": "A Short History of Tea",
         "body": (
             "Few drinks have shaped world history as quietly and thoroughly as tea. According to "
@@ -87,6 +92,7 @@ READING_BANK: List[Item] = [
     },
     {
         "id": "r3",
+        "band": 6.5,
         "title": "Why We Sleep in Cycles",
         "body": (
             "Sleep feels like a single, uniform state — a nightly switch from 'on' to 'off'. In "
@@ -123,6 +129,7 @@ READING_BANK: List[Item] = [
     },
     {
         "id": "r4",
+        "band": 7.0,
         "title": "The Sea That Disappeared",
         "body": (
             "Sixty years ago the Aral Sea, straddling the border of Kazakhstan and Uzbekistan, was "
@@ -159,6 +166,7 @@ READING_BANK: List[Item] = [
     },
     {
         "id": "r5",
+        "band": 7.0,
         "title": "The Infinite Life of Glass",
         "body": (
             "Of all everyday materials, glass comes closest to true immortality. A glass bottle "
@@ -196,6 +204,7 @@ READING_BANK: List[Item] = [
     },
     {
         "id": "r6",
+        "band": 7.5,
         "title": "Gutenberg's Unintended Revolution",
         "body": (
             "When Johannes Gutenberg assembled his printing press in Mainz around 1450, his "
@@ -231,11 +240,258 @@ READING_BANK: List[Item] = [
             {"prompt": "What comparison does the passage end with?", "options": ["Printing and the internet raise similar debates", "Gutenberg was richer than modern publishers", "Books are better than websites", "Censorship works better today"], "answer_index": 0},
         ],
     },
+    {
+        "id": "r7",
+        "band": 6.5,
+        "title": "The Return of the Wolf",
+        "body": (
+            "When the last wolves were shot in Yellowstone National Park in the 1920s, few "
+            "Americans mourned them. Wolves were seen as vicious pests, and their removal was "
+            "official policy. For seventy years the park had none. Yet their absence, it turned "
+            "out, had quietly reshaped the entire landscape — a lesson ecologists are still "
+            "learning from today.\n\n"
+            "Without wolves, the park's elk population exploded. Great herds grazed freely along "
+            "rivers and streams, eating young willow, aspen and cottonwood faster than the plants "
+            "could regrow. As the trees vanished, so did the beavers that depended on them and the "
+            "songbirds that nested in them. Riverbanks, no longer held together by roots, crumbled "
+            "and widened. A missing predator had, step by step, changed even the shape of the "
+            "rivers.\n\n"
+            "In 1995 biologists reintroduced fourteen wolves, brought from Canada. The results "
+            "astonished even the scientists who had argued for the plan. The wolves did not merely "
+            "reduce elk numbers; they changed elk behaviour, keeping the herds moving and away "
+            "from the exposed valleys where they were easy to hunt. Freed from constant grazing, "
+            "willows and aspens shot up. Beavers returned to build dams, which created ponds for "
+            "fish and amphibians. Birds came back to the recovering woodland.\n\n"
+            "Scientists call this a 'trophic cascade' — a chain of effects that spreads downward "
+            "from a top predator through an entire ecosystem. The Yellowstone story became its "
+            "most famous example, cited in classrooms around the world. Some researchers caution "
+            "that the tale is often told too simply: weather, rising bear numbers and other "
+            "factors also played a part, and the recovery is patchy rather than complete.\n\n"
+            "Still, the broad lesson stands. Removing a single species can unravel connections no "
+            "one had noticed, and returning it can begin, slowly, to knit them back together. The "
+            "wolves of Yellowstone are now among the most studied animals on Earth — living proof "
+            "that in nature, nothing exists alone."
+        ),
+        "questions": [
+            {"prompt": "How were wolves regarded before the 1920s?", "options": ["As protected symbols", "As a valuable tourist attraction", "As harmful pests to be removed", "As sacred animals"], "answer_index": 2},
+            {"prompt": "What happened to the park after the wolves were gone?", "options": ["The elk population grew and overgrazed the trees", "Elk numbers fell sharply", "Beavers multiplied rapidly", "The rivers became deeper"], "answer_index": 0},
+            {"prompt": "Besides reducing their numbers, how did the wolves affect the elk?", "options": ["They made the elk breed faster", "They drove the elk out of the park entirely", "They had no effect on elk behaviour", "They changed the elk's behaviour and movements"], "answer_index": 3},
+            {"prompt": "What is a 'trophic cascade'?", "options": ["A sudden collapse of a riverbank", "Effects spreading down from a top predator through an ecosystem", "A method of counting wolves", "A type of waterfall"], "answer_index": 1},
+            {"prompt": "What caution do some researchers add?", "options": ["The wolves should be removed again", "The whole story is completely false", "Other factors also contributed and the recovery is incomplete", "Elk were never really a problem"], "answer_index": 2},
+            {"prompt": "What is the main message of the passage?", "options": ["Wolves are dangerous to humans", "Species are connected, and losing one can affect many others", "National parks should ban all predators", "Rivers cannot change their shape"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "r8",
+        "band": 7.0,
+        "title": "Why Tall Buildings Sway",
+        "body": (
+            "Visitors to the observation deck of a supertall skyscraper are sometimes unnerved to "
+            "feel the floor move gently beneath them on a windy day. Their instinct is that a "
+            "building should be rigid, and that any movement signals danger. In fact the opposite "
+            "is true: a tall tower that could not sway would be far more likely to fail. "
+            "Flexibility, not stiffness, is what keeps modern skyscrapers standing.\n\n"
+            "Wind is the main challenge for very tall structures. A steady breeze is not the "
+            "problem; the danger comes from gusts and, more subtly, from the way wind forms "
+            "swirling eddies as it passes a building. These eddies can push the tower rhythmically "
+            "from side to side. If that rhythm happens to match the building's own natural "
+            "frequency — the rate at which it would rock back and forth on its own — the movements "
+            "can reinforce one another and grow alarmingly large, a phenomenon known as "
+            "resonance.\n\n"
+            "Engineers use several tricks to prevent this. The simplest is to shape the tower so "
+            "that wind cannot organise itself into a regular rhythm: many recent skyscrapers taper "
+            "towards the top, twist as they rise, or have rounded corners and openings that break "
+            "up the airflow. A more dramatic solution sits near the summit of some towers: a tuned "
+            "mass damper, a huge weight — sometimes hundreds of tonnes — suspended so that it "
+            "swings in the opposite direction to the building, cancelling much of the motion. "
+            "Taipei 101 famously houses a golden steel sphere weighing 660 tonnes for exactly this "
+            "purpose.\n\n"
+            "The goal is never to eliminate movement completely, which would be impossibly "
+            "expensive, but to keep it small enough that occupants do not notice or feel unwell. "
+            "Comfort, oddly, is a stricter limit than safety: a building can be structurally fine "
+            "yet sway enough to make people on the upper floors queasy. So the next time a tower "
+            "trembles in the wind, there is no need to worry. It is simply doing its job — bending "
+            "a little, precisely so that it never has to break."
+        ),
+        "questions": [
+            {"prompt": "Why are visitors sometimes alarmed on windy days?", "options": ["The lift moves too fast", "The observation deck is very high", "The windows are left open", "They feel the building move and assume it is unsafe"], "answer_index": 3},
+            {"prompt": "What is the main source of danger from wind?", "options": ["A steady, constant breeze", "Rain combined with wind", "Gusts and swirling eddies that push the tower rhythmically", "Cold temperatures at height"], "answer_index": 2},
+            {"prompt": "What is 'resonance' in this context?", "options": ["A method of measuring wind speed", "When wind's rhythm matches the building's natural frequency and enlarges its motion", "A type of building material", "The stiffness of steel beams"], "answer_index": 1},
+            {"prompt": "How does tapering or twisting a tower help?", "options": ["It stops wind forming a regular rhythm around the tower", "It makes the building cheaper to build", "It increases the building's weight", "It blocks out sunlight"], "answer_index": 0},
+            {"prompt": "What does a tuned mass damper do?", "options": ["It generates electricity for the tower", "It measures the sway for engineers", "It swings opposite to the building to cancel much of the motion", "It supports the weight of the roof"], "answer_index": 2},
+            {"prompt": "Why is comfort described as a stricter limit than safety?", "options": ["Safety rules are ignored in tall towers", "A structurally safe building can still sway enough to make people feel ill", "Comfort is cheaper to achieve than safety", "People never notice a building swaying"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "r9",
+        "band": 7.5,
+        "title": "The Economics of Happiness",
+        "body": (
+            "For most of its history, economics measured success in a single currency: money. A "
+            "country was doing well if its output grew; a person was better off if their income "
+            "rose. In recent decades, however, a growing number of economists have begun to ask a "
+            "more awkward question — does more money actually make people happier? The answer, it "
+            "turns out, is: up to a point.\n\n"
+            "The puzzle was first sharpened in the 1970s by the economist Richard Easterlin. He "
+            "noticed that although richer people within a country tend to report being happier "
+            "than poorer ones, entire nations do not necessarily grow happier as they get richer "
+            "over time. The United States, for example, became far wealthier after the Second "
+            "World War without any lasting rise in reported life satisfaction. This apparent "
+            "contradiction became known as the Easterlin Paradox.\n\n"
+            "One explanation is that much of the satisfaction money brings is relative rather than "
+            "absolute. What matters is not how much you have, but how much you have compared with "
+            "the people around you. If everyone's income doubles, nobody feels richer, because "
+            "their position in the ranking is unchanged. Another factor is adaptation: people "
+            "quickly grow used to a higher standard of living, so a pay rise that feels wonderful "
+            "in January is taken for granted by June.\n\n"
+            "None of this means money is irrelevant. For those in poverty, more income reliably "
+            "improves well-being, because it removes real hardship — hunger, insecurity, the "
+            "stress of unpaid bills. The gains simply shrink as wealth increases. Beyond a "
+            "comfortable level, studies suggest, further income adds little, while factors such as "
+            "health, close relationships and a sense of purpose matter far more.\n\n"
+            "These findings have begun to influence policy. Some governments now track measures of "
+            "national well-being alongside economic output, arguing that a country's job is to "
+            "increase happiness, not merely wealth. Critics reply that happiness is too vague and "
+            "personal to measure reliably. Yet the underlying question — what, in the end, is an "
+            "economy for? — is one that pure income figures were never able to answer."
+        ),
+        "questions": [
+            {"prompt": "What awkward question have some economists begun to ask?", "options": ["Whether the economy will keep growing", "How to measure national output", "Whether more money actually makes people happier", "Why prices rise over time"], "answer_index": 2},
+            {"prompt": "What did Easterlin observe?", "options": ["Richer people are always unhappy", "Nations do not necessarily get happier as they grow richer over time", "Money has no effect on anyone", "Poor countries are the happiest"], "answer_index": 1},
+            {"prompt": "What does 'relative' satisfaction mean here?", "options": ["The exact amount of money you earn", "The total wealth of a nation", "The price of everyday goods", "How much you have compared with the people around you"], "answer_index": 3},
+            {"prompt": "What is 'adaptation'?", "options": ["People get used to a higher standard of living", "People give away their extra money", "Incomes tend to fall over time", "Happiness can never change"], "answer_index": 0},
+            {"prompt": "For whom does more income reliably improve well-being?", "options": ["Wealthy business owners", "Retired people", "People living in poverty", "Government officials"], "answer_index": 2},
+            {"prompt": "How have the findings influenced policy?", "options": ["All governments have banned income statistics", "Some governments now track well-being alongside economic output", "Economists have stopped studying happiness", "Wealth is no longer measured at all"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "r10",
+        "band": 6.5,
+        "title": "How Coral Reefs Build Themselves",
+        "body": (
+            "A coral reef looks like rock, but it is one of the busiest living structures on the "
+            "planet. What appears to be colourful stone is in fact built by millions of tiny "
+            "animals called polyps, each no larger than a grain of rice. Understanding how these "
+            "fragile creatures create the largest structures ever made by living things helps "
+            "explain why reefs are now in such danger.\n\n"
+            "Each polyp is a soft, tube-shaped animal that draws calcium and carbonate from "
+            "seawater and lays down a hard skeleton of limestone beneath itself. As generations of "
+            "polyps live, die and are built over, their skeletons accumulate into the vast ridges "
+            "we call reefs. The Great Barrier Reef, stretching more than two thousand kilometres, "
+            "has grown this way over hundreds of thousands of years, and can be seen from space.\n\n"
+            "The polyps could not do this alone. Inside their tissues live microscopic algae, "
+            "which use sunlight to make sugars and share them with their hosts. In return, the "
+            "algae get shelter and the polyp's waste as nutrients. This partnership is so "
+            "productive that reefs flourish even in the clear, nutrient-poor tropical waters where "
+            "little else can grow. It is also what gives coral its brilliant colour — the algae, "
+            "not the polyps, supply most of the hue.\n\n"
+            "That same partnership is the reef's weak point. When the water grows too warm, even "
+            "by a degree or two for a few weeks, the algae produce harmful chemicals and the "
+            "polyps expel them. Without the algae the coral turns ghostly white — an event called "
+            "bleaching — and, robbed of its main food supply, begins to starve. If cooler "
+            "conditions return quickly, the algae can recolonise and the coral recovers; if not, "
+            "it dies.\n\n"
+            "Because reefs shelter a quarter of all marine species while covering less than one "
+            "per cent of the ocean floor, their fate matters far beyond their own beauty. "
+            "Protecting them means, above all, keeping the seas from warming."
+        ),
+        "questions": [
+            {"prompt": "What actually builds a coral reef?", "options": ["Ocean currents piling up sand", "Millions of tiny animals called polyps", "Volcanic rock rising from the seabed", "Fish depositing shells"], "answer_index": 1},
+            {"prompt": "What does each polyp make from seawater?", "options": ["A soft outer shell", "A cloud of eggs", "A hard limestone skeleton beneath itself", "A layer of algae"], "answer_index": 2},
+            {"prompt": "What do the algae inside coral provide?", "options": ["Oxygen for breathing", "Protection from predators", "Sugars made from sunlight", "Calcium for the skeleton"], "answer_index": 2},
+            {"prompt": "What gives coral most of its colour?", "options": ["The limestone rock", "The surrounding seawater", "The polyps themselves", "The algae living inside the polyps"], "answer_index": 3},
+            {"prompt": "What causes coral bleaching?", "options": ["Pollution washed in from rivers", "Water becoming too warm, so the polyps expel the algae", "Too many fish eating the coral", "A lack of sunlight"], "answer_index": 1},
+            {"prompt": "Why do reefs matter beyond their beauty?", "options": ["They produce most of the world's oxygen", "They shelter about a quarter of all marine species", "They are made of valuable minerals", "They slow down ocean currents"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "r11",
+        "band": 7.0,
+        "title": "The Wayfinders",
+        "body": (
+            "Long before Europeans crossed the oceans with compasses and charts, the peoples of "
+            "the Pacific were settling islands scattered across an expanse of water larger than "
+            "all the world's landmasses combined. They did so in open canoes, without instruments "
+            "of any kind, guided only by a detailed reading of the natural world. For a long time "
+            "European scholars refused to believe it was deliberate, insisting the islands must "
+            "have been reached by accident, by canoes blown off course. They were wrong.\n\n"
+            "Polynesian navigators, it is now understood, carried an immense body of knowledge in "
+            "memory alone. They read the positions of the rising and setting stars, using a mental "
+            "'star compass' of dozens of points around the horizon. By day, when the stars were "
+            "hidden, they steered by the direction of the ocean swells — the long, regular waves "
+            "generated by distant weather systems, which hold their direction for days and can be "
+            "felt through the hull of a canoe even when the wind shifts.\n\n"
+            "They also learned to detect land long before it appeared. Certain seabirds fly out to "
+            "fish each morning and return to land at dusk, so their flight path in the evening "
+            "points the way to an island. Clouds pile up and take on a greenish tinge above a "
+            "lagoon; a distinctive pattern of waves, reflected and bent by an island, can reveal "
+            "its presence far over the horizon. A skilled navigator wove these signs together into "
+            "a continuous sense of position.\n\n"
+            "This knowledge was almost lost. As colonial rule spread and Western navigation took "
+            "over, the old skills fell into disuse, surviving with only a handful of "
+            "practitioners. In the 1970s, however, a voyage aboard a reconstructed canoe named "
+            "Hokule'a — sailed across thousands of kilometres of open ocean using traditional "
+            "methods alone — proved to a doubting world that the ancient techniques worked. The "
+            "voyage helped spark a wider revival of Pacific culture that continues today."
+        ),
+        "questions": [
+            {"prompt": "What did the peoples of the Pacific achieve?", "options": ["They deliberately settled islands across a vast ocean without instruments", "They built the first compasses", "They mapped the whole Pacific on charts", "They traded regularly with Europe"], "answer_index": 0},
+            {"prompt": "What did European scholars wrongly believe?", "options": ["That the voyages were carefully planned", "That the islands were reached only by accident", "That no one ever lived on the islands", "That the canoes carried secret instruments"], "answer_index": 1},
+            {"prompt": "How did navigators steer when the stars were hidden?", "options": ["By using a hidden compass", "By waiting for the stars to return", "By following other canoes", "By the direction of the ocean swells"], "answer_index": 3},
+            {"prompt": "How could seabirds help the navigators?", "options": ["They frightened away storms", "Their morning song predicted the weather", "Their evening flight pointed the way toward land", "They carried messages between islands"], "answer_index": 2},
+            {"prompt": "Why did the knowledge almost disappear?", "options": ["The canoes were too small", "A series of storms destroyed them", "Colonial rule and Western navigation replaced the old skills", "The navigators forgot on purpose"], "answer_index": 2},
+            {"prompt": "What did the Hokule'a voyage demonstrate?", "options": ["That Europeans had invented navigation", "That the traditional methods really worked", "That the islands were uninhabited", "That compasses are unnecessary anywhere"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "r12",
+        "band": 8.0,
+        "title": "The Science of Forgetting",
+        "body": (
+            "We tend to think of forgetting as a failure — a fault in an otherwise reliable "
+            "machine. The memory we cannot retrieve feels like a file that has been corrupted or "
+            "lost. Yet a growing body of research suggests that forgetting is not a flaw in the "
+            "system but a feature of it: an active, useful process without which the mind would "
+            "work far worse, not better.\n\n"
+            "The evidence begins with rare individuals who cannot forget. A handful of people "
+            "possess what is called highly superior autobiographical memory, recalling the details "
+            "of almost every day of their lives. One might expect them to be formidably capable, "
+            "yet many describe their gift as a burden. Unable to let go of the trivial and the "
+            "painful alike, they can become trapped in the past, and there is little sign that "
+            "their extraordinary recall makes them better at reasoning or solving problems.\n\n"
+            "The reason, researchers argue, is that intelligence depends on generalisation, and "
+            "generalisation depends on discarding detail. To recognise that many different "
+            "four-legged animals are all 'dogs', the brain must throw away the specifics that make "
+            "each one unique. A memory system that preserved every particular would drown in "
+            "noise, unable to see the pattern for the exceptions. Forgetting, on this view, is how "
+            "the brain decides what matters.\n\n"
+            "Sleep appears to be when much of this pruning happens. During deep sleep the brain "
+            "seems to strengthen important connections while weakening others, clearing space and "
+            "consolidating the day's most useful lessons. Forgetting also keeps knowledge current: "
+            "an old phone number or a former address, once useful, becomes clutter, and letting it "
+            "fade allows newer, relevant information to take its place.\n\n"
+            "This reframing has practical implications. Techniques that feel like failures of "
+            "memory — struggling to recall something, or spacing study out until we have "
+            "half-forgotten it — often produce stronger, more durable learning than smooth, "
+            "effortless review. The difficulty is the point. Far from being memory's enemy, a "
+            "certain amount of forgetting may be the price, and even the mechanism, of thinking "
+            "well."
+        ),
+        "questions": [
+            {"prompt": "What is the passage's central claim about forgetting?", "options": ["It is a serious medical disorder", "It only affects older people", "It is a useful, active process rather than merely a failure", "It can always be prevented"], "answer_index": 2},
+            {"prompt": "What do people who cannot forget often report?", "options": ["That their perfect recall is often a burden", "That it makes them excellent problem-solvers", "That they actually forget more than others", "That they enjoy reliving every day"], "answer_index": 0},
+            {"prompt": "Why is discarding detail important for intelligence?", "options": ["Because detail takes up physical space", "Because generalisation requires throwing away specifics", "Because the brain dislikes information", "Because memories are always false"], "answer_index": 1},
+            {"prompt": "What role does deep sleep appear to play?", "options": ["It erases all memories equally", "It has no effect on memory", "It only stores phone numbers", "It strengthens important connections while weakening others"], "answer_index": 3},
+            {"prompt": "How does forgetting keep knowledge current?", "options": ["By repeating information endlessly", "By allowing outdated information to fade so newer information can take its place", "By preventing any new learning", "By copying memories exactly"], "answer_index": 1},
+            {"prompt": "What practical point does the passage end on?", "options": ["Smooth, effortless review is always best", "Studying is essentially pointless", "Effortful, half-forgotten study can produce stronger, lasting learning", "Memory cannot be improved at all"], "answer_index": 2},
+        ],
+    },
 ]
 
 LISTENING_BANK: List[Item] = [
     {
         "id": "l1",
+        "band": 5.5,
         "title": "Enrolling at the Language Centre",
         "body": (
             "Receptionist: Good morning, City Language Centre. How can I help you? "
@@ -268,6 +524,7 @@ LISTENING_BANK: List[Item] = [
     },
     {
         "id": "l2",
+        "band": 6.0,
         "title": "Museum Audio Tour: The Silk Road Gallery",
         "body": (
             "Welcome to the Silk Road gallery. Before we begin, please note that photography is "
@@ -297,6 +554,7 @@ LISTENING_BANK: List[Item] = [
     },
     {
         "id": "l3",
+        "band": 6.0,
         "title": "Podcast: Getting Started with Running",
         "body": (
             "Welcome back to Health in Ten. Today: how to start running when you've never run "
@@ -326,6 +584,7 @@ LISTENING_BANK: List[Item] = [
     },
     {
         "id": "l4",
+        "band": 6.0,
         "title": "Student Services: Finding a Part-Time Job",
         "body": (
             "Adviser: Come in, have a seat. So, you're looking for part-time work this semester? "
@@ -358,6 +617,7 @@ LISTENING_BANK: List[Item] = [
     },
     {
         "id": "l5",
+        "band": 7.0,
         "title": "Lecture Extract: The Secret Life of Ants",
         "body": (
             "Today I want to challenge how you think about intelligence. Consider the ant colony. "
@@ -385,6 +645,163 @@ LISTENING_BANK: List[Item] = [
             {"prompt": "Why do shorter routes end up with more scent?", "options": ["Ants prefer cooler paths", "They are completed faster, so get more traffic", "The queen marks them", "Longer routes are blocked"], "answer_index": 1},
             {"prompt": "What is 'emergence'?", "options": ["Complex behaviour from simple interacting parts", "The birth of new queens", "A type of pheromone", "An ant war strategy"], "answer_index": 0},
             {"prompt": "Why do engineers build robot swarms?", "options": ["Swarms look more natural", "A swarm keeps working when members fail", "Single robots are illegal", "Swarms need no programming"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "l6",
+        "band": 5.5,
+        "title": "Booking a Campsite",
+        "body": (
+            "Assistant: Good afternoon, Pinewood Campsite, how can I help? "
+            "Caller: Hello, I'd like to book a pitch for the last weekend of July, please. "
+            "Assistant: Certainly. Is that for a tent or a caravan? "
+            "Caller: A tent — there'll be four of us. "
+            "Assistant: No problem. A standard tent pitch is eighteen pounds a night, or we have "
+            "larger pitches nearer the lake for twenty-five. "
+            "Caller: We'll take a standard one. Two nights, so Friday and Saturday. "
+            "Assistant: That's thirty-six pounds altogether. Now, a few things to note. Check-in "
+            "is from two o'clock in the afternoon, and we ask everyone to leave by eleven on the "
+            "morning you depart. "
+            "Caller: Fine. Are campfires allowed? "
+            "Assistant: Not open fires on the ground, I'm afraid — too risky in summer. But you "
+            "can hire a raised fire bowl from reception for five pounds, and we sell firewood "
+            "there too. "
+            "Caller: Good to know. And is there anything for children? "
+            "Assistant: There's a playground next to the shower block, and on Saturday mornings we "
+            "run a free nature walk for kids at ten. One more thing — the nearest shop is two "
+            "miles away and closes early, so bring what you need for the evening. "
+            "Caller: Thanks, that's really helpful. "
+            "Assistant: You're welcome. Could I take a name to hold the booking?"
+        ),
+        "questions": [
+            {"prompt": "What type of pitch does the caller book?", "options": ["A caravan pitch", "A standard tent pitch", "A large pitch by the lake", "A cabin"], "answer_index": 1},
+            {"prompt": "How much will the caller pay in total?", "options": ["£18", "£25", "£36", "£50"], "answer_index": 2},
+            {"prompt": "By what time must guests leave on their departure day?", "options": ["2 in the afternoon", "10 in the morning", "11 in the morning", "Midday"], "answer_index": 2},
+            {"prompt": "What is the rule about campfires?", "options": ["All fires are completely forbidden", "Open ground fires are banned, but fire bowls can be hired", "Fires are allowed anywhere on the site", "Only wood fires are permitted"], "answer_index": 1},
+            {"prompt": "What does the assistant advise the caller to bring?", "options": ["Extra tent pegs", "Warm clothing", "Evening food and supplies, since the shop is far and closes early", "Swimming gear"], "answer_index": 2},
+        ],
+    },
+    {
+        "id": "l7",
+        "band": 6.0,
+        "title": "Volunteering at the Food Festival",
+        "body": (
+            "Thanks, everyone, for signing up to help at this year's River City Food Festival. Let "
+            "me run through the essentials. The festival runs across the whole weekend, but as a "
+            "volunteer you're only asked to do one shift of four hours, either Saturday or Sunday "
+            "— you told us your preference on the form, and we'll email your exact time by "
+            "Thursday. Please arrive fifteen minutes before your shift to collect your T-shirt and "
+            "pass. The T-shirt is bright yellow so visitors can spot you easily, and you'll need "
+            "to wear it all day; do keep it afterwards as a thank-you. Now, roles. Most of you "
+            "will be on information points, directing people to stalls, toilets and first aid. A "
+            "few will help the stallholders set up in the morning — that's more physical, so wear "
+            "sturdy shoes. Whatever your role, the golden rule is simple: if you don't know the "
+            "answer to a visitor's question, don't guess — radio the supervisor. Lunch isn't "
+            "provided, but every volunteer gets five pounds of festival tokens to spend at any "
+            "food stall, which is honestly the best part. Finally, a safety note: the site can get "
+            "very crowded by midday, so familiarise yourself with the two emergency exits marked "
+            "on the map in your welcome pack before your shift begins. Any questions, find me — "
+            "I'm in the green tent by the main gate all weekend."
+        ),
+        "questions": [
+            {"prompt": "How long is a single volunteer shift?", "options": ["The whole weekend", "Four hours", "Two hours", "One full day"], "answer_index": 1},
+            {"prompt": "Why is the T-shirt bright yellow?", "options": ["It is the festival's official colour", "So visitors can easily spot the volunteers", "To keep volunteers warm", "It was the cheapest option available"], "answer_index": 1},
+            {"prompt": "What should volunteers do if they can't answer a question?", "options": ["Guess politely", "Send the visitor away", "Radio the supervisor rather than guess", "Close the information point"], "answer_index": 2},
+            {"prompt": "What do volunteers receive instead of a free lunch?", "options": ["A free hot meal", "A small cash payment", "Five pounds of tokens to spend at food stalls", "A second T-shirt"], "answer_index": 2},
+            {"prompt": "What are volunteers told to do before their shift?", "options": ["Test all the radios", "Locate the two emergency exits on the map", "Count the stalls", "Meet all the other volunteers"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "l8",
+        "band": 6.5,
+        "title": "Lecture: The History of Chocolate",
+        "body": (
+            "Right, let's turn to chocolate, which has a far longer and stranger history than the "
+            "sweet bars in the shops might suggest. The cacao tree is native to the rainforests of "
+            "Central and South America, and its beans were being used at least three thousand "
+            "years ago. But here's the first surprise: for most of that history, chocolate was not "
+            "eaten at all — it was drunk, and it was bitter. The Maya and later the Aztecs ground "
+            "roasted cacao beans into a frothy, spiced drink, often flavoured with chilli rather "
+            "than sugar, which of course they did not have. It was valued so highly that the beans "
+            "themselves were used as money; you could, quite literally, buy goods with chocolate. "
+            "When Spanish colonisers brought cacao back to Europe in the sixteenth century, it "
+            "remained a drink, but Europeans added sugar and honey to soften the bitterness, and "
+            "for two hundred years it stayed an expensive luxury for the wealthy. The chocolate we "
+            "recognise today is surprisingly recent. It was only in the nineteenth century that "
+            "manufacturers, mostly in Britain and Switzerland, worked out how to press cacao and "
+            "recombine it into a smooth solid bar, and later how to blend in milk. So the everyday "
+            "chocolate bar, far from being ancient, is younger than the railway. Next week we'll "
+            "look at how that transformation turned a sacred drink into one of the world's biggest "
+            "industries."
+        ),
+        "questions": [
+            {"prompt": "How was chocolate mostly consumed for most of its history?", "options": ["As a solid sweet bar", "As a bitter drink", "As a medicine only", "As a baked cake"], "answer_index": 1},
+            {"prompt": "What did the Maya and Aztecs often add to it?", "options": ["Sugar", "Milk", "Chilli", "Honey"], "answer_index": 2},
+            {"prompt": "What surprising use did cacao beans have?", "options": ["They were burned as fuel", "They were used as money", "They were planted only for decoration", "They were fed to animals"], "answer_index": 1},
+            {"prompt": "What did Europeans add to chocolate?", "options": ["Chilli and spices", "Sugar and honey", "Salt", "Nothing at all"], "answer_index": 1},
+            {"prompt": "When was the solid chocolate bar developed?", "options": ["Three thousand years ago", "In the sixteenth century", "In the nineteenth century", "In the twentieth century"], "answer_index": 2},
+        ],
+    },
+    {
+        "id": "l9",
+        "band": 6.5,
+        "title": "Field Trip Briefing: The Wetlands",
+        "body": (
+            "Before we set off for the wetlands tomorrow, a few practical points so the day runs "
+            "smoothly. We'll meet at the college car park at eight sharp — the coach won't wait, "
+            "so please be early rather than on time. The reserve is about an hour away. Now, the "
+            "ground out there is genuinely wet, so waterproof boots are essential, not trainers; "
+            "anyone in trainers will have to stay on the visitor path and will miss the best part. "
+            "Bring a packed lunch and, crucially, a full water bottle, because there's nowhere to "
+            "buy anything once we're inside the reserve. In terms of what we'll do: the morning is "
+            "a guided walk with a ranger who'll show you how the reserve manages water levels to "
+            "protect nesting birds. After lunch, you'll work in pairs on the pond-dipping survey — "
+            "that's the data you'll need for your coursework, so don't leave your recording sheet "
+            "on the coach. A word on the wildlife: this is the breeding season, so we must keep "
+            "noise down and stay well back from the nesting areas; a single disturbance can make "
+            "birds abandon their eggs. And please, no picking plants or taking anything home — "
+            "everything stays where it is. The weather looks changeable, so pack a raincoat "
+            "whatever the forecast says. Right — any questions before tomorrow?"
+        ),
+        "questions": [
+            {"prompt": "What are students told about arrival time?", "options": ["Arrive exactly on time", "Be early, because the coach won't wait", "Arrive after the ranger", "Meet at the reserve directly"], "answer_index": 1},
+            {"prompt": "Why are waterproof boots essential?", "options": ["The reserve requires a uniform", "Boots are simply warmer", "Those in trainers must stay on the path and miss the best part", "Trainers are not allowed on the coach"], "answer_index": 2},
+            {"prompt": "Why must students bring a full water bottle?", "options": ["The water there is unsafe to drink", "Nothing can be bought inside the reserve", "To share with the ranger", "It is expected to be very hot"], "answer_index": 1},
+            {"prompt": "What will the afternoon activity provide?", "options": ["A free souvenir", "A second guided walk", "The data needed for their coursework", "A packed lunch"], "answer_index": 2},
+            {"prompt": "Why must students keep noise down?", "options": ["Loud noise damages the equipment", "It is breeding season and disturbance can make birds abandon their eggs", "The ranger simply dislikes noise", "Other visitors are studying nearby"], "answer_index": 1},
+        ],
+    },
+    {
+        "id": "l10",
+        "band": 7.0,
+        "title": "Radio Feature: The Return of the Bicycle",
+        "body": (
+            "And now for our city feature. The bicycle, that Victorian invention many had written "
+            "off as old-fashioned, is enjoying a remarkable comeback in cities around the world — "
+            "and the reasons are more interesting than you might think. For most of the twentieth "
+            "century, urban planning was built around the car. Roads widened, city centres emptied "
+            "of homes, and cycling came to seem both dangerous and slightly eccentric. What "
+            "changed? Partly it was congestion: as traffic thickened, the bicycle quietly became "
+            "the fastest way to cross many city centres at rush hour, often quicker than a car or "
+            "bus. Partly it was health, as governments grappling with the costs of inactive "
+            "lifestyles began to see cycling as cheap preventive medicine. But the real turning "
+            "point, most experts agree, was infrastructure. Cities that simply told people to "
+            "cycle achieved very little; cities that built physically separated bike lanes — "
+            "protected from traffic by a kerb, not just a painted line — saw cycling numbers "
+            "double or triple within a few years. Copenhagen and Amsterdam are the famous "
+            "examples, but the striking thing is how fast newer converts like Paris and Seville "
+            "have caught up, essentially by copying what worked. There are limits, of course. "
+            "Hilly cities, extreme climates and long distances all reduce the appeal, though "
+            "electric bikes are steadily eroding those barriers too. The lesson, planners say, is "
+            "simple but easily forgotten: people cycle not when they are lectured, but when they "
+            "are given a safe and convenient way to do so."
+        ),
+        "questions": [
+            {"prompt": "Why did cycling decline during the twentieth century?", "options": ["Bicycles became too expensive", "People forgot how to ride", "Cities were planned around the car", "The weather grew worse"], "answer_index": 2},
+            {"prompt": "How did congestion help the bicycle's comeback?", "options": ["Cycling became the fastest way across many city centres at rush hour", "Cycling became fashionable", "Cars were banned", "Buses stopped running"], "answer_index": 0},
+            {"prompt": "Why did governments start to favour cycling?", "options": ["It raised tax revenue", "They saw it as cheap preventive medicine", "It reduced traffic noise", "It was a long tradition"], "answer_index": 1},
+            {"prompt": "What does the speaker say made the biggest difference?", "options": ["Telling people to cycle more", "Lowering the price of bikes", "Banning cars from city centres", "Building physically separated bike lanes"], "answer_index": 3},
+            {"prompt": "What is the overall lesson?", "options": ["Cycling suits every city equally", "Only flat cities can succeed", "People cycle when given a safe, convenient way, not when lectured", "Electric bikes have failed"], "answer_index": 2},
         ],
     },
 ]

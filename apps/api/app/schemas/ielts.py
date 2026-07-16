@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -16,8 +17,17 @@ class WritingTask(BaseModel):
     prompt: str
 
 
+class HistoryItemOut(BaseModel):
+    skill: str
+    band: float
+    correct: Optional[int] = None  # Reading/Listening only
+    total: Optional[int] = None
+    created_at: datetime
+
+
 class OverviewOut(BaseModel):
     best_bands: Dict[str, float]  # skill -> best band
+    recent: List[HistoryItemOut]  # newest first
     enabled: bool
 
 
@@ -29,6 +39,7 @@ class QuestionOut(BaseModel):
 class BankItemOut(BaseModel):
     id: str
     title: str
+    band: float  # approximate difficulty, for sorting/labelling
     question_count: int
     word_count: int
     done: bool

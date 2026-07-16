@@ -124,6 +124,53 @@ export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {
         })}
       </div>
 
+      {overview && overview.recent.length > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-10"
+        >
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-ink-soft">
+            📈 {t.recentTitle}
+          </h2>
+          <div className="overflow-hidden rounded-2xl border border-line bg-card">
+            {overview.recent.map((item, i) => {
+              const skill = SKILLS.find((s) => s.key === item.skill);
+              return (
+                <div
+                  key={`${item.created_at}-${i}`}
+                  className={cn(
+                    "flex items-center justify-between gap-3 px-4 py-3",
+                    i > 0 && "border-t border-line"
+                  )}
+                >
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span className="text-lg">{skill?.emoji ?? "🎓"}</span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-ink">
+                        {skill ? t[skill.key] : item.skill}
+                      </p>
+                      <p className="text-xs text-ink-soft">
+                        {new Intl.DateTimeFormat(lang, { day: "numeric", month: "short" }).format(
+                          new Date(item.created_at)
+                        )}
+                        {item.correct != null && item.total != null && (
+                          <> · {item.correct}/{item.total} {t.correct}</>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={cn("text-lg font-extrabold tabular-nums", BAND_COLOR(item.band))}>
+                    {item.band.toFixed(1)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </motion.section>
+      )}
+
       <p className="mt-6 text-center text-xs text-ink-soft">{t.aiNote}</p>
     </main>
   );

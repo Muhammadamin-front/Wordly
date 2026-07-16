@@ -445,3 +445,14 @@ async def best_bands(db: AsyncSession, user: User) -> Dict[str, float]:
         if r.band > best.get(r.skill, 0.0):
             best[r.skill] = r.band
     return best
+
+
+async def recent_results(db: AsyncSession, user: User, limit: int = 10) -> List[IeltsResult]:
+    """Latest scored attempts across all skills, newest first."""
+    rows = await db.scalars(
+        select(IeltsResult)
+        .where(IeltsResult.user_id == user.id)
+        .order_by(IeltsResult.created_at.desc())
+        .limit(limit)
+    )
+    return list(rows)

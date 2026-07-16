@@ -19,6 +19,7 @@ from app.schemas.ielts import (
     GenerateRequest,
     GeneratedTestOut,
     GradeOut,
+    HistoryItemOut,
     OverviewOut,
     QuestionOut,
     RewardOut,
@@ -75,6 +76,20 @@ def _reward(summary: RewardSummary) -> RewardOut:
     )
 
 
+def _history_item(result) -> HistoryItemOut:
+    correct = total = None
+    try:
+        detail = json.loads(result.detail or "")
+        if isinstance(detail, dict):
+            correct, total = detail.get("correct"), detail.get("total")
+    except ValueError:
+        pass  # Writing stores plain feedback text, not JSON
+    return HistoryItemOut(
+        skill=result.skill, band=result.band, correct=correct, total=total,
+        created_at=result.created_at,
+    )
+
+
 @router.get("/overview", response_model=OverviewOut)
 async def overview(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     best = await ielts.best_bands(db, user)
@@ -82,7 +97,8 @@ async def overview(user: User = Depends(get_current_user), db: AsyncSession = De
     report = await coach.latest_report(db, user)
     if report is not None:
         best["speaking"] = max(best.get("speaking", 0.0), report.band_overall)
-    return OverviewOut(best_bands=best, enabled=get_settings().ai_enabled)
+    recent = [_history_item(r) for r in await ielts.recent_results(db, user)]
+    return OverviewOut(best_bands=best, recent=recent, enabled=get_settings().ai_enabled)
 
 
 @router.get("/writing/tasks", response_model=Dict[str, List[WritingTask]])
@@ -153,11 +169,12 @@ async def bank_list(
         BankItemOut(
             id=item["id"],
             title=item["title"],
+            band=float(item.get("band", 6.0)),
             question_count=len(item["questions"]),
             word_count=len(item["body"].split()),
             done=item["id"] in done,
         )
-        for item in bank_for(kind)
+        for item in sorted(bank_for(kind), key=lambda it: it.get("band", 6.0))
     ]
 
 

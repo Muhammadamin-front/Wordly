@@ -151,39 +151,27 @@ async def test_bank_answer_keys_are_valid(client):
     from app.services.ielts_bank import LISTENING_BANK, READING_BANK
 
     for bank in (READING_BANK, LISTENING_BANK):
+        ids = [item["id"] for item in bank]
+        assert len(ids) == len(set(ids)), "duplicate bank id"
         for item in bank:
             assert len(item["body"].split()) > 150, item["id"]
+            assert 4.0 <= item["band"] <= 9.0, item["id"]
             for q in item["questions"]:
                 assert 0 <= q["answer_index"] < len(q["options"]), (item["id"], q["prompt"])
+
+
+async def test_bank_list_is_sorted_by_band_and_exposes_it(client):
+    headers = await learner(client, email="banksort@words.uz")
+    listing = (await client.get("/api/v1/ielts/listening/bank", headers=headers)).json()
+    assert len(listing) >= 10
+    bands = [item["band"] for item in listing]
+    assert bands == sorted(bands)  # easiest first
 
 
 async def test_bank_unknown_item_404s(client):
     headers = await learner(client, email="bank404@words.uz")
     resp = await client.post("/api/v1/ielts/reading/bank/nope/start", headers=headers)
     assert resp.status_code == 404
-
-
-async def test_writing_score_returns_bands(client):
-    use_fake()
-    try:
-        headers = await learner(client, email="ieltsw@words.uz")
-        resp = await client.post(
-            "/api/v1/ielts/writing/score",
-            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
-            headers=headers,
-        )
-        assert resp.status_code == 200, resp.text
-        data = resp.json()
-        assert data["band_overall"] == 6.5  # 6.4 -> nearest half band
-        assert data["lexical"] == 7.0
-        assert data["feedback"]
-        assert data["reward"]["xp_gained"] > 0
-
-        # It shows up as the best Writing band on the overview.
-        ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()
-        assert ov["best_bands"]["writing"] == 6.5
-    finally:
-        app.dependency_overrides.pop(require_ai_client, None)
 
 
 async def test_listening_audio_streams_tts(client, monkeypatch):
@@ -221,3 +209,58 @@ async def test_listening_audio_streams_tts(client, monkeypatch):
     ).json()
     resp = await client.get(f"/api/v1/ielts/listening/{reading['test_id']}/audio", headers=headers)
     assert resp.status_code == 404
+
+
+async def test_writing_score_returns_bands(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="ieltsw@words.uz")
+        resp = await client.post(
+            "/api/v1/ielts/writing/score",
+            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+            headers=headers,
+        )
+        assert resp.status_code == 200, resp.text
+        data = resp.json()
+        assert data["band_overall"] == 6.5  # 6.4 -> nearest half band
+        assert data["lexical"] == 7.0
+        assert data["feedback"]
+        assert data["reward"]["xp_gained"] > 0
+
+        # It shows up as the best Writing band on the overview.
+        ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()
+        assert ov["best_bands"]["writing"] == 6.5
+
+        # …and as a history entry (Writing has no correct/total).
+        assert ov["recent"][0]["skill"] == "writing"
+        assert ov["recent"][0]["band"] == 6.5
+        assert ov["recent"][0]["correct"] is None
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_overview_recent_lists_graded_tests_newest_first(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="history@words.uz")
+        ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()
+        assert ov["recent"] == []
+
+        test = (
+            await client.post("/api/v1/ielts/reading/generate", json={"band": 6}, headers=headers)
+        ).json()
+        await client.post(
+            "/api/v1/ielts/reading/submit",
+            json={"test_id": test["test_id"], "answers": [0, 1, 2]},
+            headers=headers,
+        )
+
+        ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()
+        assert len(ov["recent"]) == 1
+        entry = ov["recent"][0]
+        assert entry["skill"] == "reading"
+        assert entry["band"] == 9.0
+        assert entry["correct"] == 3 and entry["total"] == 3
+        assert entry["created_at"]
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)

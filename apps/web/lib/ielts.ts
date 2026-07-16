@@ -10,8 +10,17 @@ export interface IeltsReward {
   leveled_up: boolean;
 }
 
+export interface IeltsHistoryItem {
+  skill: string;
+  band: number;
+  correct: number | null; // Reading/Listening only
+  total: number | null;
+  created_at: string;
+}
+
 export interface IeltsOverview {
   best_bands: Record<string, number>;
+  recent: IeltsHistoryItem[]; // newest first
   enabled: boolean;
 }
 
@@ -54,6 +63,7 @@ export interface WritingScore {
 export interface BankItem {
   id: string;
   title: string;
+  band: number;
   question_count: number;
   word_count: number;
   done: boolean;
