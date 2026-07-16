@@ -495,6 +495,7 @@
     "listeningDesc": "Audio + questions",
     "writingDesc": "Task 1 & 2, band-scored",
     "speakingDesc": "Examiner interview (Coach)",
+    "speakingLocked": "Temporarily unavailable — we're improving the AI examiner",
     "readingIntro": "Read an academic passage and answer the questions within the time limit. You'll get an estimated band.",
     "listeningIntro": "Listen to the recording (it plays once), then answer the questions. You'll get an estimated band.",
     "startTest": "Start test",

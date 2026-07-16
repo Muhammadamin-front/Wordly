@@ -97,15 +97,14 @@ export function SkillView({
   );
 }
 
-function SpeakingPanel({ lang, t }: { lang: string; t: Ielts }) {
+function SpeakingPanel({ t }: { lang: string; t: Ielts }) {
+  // Locked while the realtime AI examiner is too slow/flaky for learners —
+  // re-enable the Coach CTA once the streaming issues are fixed.
   return (
     <div className="rounded-2xl border border-line bg-card p-8 text-center">
-      <p className="text-5xl">🎙️</p>
-      <h2 className="mt-3 text-xl font-bold text-ink">{t.speakingCtaTitle}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">{t.speakingCtaDesc}</p>
-      <Link href={`/${lang}/coach`}>
-        <Button className="mt-5">{t.speakingCtaButton} →</Button>
-      </Link>
+      <p className="text-5xl">🔒</p>
+      <h2 className="mt-3 text-xl font-bold text-ink">{t.speaking}</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">{t.speakingLocked}</p>
     </div>
   );
 }

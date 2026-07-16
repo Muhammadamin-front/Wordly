@@ -18,13 +18,15 @@ interface SkillCard {
   href: string; // suffix after /{lang}
   emoji: string;
   gradient: string;
+  locked?: boolean;
 }
 
 const SKILLS: SkillCard[] = [
   { key: "reading", href: "ielts/reading", emoji: "📖", gradient: "from-blue-500 via-blue-700 to-blue-950" },
   { key: "listening", href: "ielts/listening", emoji: "🎧", gradient: "from-purple-500 via-purple-700 to-purple-950" },
   { key: "writing", href: "ielts/writing", emoji: "✍️", gradient: "from-emerald-500 via-emerald-700 to-emerald-950" },
-  { key: "speaking", href: "ielts/speaking", emoji: "🎙️", gradient: "from-orange-500 via-orange-700 to-orange-950" },
+  // Locked while the realtime AI examiner is too slow/flaky for learners.
+  { key: "speaking", href: "ielts/speaking", emoji: "🎙️", gradient: "from-orange-500 via-orange-700 to-orange-950", locked: true },
 ];
 
 export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {
@@ -89,6 +91,37 @@ export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
         {SKILLS.map((skill, i) => {
           const band = bands[skill.key];
+          const card = (
+            <motion.div
+              whileHover={skill.locked ? undefined : { y: -6 }}
+              transition={{ type: "spring", stiffness: 300, damping: 22 }}
+              className={cn(
+                "relative flex h-44 flex-col justify-end overflow-hidden rounded-2xl bg-linear-to-br p-5 shadow-md ring-1 ring-black/5",
+                skill.gradient,
+                skill.locked ? "opacity-60 saturate-50" : "hover:shadow-2xl"
+              )}
+            >
+              <span className="absolute -right-4 -top-3 text-8xl opacity-20">{skill.emoji}</span>
+              <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+              <div className="relative z-10">
+                <p className="text-xl font-extrabold text-white">
+                  {skill.locked && <span className="mr-1.5">🔒</span>}
+                  {t[skill.key]}
+                </p>
+                <p className="mt-1 text-sm text-white/75">{t[`${skill.key}Desc` as keyof Ielts]}</p>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className="text-sm font-semibold text-white/90">
+                    {skill.locked
+                      ? t.speakingLocked
+                      : band
+                        ? `${t.bestBand}: ${band.toFixed(1)}`
+                        : t.notStarted}
+                  </span>
+                  {!skill.locked && <span className="text-sm font-bold text-white">→</span>}
+                </div>
+              </div>
+            </motion.div>
+          );
           return (
             <motion.div
               key={skill.key}
@@ -96,29 +129,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06 }}
             >
-              <Link href={`/${lang}/${skill.href}`}>
-                <motion.div
-                  whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 22 }}
-                  className={cn(
-                    "relative flex h-44 flex-col justify-end overflow-hidden rounded-2xl bg-linear-to-br p-5 shadow-md ring-1 ring-black/5 hover:shadow-2xl",
-                    skill.gradient
-                  )}
-                >
-                  <span className="absolute -right-4 -top-3 text-8xl opacity-20">{skill.emoji}</span>
-                  <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
-                  <div className="relative z-10">
-                    <p className="text-xl font-extrabold text-white">{t[skill.key]}</p>
-                    <p className="mt-1 text-sm text-white/75">{t[`${skill.key}Desc` as keyof Ielts]}</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white/90">
-                        {band ? `${t.bestBand}: ${band.toFixed(1)}` : t.notStarted}
-                      </span>
-                      <span className="text-sm font-bold text-white">→</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </Link>
+              {skill.locked ? card : <Link href={`/${lang}/${skill.href}`}>{card}</Link>}
             </motion.div>
           );
         })}

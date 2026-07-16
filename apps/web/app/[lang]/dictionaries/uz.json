@@ -495,6 +495,7 @@
     "listeningDesc": "Audio + savollar",
     "writingDesc": "Task 1 & 2, band baho",
     "speakingDesc": "Imtihonchi suhbati (Coach)",
+    "speakingLocked": "Vaqtincha yopiq — AI imtihonchini yaxshilayapmiz",
     "readingIntro": "Akademik matnni o'qing va vaqt ichida savollarga javob bering. Taxminiy band olasiz.",
     "listeningIntro": "Yozuvni tinglang (bir marta ijro etiladi), keyin savollarga javob bering. Taxminiy band olasiz.",
     "startTest": "Testni boshlash",
