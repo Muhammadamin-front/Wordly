@@ -52,3 +52,6 @@ node_modules/
 
 # API .env (keep real keys out of git)
 apps/api/.env
+
+# corpus pipeline cache (raw dictionary API responses)
+apps/api/scripts/data/.enrich_cache/

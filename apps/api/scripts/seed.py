@@ -73,6 +73,10 @@ CORPUS_FILES = [
     "ielts_833_932.csv",
     "ielts_933_1000.csv",
     "ielts_1001_1050.csv",
+    "phrasal_idioms_3.csv",
+    "useful_batch1.csv",
+    "useful_batch2.csv",
+    "useful_batch3.csv",
 ]
 
 
