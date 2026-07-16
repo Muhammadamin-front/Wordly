@@ -20,8 +20,7 @@ type NavKey =
   | "decks"
   | "games"
   | "skills"
-  | "ai"
-  | "coach"
+  | "ielts"
   | "leaderboard"
   | "friends"
   | "statistics"
@@ -40,8 +39,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "decks", href: "decks", icon: "🃏" },
   { key: "games", href: "games", icon: "🎮" },
   { key: "skills", href: "skills", icon: "📚" },
-  { key: "ai", href: "ai", icon: "✨" },
-  { key: "coach", href: "coach", icon: "🎙️" },
+  { key: "ielts", href: "ielts", icon: "🎓" },
   { key: "leaderboard", href: "leaderboard", icon: "🏆" },
   { key: "friends", href: "friends", icon: "🤝" },
   { key: "statistics", href: "statistics", icon: "📊" },

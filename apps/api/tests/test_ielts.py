@@ -1,0 +1,142 @@
+from typing import Any
+
+from app.api.v1.ielts import require_ai_client
+from app.main import app
+from app.services.ielts import band_from_ratio
+from tests.conftest import register_user
+
+QUESTIONS = [
+    {"prompt": "Q1?", "options": ["a", "b", "c", "d"], "answer_index": 0},
+    {"prompt": "Q2?", "options": ["a", "b", "c", "d"], "answer_index": 1},
+    {"prompt": "Q3?", "options": ["a", "b", "c", "d"], "answer_index": 2},
+]
+
+
+class FakeIeltsAi:
+    async def text(self, *, system, prompt, max_tokens) -> str:
+        return "ok"
+
+    async def chat(self, *, system, messages, max_tokens) -> str:
+        return "ok"
+
+    async def json(self, *, system, prompt, schema, max_tokens) -> Any:
+        props = schema["properties"]
+        if "questions" in props:
+            return {"title": "The Ocean", "body": "A passage about the ocean.", "questions": QUESTIONS}
+        return {
+            "band_overall": 6.4, "task": 6.0, "coherence": 6.5, "lexical": 7.0, "grammar": 6.0,
+            "feedback": "Good structure; work on cohesion.", "improved": "A stronger sentence.",
+        }
+
+
+def use_fake() -> None:
+    app.dependency_overrides[require_ai_client] = lambda: FakeIeltsAi()
+
+
+async def learner(client, email="ielts@words.uz") -> dict:
+    data = await register_user(client, email=email)
+    return {"Authorization": "Bearer " + data["access_token"]}
+
+
+def test_band_from_ratio_monotonic():
+    assert band_from_ratio(1.0) == 9.0
+    assert band_from_ratio(0.5) == 6.0
+    assert band_from_ratio(0.0) == 3.0
+    assert band_from_ratio(0.67) >= band_from_ratio(0.5)
+
+
+async def test_ielts_requires_auth(client):
+    assert (await client.get("/api/v1/ielts/overview")).status_code == 401
+
+
+async def test_writing_tasks_lists_both(client):
+    headers = await learner(client)
+    body = (await client.get("/api/v1/ielts/writing/tasks", headers=headers)).json()
+    assert "task1" in body and "task2" in body
+    assert body["task1"][0]["prompt"]
+
+
+async def test_generate_requires_ai_configured(client):
+    headers = await learner(client)
+    resp = await client.post("/api/v1/ielts/reading/generate", json={"band": 6}, headers=headers)
+    assert resp.status_code == 503  # no AI key in tests, no override
+
+
+async def test_reading_generate_hides_answers_and_grades_serverside(client):
+    use_fake()
+    try:
+        headers = await learner(client)
+        gen = await client.post(
+            "/api/v1/ielts/reading/generate", json={"band": 6}, headers=headers
+        )
+        assert gen.status_code == 200, gen.text
+        test = gen.json()
+        assert test["title"] == "The Ocean"
+        assert len(test["questions"]) == 3
+        # The answer key must NOT be exposed to the client.
+        assert "answer_index" not in test["questions"][0]
+
+        # All correct → top band.
+        good = await client.post(
+            "/api/v1/ielts/reading/submit",
+            json={"test_id": test["test_id"], "answers": [0, 1, 2]},
+            headers=headers,
+        )
+        assert good.status_code == 200, good.text
+        gd = good.json()
+        assert gd["correct"] == 3 and gd["total"] == 3
+        assert gd["band"] == 9.0
+        assert gd["answers"] == [0, 1, 2]  # revealed after grading
+        assert gd["reward"]["xp_gained"] > 0
+
+        # The test is one-shot: a second submit 404s.
+        again = await client.post(
+            "/api/v1/ielts/reading/submit",
+            json={"test_id": test["test_id"], "answers": [0, 1, 2]},
+            headers=headers,
+        )
+        assert again.status_code == 404
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_reading_wrong_answers_score_lower(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="ielts2@words.uz")
+        test = (
+            await client.post("/api/v1/ielts/reading/generate", json={"band": 6}, headers=headers)
+        ).json()
+        bad = await client.post(
+            "/api/v1/ielts/reading/submit",
+            json={"test_id": test["test_id"], "answers": [3, 3, 3]},  # all wrong
+            headers=headers,
+        )
+        gd = bad.json()
+        assert gd["correct"] == 0
+        assert gd["band"] < 6.0
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_writing_score_returns_bands(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="ieltsw@words.uz")
+        resp = await client.post(
+            "/api/v1/ielts/writing/score",
+            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+            headers=headers,
+        )
+        assert resp.status_code == 200, resp.text
+        data = resp.json()
+        assert data["band_overall"] == 6.5  # 6.4 -> nearest half band
+        assert data["lexical"] == 7.0
+        assert data["feedback"]
+        assert data["reward"]["xp_gained"] > 0
+
+        # It shows up as the best Writing band on the overview.
+        ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()
+        assert ov["best_bands"]["writing"] == 6.5
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
