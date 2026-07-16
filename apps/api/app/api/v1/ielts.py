@@ -12,6 +12,7 @@ from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.ielts import (
+    BankItemOut,
     GenerateRequest,
     GeneratedTestOut,
     GradeOut,
@@ -26,6 +27,7 @@ from app.schemas.ielts import (
 from app.services import ai_quota, coach, ielts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
+from app.services.ielts_bank import bank_for
 
 router = APIRouter(
     prefix="/ielts",
@@ -129,6 +131,51 @@ async def _submit(payload: SubmitRequest, user: User, db: AsyncSession):
     return GradeOut(
         correct=result.correct, total=result.total, band=result.band,
         answers=result.answers, reward=_reward(result.reward),
+    )
+
+
+@router.get("/{kind}/bank", response_model=List[BankItemOut])
+async def bank_list(
+    kind: str,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Built-in practice passages/scripts — no AI, no quota. Titles only; the
+    body and questions arrive when an item is started."""
+    if kind not in ("reading", "listening"):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown section")
+    done = set(await ielts.completed_bank_ids(db, user, kind))
+    return [
+        BankItemOut(
+            id=item["id"],
+            title=item["title"],
+            question_count=len(item["questions"]),
+            word_count=len(item["body"].split()),
+            done=item["id"] in done,
+        )
+        for item in bank_for(kind)
+    ]
+
+
+@router.post("/{kind}/bank/{item_id}/start", response_model=GeneratedTestOut)
+async def bank_start(
+    kind: str,
+    item_id: str,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if kind not in ("reading", "listening"):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown section")
+    try:
+        test_id, payload = await ielts.start_bank_test(db, user, kind, item_id)
+    except LookupError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Passage not found")
+    await db.commit()
+    return GeneratedTestOut(
+        test_id=test_id,
+        title=payload["title"],
+        body=payload["body"],
+        questions=[QuestionOut(prompt=q["prompt"], options=q["options"]) for q in payload["questions"]],
     )
 
 

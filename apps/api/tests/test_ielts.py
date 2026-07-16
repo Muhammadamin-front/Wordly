@@ -119,6 +119,50 @@ async def test_reading_wrong_answers_score_lower(client):
         app.dependency_overrides.pop(require_ai_client, None)
 
 
+async def test_bank_lists_items_and_marks_done(client):
+    headers = await learner(client, email="bank@words.uz")
+    listing = (await client.get("/api/v1/ielts/reading/bank", headers=headers)).json()
+    assert len(listing) >= 6
+    first = listing[0]
+    assert first["done"] is False
+    assert first["word_count"] > 200
+
+    # Start it — no AI needed, answer key hidden.
+    started = await client.post(
+        f"/api/v1/ielts/reading/bank/{first['id']}/start", headers=headers
+    )
+    assert started.status_code == 200, started.text
+    test = started.json()
+    assert "answer_index" not in test["questions"][0]
+
+    # Submit (all A) — grading works and the item becomes done.
+    graded = await client.post(
+        "/api/v1/ielts/reading/submit",
+        json={"test_id": test["test_id"], "answers": [0] * len(test["questions"])},
+        headers=headers,
+    )
+    assert graded.status_code == 200, graded.text
+    listing2 = (await client.get("/api/v1/ielts/reading/bank", headers=headers)).json()
+    assert next(i for i in listing2 if i["id"] == first["id"])["done"] is True
+
+
+async def test_bank_answer_keys_are_valid(client):
+    # Every bank question's answer_index must point at a real option.
+    from app.services.ielts_bank import LISTENING_BANK, READING_BANK
+
+    for bank in (READING_BANK, LISTENING_BANK):
+        for item in bank:
+            assert len(item["body"].split()) > 150, item["id"]
+            for q in item["questions"]:
+                assert 0 <= q["answer_index"] < len(q["options"]), (item["id"], q["prompt"])
+
+
+async def test_bank_unknown_item_404s(client):
+    headers = await learner(client, email="bank404@words.uz")
+    resp = await client.post("/api/v1/ielts/reading/bank/nope/start", headers=headers)
+    assert resp.status_code == 404
+
+
 async def test_writing_score_returns_bands(client):
     use_fake()
     try:

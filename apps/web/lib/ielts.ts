@@ -51,8 +51,25 @@ export interface WritingScore {
   reward: IeltsReward;
 }
 
+export interface BankItem {
+  id: string;
+  title: string;
+  question_count: number;
+  word_count: number;
+  done: boolean;
+}
+
 export const ieltsApi = {
   overview: () => apiFetch<IeltsOverview>("/ielts/overview", { auth: true }),
+
+  bank: (kind: ComprehensionKind) =>
+    apiFetch<BankItem[]>(`/ielts/${kind}/bank`, { auth: true }),
+
+  bankStart: (kind: ComprehensionKind, itemId: string) =>
+    apiFetch<GeneratedTest>(`/ielts/${kind}/bank/${itemId}/start`, {
+      method: "POST",
+      auth: true,
+    }),
 
   writingTasks: () =>
     apiFetch<Record<string, WritingTask[]>>("/ielts/writing/tasks", { auth: true }),

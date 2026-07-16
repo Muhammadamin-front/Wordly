@@ -27,7 +27,8 @@ XP_READING = 30
 XP_WRITING = 40
 XP_LISTENING = 30
 
-# Static Writing prompts (Academic). Kept small; rotated client-side.
+# Static Writing prompts (Academic), rotated client-side. Original prompts in
+# the exact register of real Task 1 / Task 2 questions.
 WRITING_TASKS: Dict[str, List[Dict[str, str]]] = {
     "task1": [
         {
@@ -47,6 +48,58 @@ WRITING_TASKS: Dict[str, List[Dict[str, str]]] = {
                 "process. Write at least 150 words."
             ),
         },
+        {
+            "title": "Task 1 — Line graph",
+            "prompt": (
+                "The graph below shows average house prices in one European city between 2000 and "
+                "2020, compared with average salaries over the same period. Summarise the "
+                "information by selecting and reporting the main features, and make comparisons "
+                "where relevant. Write at least 150 words."
+            ),
+        },
+        {
+            "title": "Task 1 — Pie charts",
+            "prompt": (
+                "The two pie charts below show how a typical household spent its monthly income "
+                "in 1990 and in 2020. Summarise the information by selecting and reporting the "
+                "main features, and make comparisons where relevant. Write at least 150 words."
+            ),
+        },
+        {
+            "title": "Task 1 — Table",
+            "prompt": (
+                "The table below gives information about international student numbers at five "
+                "universities in 2010, 2015 and 2020. Summarise the information by selecting and "
+                "reporting the main features, and make comparisons where relevant. Write at least "
+                "150 words."
+            ),
+        },
+        {
+            "title": "Task 1 — Map",
+            "prompt": (
+                "The two maps below show a small coastal town in 1980 and today. Summarise the "
+                "information by describing the main changes that have taken place. Write at "
+                "least 150 words."
+            ),
+        },
+        {
+            "title": "Task 1 — Process (manufacturing)",
+            "prompt": (
+                "The diagram below shows the stages in the production of chocolate, from the "
+                "harvesting of cocoa pods to the packaging of finished bars. Summarise the "
+                "information by describing the main stages of the process. Write at least 150 "
+                "words."
+            ),
+        },
+        {
+            "title": "Task 1 — Two charts",
+            "prompt": (
+                "The bar chart below shows the proportion of adults using public transport in "
+                "four cities, and the line graph shows petrol prices in the same cities over ten "
+                "years. Summarise the information by selecting and reporting the main features, "
+                "and make comparisons where relevant. Write at least 150 words."
+            ),
+        },
     ],
     "task2": [
         {
@@ -63,6 +116,54 @@ WRITING_TASKS: Dict[str, List[Dict[str, str]]] = {
                 "Some people think technology has made our lives more complex, while others "
                 "believe it has made life easier. Discuss both views and give your own opinion. "
                 "Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Problem & solution",
+            "prompt": (
+                "In many large cities, traffic congestion is becoming a serious problem. What "
+                "are the main causes of this problem, and what measures could governments take "
+                "to solve it? Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Advantages & disadvantages",
+            "prompt": (
+                "More and more employees now work from home rather than travelling to an "
+                "office. Do the advantages of this development outweigh the disadvantages? "
+                "Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Opinion (education)",
+            "prompt": (
+                "Some people argue that universities should accept equal numbers of male and "
+                "female students in every subject. To what extent do you agree or disagree? "
+                "Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Two-part question",
+            "prompt": (
+                "Many young people today spend a large part of their free time on social media. "
+                "Why is social media so attractive to young people? Is this a positive or "
+                "negative development? Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Discussion (environment)",
+            "prompt": (
+                "Some people believe that protecting the environment is the responsibility of "
+                "governments, while others think individuals should take responsibility. "
+                "Discuss both views and give your own opinion. Write at least 250 words."
+            ),
+        },
+        {
+            "title": "Task 2 — Opinion (money)",
+            "prompt": (
+                "Some people think that the best way to motivate employees is to pay them more, "
+                "while others believe that job satisfaction matters more than salary. Discuss "
+                "both views and give your own opinion. Write at least 250 words."
             ),
         },
     ],
@@ -142,8 +243,10 @@ async def generate_test(
         "material. Never reproduce copyrighted texts."
     )
     prompt = template.format(band=band, n=count)
+    # Generous limit: a 400-word passage + 6 questions as JSON easily exceeds
+    # 2000 tokens, and a truncated response fails JSON parsing (seen live).
     data = await client.json(
-        system=system, prompt=prompt, schema=_COMPREHENSION_SCHEMA, max_tokens=2000
+        system=system, prompt=prompt, schema=_COMPREHENSION_SCHEMA, max_tokens=4096
     )
 
     questions = [
@@ -167,6 +270,57 @@ async def generate_test(
         ],
     }
     return test.id, client_payload
+
+
+async def start_bank_test(
+    db: AsyncSession, user: User, kind: str, item_id: str
+) -> Tuple[UUID, Dict[str, Any]]:
+    """Start a built-in bank passage: persist it as a normal IeltsTest (with its
+    answer key and bank id) so grading/XP/history reuse the same pipeline. No AI
+    call, no quota."""
+    from app.services.ielts_bank import bank_item
+
+    item = bank_item(kind, item_id)
+    if item is None:
+        raise LookupError("bank item not found")
+    payload = {
+        "title": item["title"],
+        "body": item["body"],
+        "questions": item["questions"],
+        "bank_id": item["id"],
+    }
+    test = IeltsTest(user_id=user.id, kind=kind, payload_json=json.dumps(payload))
+    db.add(test)
+    await db.flush()
+    client_payload = {
+        "title": payload["title"],
+        "body": payload["body"],
+        "questions": [
+            {"prompt": q["prompt"], "options": q["options"]} for q in item["questions"]
+        ],
+    }
+    return test.id, client_payload
+
+
+async def completed_bank_ids(db: AsyncSession, user: User, kind: str) -> List[str]:
+    """Bank items this user has already completed (marked ✓ in the list)."""
+    skill = "reading" if kind == "reading" else "listening"
+    rows = await db.scalars(
+        select(IeltsResult.detail).where(
+            IeltsResult.user_id == user.id, IeltsResult.skill == skill
+        )
+    )
+    done: List[str] = []
+    for detail in rows:
+        if not detail:
+            continue
+        try:
+            bank_id = json.loads(detail).get("bank_id")
+        except ValueError:
+            continue
+        if bank_id:
+            done.append(bank_id)
+    return done
 
 
 @dataclass
@@ -200,13 +354,11 @@ async def grade_test(
     skill = "reading" if test.kind == "reading" else "listening"
     xp = XP_READING if test.kind == "reading" else XP_LISTENING
     reward = await apply_skill_xp(db, user, xp)
+    detail: Dict[str, Any] = {"correct": correct, "total": total}
+    if payload.get("bank_id"):
+        detail["bank_id"] = payload["bank_id"]  # marks the bank item as done
     db.add(
-        IeltsResult(
-            user_id=user.id,
-            skill=skill,
-            band=band,
-            detail=json.dumps({"correct": correct, "total": total}),
-        )
+        IeltsResult(user_id=user.id, skill=skill, band=band, detail=json.dumps(detail))
     )
     # One-shot content: drop the stored test after grading.
     await db.delete(test)

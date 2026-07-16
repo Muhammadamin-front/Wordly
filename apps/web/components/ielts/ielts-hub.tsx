@@ -24,7 +24,7 @@ const SKILLS: SkillCard[] = [
   { key: "reading", href: "ielts/reading", emoji: "📖", gradient: "from-blue-500 via-blue-700 to-blue-950" },
   { key: "listening", href: "ielts/listening", emoji: "🎧", gradient: "from-purple-500 via-purple-700 to-purple-950" },
   { key: "writing", href: "ielts/writing", emoji: "✍️", gradient: "from-emerald-500 via-emerald-700 to-emerald-950" },
-  { key: "speaking", href: "coach", emoji: "🎙️", gradient: "from-orange-500 via-orange-700 to-orange-950" },
+  { key: "speaking", href: "ielts/speaking", emoji: "🎙️", gradient: "from-orange-500 via-orange-700 to-orange-950" },
 ];
 
 export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {

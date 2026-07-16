@@ -1,18 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { useAuth } from "@/components/auth/auth-provider";
 import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api";
 import {
   BAND_COLOR,
   ieltsApi,
+  type BankItem,
   type ComprehensionKind,
   type GeneratedTest,
   type GradeResult,
@@ -30,30 +29,31 @@ function fmt(sec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+/** Reading/Listening practice panel: a bank of built-in passages plus an
+ *  AI-generated "unlimited" mode; timed test; server-side grading. */
 export function ComprehensionTest({
-  lang,
   kind,
   t,
 }: {
   lang: string;
   kind: ComprehensionKind;
   t: Ielts;
+  embedded?: boolean;
 }) {
-  const { user, ready } = useAuth();
-  const router = useRouter();
   const speech = useSpeech();
 
+  const [bank, setBank] = useState<BankItem[] | null>(null);
   const [test, setTest] = useState<GeneratedTest | null>(null);
   const [answers, setAnswers] = useState<number[]>([]);
   const [result, setResult] = useState<GradeResult | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loadingId, setLoadingId] = useState<string | null>(null); // bank id or "ai"
   const [error, setError] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const submitRef = useRef<() => void>(() => {});
 
   useEffect(() => {
-    if (ready && !user) router.replace(`/${lang}/auth/login`);
-  }, [ready, user, router, lang]);
+    ieltsApi.bank(kind).then(setBank).catch(() => setBank([]));
+  }, [kind]);
 
   // Countdown while a test is active; auto-submits at zero.
   useEffect(() => {
@@ -71,20 +71,25 @@ export function ComprehensionTest({
     return () => window.clearInterval(id);
   }, [test, result]);
 
-  async function generate() {
-    setLoading(true);
+  function begin(generated: GeneratedTest) {
+    setTest(generated);
+    setAnswers(new Array(generated.questions.length).fill(-1));
+    setSecondsLeft(TIME_LIMIT[kind]);
+    if (kind === "listening") {
+      // Play the recording once, automatically — like the real exam.
+      window.setTimeout(() => speech.speak(generated.body, { rate: 0.98 }), 400);
+    }
+  }
+
+  async function start(source: "ai" | string) {
+    setLoadingId(source);
     setError(null);
     setResult(null);
     speech.cancel();
     try {
-      const generated = await ieltsApi.generate(kind, 6);
-      setTest(generated);
-      setAnswers(new Array(generated.questions.length).fill(-1));
-      setSecondsLeft(TIME_LIMIT[kind]);
-      if (kind === "listening") {
-        // Read the script aloud once, automatically.
-        window.setTimeout(() => speech.speak(generated.body, { rate: 0.98 }), 400);
-      }
+      begin(
+        source === "ai" ? await ieltsApi.generate(kind, 6) : await ieltsApi.bankStart(kind, source)
+      );
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 429
@@ -94,7 +99,7 @@ export function ComprehensionTest({
             : t.error
       );
     } finally {
-      setLoading(false);
+      setLoadingId(null);
     }
   }
 
@@ -102,7 +107,9 @@ export function ComprehensionTest({
     if (!test || result) return;
     speech.cancel();
     try {
-      setResult(await ieltsApi.submit(kind, test.test_id, answers));
+      const graded = await ieltsApi.submit(kind, test.test_id, answers);
+      setResult(graded);
+      setBank(null); // refresh done-marks next time the picker shows
     } catch {
       setError(t.error);
     }
@@ -112,60 +119,105 @@ export function ComprehensionTest({
     submitRef.current = submit;
   });
 
-  if (!ready || !user) {
-    return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
-      </main>
-    );
+  function backToList() {
+    speech.cancel();
+    setTest(null);
+    setResult(null);
+    ieltsApi.bank(kind).then(setBank).catch(() => setBank([]));
   }
 
-  const title = kind === "reading" ? t.reading : t.listening;
-
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
-        <Link href={`/${lang}/ielts`} className="text-sm font-medium text-ink-soft hover:text-ink">
-          ← IELTS
-        </Link>
-        <h1 className="text-lg font-bold text-ink">
-          {kind === "reading" ? "📖" : "🎧"} {title}
-        </h1>
-        {test && !result && (
-          <span
-            className={cn(
-              "rounded-full px-3 py-1 text-sm font-bold tabular-nums",
-              secondsLeft < 60 ? "bg-danger/10 text-danger" : "bg-brand-600/10 text-brand-600 dark:text-brand-300"
-            )}
-          >
-            ⏱ {fmt(secondsLeft)}
-          </span>
-        )}
-      </div>
-
+    <div>
       {error && (
         <Alert tone="error" className="mb-4">
           {error}
         </Alert>
       )}
 
-      {/* Intro */}
+      {/* Picker: built-in passages + AI unlimited */}
       {!test && (
-        <div className="rounded-2xl border border-line bg-card p-8 text-center">
-          <p className="text-5xl">{kind === "reading" ? "📖" : "🎧"}</p>
-          <h2 className="mt-3 text-xl font-bold text-ink">{title}</h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">
+        <div className="space-y-3">
+          <p className="text-sm text-ink-soft">
             {kind === "reading" ? t.readingIntro : t.listeningIntro}
           </p>
-          <Button className="mt-5" loading={loading} onClick={generate}>
-            {t.startTest}
-          </Button>
+
+          {/* AI unlimited card */}
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-4">
+            <div>
+              <p className="font-bold text-ink">✨ {t.aiUnlimited}</p>
+              <p className="text-xs text-ink-soft">{t.aiUnlimitedDesc}</p>
+            </div>
+            <Button size="sm" loading={loadingId === "ai"} onClick={() => start("ai")}>
+              {t.startTest}
+            </Button>
+          </div>
+
+          <h2 className="pt-2 text-sm font-bold uppercase tracking-wide text-ink-soft">
+            📚 {t.passagesTitle}
+          </h2>
+          {bank === null ? (
+            <div className="space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-16 rounded-2xl" />
+              ))}
+            </div>
+          ) : (
+            bank.map((item, i) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-card p-4"
+              >
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-ink">
+                    {item.done && <span className="mr-1 text-success">✓</span>}
+                    {item.title}
+                  </p>
+                  <p className="text-xs text-ink-soft">
+                    {item.word_count} {t.words} · {item.question_count} {t.questionsShort}
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant={item.done ? "secondary" : "primary"}
+                  loading={loadingId === item.id}
+                  onClick={() => start(item.id)}
+                >
+                  {item.done ? t.tryAgain : t.startTest}
+                </Button>
+              </motion.div>
+            ))
+          )}
         </div>
       )}
 
       {/* Active test */}
       {test && (
         <div className="space-y-5">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={backToList}
+              className="text-sm font-medium text-ink-soft hover:text-ink"
+            >
+              ← {t.passagesTitle}
+            </button>
+            {!result && (
+              <span
+                className={cn(
+                  "rounded-full px-3 py-1 text-sm font-bold tabular-nums",
+                  secondsLeft < 60
+                    ? "bg-danger/10 text-danger"
+                    : "bg-brand-600/10 text-brand-600 dark:text-brand-300"
+                )}
+              >
+                ⏱ {fmt(secondsLeft)}
+              </span>
+            )}
+          </div>
+
           {kind === "reading" ? (
             <article className="max-h-72 overflow-y-auto rounded-2xl border border-line bg-card p-5">
               <h2 className="mb-2 text-lg font-bold text-ink">{test.title}</h2>
@@ -175,7 +227,9 @@ export function ComprehensionTest({
             <div className="flex items-center justify-center gap-3 rounded-2xl border border-line bg-card p-5">
               <Button
                 variant="secondary"
-                onClick={() => (speech.speaking ? speech.cancel() : speech.speak(test.body, { rate: 0.98 }))}
+                onClick={() =>
+                  speech.speaking ? speech.cancel() : speech.speak(test.body, { rate: 0.98 })
+                }
               >
                 {speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
               </Button>
@@ -183,7 +237,6 @@ export function ComprehensionTest({
             </div>
           )}
 
-          {/* Questions */}
           {test.questions.map((q, qi) => (
             <div key={qi} className="rounded-2xl border border-line bg-card p-4">
               <p className="font-semibold text-ink">
@@ -199,9 +252,7 @@ export function ComprehensionTest({
                       key={oi}
                       type="button"
                       disabled={!!result}
-                      onClick={() =>
-                        setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))
-                      }
+                      onClick={() => setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))}
                       className={cn(
                         "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
                         correct && "border-success bg-success/10 text-success",
@@ -225,24 +276,22 @@ export function ComprehensionTest({
               {t.submitTest}
             </Button>
           ) : (
-            <ResultCard result={result} t={t} onRetry={generate} lang={lang} />
+            <ResultCard result={result} t={t} onBack={backToList} />
           )}
         </div>
       )}
-    </main>
+    </div>
   );
 }
 
 function ResultCard({
   result,
   t,
-  onRetry,
-  lang,
+  onBack,
 }: {
   result: GradeResult;
   t: Ielts;
-  onRetry: () => void;
-  lang: string;
+  onBack: () => void;
 }) {
   return (
     <motion.div
@@ -251,16 +300,15 @@ function ResultCard({
       className="rounded-2xl border border-line bg-card p-6 text-center"
     >
       <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t.yourBand}</p>
-      <p className={cn("text-5xl font-extrabold", BAND_COLOR(result.band))}>{result.band.toFixed(1)}</p>
+      <p className={cn("text-5xl font-extrabold", BAND_COLOR(result.band))}>
+        {result.band.toFixed(1)}
+      </p>
       <p className="mt-1 text-sm text-ink-soft">
         {result.correct} / {result.total} {t.correct} · +{result.reward.xp_gained} XP
       </p>
-      <div className="mt-4 flex justify-center gap-2">
-        <Button onClick={onRetry}>{t.newTest}</Button>
-        <Link href={`/${lang}/ielts`}>
-          <Button variant="ghost">IELTS</Button>
-        </Link>
-      </div>
+      <Button className="mt-4" onClick={onBack}>
+        {t.newTest}
+      </Button>
     </motion.div>
   );
 }

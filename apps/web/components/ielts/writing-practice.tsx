@@ -1,11 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
@@ -15,10 +12,14 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Ielts = Dictionary["ielts"];
 
-export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
-  const { user, ready } = useAuth();
-  const router = useRouter();
-
+/** Writing practice panel: rotating Task 1/2 prompts + AI band scoring. */
+export function WritingPractice({
+  t,
+}: {
+  lang: string;
+  t: Ielts;
+  embedded?: boolean;
+}) {
   const [tasks, setTasks] = useState<Record<string, WritingTask[]> | null>(null);
   const [taskType, setTaskType] = useState<"task1" | "task2">("task2");
   const [taskIndex, setTaskIndex] = useState(0);
@@ -28,21 +29,8 @@ export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (ready && !user) router.replace(`/${lang}/auth/login`);
-  }, [ready, user, router, lang]);
-
-  useEffect(() => {
-    if (!ready || !user) return;
     ieltsApi.writingTasks().then(setTasks).catch(() => {});
-  }, [ready, user]);
-
-  if (!ready || !user) {
-    return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
-      </main>
-    );
-  }
+  }, []);
 
   const currentTask = tasks?.[taskType]?.[taskIndex];
   const words = essay.trim() ? essay.trim().split(/\s+/).length : 0;
@@ -76,14 +64,7 @@ export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-      <div className="mb-5 flex items-center justify-between">
-        <Link href={`/${lang}/ielts`} className="text-sm font-medium text-ink-soft hover:text-ink">
-          ← IELTS
-        </Link>
-        <h1 className="text-lg font-bold text-ink">✍️ {t.writing}</h1>
-      </div>
-
+    <div>
       {/* Task type toggle */}
       <div className="flex gap-1 rounded-xl border border-line p-1">
         {(["task1", "task2"] as const).map((tt) => (
@@ -109,12 +90,10 @@ export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
             {(tasks?.[taskType]?.length ?? 0) > 1 && (
               <button
                 type="button"
-                onClick={() =>
-                  reset(taskType, (taskIndex + 1) % (tasks?.[taskType]?.length ?? 1))
-                }
+                onClick={() => reset(taskType, (taskIndex + 1) % (tasks?.[taskType]?.length ?? 1))}
                 className="text-xs font-semibold text-brand-600 hover:underline dark:text-brand-300"
               >
-                {t.newPrompt} ↻
+                {t.newPrompt} ↻ ({taskIndex + 1}/{tasks?.[taskType]?.length})
               </button>
             )}
           </div>
@@ -139,7 +118,12 @@ export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
             className="mt-4 w-full resize-y rounded-2xl border border-line bg-card p-4 text-sm leading-relaxed text-ink focus:border-brand-400 focus:outline-none"
           />
           <div className="mt-2 flex items-center justify-between">
-            <span className={cn("text-xs font-semibold", words >= minWords ? "text-success" : "text-ink-soft")}>
+            <span
+              className={cn(
+                "text-xs font-semibold",
+                words >= minWords ? "text-success" : "text-ink-soft"
+              )}
+            >
               {words} {t.words} · {t.min} {minWords}
             </span>
             <Button loading={pending} onClick={submit} disabled={words < 20}>
@@ -150,7 +134,7 @@ export function WritingPractice({ lang, t }: { lang: string; t: Ielts }) {
       ) : (
         <ScoreCard score={score} t={t} onRetry={() => reset(taskType, taskIndex)} />
       )}
-    </main>
+    </div>
   );
 }
 

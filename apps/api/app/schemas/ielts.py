@@ -26,6 +26,14 @@ class QuestionOut(BaseModel):
     options: List[str]
 
 
+class BankItemOut(BaseModel):
+    id: str
+    title: str
+    question_count: int
+    word_count: int
+    done: bool
+
+
 class GenerateRequest(BaseModel):
     band: float = Field(default=6.0, ge=4.0, le=9.0)
 

@@ -12,7 +12,7 @@ export default async function IeltsSkillPage({ params }: { params: Promise<{ lan
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <SkillView lang={lang} skill="listening" t={dict.ielts} />
+      <SkillView lang={lang} skill="speaking" t={dict.ielts} />
     </>
   );
 }

@@ -513,7 +513,19 @@
     "improved": "Improved example",
     "tryAgain": "Try another",
     "quotaOut": "You've used today's free AI actions. Upgrade to Premium for unlimited.",
-    "error": "Something went wrong. Please try again."
+    "error": "Something went wrong. Please try again.",
+    "strategyTab": "Strategy",
+    "practiceTab": "Practice",
+    "startPractice": "Start practising",
+    "tipsTitle": "How to score high",
+    "mistakesTitle": "Common mistakes",
+    "passagesTitle": "Practice tests",
+    "aiUnlimited": "AI unlimited practice",
+    "aiUnlimitedDesc": "A brand-new test generated just for you, every time.",
+    "questionsShort": "questions",
+    "speakingCtaTitle": "Ready for a real interview?",
+    "speakingCtaDesc": "The AI examiner runs a full IELTS Speaking test — Parts 1-3, live voice, and a band report with feedback.",
+    "speakingCtaButton": "Start with the examiner"
   },
   "billing": {
     "title": "Pricing",
