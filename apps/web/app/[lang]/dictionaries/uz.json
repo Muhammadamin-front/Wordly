@@ -358,6 +358,12 @@
       "name": "So'z izlash",
       "desc": "Panjarada yashiringan so'zlarni toping"
     },
+    "crossword": {
+      "name": "Krossvord",
+      "desc": "Katakchalarni to'ldiring — tarjimalar sizga ishora"
+    },
+    "across": "Eniga",
+    "down": "Bo'yiga",
     "guess": "Toping",
     "yourWord": "Sizning javobingiz",
     "bossHp": "Boss jони",
@@ -370,6 +376,7 @@
     "saidIt": "Aytdim",
     "notYet": "Hali emas",
     "chooseSource": "So'zlarni tanlang",
+    "music": "Fon musiqasi",
     "sourceMine": "Kartalarim",
     "sourcePhrasal": "Frazalar",
     "sourceIdioms": "Idiomalar",
@@ -523,6 +530,8 @@
     "aiUnlimited": "AI cheksiz amaliyot",
     "aiUnlimitedDesc": "Har safar faqat siz uchun yangi test yaratiladi.",
     "questionsShort": "savol",
+    "bandLabel": "Band",
+    "recentTitle": "So'nggi natijalar",
     "speakingCtaTitle": "Haqiqiy suhbatga tayyormisiz?",
     "speakingCtaDesc": "AI imtihonchi to'liq IELTS Speaking testini o'tkazadi — Part 1-3, jonli ovoz va band hisoboti.",
     "speakingCtaButton": "Imtihonchi bilan boshlash"

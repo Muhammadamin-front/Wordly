@@ -13,6 +13,7 @@ export const GAME_TYPES = [
   "spelling_bee",
   "sentence_builder",
   "word_search",
+  "crossword",
 ] as const;
 
 /** M11 skill drills — same session/answer API, surfaced under /skills. */

@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ChoiceGame } from "@/components/games/choice-game";
+import { buildCrossword, CrosswordGame, type Crossword } from "@/components/games/crossword-game";
 import { DictationGame } from "@/components/games/dictation-game";
 import { HangmanGame } from "@/components/games/hangman-game";
 import { MatchGame } from "@/components/games/match-game";
@@ -15,6 +16,7 @@ import { SentenceGame, type SentenceItem } from "@/components/games/sentence-gam
 import { SpeakingGame } from "@/components/games/speaking-game";
 import { SpellingGame } from "@/components/games/spelling-game";
 import { TypingGame } from "@/components/games/typing-game";
+import { useAmbientMusic } from "@/components/games/use-ambient-music";
 import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/games/word-search-game";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -38,6 +40,7 @@ interface Prepared {
   tiles: Tile[];
   sentences: SentenceItem[];
   wordSearch: WordSearch;
+  crossword: Crossword | null;
 }
 
 function prepare(questions: GameQuestion[], gameType: GameType): Prepared {
@@ -59,6 +62,7 @@ function prepare(questions: GameQuestion[], gameType: GameType): Prepared {
     tiles,
     sentences,
     wordSearch: gameType === "word_search" ? buildWordSearch(questions) : { size: 0, grid: [], targets: [] },
+    crossword: gameType === "crossword" ? buildCrossword(questions) : null,
   };
 }
 
@@ -70,6 +74,9 @@ export interface GameProps {
 }
 
 type Phase = "choosing" | "loading" | "empty" | "error" | "playing" | "done";
+
+// Games where the learner must hear spoken words clearly — no background music.
+const AUDIO_GAMES: GameType[] = ["listening", "audio_guess", "speaking", "spelling_bee"];
 
 interface SourceOption {
   key: string; // stable id
@@ -111,6 +118,8 @@ export function GamePlayer({
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
   const [source, setSource] = useState<GameSource>({});
+  const musicEligible = !AUDIO_GAMES.includes(gameType);
+  const music = useAmbientMusic(musicEligible && phase === "playing");
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -137,6 +146,7 @@ export function GamePlayer({
   );
 
   const start = (chosen: GameSource) => {
+    music.arm(); // inside the click gesture, so the browser allows audio
     setSource(chosen);
     fetchSession(chosen);
   };
@@ -271,6 +281,19 @@ export function GamePlayer({
 
   return (
     <div className="mx-auto w-full max-w-xl">
+      {musicEligible && (
+        <div className="mb-2 flex justify-end">
+          <button
+            type="button"
+            onClick={music.toggle}
+            aria-label={games.music}
+            title={games.music}
+            className="rounded-full border border-line bg-card px-2.5 py-1 text-sm text-ink-soft transition-colors hover:text-ink"
+          >
+            {music.enabled ? "🎵" : "🔇"}
+          </button>
+        </div>
+      )}
       {gameType === "typing_race" ? (
         <TypingGame {...shared} questions={prepared.questions} />
       ) : gameType === "word_match" ? (
@@ -285,6 +308,8 @@ export function GamePlayer({
         <SentenceGame {...shared} items={prepared.sentences} />
       ) : gameType === "word_search" ? (
         <WordSearchGame {...shared} search={prepared.wordSearch} />
+      ) : gameType === "crossword" && prepared.crossword ? (
+        <CrosswordGame {...shared} crossword={prepared.crossword} />
       ) : gameType === "listening" ? (
         <DictationGame {...shared} questions={prepared.questions} />
       ) : gameType === "speaking" ? (

@@ -27,6 +27,7 @@ GAME_TYPES = (
     "spelling_bee",
     "sentence_builder",
     "word_search",
+    "crossword",
     # M11 skill drills — same session/answer plumbing, surfaced under /skills.
     "listening",
     "speaking",

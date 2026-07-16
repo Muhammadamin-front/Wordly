@@ -21,6 +21,7 @@ const GAME_ICONS: Record<GameType, string> = {
   spelling_bee: "🐝",
   sentence_builder: "🧩",
   word_search: "🔍",
+  crossword: "🔠",
   // Skill drills live under /skills; keys exist so the Records stay total.
   listening: "🎧",
   speaking: "🗣️",
@@ -38,6 +39,7 @@ const GAME_ACCENT: Record<GameType, string> = {
   spelling_bee: "from-yellow-500/15",
   sentence_builder: "from-emerald-500/15",
   word_search: "from-cyan-500/15",
+  crossword: "from-lime-500/15",
   listening: "from-sky-500/15",
   speaking: "from-orange-500/15",
 };
