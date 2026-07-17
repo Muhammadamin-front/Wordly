@@ -71,6 +71,14 @@ JUNK = {
     "avg", "dna", "hiv", "pda", "dsl", "don", "gps", "acc", "lib", "kim",
     "iso", "vat", "css", "bio", "pcs", "med", "abc", "jay", "biz", "par",
     "lbs", "lol", "mph", "cpu", "sam", "pdt", "usd",
+    # lowercase proper nouns/brands the dictionary APIs resolve anyway
+    "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
+    "chicago", "disney", "italian", "michigan", "minnesota", "montana",
+    "nevada", "ontario", "oregon", "oxford", "panasonic", "paris", "portland",
+    "thailand", "victoria", "korea", "london", "florida", "houston",
+    "lincoln", "marshall", "motorola", "nintendo", "iraq", "ipod",
+    "playstation", "pubmed", "siemens", "sterling", "franklin", "santa",
+    "matt", "fetish", "permalink",
 }
 
 # Grammar/function words — learners get these from grammar lessons, not
@@ -96,13 +104,20 @@ ALLOW = {"news", "goods", "means", "series", "species", "physics", "economics"}
 
 
 def _is_inflection(word: str, known: set) -> bool:
-    """Plural/3sg/past/gerund of a word we already have ('books' vs 'book')."""
+    """Plural/3sg/past/gerund/superlative of a word we already have."""
     if word in ALLOW:
         return False
-    for suffix, strip in (("s", 1), ("es", 2), ("ed", 2), ("ing", 3), ("d", 1)):
+    for suffix, strip in (
+        ("s", 1), ("es", 2), ("ed", 2), ("ing", 3), ("d", 1), ("est", 3),
+    ):
         if word.endswith(suffix) and len(word) - strip >= 3:
             stem = word[:-strip]
             if stem in known or stem + "e" in known:
+                return True
+    # carried→carry, happiest→happy
+    for suffix, strip in (("ied", 3), ("iest", 4)):
+        if word.endswith(suffix) and len(word) - strip >= 3:
+            if word[:-strip] + "y" in known:
                 return True
     return False
 
@@ -274,13 +289,19 @@ _SYSTEM = (
     "definition_en is a simple graded definition of at most 18 words, understandable "
     "one CEFR level below the word itself. translation_uz is natural Uzbek in LATIN "
     "script only (never Cyrillic); give 1-2 variants separated by a space, no commas. "
-    "translation_ru is natural Russian. example_en is one natural everyday sentence of "
-    "8-14 words using the headword; example_uz is its natural Uzbek translation (Latin "
-    "script). Copy the provided IPA when given (no slashes); otherwise supply standard "
-    "British IPA. cefr_level reflects real-world difficulty. category: pick the best "
-    "thematic fit from the allowed list; use 'ielts' for academic/abstract B2-C2 words "
-    "that suit IELTS essays; 'basics' only for true beginner words. synonyms: at most "
-    "2, space-separated, or empty string. antonyms: at most 1, or empty string."
+    "Translation quality is the top priority: use the word an Uzbek speaker would "
+    "actually say — a native Uzbek word over a Russian loan when both exist (e.g. "
+    "'rivojlanish' not 'razvitiye'), and NEVER transliterate the English headword as "
+    "the translation. The translation must match the exact sense you defined, not a "
+    "different sense of the word. translation_ru is natural Russian. example_en is one "
+    "natural everyday sentence of 8-14 words using the headword; example_uz is a "
+    "natural Uzbek rendering of it — how a person would really say it, not a "
+    "word-for-word calque. Copy the provided IPA when given (no slashes); otherwise "
+    "supply standard British IPA. cefr_level reflects real-world difficulty. category: "
+    "pick the best thematic fit from the allowed list; use 'ielts' for academic/"
+    "abstract B2-C2 words that suit IELTS essays; 'basics' only for true beginner "
+    "words. synonyms: at most 2, space-separated, or empty string. antonyms: at most "
+    "1, or empty string."
 )
 
 
