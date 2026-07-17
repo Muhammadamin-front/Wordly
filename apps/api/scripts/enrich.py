@@ -72,7 +72,10 @@ JUNK = {
     "iso", "vat", "css", "bio", "pcs", "med", "abc", "jay", "biz", "par",
     "lbs", "lol", "mph", "cpu", "sam", "pdt", "usd", "ibm", "gnu", "ben",
     "cam", "ram", "ref", "res", "que", "reg", "mod", "rep", "aud", "crm",
-    "rpm", "mhz", "lat", "rev", "fed", "aka", "cad", "cal", "pee",
+    "rpm", "mhz", "lat", "rev", "fed", "aka", "cad", "cal", "pee", "est",
+    "cds", "ups", "les", "sql", "sci", "ing", "ken", "def", "ceo", "lan",
+    "hrs", "tvs", "mrs", "ext", "dir", "gbp", "chi", "opt", "plc", "msg",
+    "cod", "gen", "vid", "tri", "rap", "alt",
     # lowercase proper nouns/brands the dictionary APIs resolve anyway
     "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
     "chicago", "disney", "italian", "michigan", "minnesota", "montana",
@@ -80,7 +83,8 @@ JUNK = {
     "thailand", "victoria", "korea", "london", "florida", "houston",
     "lincoln", "marshall", "motorola", "nintendo", "iraq", "ipod",
     "playstation", "pubmed", "siemens", "sterling", "franklin", "santa",
-    "matt", "fetish", "permalink",
+    "matt", "fetish", "permalink", "arizona", "toronto", "kevin",
+    "anderson", "nasa", "toshiba", "berlin", "nepal", "melissa", "samsung",
 }
 
 # Grammar/function words — learners get these from grammar lessons, not
