@@ -78,7 +78,10 @@ JUNK = {
     "cod", "gen", "vid", "tri", "rap", "alt", "nfl", "exp", "nba", "epa",
     "ent", "val", "dos", "nhl", "std", "thy", "ted", "cms", "vic", "pos",
     "nav", "ist", "lil", "sys", "sox", "ash", "gsm", "ton", "div", "avi",
-    "leo", "geo", "sim", "rna", "sol", "sap", "cant", "proc",
+    "leo", "geo", "sim", "rna", "sol", "sap", "cant", "proc", "iii", "msn",
+    "von", "edt", "ron", "roy", "tcp", "aaa", "icq", "dns", "pty", "mem",
+    "rec", "gpl", "phi", "ide", "rpg", "ict", "pts", "rrp", "ooo", "kay",
+    "ser", "fwd", "hwy", "str",
     # lowercase proper nouns/brands the dictionary APIs resolve anyway
     "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
     "chicago", "disney", "italian", "michigan", "minnesota", "montana",
@@ -89,7 +92,9 @@ JUNK = {
     "matt", "fetish", "permalink", "arizona", "toronto", "kevin",
     "anderson", "nasa", "toshiba", "berlin", "nepal", "melissa", "samsung",
     "nebraska", "alan", "morgan", "hilton", "charlie", "quebec", "espn",
-    "marriott", "reuters", "bangladesh", "barbados", "flickr",
+    "marriott", "reuters", "bangladesh", "barbados", "flickr", "richard",
+    "tampa", "susan", "amsterdam", "nikon", "peru", "evans", "madrid",
+    "samoa", "lauren", "manitoba", "uganda", "elvis",
 }
 
 # Grammar/function words — learners get these from grammar lessons, not
