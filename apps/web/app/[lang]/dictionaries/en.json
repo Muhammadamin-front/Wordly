@@ -18,6 +18,7 @@
     "decks": "Cards",
     "games": "Games",
     "skills": "Skills",
+    "grammar": "Grammar",
     "ai": "AI Tutor",
     "coach": "Speaking",
     "leaderboard": "League",
@@ -832,5 +833,21 @@
     "searchMyCards": "Search your cards…",
     "noCards": "No cards yet. Add words from the shelves or search above.",
     "manage": "Manage"
+  },
+  "grammar": {
+    "title": "Grammar",
+    "subtitle": "The full path from zero to IELTS — every topic explained in depth",
+    "completed": "done",
+    "done": "Done",
+    "formula": "Formula",
+    "examples": "Examples",
+    "mistakes": "Common mistakes",
+    "quiz": "Practice quiz",
+    "check": "Check answers",
+    "passed": "Great! Lesson completed.",
+    "tryAgainHint": "Review the lesson and try again — you need 60%.",
+    "retry": "Try again",
+    "nextLesson": "Next lesson",
+    "backToList": "All topics"
   }
 }

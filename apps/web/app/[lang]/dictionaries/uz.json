@@ -18,6 +18,7 @@
     "decks": "Kartalar",
     "games": "O'yinlar",
     "skills": "Ko'nikmalar",
+    "grammar": "Grammatika",
     "ai": "AI ustoz",
     "coach": "Gapirish",
     "leaderboard": "Liga",
@@ -832,5 +833,21 @@
     "searchMyCards": "Kartalaringizni qidiring…",
     "noCards": "Hali karta yo'q. Tokchalardan yoki yuqoridagi qidiruvdan so'z qo'shing.",
     "manage": "Boshqarish"
+  },
+  "grammar": {
+    "title": "Grammatika",
+    "subtitle": "Noldan IELTS'gacha to'liq yo'l — har bir mavzu chuqur tushuntirilgan",
+    "completed": "bajarildi",
+    "done": "Tayyor",
+    "formula": "Formula",
+    "examples": "Misollar",
+    "mistakes": "Ko'p uchraydigan xatolar",
+    "quiz": "Mashq testi",
+    "check": "Javoblarni tekshirish",
+    "passed": "Ajoyib! Dars yakunlandi.",
+    "tryAgainHint": "Darsni qayta ko'rib chiqing — 60% kerak.",
+    "retry": "Qayta urinish",
+    "nextLesson": "Keyingi dars",
+    "backToList": "Barcha mavzular"
   }
 }
