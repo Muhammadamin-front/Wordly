@@ -63,7 +63,14 @@ JUNK = {
     "max", "int", "tel", "dev", "pst", "gmt", "usb", "tom", "lee",
     # irregular inflections the suffix heuristic can't catch
     "got", "led", "went", "gone", "done", "made", "said", "seen", "taken",
-    "came", "gave", "took", "knew", "told", "felt", "kept",
+    "came", "gave", "took", "knew", "told", "felt", "kept", "men", "met",
+    "won", "ran", "sat",
+    # recurring wordlist junk: names, brands, codes, clipped forms
+    "pre", "mac", "ads", "vol", "bob", "sec", "nor", "mid", "del", "joe",
+    "cvs", "des", "lcd", "ave", "vhs", "con", "var", "doc", "dan", "bbc",
+    "avg", "dna", "hiv", "pda", "dsl", "don", "gps", "acc", "lib", "kim",
+    "iso", "vat", "css", "bio", "pcs", "med", "abc", "jay", "biz", "par",
+    "lbs", "lol", "mph", "cpu", "sam", "pdt", "usd",
 }
 
 # Grammar/function words — learners get these from grammar lessons, not
@@ -322,6 +329,9 @@ def validate_rows(rows: list, existing: set) -> tuple:
         ]
         if missing:
             reject(f"empty field(s) {', '.join(missing)}")
+            continue
+        if word != word.lower():
+            reject("capitalized headword — proper noun")  # Japan, Nokia, Davis…
             continue
         if CYRILLIC.search(row["translation_uz"] + row["example_uz"]):
             reject("Cyrillic in uz field")
