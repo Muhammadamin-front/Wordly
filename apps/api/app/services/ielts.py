@@ -372,64 +372,136 @@ async def grade_test(
 
 
 # --- Writing scoring ---------------------------------------------------------
+_CRITERION = {
+    "type": "object",
+    "properties": {"band": {"type": "number"}, "comment": {"type": "string"}},
+    "required": ["band", "comment"],
+    "additionalProperties": False,
+}
+
 _WRITING_SCHEMA = {
     "type": "object",
     "properties": {
         "band_overall": {"type": "number"},
-        "task": {"type": "number"},
-        "coherence": {"type": "number"},
-        "lexical": {"type": "number"},
-        "grammar": {"type": "number"},
+        "task": _CRITERION,
+        "coherence": _CRITERION,
+        "lexical": _CRITERION,
+        "grammar": _CRITERION,
+        "errors": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "quote": {"type": "string"},
+                    "fix": {"type": "string"},
+                    "note": {"type": "string"},
+                    "type": {
+                        "type": "string",
+                        "enum": ["grammar", "vocabulary", "spelling", "punctuation", "style"],
+                    },
+                },
+                "required": ["quote", "fix", "note", "type"],
+                "additionalProperties": False,
+            },
+        },
+        "strengths": {"type": "array", "items": {"type": "string"}},
         "feedback": {"type": "string"},
         "improved": {"type": "string"},
     },
-    "required": ["band_overall", "task", "coherence", "lexical", "grammar", "feedback", "improved"],
+    "required": [
+        "band_overall", "task", "coherence", "lexical", "grammar",
+        "errors", "strengths", "feedback", "improved",
+    ],
     "additionalProperties": False,
 }
+
+_FEEDBACK_LANG = {"uz": "Uzbek (Latin script)", "ru": "Russian", "en": "English"}
+
+
+@dataclass
+class WritingError:
+    quote: str
+    fix: str
+    note: str
+    type: str
+
+
+@dataclass
+class Criterion:
+    band: float
+    comment: str
 
 
 @dataclass
 class WritingScore:
     band_overall: float
-    task: float
-    coherence: float
-    lexical: float
-    grammar: float
+    task: Criterion
+    coherence: Criterion
+    lexical: Criterion
+    grammar: Criterion
+    errors: List[WritingError]
+    strengths: List[str]
     feedback: str
     improved: str
     reward: RewardSummary
 
 
+def _criterion(data: Any) -> Criterion:
+    data = data if isinstance(data, dict) else {}
+    return Criterion(band=_half_band(data.get("band")), comment=str(data.get("comment", "")).strip())
+
+
 async def score_writing(
-    db: AsyncSession, user: User, client: AiClient, task_type: str, prompt: str, essay: str
+    db: AsyncSession, user: User, client: AiClient, task_type: str, prompt: str,
+    essay: str, lang: str = "en",
 ) -> WritingScore:
-    """Score an IELTS Writing response across the four official criteria."""
-    criteria = (
-        "Task Achievement" if task_type == "task1" else "Task Response"
-    )
+    """Professional Writing review: strict band scores per criterion, a full
+    error list with corrections, strengths, and a band-8 model rewrite."""
+    criteria = "Task Achievement" if task_type == "task1" else "Task Response"
+    feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
     system = (
-        "You are a certified IELTS Writing examiner. Score strictly and fairly on the 0-9 band "
-        "scale in 0.5 steps against the four criteria: {crit}, Coherence & Cohesion, Lexical "
-        "Resource, and Grammatical Range & Accuracy. band_overall is their average rounded to "
-        "the nearest 0.5. 'feedback' is 2-4 concrete sentences; 'improved' rewrites ONE weak "
-        "sentence from the response as a band-8 example. Do not inflate scores."
-    ).format(crit=criteria)
+        "You are a certified IELTS Writing examiner and an experienced writing tutor. "
+        "Score strictly and fairly on the 0-9 band scale in 0.5 steps against the four "
+        "criteria: {crit}, Coherence & Cohesion, Lexical Resource, and Grammatical Range "
+        "& Accuracy; band_overall is their average rounded to the nearest 0.5 — do not "
+        "inflate scores. Each criterion gets a 1-2 sentence 'comment'. 'errors' lists "
+        "every significant mistake (up to 12, most damaging first): 'quote' copies the "
+        "exact fragment from the response, 'fix' is the corrected fragment, 'note' "
+        "explains the rule in one short sentence. 'strengths' names 2-3 concrete things "
+        "the candidate did well. 'feedback' is a 2-4 sentence overall summary with the "
+        "single most important next step. 'improved' rewrites the WHOLE response as a "
+        "band-8 model answer that keeps the candidate's ideas and structure. Write all "
+        "comments, notes, strengths and feedback in {lang}; quotes, fixes and the "
+        "improved response stay in English."
+    ).format(crit=criteria, lang=feedback_lang)
     user_prompt = (
         "IELTS Writing {tt}.\n\nPROMPT:\n{p}\n\nCANDIDATE RESPONSE:\n{e}"
     ).format(tt=task_type.upper(), p=prompt, e=essay)
     data = await client.json(
-        system=system, prompt=user_prompt, schema=_WRITING_SCHEMA, max_tokens=900
+        system=system, prompt=user_prompt, schema=_WRITING_SCHEMA, max_tokens=8192
     )
 
     reward = await apply_skill_xp(db, user, XP_WRITING)
     band = _half_band(data.get("band_overall"))
     db.add(IeltsResult(user_id=user.id, skill="writing", band=band, detail=data.get("feedback")))
+    errors = [
+        WritingError(
+            quote=str(e.get("quote", "")).strip(),
+            fix=str(e.get("fix", "")).strip(),
+            note=str(e.get("note", "")).strip(),
+            type=str(e.get("type", "grammar")),
+        )
+        for e in data.get("errors", [])
+        if isinstance(e, dict) and str(e.get("quote", "")).strip()
+    ][:12]
     return WritingScore(
         band_overall=band,
-        task=_half_band(data.get("task")),
-        coherence=_half_band(data.get("coherence")),
-        lexical=_half_band(data.get("lexical")),
-        grammar=_half_band(data.get("grammar")),
+        task=_criterion(data.get("task")),
+        coherence=_criterion(data.get("coherence")),
+        lexical=_criterion(data.get("lexical")),
+        grammar=_criterion(data.get("grammar")),
+        errors=errors,
+        strengths=[str(s).strip() for s in data.get("strengths", []) if str(s).strip()][:4],
         feedback=str(data.get("feedback", "")).strip(),
         improved=str(data.get("improved", "")).strip(),
         reward=reward,

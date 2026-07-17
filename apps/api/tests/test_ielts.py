@@ -24,8 +24,17 @@ class FakeIeltsAi:
         if "questions" in props:
             return {"title": "The Ocean", "body": "A passage about the ocean.", "questions": QUESTIONS}
         return {
-            "band_overall": 6.4, "task": 6.0, "coherence": 6.5, "lexical": 7.0, "grammar": 6.0,
-            "feedback": "Good structure; work on cohesion.", "improved": "A stronger sentence.",
+            "band_overall": 6.4,
+            "task": {"band": 6.0, "comment": "Addresses the task."},
+            "coherence": {"band": 6.5, "comment": "Mostly well organised."},
+            "lexical": {"band": 7.0, "comment": "Good range of vocabulary."},
+            "grammar": {"band": 6.0, "comment": "Some agreement errors."},
+            "errors": [
+                {"quote": "peoples is", "fix": "people are", "note": "'People' is already plural.", "type": "grammar"},
+            ],
+            "strengths": ["Clear position", "Good paragraphing"],
+            "feedback": "Good structure; work on cohesion.",
+            "improved": "A full band-8 model answer.",
         }
 
 
@@ -217,14 +226,18 @@ async def test_writing_score_returns_bands(client):
         headers = await learner(client, email="ieltsw@words.uz")
         resp = await client.post(
             "/api/v1/ielts/writing/score",
-            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60, "lang": "uz"},
             headers=headers,
         )
         assert resp.status_code == 200, resp.text
         data = resp.json()
         assert data["band_overall"] == 6.5  # 6.4 -> nearest half band
-        assert data["lexical"] == 7.0
+        assert data["lexical"]["band"] == 7.0
+        assert data["lexical"]["comment"]
+        assert data["errors"][0]["fix"] == "people are"
+        assert data["strengths"]
         assert data["feedback"]
+        assert data["improved"]
         assert data["reward"]["xp_gained"] > 0
 
         # It shows up as the best Writing band on the overview.

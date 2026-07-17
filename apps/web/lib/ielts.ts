@@ -49,14 +49,28 @@ export interface GradeResult {
   reward: IeltsReward;
 }
 
+export interface WritingCriterion {
+  band: number;
+  comment: string;
+}
+
+export interface WritingError {
+  quote: string; // exact fragment from the essay
+  fix: string; // corrected fragment
+  note: string; // one-sentence explanation
+  type: "grammar" | "vocabulary" | "spelling" | "punctuation" | "style";
+}
+
 export interface WritingScore {
   band_overall: number;
-  task: number;
-  coherence: number;
-  lexical: number;
-  grammar: number;
+  task: WritingCriterion;
+  coherence: WritingCriterion;
+  lexical: WritingCriterion;
+  grammar: WritingCriterion;
+  errors: WritingError[];
+  strengths: string[];
   feedback: string;
-  improved: string;
+  improved: string; // full band-8 model rewrite
   reward: IeltsReward;
 }
 
@@ -84,10 +98,10 @@ export const ieltsApi = {
   writingTasks: () =>
     apiFetch<Record<string, WritingTask[]>>("/ielts/writing/tasks", { auth: true }),
 
-  scoreWriting: (taskType: string, prompt: string, essay: string) =>
+  scoreWriting: (taskType: string, prompt: string, essay: string, lang = "en") =>
     apiFetch<WritingScore>("/ielts/writing/score", {
       method: "POST",
-      body: { task_type: taskType, prompt, essay },
+      body: { task_type: taskType, prompt, essay, lang },
       auth: true,
     }),
 

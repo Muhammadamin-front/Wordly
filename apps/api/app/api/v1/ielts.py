@@ -16,6 +16,7 @@ from app.db.session import get_db
 from app.models.user import User
 from app.schemas.ielts import (
     BankItemOut,
+    CriterionOut,
     GenerateRequest,
     GeneratedTestOut,
     GradeOut,
@@ -24,6 +25,7 @@ from app.schemas.ielts import (
     QuestionOut,
     RewardOut,
     SubmitRequest,
+    WritingErrorOut,
     WritingScoreOut,
     WritingScoreRequest,
     WritingTask,
@@ -118,14 +120,25 @@ async def writing_score(
     score = await _guarded(
         db, user,
         lambda: ielts.score_writing(
-            db, user, client, payload.task_type, payload.prompt, payload.essay
+            db, user, client, payload.task_type, payload.prompt, payload.essay,
+            lang=payload.lang,
         ),
     )
     await db.commit()
     return WritingScoreOut(
-        band_overall=score.band_overall, task=score.task, coherence=score.coherence,
-        lexical=score.lexical, grammar=score.grammar, feedback=score.feedback,
-        improved=score.improved, reward=_reward(score.reward),
+        band_overall=score.band_overall,
+        task=CriterionOut(band=score.task.band, comment=score.task.comment),
+        coherence=CriterionOut(band=score.coherence.band, comment=score.coherence.comment),
+        lexical=CriterionOut(band=score.lexical.band, comment=score.lexical.comment),
+        grammar=CriterionOut(band=score.grammar.band, comment=score.grammar.comment),
+        errors=[
+            WritingErrorOut(quote=e.quote, fix=e.fix, note=e.note, type=e.type)
+            for e in score.errors
+        ],
+        strengths=score.strengths,
+        feedback=score.feedback,
+        improved=score.improved,
+        reward=_reward(score.reward),
     )
 
 

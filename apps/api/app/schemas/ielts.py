@@ -73,14 +73,29 @@ class WritingScoreRequest(BaseModel):
     task_type: str = Field(pattern="^(task1|task2)$")
     prompt: str = Field(min_length=10, max_length=1200)
     essay: str = Field(min_length=20, max_length=6000)
+    lang: str = Field(default="en", pattern="^(uz|ru|en)$")  # feedback language
+
+
+class CriterionOut(BaseModel):
+    band: float
+    comment: str
+
+
+class WritingErrorOut(BaseModel):
+    quote: str  # exact fragment from the essay
+    fix: str  # corrected fragment
+    note: str  # one-sentence explanation in the requested language
+    type: str  # grammar|vocabulary|spelling|punctuation|style
 
 
 class WritingScoreOut(BaseModel):
     band_overall: float
-    task: float
-    coherence: float
-    lexical: float
-    grammar: float
+    task: CriterionOut
+    coherence: CriterionOut
+    lexical: CriterionOut
+    grammar: CriterionOut
+    errors: List[WritingErrorOut]
+    strengths: List[str]
     feedback: str
-    improved: str
+    improved: str  # full band-8 model rewrite
     reward: RewardOut

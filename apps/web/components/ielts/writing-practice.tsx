@@ -12,8 +12,11 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Ielts = Dictionary["ielts"];
 
-/** Writing practice panel: rotating Task 1/2 prompts + AI band scoring. */
+/** Writing practice panel: rotating Task 1/2 prompts + a professional AI
+ *  review — per-criterion bands, a full error list with corrections, and a
+ *  band-8 model rewrite. Feedback arrives in the UI language. */
 export function WritingPractice({
+  lang,
   t,
 }: {
   lang: string;
@@ -41,7 +44,7 @@ export function WritingPractice({
     setPending(true);
     setError(null);
     try {
-      setScore(await ieltsApi.scoreWriting(taskType, currentTask.prompt, essay));
+      setScore(await ieltsApi.scoreWriting(taskType, currentTask.prompt, essay, lang));
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 429
@@ -138,50 +141,105 @@ export function WritingPractice({
   );
 }
 
+const ERROR_TYPE_EMOJI: Record<string, string> = {
+  grammar: "📐",
+  vocabulary: "📚",
+  spelling: "🔤",
+  punctuation: "✒️",
+  style: "🎨",
+};
+
 function ScoreCard({ score, t, onRetry }: { score: WritingScore; t: Ielts; onRetry: () => void }) {
-  const criteria: [string, number][] = [
+  const criteria = [
     [t.taskCriterion, score.task],
     [t.coherence, score.coherence],
     [t.lexical, score.lexical],
     [t.grammar, score.grammar],
-  ];
+  ] as const;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-4 rounded-2xl border border-line bg-card p-6"
+      className="mt-4 space-y-4"
     >
-      <div className="flex items-center gap-4">
-        <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-full border-4 border-brand-500/30">
-          <span className="text-[10px] font-bold uppercase text-ink-soft">{t.yourBand}</span>
-          <span className={cn("text-2xl font-extrabold", BAND_COLOR(score.band_overall))}>
-            {score.band_overall.toFixed(1)}
-          </span>
+      {/* Band + criteria with examiner comments */}
+      <div className="rounded-2xl border border-line bg-card p-6">
+        <div className="flex items-start gap-4">
+          <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-full border-4 border-brand-500/30">
+            <span className="text-[10px] font-bold uppercase text-ink-soft">{t.yourBand}</span>
+            <span className={cn("text-2xl font-extrabold", BAND_COLOR(score.band_overall))}>
+              {score.band_overall.toFixed(1)}
+            </span>
+          </div>
+          <div className="grid flex-1 gap-2 sm:grid-cols-2">
+            {criteria.map(([label, c]) => (
+              <div key={label} className="rounded-lg bg-line/40 px-3 py-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] text-ink-soft">{label}</p>
+                  <p className={cn("text-sm font-bold", BAND_COLOR(c.band))}>{c.band.toFixed(1)}</p>
+                </div>
+                {c.comment && <p className="mt-0.5 text-xs leading-snug text-ink">{c.comment}</p>}
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid flex-1 grid-cols-2 gap-2">
-          {criteria.map(([label, value]) => (
-            <div key={label} className="rounded-lg bg-line/40 px-3 py-1.5">
-              <p className="text-[11px] text-ink-soft">{label}</p>
-              <p className="text-sm font-bold text-ink">{value.toFixed(1)}</p>
-            </div>
-          ))}
+        <div className="mt-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t.feedback}</p>
+          <p className="mt-1 text-sm text-ink">{score.feedback}</p>
         </div>
+        {score.strengths.length > 0 && (
+          <div className="mt-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">
+              💪 {t.strengthsTitle}
+            </p>
+            <ul className="mt-1 space-y-0.5">
+              {score.strengths.map((s, i) => (
+                <li key={i} className="text-sm text-ink">
+                  <span className="mr-1 text-success">✓</span>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <p className="mt-3 text-xs text-ink-soft">+{score.reward.xp_gained} XP</p>
       </div>
 
-      <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t.feedback}</p>
-        <p className="mt-1 text-sm text-ink">{score.feedback}</p>
-      </div>
-      {score.improved && (
-        <div className="mt-3">
-          <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t.improved}</p>
-          <p className="mt-1 rounded-lg bg-success/5 px-3 py-2 text-sm italic text-ink">
-            {score.improved}
+      {/* Error corrections, most damaging first */}
+      {score.errors.length > 0 && (
+        <div className="rounded-2xl border border-line bg-card p-5">
+          <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">
+            🔍 {t.errorsTitle} ({score.errors.length})
           </p>
+          <div className="mt-2 space-y-2">
+            {score.errors.map((err, i) => (
+              <div key={i} className="rounded-xl border border-line/70 p-3">
+                <p className="text-sm">
+                  <span aria-hidden>{ERROR_TYPE_EMOJI[err.type] ?? "✏️"} </span>
+                  <span className="text-danger line-through decoration-danger/60">{err.quote}</span>
+                  <span className="mx-1.5 text-ink-soft">→</span>
+                  <span className="font-semibold text-success">{err.fix}</span>
+                </p>
+                {err.note && <p className="mt-1 text-xs text-ink-soft">{err.note}</p>}
+              </div>
+            ))}
+          </div>
         </div>
       )}
-      <p className="mt-3 text-xs text-ink-soft">+{score.reward.xp_gained} XP</p>
-      <Button className="mt-4" fullWidth onClick={onRetry}>
+
+      {/* Band-8 model rewrite */}
+      {score.improved && (
+        <details className="rounded-2xl border border-line bg-card p-5">
+          <summary className="cursor-pointer text-xs font-bold uppercase tracking-wide text-ink-soft">
+            ⭐ {t.improved}
+          </summary>
+          <p className="mt-2 whitespace-pre-line rounded-lg bg-success/5 px-3 py-2 text-sm leading-relaxed text-ink">
+            {score.improved}
+          </p>
+        </details>
+      )}
+
+      <Button fullWidth onClick={onRetry}>
         {t.tryAgain}
       </Button>
     </motion.div>
