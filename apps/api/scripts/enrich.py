@@ -70,7 +70,9 @@ JUNK = {
     "cvs", "des", "lcd", "ave", "vhs", "con", "var", "doc", "dan", "bbc",
     "avg", "dna", "hiv", "pda", "dsl", "don", "gps", "acc", "lib", "kim",
     "iso", "vat", "css", "bio", "pcs", "med", "abc", "jay", "biz", "par",
-    "lbs", "lol", "mph", "cpu", "sam", "pdt", "usd",
+    "lbs", "lol", "mph", "cpu", "sam", "pdt", "usd", "ibm", "gnu", "ben",
+    "cam", "ram", "ref", "res", "que", "reg", "mod", "rep", "aud", "crm",
+    "rpm", "mhz", "lat", "rev", "fed", "aka", "cad", "cal", "pee",
     # lowercase proper nouns/brands the dictionary APIs resolve anyway
     "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
     "chicago", "disney", "italian", "michigan", "minnesota", "montana",
@@ -305,9 +307,10 @@ _SYSTEM = (
 )
 
 
-async def generate_rows(facts_batch: list, attempts: int = 4) -> list:
+async def generate_rows(facts_batch: list, attempts: int = 6) -> list:
     """One AI call per batch, retried with backoff — providers 503 under load
-    and long JSON responses occasionally truncate."""
+    and long JSON responses occasionally truncate. Waits total >600s so a
+    batch survives a full provider-cooldown window instead of being skipped."""
     client = get_ai_client()
     if client is None:
         raise SystemExit("AI is not configured (no keys in .env)")
@@ -325,7 +328,7 @@ async def generate_rows(facts_batch: list, attempts: int = 4) -> list:
             return data.get("words", [])
         except (AiError, ValueError) as exc:
             last = exc
-            wait = 8 * (attempt + 1)
+            wait = 30 * (attempt + 1)
             print(f"  attempt {attempt + 1} failed ({str(exc)[:80]}); retry in {wait}s")
             await asyncio.sleep(wait)
     raise last
