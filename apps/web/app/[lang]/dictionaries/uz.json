@@ -16,6 +16,7 @@
     "dashboard": "Boshqaruv paneli",
     "logout": "Chiqish",
     "decks": "Kartalar",
+    "expressions": "Iboralar",
     "games": "O'yinlar",
     "skills": "Ko'nikmalar",
     "grammar": "Grammatika",
@@ -849,5 +850,26 @@
     "retry": "Qayta urinish",
     "nextLesson": "Keyingi dars",
     "backToList": "Barcha mavzular"
+  },
+  "expressions": {
+    "title": "Iboralar",
+    "subtitle": "Sizni ravon qiladigan native iboralar — IELTS Band 7-9 uchun",
+    "total": "ibora",
+    "searchPlaceholder": "Ibora yoki ma'no qidiring...",
+    "allLevels": "Barcha darajalar",
+    "allCategories": "Barcha turkumlar",
+    "empty": "Hech narsa topilmadi. Boshqa filtr sinang.",
+    "prev": "Oldingi",
+    "next": "Keyingi",
+    "listen": "Tinglash",
+    "usage": "Qachon ishlatiladi",
+    "grammar": "Grammatik qolip",
+    "examples": "Misollar",
+    "collocations": "Birikmalar",
+    "alternatives": "Muqobil variantlar",
+    "synonyms": "Sinonimlar",
+    "opposites": "Antonimlar",
+    "mistakes": "Ko'p uchraydigan xatolar",
+    "nativeNotes": "Native so'zlovchi izohlari"
   }
 }

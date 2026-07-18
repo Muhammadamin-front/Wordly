@@ -16,6 +16,7 @@
     "dashboard": "Панель",
     "logout": "Выйти",
     "decks": "Карточки",
+    "expressions": "Выражения",
     "games": "Игры",
     "skills": "Навыки",
     "grammar": "Грамматика",
@@ -849,5 +850,26 @@
     "retry": "Ещё раз",
     "nextLesson": "Следующий урок",
     "backToList": "Все темы"
+  },
+  "expressions": {
+    "title": "Выражения",
+    "subtitle": "Фразы носителей для IELTS Band 7-9",
+    "total": "выражений",
+    "searchPlaceholder": "Найти выражение или значение...",
+    "allLevels": "Все уровни",
+    "allCategories": "Все категории",
+    "empty": "Ничего не найдено.",
+    "prev": "Назад",
+    "next": "Вперёд",
+    "listen": "Слушать",
+    "usage": "Когда использовать",
+    "grammar": "Грамматический шаблон",
+    "examples": "Примеры",
+    "collocations": "Словосочетания",
+    "alternatives": "Альтернативы",
+    "synonyms": "Синонимы",
+    "opposites": "Противоположности",
+    "mistakes": "Частые ошибки",
+    "nativeNotes": "Заметки носителя"
   }
 }

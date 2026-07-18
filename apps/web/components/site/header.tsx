@@ -18,6 +18,7 @@ import type { Locale } from "@/lib/locales";
 type NavKey =
   | "dashboard"
   | "decks"
+  | "expressions"
   | "games"
   | "skills"
   | "grammar"
@@ -38,6 +39,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { key: "dashboard", href: "dashboard", icon: "🏠" },
   { key: "decks", href: "decks", icon: "🃏" },
+  { key: "expressions", href: "expressions", icon: "💬" },
   { key: "games", href: "games", icon: "🎮" },
   { key: "skills", href: "skills", icon: "📚" },
   { key: "grammar", href: "grammar", icon: "📘" },

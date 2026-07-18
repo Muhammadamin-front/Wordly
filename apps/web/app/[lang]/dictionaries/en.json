@@ -16,6 +16,7 @@
     "dashboard": "Dashboard",
     "logout": "Log out",
     "decks": "Cards",
+    "expressions": "Expressions",
     "games": "Games",
     "skills": "Skills",
     "grammar": "Grammar",
@@ -849,5 +850,26 @@
     "retry": "Try again",
     "nextLesson": "Next lesson",
     "backToList": "All topics"
+  },
+  "expressions": {
+    "title": "Expressions",
+    "subtitle": "Native phrases that make you sound fluent — for IELTS Band 7-9",
+    "total": "expressions",
+    "searchPlaceholder": "Search an expression or meaning...",
+    "allLevels": "All levels",
+    "allCategories": "All categories",
+    "empty": "Nothing found. Try another filter.",
+    "prev": "Prev",
+    "next": "Next",
+    "listen": "Listen",
+    "usage": "When to use",
+    "grammar": "Grammar pattern",
+    "examples": "Examples",
+    "collocations": "Collocations",
+    "alternatives": "Alternatives",
+    "synonyms": "Synonyms",
+    "opposites": "Opposites",
+    "mistakes": "Common mistakes",
+    "nativeNotes": "Native speaker notes"
   }
 }
