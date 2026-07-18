@@ -27,11 +27,24 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from app.services.ai_client import AiError, BazaarLinkClient  # noqa: E402
+from app.services.ai_client import AiError, BazaarLinkClient, GeminiClient  # noqa: E402
 
 OUT_DIR = pathlib.Path(__file__).parent / "data" / "expressions"
 MODEL = "deepseek-v3.2"
 GEN_BATCH = 5  # rich 14-field schema → small batches keep the JSON response intact
+
+# Generation client, set in main(). BazaarLink deepseek is best but costs
+# credits; Gemini flash-lite is the free fallback for the English-heavy content.
+_CLIENT = None
+
+
+def _client():
+    global _CLIENT
+    if _CLIENT is None:
+        c = BazaarLinkClient()
+        c._model = MODEL
+        _CLIENT = c
+    return _CLIENT
 CYRILLIC = re.compile("[а-яА-ЯёЁ]")
 CEFR_VALUES = {"A2", "B1", "B2", "C1", "C2"}
 
@@ -154,8 +167,7 @@ def existing_expressions() -> set:
 
 
 async def gen_batch(category: str, cefr_hint: str, avoid: list, attempts: int = 5) -> list:
-    client = BazaarLinkClient()
-    client._model = MODEL
+    client = _client()
     avoid_note = ""
     if avoid:
         avoid_note = (
@@ -176,7 +188,7 @@ async def gen_batch(category: str, cefr_hint: str, avoid: list, attempts: int = 
             return data.get("expressions", [])
         except (AiError, ValueError) as exc:
             last = exc
-            wait = 8 * (attempt + 1)
+            wait = 20 * (attempt + 1)  # generous for the free Gemini tier's quota bursts
             print(f"    attempt {attempt + 1} failed ({str(exc)[:70]}); retry in {wait}s")
             await asyncio.sleep(wait)
     print(f"    giving up on this sub-batch: {last}")
@@ -273,6 +285,7 @@ async def run(args) -> None:
 
 
 def main() -> None:
+    global _CLIENT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--category", default=None)
     parser.add_argument("--count", type=int, default=40)
@@ -280,7 +293,17 @@ def main() -> None:
     parser.add_argument("--pilot", action="store_true")
     parser.add_argument("--auto", action="store_true")
     parser.add_argument("--target", type=int, default=5000)
-    asyncio.run(run(parser.parse_args()))
+    parser.add_argument(
+        "--gemini", action="store_true",
+        help="generate on free Gemini flash-lite instead of paid BazaarLink",
+    )
+    args = parser.parse_args()
+    if args.gemini:
+        c = GeminiClient()
+        c._model = "gemini-flash-lite-latest"
+        _CLIENT = c
+        print("generator: Gemini flash-lite (free)")
+    asyncio.run(run(args))
 
 
 if __name__ == "__main__":
