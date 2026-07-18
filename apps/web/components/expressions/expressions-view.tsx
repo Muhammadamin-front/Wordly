@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 
+import { useAuth } from "@/components/auth/auth-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   CEFR_COLOR,
@@ -11,6 +12,7 @@ import {
   type ExpressionListItem,
   type ExpressionMeta,
 } from "@/lib/expressions";
+import { flashcardsApi } from "@/lib/flashcards";
 import { speak } from "@/lib/games";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -20,6 +22,27 @@ type T = Dictionary["expressions"];
 const CEFR_LEVELS = ["A2", "B1", "B2", "C1", "C2"];
 
 export function ExpressionsView({ t }: { lang: string; t: T }) {
+  const { user } = useAuth();
+  // Slugs the user has added to their SRS deck this session (best-effort UI).
+  const [added, setAdded] = useState<Set<string>>(new Set());
+
+  const addToCards = useCallback(
+    async (e: ExpressionDetail | ExpressionListItem) => {
+      if (added.has(e.slug)) return;
+      setAdded((prev) => new Set(prev).add(e.slug));
+      try {
+        await flashcardsApi.createCustomCard(e.expression, e.uzbek);
+      } catch {
+        setAdded((prev) => {
+          const next = new Set(prev);
+          next.delete(e.slug);
+          return next;
+        });
+      }
+    },
+    [added]
+  );
+
   const [meta, setMeta] = useState<ExpressionMeta | null>(null);
   const [items, setItems] = useState<ExpressionListItem[] | null>(null);
   const [total, setTotal] = useState(0);
@@ -171,7 +194,16 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
       )}
 
       <AnimatePresence>
-        {open && <DetailModal expr={open} t={t} onClose={() => setOpen(null)} />}
+        {open && (
+          <DetailModal
+            expr={open}
+            t={t}
+            canAdd={!!user}
+            isAdded={added.has(open.slug)}
+            onAdd={() => addToCards(open)}
+            onClose={() => setOpen(null)}
+          />
+        )}
       </AnimatePresence>
     </main>
   );
@@ -222,10 +254,16 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function DetailModal({
   expr,
   t,
+  canAdd,
+  isAdded,
+  onAdd,
   onClose,
 }: {
   expr: ExpressionDetail;
   t: T;
+  canAdd: boolean;
+  isAdded: boolean;
+  onAdd: () => void;
   onClose: () => void;
 }) {
   return (
@@ -271,6 +309,22 @@ function DetailModal({
           <Tag>IELTS {expr.ielts_band}</Tag>
           <Tag>{expr.formality}</Tag>
         </div>
+
+        {canAdd && (
+          <button
+            type="button"
+            onClick={onAdd}
+            disabled={isAdded}
+            className={cn(
+              "mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors",
+              isAdded
+                ? "bg-success/10 text-success"
+                : "bg-brand-600 text-white hover:bg-brand-700"
+            )}
+          >
+            {isAdded ? `✓ ${t.addedToCards}` : `➕ ${t.addToCards}`}
+          </button>
+        )}
 
         <div className="mt-5 space-y-4">
           <Section title={t.usage}>{expr.usage}</Section>

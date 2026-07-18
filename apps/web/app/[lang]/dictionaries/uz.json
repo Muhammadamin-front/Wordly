@@ -870,6 +870,8 @@
     "synonyms": "Sinonimlar",
     "opposites": "Antonimlar",
     "mistakes": "Ko'p uchraydigan xatolar",
-    "nativeNotes": "Native so'zlovchi izohlari"
+    "nativeNotes": "Native so'zlovchi izohlari",
+    "addToCards": "Kartalarga qo'shish",
+    "addedToCards": "Kartalarga qo'shildi"
   }
 }

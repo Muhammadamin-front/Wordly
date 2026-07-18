@@ -870,6 +870,8 @@
     "synonyms": "Synonyms",
     "opposites": "Opposites",
     "mistakes": "Common mistakes",
-    "nativeNotes": "Native speaker notes"
+    "nativeNotes": "Native speaker notes",
+    "addToCards": "Add to cards",
+    "addedToCards": "Added to cards"
   }
 }

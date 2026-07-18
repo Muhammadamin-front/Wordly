@@ -90,6 +90,14 @@ export const flashcardsApi = {
 
   createCard: (wordId: string) =>
     apiFetch<CardOut>("/cards", { method: "POST", body: { word_id: wordId }, auth: true }),
+
+  // A custom front/back card — used to add an expression to the SRS deck.
+  createCustomCard: (frontText: string, backText: string) =>
+    apiFetch<CardOut>("/cards", {
+      method: "POST",
+      body: { front_text: frontText, back_text: backText },
+      auth: true,
+    }),
 };
 
 export async function importDeckCsv(deckId: string, file: File): Promise<DeckImportReport> {
