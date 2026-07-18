@@ -83,23 +83,28 @@ export function normalize(text: string): string {
 }
 
 // Natural voice via the API's ElevenLabs proxy (server-side cached). Audio for
-// a given text never changes, so blob URLs are memoized per session. When the
-// server has no TTS key (503) we stop asking and use the browser voice.
+// a given text never changes, so blob URLs are memoized per session. A 503
+// (TTS not configured) or 429 (rate limit) only pauses server audio for a
+// short cooldown — never a permanent per-session latch — so a transient blip
+// or redeploy self-heals instead of dropping everyone to the robotic browser
+// voice for the rest of their visit.
 const ttsCache = new Map<string, string>();
-let serverTts = true;
+let serverTtsPausedUntil = 0;
 let playing: HTMLAudioElement | null = null;
 
 async function playServerVoice(text: string): Promise<void> {
-  if (!serverTts) throw new Error("server tts off");
   let url = ttsCache.get(text);
   if (!url) {
+    if (Date.now() < serverTtsPausedUntil) throw new Error("server tts cooling down");
     const token = getAccessToken();
     if (!token) throw new Error("not authenticated");
     const response = await fetch(`${API_URL}/api/v1/tts?text=${encodeURIComponent(text)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) {
-      if (response.status === 503) serverTts = false;
+      // 429 (rate limit) recovers quickly; 503 (not configured) may be a
+      // deploy in progress — back off briefly either way, then retry.
+      serverTtsPausedUntil = Date.now() + (response.status === 429 ? 15_000 : 120_000);
       throw new Error(`tts ${response.status}`);
     }
     url = URL.createObjectURL(await response.blob());
