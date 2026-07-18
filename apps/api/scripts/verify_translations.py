@@ -28,10 +28,24 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from app.services.ai_client import AiError, get_ai_client  # noqa: E402
+from app.services.ai_client import AiError, BazaarLinkClient, get_ai_client  # noqa: E402
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
 BATCH_SIZE = 15  # smaller → more reliable JSON from gemini-flash on the verdict array
+
+# The judge client. Verification is a comprehension task (does the Uzbek match
+# the English?), independent of a model's own generation quality, so a strong
+# no-throttle BazaarLink model (deepseek) can run it fast without touching the
+# Gemini quota that enrichment needs. Set via --bazaarlink; defaults to the
+# app's Gemini chain.
+_CLIENT = None
+
+
+def _judge():
+    global _CLIENT
+    if _CLIENT is None:
+        _CLIENT = get_ai_client()
+    return _CLIENT
 
 _SCHEMA = {
     "type": "object",
@@ -86,7 +100,7 @@ def load_rows(filename: str) -> list:
 
 
 async def verify_batch(rows: list, attempts: int = 5) -> list:
-    client = get_ai_client()
+    client = _judge()
     if client is None:
         raise SystemExit("AI is not configured (no keys in .env)")
     items = [
@@ -161,12 +175,24 @@ async def run(files: list, out: str) -> None:
 
 
 def main() -> None:
+    global _CLIENT
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--files", nargs="*", default=None)
     parser.add_argument("--all-pipeline", action="store_true", help="all useful_batch*.csv")
     parser.add_argument("--all", action="store_true", help="every corpus CSV with translations")
     parser.add_argument("--out", default="verify_report.json")
+    parser.add_argument(
+        "--bazaarlink", action="store_true",
+        help="judge on BazaarLink (deepseek, no throttle) instead of the Gemini chain",
+    )
+    parser.add_argument("--model", default="deepseek-v3.2", help="BazaarLink model id")
     args = parser.parse_args()
+
+    if args.bazaarlink:
+        client = BazaarLinkClient()
+        client._model = args.model  # override the .env default for this run
+        _CLIENT = client
+        print(f"judge: BazaarLink {args.model}")
 
     if args.all:
         files = sorted(p.name for p in DATA_DIR.glob("*.csv") if p.name != "word_images.csv")
