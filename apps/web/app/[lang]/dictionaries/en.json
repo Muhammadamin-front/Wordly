@@ -16,7 +16,6 @@
     "dashboard": "Dashboard",
     "logout": "Log out",
     "decks": "Cards",
-    "expressions": "Expressions",
     "games": "Games",
     "skills": "Skills",
     "grammar": "Grammar",
@@ -822,6 +821,10 @@
       "idioms": {
         "name": "Idioms",
         "desc": "Speak like a native."
+      },
+      "expressions": {
+        "name": "Expressions",
+        "desc": "Native phrases for IELTS Band 7-9."
       },
       "business": {
         "name": "Business English",

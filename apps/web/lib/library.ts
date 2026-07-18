@@ -26,6 +26,7 @@ export interface ShelfMeta {
   accent: string; // bright accent text readable on the dark card
   art: string; // full-card gradient (replaces per-level cover art — no assets)
   soon?: boolean;
+  href?: string; // path suffix after /{lang}/ — for shelves with a bespoke page
 }
 
 export const SHELVES: ShelfMeta[] = [
@@ -40,6 +41,7 @@ export const SHELVES: ShelfMeta[] = [
   { slug: "sat", key: "sat", gradient: "from-slate-500/20 to-slate-500/5", bar: "bg-slate-600", text: "text-slate-600 dark:text-slate-300", ring: "ring-slate-500/30", overlay: "from-slate-950 via-slate-950/70", accent: "text-slate-300", art: "from-slate-500 via-slate-700 to-slate-950", soon: true },
   { slug: "phrasal", key: "phrasal", category: "phrasal", gradient: "from-yellow-500/20 to-yellow-500/5", bar: "bg-yellow-500", text: "text-yellow-600 dark:text-yellow-400", ring: "ring-yellow-500/30", overlay: "from-yellow-950 via-yellow-950/70", accent: "text-yellow-300", art: "from-yellow-500 via-yellow-700 to-yellow-950" },
   { slug: "idioms", key: "idioms", category: "idioms", gradient: "from-amber-600/20 to-amber-600/5", bar: "bg-amber-600", text: "text-amber-700 dark:text-amber-400", ring: "ring-amber-600/30", overlay: "from-amber-950 via-amber-950/70", accent: "text-amber-300", art: "from-amber-500 via-amber-700 to-amber-950" },
+  { slug: "expressions", key: "expressions", href: "expressions", gradient: "from-rose-500/20 to-rose-500/5", bar: "bg-rose-500", text: "text-rose-600 dark:text-rose-400", ring: "ring-rose-500/30", overlay: "from-rose-950 via-rose-950/70", accent: "text-rose-300", art: "from-rose-500 via-rose-700 to-rose-950" },
   { slug: "business", key: "business", gradient: "from-cyan-500/20 to-cyan-500/5", bar: "bg-cyan-500", text: "text-cyan-600 dark:text-cyan-400", ring: "ring-cyan-500/30", overlay: "from-cyan-950 via-cyan-950/70", accent: "text-cyan-300", art: "from-cyan-500 via-cyan-700 to-cyan-950", soon: true },
 ];
 

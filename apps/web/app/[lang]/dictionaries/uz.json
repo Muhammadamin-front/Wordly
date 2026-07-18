@@ -16,7 +16,6 @@
     "dashboard": "Boshqaruv paneli",
     "logout": "Chiqish",
     "decks": "Kartalar",
-    "expressions": "Iboralar",
     "games": "O'yinlar",
     "skills": "Ko'nikmalar",
     "grammar": "Grammatika",
@@ -822,6 +821,10 @@
       "idioms": {
         "name": "Idiomalar",
         "desc": "Ona tilidagidek gapiring."
+      },
+      "expressions": {
+        "name": "Iboralar",
+        "desc": "Ravon gapirish uchun native iboralar."
       },
       "business": {
         "name": "Biznes ingliz tili",

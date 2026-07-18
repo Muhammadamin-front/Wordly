@@ -12,6 +12,7 @@ import {
   Lightbulb,
   Link2,
   Lock,
+  MessageCircle,
   PenTool,
   Sprout,
   Target,
@@ -35,6 +36,7 @@ const ICONS: Record<string, LucideIcon> = {
   phrasal: Link2,
   idioms: Lightbulb,
   business: Briefcase,
+  expressions: MessageCircle,
 };
 
 export interface ShelfStrings {
@@ -59,7 +61,9 @@ export function LevelCard({
 }) {
   const Icon = ICONS[meta.slug] ?? BookOpen;
   const pct = total > 0 ? Math.round((learned / total) * 100) : 0;
-  const locked = meta.soon || total === 0;
+  // Custom shelves (bespoke page, no library progress data) are always open.
+  const custom = !!meta.href;
+  const locked = meta.soon || (!custom && total === 0);
 
   const body = (
     <motion.div
@@ -101,30 +105,39 @@ export function LevelCard({
         </h3>
         <p className="mt-1 line-clamp-2 text-sm text-white/75">{strings.desc}</p>
 
-        {!locked && (
-          <>
-            <p className="mt-3 text-sm font-semibold text-white">
-              {learned} / {total}{" "}
-              <span className="font-normal text-white/60">{labels.learned}</span>
-            </p>
-            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/25">
-              <div
-                className={cn("h-full rounded-full", meta.bar)}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <div className="mt-2.5 flex items-center justify-between">
-              <span className={cn("text-sm font-bold", meta.accent)}>{pct}%</span>
-              <span
-                className={cn(
-                  "flex items-center gap-1 text-sm font-semibold text-white transition-transform group-hover:translate-x-1"
-                )}
-              >
-                {learned > 0 ? labels.continue : labels.start}
-                <ArrowRight className="size-4" />
-              </span>
-            </div>
-          </>
+        {custom ? (
+          <div className="mt-3 flex items-center justify-end">
+            <span className="flex items-center gap-1 text-sm font-semibold text-white transition-transform group-hover:translate-x-1">
+              {labels.start}
+              <ArrowRight className="size-4" />
+            </span>
+          </div>
+        ) : (
+          !locked && (
+            <>
+              <p className="mt-3 text-sm font-semibold text-white">
+                {learned} / {total}{" "}
+                <span className="font-normal text-white/60">{labels.learned}</span>
+              </p>
+              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/25">
+                <div
+                  className={cn("h-full rounded-full", meta.bar)}
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <div className="mt-2.5 flex items-center justify-between">
+                <span className={cn("text-sm font-bold", meta.accent)}>{pct}%</span>
+                <span
+                  className={cn(
+                    "flex items-center gap-1 text-sm font-semibold text-white transition-transform group-hover:translate-x-1"
+                  )}
+                >
+                  {learned > 0 ? labels.continue : labels.start}
+                  <ArrowRight className="size-4" />
+                </span>
+              </div>
+            </>
+          )
         )}
       </div>
     </motion.div>
@@ -132,7 +145,7 @@ export function LevelCard({
 
   if (locked) return <div className="h-full">{body}</div>;
   return (
-    <Link href={`/${lang}/library/${meta.slug}`} className="h-full">
+    <Link href={`/${lang}/${meta.href ?? `library/${meta.slug}`}`} className="h-full">
       {body}
     </Link>
   );
