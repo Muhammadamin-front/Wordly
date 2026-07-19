@@ -218,9 +218,11 @@ def valid(e: dict) -> tuple:
 
 async def generate(category: str, count: int, cefr_hint: str, seen: set, out_path: pathlib.Path) -> int:
     kept = 0
+    empty_streak = 0
+    recent: list = []  # expressions already made in THIS category, to steer away from
     with out_path.open("a", encoding="utf-8") as fh:
         while kept < count:
-            batch = await gen_batch(category, cefr_hint, avoid=[])
+            batch = await gen_batch(category, cefr_hint, avoid=recent[-60:])
             if not batch:
                 break
             new_in_batch = 0
@@ -233,6 +235,7 @@ async def generate(category: str, count: int, cefr_hint: str, seen: set, out_pat
                     print(f"    REJECTED '{e.get('expression','?')}': {reason}")
                     continue
                 seen.add(key)
+                recent.append(e["expression"])
                 e["example_sentences"] = e["example_sentences"][:5]
                 fh.write(json.dumps(e, ensure_ascii=False) + "\n")
                 fh.flush()
@@ -241,7 +244,10 @@ async def generate(category: str, count: int, cefr_hint: str, seen: set, out_pat
                 if kept >= count:
                     break
             print(f"  [{category}] {kept}/{count} kept (+{new_in_batch} this batch)")
-            if new_in_batch == 0:  # model looping on dupes → stop this category
+            # Give up on a category only after several dry batches in a row —
+            # the avoid list often unlocks more distinct expressions.
+            empty_streak = empty_streak + 1 if new_in_batch == 0 else 0
+            if empty_streak >= 3:
                 break
             await asyncio.sleep(1)
     return kept
@@ -295,14 +301,20 @@ def main() -> None:
     parser.add_argument("--target", type=int, default=5000)
     parser.add_argument(
         "--gemini", action="store_true",
-        help="generate on free Gemini flash-lite instead of paid BazaarLink",
+        help="generate on free Gemini instead of paid BazaarLink",
+    )
+    parser.add_argument(
+        "--gemini-model", default="gemini-flash-latest",
+        help="which Gemini bucket (flash vs flash-lite) — keep separate from the word pipeline",
     )
     args = parser.parse_args()
     if args.gemini:
         c = GeminiClient()
-        c._model = "gemini-flash-lite-latest"
+        # flash vs flash-lite are SEPARATE Gemini quota buckets — run expressions
+        # on one while the word pipeline uses the other, so neither sits idle.
+        c._model = args.gemini_model
         _CLIENT = c
-        print("generator: Gemini flash-lite (free)")
+        print(f"generator: Gemini {args.gemini_model} (free)")
     asyncio.run(run(args))
 
 
