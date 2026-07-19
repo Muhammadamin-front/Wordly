@@ -81,7 +81,9 @@ JUNK = {
     "leo", "geo", "sim", "rna", "sol", "sap", "cant", "proc", "iii", "msn",
     "von", "edt", "ron", "roy", "tcp", "aaa", "icq", "dns", "pty", "mem",
     "rec", "gpl", "phi", "ide", "rpg", "ict", "pts", "rrp", "ooo", "kay",
-    "ser", "fwd", "hwy", "str",
+    "ser", "fwd", "hwy", "str", "eng", "seo", "isp", "ins", "arg", "sku",
+    "tex", "dpi", "loc", "ver", "yrs", "foo", "soc", "tba", "ppm", "psi",
+    "pct", "mil", "ate", "yea",
     # lowercase proper nouns/brands the dictionary APIs resolve anyway
     "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
     "chicago", "disney", "italian", "michigan", "minnesota", "montana",
@@ -94,7 +96,8 @@ JUNK = {
     "nebraska", "alan", "morgan", "hilton", "charlie", "quebec", "espn",
     "marriott", "reuters", "bangladesh", "barbados", "flickr", "richard",
     "tampa", "susan", "amsterdam", "nikon", "peru", "evans", "madrid",
-    "samoa", "lauren", "manitoba", "uganda", "elvis",
+    "samoa", "lauren", "manitoba", "uganda", "elvis", "mars", "nissan",
+    "norton", "troy", "ghana", "bermuda", "leone", "lexus", "fuji", "firewire",
 }
 
 # Grammar/function words — learners get these from grammar lessons, not
