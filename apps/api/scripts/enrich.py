@@ -144,6 +144,17 @@ def _is_inflection(word: str, known: set) -> bool:
                 return True
     return False
 
+# Adult/profanity + spoken interjections — the OpenSubtitles list carries many;
+# unsuitable for a learner vocab app. Rejected at selection.
+BLOCKED_CONTENT = {
+    "ass", "sex", "sexy", "porn", "penis", "vagina", "nude", "naked", "sperm",
+    "orgasm", "condom", "horny", "slut", "whore", "bitch", "fuck", "shit",
+    "dick", "cock", "pussy", "boobs", "erotic", "damn", "crap", "bastard",
+    "huh", "hmm", "ooh", "mmm", "aah", "yep", "shh", "ugh", "nah", "heh",
+    "gee", "erm", "yup", "woo", "yay", "boo", "aha", "aww", "wee", "hmmm",
+    "ahh", "ohh", "eww", "psst", "meh", "duh", "oops", "yikes",
+}
+
 CYRILLIC = re.compile("[а-яА-ЯёЁ]")
 FIELDNAMES = [
     "headword", "pos", "cefr_level", "translation_uz", "translation_ru",
@@ -173,7 +184,7 @@ def select_candidates(count: int) -> list:
         word = line.strip().lower()
         if (
             len(word) < 3 or not word.isalpha()
-            or word in JUNK or word in FUNCTION_WORDS or word in existing
+            or word in JUNK or word in FUNCTION_WORDS or word in BLOCKED_CONTENT or word in existing
             or _is_inflection(word, existing | picked_words)
         ):
             continue
