@@ -83,7 +83,11 @@ JUNK = {
     "rec", "gpl", "phi", "ide", "rpg", "ict", "pts", "rrp", "ooo", "kay",
     "ser", "fwd", "hwy", "str", "eng", "seo", "isp", "ins", "arg", "sku",
     "tex", "dpi", "loc", "ver", "yrs", "foo", "soc", "tba", "ppm", "psi",
-    "pct", "mil", "ate", "yea",
+    "pct", "mil", "ate", "yea", "jim", "jon", "sri", "api", "amy", "ghz",
+    "cnn", "ali", "mls", "cet", "ppc", "buf", "dis", "gdp", "una", "sig",
+    "dem", "sie", "eva", "mas", "cos", "pac", "erp", "vpn", "fcc", "irs",
+    "cdt", "uni", "dip", "cas", "pix", "mic", "nil", "neo", "til", "sip",
+    "nato", "yang", "andale", "xhtml",
     # lowercase proper nouns/brands the dictionary APIs resolve anyway
     "africa", "alabama", "america", "apache", "arab", "argentina", "canada",
     "chicago", "disney", "italian", "michigan", "minnesota", "montana",
