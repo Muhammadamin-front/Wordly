@@ -39,7 +39,7 @@ from scripts.seed import CATEGORIES  # noqa: E402
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
 CACHE_DIR = DATA_DIR / ".enrich_cache"
-WORDLIST = DATA_DIR / "wordlists" / "google-10000-en.txt"
+WORDLIST = DATA_DIR / "wordlists" / "frequency_50k.txt"
 
 CATEGORY_SLUGS = [slug for slug, *_ in CATEGORIES]
 POS_VALUES = [
