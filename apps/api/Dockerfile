@@ -12,5 +12,5 @@ COPY . .
 
 EXPOSE 8000
 
-# Run migrations, then serve.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+# Run migrations, import bundled learning content, then serve.
+CMD ["sh", "-c", "alembic upgrade head && python -m scripts.import_expressions && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
