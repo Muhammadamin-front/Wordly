@@ -18,18 +18,21 @@ COPY apps/web ./apps/web
 # was written on another OS (npm/cli#4828) — reinstall the native bindings
 # Tailwind v4 needs so the correct musl binaries are present.
 RUN npm install --no-save lightningcss @tailwindcss/oxide
-# NEXT_PUBLIC_* values are inlined into the client bundle at build time.
+ARG INTERNAL_API_URL=http://api:8000
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
+ENV INTERNAL_API_URL=$INTERNAL_API_URL \
+    NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL \
     NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 RUN npm run build --workspace web
 
 FROM node:22-alpine AS run
 WORKDIR /app
+ARG INTERNAL_API_URL=http://api:8000
 ENV NODE_ENV=production \
     PORT=3000 \
-    HOSTNAME=0.0.0.0
+    HOSTNAME=0.0.0.0 \
+    INTERNAL_API_URL=$INTERNAL_API_URL
 RUN addgroup -S app && adduser -S app -G app
 # Standalone output keeps the monorepo layout: server.js under apps/web/.
 COPY --from=build --chown=app:app /app/apps/web/.next/standalone ./

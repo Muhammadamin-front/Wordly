@@ -1,8 +1,6 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const API_URLS =
-  process.env.NODE_ENV !== "production" && API_URL === "http://localhost:8000"
-    ? [API_URL, "http://localhost:8001"]
-    : [API_URL];
+const serverApiUrl =
+  process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://api:8000";
+export const API_URL = typeof window === "undefined" ? serverApiUrl : "";
 
 export interface Profile {
   display_name: string;
@@ -59,18 +57,15 @@ export async function apiFetch<T>(
 
   let response: Response | null = null;
   let networkError: unknown = null;
-  for (const baseUrl of API_URLS) {
-    try {
-      response = await fetch(`${baseUrl}/api/v1${path}`, {
-        method: options.method ?? "GET",
-        headers,
-        body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
-        credentials: "include",
-      });
-      break;
-    } catch (error) {
-      networkError = error;
-    }
+  try {
+    response = await fetch(`${API_URL}/api/v1${path}`, {
+      method: options.method ?? "GET",
+      headers,
+      body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+      credentials: "include",
+    });
+  } catch (error) {
+    networkError = error;
   }
 
   if (!response) throw networkError;

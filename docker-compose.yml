@@ -68,6 +68,7 @@ services:
       context: .
       dockerfile: apps/web/Dockerfile
       args:
+        INTERNAL_API_URL: ${INTERNAL_API_URL:-http://api:8000}
         # Baked into the client bundle at build time — the browser calls this.
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}

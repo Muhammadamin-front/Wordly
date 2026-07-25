@@ -13,6 +13,18 @@ const nextConfig: NextConfig = {
     // Serper word thumbnails live on Google's stable thumbnail CDN.
     remotePatterns: [{ protocol: "https", hostname: "**.gstatic.com" }],
   },
+  async rewrites() {
+    const apiOrigin =
+      process.env.INTERNAL_API_URL ??
+      process.env.NEXT_PUBLIC_API_URL ??
+      "http://api:8000";
+    return [
+      {
+        source: "/api/v1/:path*",
+        destination: `${apiOrigin}/api/v1/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

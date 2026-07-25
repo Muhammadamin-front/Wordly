@@ -185,13 +185,22 @@ body::after {
 .premium-card {
   position: relative;
   transform-style: preserve-3d;
+  transform: perspective(1200px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))
+    translateY(var(--card-lift, 0px)) scale(var(--card-scale, 1));
+  transform-origin: center;
+  will-change: transform;
   background:
+    radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 30%), rgb(255 255 255 / 0.18), transparent 30%),
     linear-gradient(145deg, rgb(255 255 255 / 0.16), transparent 34%),
     var(--surface-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(22px) saturate(1.24);
   -webkit-backdrop-filter: blur(22px) saturate(1.24);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 220ms ease;
 }
 
 .premium-card::before {
@@ -204,16 +213,68 @@ body::after {
   opacity: 0.7;
 }
 
+.premium-card::after {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 30%), rgb(255 255 255 / 0.24), transparent 28%);
+  content: "";
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
 .premium-card > * {
   position: relative;
 }
 
 .premium-card:hover {
-  transform: perspective(900px) rotateX(1.2deg) rotateY(-1.4deg) translateY(-4px);
+  --card-scale: 1.01;
+  --card-lift: -6px;
+  border-color: color-mix(in srgb, var(--border-subtle) 55%, var(--color-brand-400));
+  box-shadow:
+    0 34px 110px rgb(16 24 40 / 0.16),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
+}
+
+.premium-card:hover::after {
+  opacity: 1;
 }
 
 .depth-scene {
   perspective: 1200px;
+}
+
+.depth-parallax {
+  transform: translateZ(18px);
+}
+
+.float-slow {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+.float-medium {
+  animation: float-medium 6.5s ease-in-out infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes float-medium {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
 }
 
 .floating-layer {
