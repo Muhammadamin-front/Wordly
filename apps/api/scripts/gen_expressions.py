@@ -4,10 +4,8 @@ Produces natural, high-frequency English expressions (opinion phrases, linking
 words, IELTS Speaking/Writing expressions, academic connectors, etc.) with a
 rich 14-field schema, for Uzbek learners aiming at IELTS Band 7-9.
 
-Runs on BazaarLink (deepseek-v3.2) rather than the Gemini corpus chain: the
-content is English-heavy (only one Uzbek field), where the open models are
-strong, and BazaarLink has no per-minute throttle — so this never competes
-with the word-corpus pipeline's Gemini quota.
+Runs on the configured Gemini model. Generated expressions still need review
+before production import.
 
 Output: JSONL, one expression per line, production-ready for DB import.
 Dedup is by normalized expression text across all existing JSONL in the
@@ -27,23 +25,19 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 
-from app.services.ai_client import AiError, BazaarLinkClient, GeminiClient  # noqa: E402
+from app.services.ai_client import AiError, GeminiClient  # noqa: E402
 
 OUT_DIR = pathlib.Path(__file__).parent / "data" / "expressions"
-MODEL = "deepseek-v3.2"
 GEN_BATCH = 5  # rich 14-field schema → small batches keep the JSON response intact
 
-# Generation client, set in main(). BazaarLink deepseek is best but costs
-# credits; Gemini flash-lite is the free fallback for the English-heavy content.
+# Generation client, set in main().
 _CLIENT = None
 
 
 def _client():
     global _CLIENT
     if _CLIENT is None:
-        c = BazaarLinkClient()
-        c._model = MODEL
-        _CLIENT = c
+        _CLIENT = GeminiClient()
     return _CLIENT
 CYRILLIC = re.compile("[а-яА-ЯёЁ]")
 CEFR_VALUES = {"A2", "B1", "B2", "C1", "C2"}
@@ -300,21 +294,14 @@ def main() -> None:
     parser.add_argument("--auto", action="store_true")
     parser.add_argument("--target", type=int, default=5000)
     parser.add_argument(
-        "--gemini", action="store_true",
-        help="generate on free Gemini instead of paid BazaarLink",
-    )
-    parser.add_argument(
         "--gemini-model", default="gemini-flash-latest",
-        help="which Gemini bucket (flash vs flash-lite) — keep separate from the word pipeline",
+        help="which Gemini model to use",
     )
     args = parser.parse_args()
-    if args.gemini:
-        c = GeminiClient()
-        # flash vs flash-lite are SEPARATE Gemini quota buckets — run expressions
-        # on one while the word pipeline uses the other, so neither sits idle.
-        c._model = args.gemini_model
-        _CLIENT = c
-        print(f"generator: Gemini {args.gemini_model} (free)")
+    c = GeminiClient()
+    c._model = args.gemini_model
+    _CLIENT = c
+    print(f"generator: Gemini {args.gemini_model}")
     asyncio.run(run(args))
 
 

@@ -39,12 +39,6 @@ class Settings(BaseSettings):
     AI_FREE_DAILY_QUOTA: int = 5  # AI actions/day on the free tier
     AI_PREMIUM_DAILY_QUOTA: int = 200  # effectively unlimited for a human
 
-    # BazaarLink — OpenAI-compatible LLM gateway, pay-per-token but cheap
-    # enough (~$0.04-0.20/M tokens on gpt-oss-120b) to lead the failover
-    # chain: no per-minute throttling like the free Gemini tier had.
-    BAZAARLINK_API_KEY: Optional[str] = None
-    BAZAARLINK_MODEL: str = "gpt-oss-120b"
-
     # Fallback LLM (Google Gemini). When the primary provider runs out of
     # credits or errors, the chain fails over silently (see services/ai_client).
     GEMINI_API_KEY: Optional[str] = None

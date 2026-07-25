@@ -289,88 +289,6 @@ class BedrockClient:
             raise AiError("model did not return valid JSON") from exc
 
 
-BAZAARLINK_URL = "https://bazaarlink.ai/api/v1/chat/completions"
-
-
-class BazaarLinkClient:
-    """BazaarLink — an OpenAI-compatible LLM gateway (chat/completions with
-    `response_format: json_object`). Cheap enough per call to be treated as
-    the primary provider; no SDK needed, just the standard REST shape."""
-
-    def __init__(self) -> None:
-        settings = get_settings()
-        self._key = settings.BAZAARLINK_API_KEY
-        self._model = settings.BAZAARLINK_MODEL
-
-    async def _complete(
-        self,
-        *,
-        system: str,
-        messages: List[Dict[str, str]],
-        max_tokens: int,
-        json_mode: bool = False,
-    ) -> str:
-        import httpx
-
-        payload: Dict[str, Any] = {
-            "model": self._model,
-            "messages": [{"role": "system", "content": system}, *messages],
-            "max_tokens": max_tokens,
-        }
-        if json_mode:
-            payload["response_format"] = {"type": "json_object"}
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                response = await client.post(
-                    BAZAARLINK_URL,
-                    headers={
-                        "Authorization": "Bearer {}".format(self._key),
-                        "Content-Type": "application/json",
-                    },
-                    json=payload,
-                )
-        except Exception as exc:
-            raise AiError(str(exc)) from exc
-        if response.status_code != 200:
-            exc = Exception("bazaarlink {}: {}".format(response.status_code, response.text[:200]))
-            exc.status_code = response.status_code  # type: ignore[attr-defined]
-            raise _classify(exc)
-        try:
-            text = response.json()["choices"][0]["message"]["content"].strip()
-        except (KeyError, IndexError, ValueError) as exc:
-            raise AiError("bazaarlink returned no content") from exc
-        if not text:
-            raise AiError("empty response")
-        return text
-
-    async def text(self, *, system: str, prompt: str, max_tokens: int) -> str:
-        return await self._complete(
-            system=system, messages=[{"role": "user", "content": prompt}], max_tokens=max_tokens
-        )
-
-    async def chat(
-        self, *, system: str, messages: List[Dict[str, str]], max_tokens: int
-    ) -> str:
-        return await self._complete(system=system, messages=messages, max_tokens=max_tokens)
-
-    async def json(
-        self, *, system: str, prompt: str, schema: Dict[str, Any], max_tokens: int
-    ) -> Any:
-        full_prompt = "{}\n\nRespond ONLY with JSON matching this schema:\n{}".format(
-            prompt, json.dumps(schema)
-        )
-        text = await self._complete(
-            system=system,
-            messages=[{"role": "user", "content": full_prompt}],
-            max_tokens=max_tokens,
-            json_mode=True,
-        )
-        try:
-            return json.loads(text)
-        except json.JSONDecodeError as exc:
-            raise AiError("model did not return valid JSON") from exc
-
-
 class FailoverClient:
     """Tries providers in order; a failing provider is cooled down so the next
     requests go straight to the healthy one. Users never see the switch."""
@@ -435,11 +353,8 @@ def get_ai_client() -> Optional[AiClient]:
     if _client_singleton is None:
         # Order = priority. Bedrock (Claude-class quality) leads when present;
         # a direct Anthropic key, if set, takes precedence; Gemini backs them
-        # up. BazaarLinkClient is intentionally NOT in this app-wide chain —
-        # it's used directly by scripts/enrich.py for the corpus pipeline
-        # only, where every row goes through manual QA before seeding. The
-        # user-facing Coach/Writing features stay on the providers they were
-        # tuned and verified against.
+        # up. The user-facing Coach/Writing features stay on the providers
+        # they were tuned and verified against.
         providers: List[tuple] = []
         if settings.ANTHROPIC_API_KEY:
             providers.append(("anthropic", AnthropicClient()))

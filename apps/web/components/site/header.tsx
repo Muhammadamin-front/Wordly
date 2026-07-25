@@ -1,6 +1,23 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  BarChart3,
+  BookOpen,
+  Boxes,
+  ChevronDown,
+  CreditCard,
+  Gamepad2,
+  GraduationCap,
+  LayoutDashboard,
+  LibraryBig,
+  Menu,
+  Sparkles,
+  Trophy,
+  Users,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,22 +48,41 @@ type NavKey =
 interface NavItem {
   key: NavKey;
   href: string; // path suffix after /{lang}
-  icon: string;
+  icon: LucideIcon;
 }
 
-// Order = importance. Shown labelled on desktop and in the mobile sidebar.
-const NAV_ITEMS: NavItem[] = [
-  { key: "dashboard", href: "dashboard", icon: "🏠" },
-  { key: "decks", href: "decks", icon: "🃏" },
-  { key: "games", href: "games", icon: "🎮" },
-  { key: "skills", href: "skills", icon: "📚" },
-  { key: "grammar", href: "grammar", icon: "📘" },
-  { key: "ielts", href: "ielts", icon: "🎓" },
-  { key: "leaderboard", href: "leaderboard", icon: "🏆" },
-  { key: "friends", href: "friends", icon: "🤝" },
-  { key: "statistics", href: "statistics", icon: "📊" },
-  { key: "classes", href: "classes", icon: "🎒" },
-  { key: "billing", href: "billing", icon: "💎" },
+const PRIMARY_NAV: NavItem[] = [
+  { key: "dashboard", href: "dashboard", icon: LayoutDashboard },
+  { key: "decks", href: "decks", icon: LibraryBig },
+  { key: "games", href: "games", icon: Gamepad2 },
+];
+
+type NavGroupKey = "learn" | "community" | "more";
+
+const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
+  {
+    key: "learn",
+    items: [
+      { key: "skills", href: "skills", icon: BookOpen },
+      { key: "grammar", href: "grammar", icon: Boxes },
+      { key: "ielts", href: "ielts", icon: GraduationCap },
+    ],
+  },
+  {
+    key: "community",
+    items: [
+      { key: "leaderboard", href: "leaderboard", icon: Trophy },
+      { key: "friends", href: "friends", icon: Users },
+      { key: "classes", href: "classes", icon: Sparkles },
+    ],
+  },
+  {
+    key: "more",
+    items: [
+      { key: "statistics", href: "statistics", icon: BarChart3 },
+      { key: "billing", href: "billing", icon: CreditCard },
+    ],
+  },
 ];
 
 function isActive(pathname: string, lang: string, href: string): boolean {
@@ -77,61 +113,42 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
   }, [open]);
 
   return (
-    <header className="glass sticky top-0 z-40">
+    <header className="glass sticky top-0 z-40 border-x-0 border-t-0 shadow-[0_18px_80px_rgba(15,16,33,0.14)]">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
-        {/* Mobile: hamburger opens the sidebar */}
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={nav.menu}
-          className="-ml-1 flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-soft transition-colors hover:bg-line/60 hover:text-ink lg:hidden"
+          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-xl border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path
-              d="M4 6h16M4 12h16M4 18h16"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          <Menu className="size-5" aria-hidden />
         </button>
 
         <div className="shrink-0">
           <Logo lang={lang} />
         </div>
 
-        {/* Desktop: labelled nav (horizontally scrollable if it overflows) */}
-        <nav className="hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto [scrollbar-width:none] lg:flex [&::-webkit-scrollbar]:hidden">
+        <nav className="hidden min-w-0 flex-1 items-center gap-1.5 lg:flex">
           {authed ? (
-            NAV_ITEMS.map((item) => {
-              const active = isActive(pathname, lang, item.href);
-              return (
-                <Link
-                  key={item.key}
-                  href={`/${lang}/${item.href}`}
-                  className={cn(
-                    "flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-semibold transition-colors",
-                    active
-                      ? "bg-brand-600/10 text-brand-600 dark:text-brand-300"
-                      : "text-ink-soft hover:bg-line/60 hover:text-ink"
-                  )}
-                >
-                  <span className="text-base leading-none">{item.icon}</span>
-                  {nav[item.key]}
-                </Link>
-              );
-            })
+            <>
+              {PRIMARY_NAV.map((item) => (
+                <DesktopNavLink key={item.key} item={item} lang={lang} nav={nav} pathname={pathname} />
+              ))}
+              {NAV_GROUPS.map((group) => (
+                <DesktopNavGroup key={group.key} group={group} lang={lang} nav={nav} pathname={pathname} />
+              ))}
+            </>
           ) : (
             <>
               <Link
                 href={`/${lang}#features`}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+                className="rounded-xl px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
               >
                 {nav.features}
               </Link>
               <Link
                 href={`/${lang}#pricing`}
-                className="rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
+                className="rounded-xl px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
               >
                 {nav.pricing}
               </Link>
@@ -209,7 +226,7 @@ function MobileSidebar({
             className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
           />
           <motion.aside
-            className="absolute inset-y-0 left-0 flex w-72 max-w-[82%] flex-col bg-page shadow-2xl"
+            className="absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col border-r border-line bg-page/92 shadow-2xl backdrop-blur-2xl"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
@@ -221,46 +238,51 @@ function MobileSidebar({
                 type="button"
                 aria-label={nav.close}
                 onClick={onClose}
-                className="flex size-9 items-center justify-center rounded-lg text-ink-soft transition-colors hover:bg-line/60 hover:text-ink"
+                className="flex size-10 items-center justify-center rounded-xl border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
               >
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path
-                    d="M6 6l12 12M18 6L6 18"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
+                <X className="size-5" aria-hidden />
               </button>
             </div>
 
-            <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+            <nav className="flex-1 space-y-4 overflow-y-auto p-4">
               {authed ? (
-                NAV_ITEMS.map((item) => {
-                  const active = isActive(pathname, lang, item.href);
-                  return (
-                    <Link
-                      key={item.key}
-                      href={`/${lang}/${item.href}`}
-                      onClick={onClose}
-                      className={cn(
-                        "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-colors",
-                        active
-                          ? "bg-brand-600/10 text-brand-600 dark:text-brand-300"
-                          : "text-ink hover:bg-line/60"
-                      )}
-                    >
-                      <span className="text-xl leading-none">{item.icon}</span>
-                      {nav[item.key]}
-                    </Link>
-                  );
-                })
+                <>
+                  <div className="space-y-1">
+                    {PRIMARY_NAV.map((item) => (
+                      <MobileNavLink
+                        key={item.key}
+                        item={item}
+                        lang={lang}
+                        nav={nav}
+                        pathname={pathname}
+                        onClose={onClose}
+                      />
+                    ))}
+                  </div>
+                  {NAV_GROUPS.map((group) => (
+                    <div key={group.key} className="space-y-1">
+                      <p className="px-3 text-[11px] font-extrabold uppercase text-ink-soft/70">
+                        {getNavGroupLabel(lang, group.key)}
+                      </p>
+                      {group.items.map((item) => (
+                        <MobileNavLink
+                          key={item.key}
+                          item={item}
+                          lang={lang}
+                          nav={nav}
+                          pathname={pathname}
+                          onClose={onClose}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </>
               ) : (
                 <>
                   <Link
                     href={`/${lang}#features`}
                     onClick={onClose}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-line/60"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
                   >
                     <span className="text-xl">✨</span>
                     {nav.features}
@@ -268,7 +290,7 @@ function MobileSidebar({
                   <Link
                     href={`/${lang}#pricing`}
                     onClick={onClose}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-line/60"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
                   >
                     <span className="text-xl">💎</span>
                     {nav.pricing}
@@ -313,5 +335,140 @@ function MobileSidebar({
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+
+function DesktopNavLink({
+  item,
+  lang,
+  nav,
+  pathname,
+}: {
+  item: NavItem;
+  lang: Locale;
+  nav: Dictionary["nav"];
+  pathname: string;
+}) {
+  const active = isActive(pathname, lang, item.href);
+  const Icon = item.icon;
+  return (
+    <Link
+      href={`/${lang}/${item.href}`}
+      className={cn(
+        "flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold transition-all",
+        active
+          ? "bg-white/14 text-ink shadow-inner shadow-white/10 dark:bg-white/10"
+          : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
+      )}
+    >
+      <Icon className="size-4" aria-hidden />
+      {nav[item.key]}
+    </Link>
+  );
+}
+
+function DesktopNavGroup({
+  group,
+  lang,
+  nav,
+  pathname,
+}: {
+  group: { key: NavGroupKey; items: NavItem[] };
+  lang: Locale;
+  nav: Dictionary["nav"];
+  pathname: string;
+}) {
+  const active = group.items.some((item) => isActive(pathname, lang, item.href));
+  return (
+    <div className="group relative">
+      <button
+        type="button"
+        className={cn(
+          "flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-bold transition-all",
+          active
+            ? "bg-white/14 text-ink dark:bg-white/10"
+            : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
+        )}
+      >
+        {getNavGroupLabel(lang, group.key)}
+        <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" aria-hidden />
+      </button>
+      <div className="invisible absolute left-0 top-full z-50 mt-3 w-56 translate-y-2 rounded-2xl border border-line bg-card/88 p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+        {group.items.map((item) => {
+          const Icon = item.icon;
+          const itemActive = isActive(pathname, lang, item.href);
+          return (
+            <Link
+              key={item.key}
+              href={`/${lang}/${item.href}`}
+              className={cn(
+                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-colors",
+                itemActive
+                  ? "bg-brand-600/12 text-brand-600 dark:text-brand-200"
+                  : "text-ink-soft hover:bg-page/70 hover:text-ink"
+              )}
+            >
+              <Icon className="size-4" aria-hidden />
+              {nav[item.key]}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function getNavGroupLabel(lang: Locale, key: NavGroupKey): string {
+  const labels: Record<Locale, Record<NavGroupKey, string>> = {
+    uz: {
+      learn: "O'rganish",
+      community: "Hamjamiyat",
+      more: "Ko'proq",
+    },
+    ru: {
+      learn: "Учеба",
+      community: "Сообщество",
+      more: "Еще",
+    },
+    en: {
+      learn: "Learn",
+      community: "Community",
+      more: "More",
+    },
+  };
+  return labels[lang][key];
+}
+
+function MobileNavLink({
+  item,
+  lang,
+  nav,
+  pathname,
+  onClose,
+}: {
+  item: NavItem;
+  lang: Locale;
+  nav: Dictionary["nav"];
+  pathname: string;
+  onClose: () => void;
+}) {
+  const active = isActive(pathname, lang, item.href);
+  const Icon = item.icon;
+  return (
+    <Link
+      href={`/${lang}/${item.href}`}
+      onClick={onClose}
+      className={cn(
+        "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-bold transition-all",
+        active
+          ? "bg-brand-600/12 text-brand-600 shadow-inner shadow-brand-600/5 dark:text-brand-200"
+          : "text-ink hover:bg-card/70"
+      )}
+    >
+      <span className="flex size-9 items-center justify-center rounded-xl border border-line bg-card/70">
+        <Icon className="size-4" aria-hidden />
+      </span>
+      {nav[item.key]}
+    </Link>
   );
 }
