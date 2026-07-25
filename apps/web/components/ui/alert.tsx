@@ -17,7 +17,7 @@ export function Alert({
     <div
       role={tone === "error" ? "alert" : "status"}
       className={cn(
-        "rounded-xl border px-4 py-3 text-sm font-medium leading-relaxed",
+        "rounded-lg border px-4 py-3 text-sm font-medium leading-relaxed shadow-[0_14px_40px_rgba(10,17,36,0.08)] backdrop-blur-xl",
         styles[tone],
         className
       )}

@@ -1,5 +1,20 @@
 "use client";
 
+import {
+  BookOpenCheck,
+  ChartNoAxesColumnIncreasing,
+  ChevronRight,
+  Coins,
+  Flame,
+  Gamepad2,
+  LibraryBig,
+  LogOut,
+  Sparkles,
+  Target,
+  Trophy,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -67,194 +82,228 @@ export function DashboardView({
     );
   }
 
+  const reviewProgress = stats
+    ? Math.min(100, Math.round((stats.reviews_today / stats.daily_goal) * 100))
+    : 0;
+
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
-            {dict.dashboard.welcome}, {user.profile.display_name}! 👋
-          </h1>
-          <p className="mt-1 text-sm text-ink-soft">{dict.dashboard.todayTitle}</p>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={async () => {
-            await logout();
-            router.push(`/${lang}`);
-          }}
-        >
-          {dict.nav.logout}
-        </Button>
-      </div>
-
-      {!user.email_verified && (
-        <Alert tone="info" className="mt-6">
-          {dict.dashboard.verifyBanner}
-        </Alert>
-      )}
-
-      {/* Stats strip */}
-      {stats && (
-        <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
-            <p className="text-2xl font-extrabold text-orange-500">🔥 {stats.current_streak}</p>
-            <p className="mt-0.5 text-xs text-ink-soft">{gam.streak}</p>
-          </div>
-          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
-            <p className="text-2xl font-extrabold text-brand-600 dark:text-brand-300">
-              ⚡ {stats.level}
-            </p>
-            <p className="mt-0.5 text-xs text-ink-soft">
-              {stats.xp_into_level}/{stats.xp_for_next_level} XP
-            </p>
-          </div>
-          <div className="rounded-xl2 border border-line bg-card p-4 text-center">
-            <p className="text-2xl font-extrabold text-amber-500">🪙 {stats.coins}</p>
-            <p className="mt-0.5 text-xs text-ink-soft">{gam.coins}</p>
-          </div>
-          <Link
-            href={`/${lang}/leaderboard`}
-            className="rounded-xl2 border border-line bg-card p-4 text-center transition-colors hover:border-brand-400/60"
-          >
-            <p className="text-2xl font-extrabold text-ink">🏆</p>
-            <p className="mt-0.5 text-xs capitalize text-ink-soft">{stats.league_tier}</p>
-          </Link>
-        </section>
-      )}
-
-      {/* Today's review hero */}
-      <section className="mt-4">
-        <Card className="bg-linear-to-br from-brand-600/10 to-accent-500/5 text-center">
-          <p className="text-4xl" aria-hidden>
-            🐆
-          </p>
-          <CardTitle className="mt-3">{dict.dashboard.reviewHeroTitle}</CardTitle>
-          <CardDescription className="mx-auto max-w-md">
-            {dueCount !== null && dueCount > 0
-              ? `${dueCount} ${dict.dashboard.dueToday}`
-              : dict.dashboard.reviewHeroBody}
-          </CardDescription>
-
-          {stats && (
-            <div className="mx-auto mt-4 max-w-xs">
-              <div className="flex items-center justify-between text-xs text-ink-soft">
-                <span>{gam.dailyGoal}</span>
-                <span>
-                  {stats.reviews_today}/{stats.daily_goal} {gam.goalReviews}
-                </span>
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+      <section className="surface-panel rounded-lg p-5 sm:p-7 lg:p-8">
+        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+                  {dict.dashboard.todayTitle}
+                </p>
+                <h1 className="mt-2 text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl">
+                  {dict.dashboard.welcome}, {user.profile.display_name}
+                </h1>
               </div>
-              <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-line">
-                <div
-                  className="h-full rounded-full bg-linear-to-r from-brand-500 to-accent-500 transition-all"
-                  style={{
-                    width: `${Math.min(100, (stats.reviews_today / stats.daily_goal) * 100)}%`,
-                  }}
-                />
-              </div>
-              <div className="mt-2 flex items-center justify-center gap-1">
-                <span className="text-xs text-ink-soft">{gam.setGoal}:</span>
-                {GOAL_OPTIONS.map((goal) => (
-                  <button
-                    key={goal}
-                    type="button"
-                    onClick={() => void changeGoal(goal)}
-                    className={
-                      "rounded-md px-2 py-0.5 text-xs font-bold transition-colors " +
-                      (stats.daily_goal === goal
-                        ? "bg-brand-600 text-white"
-                        : "text-ink-soft hover:bg-line")
-                    }
-                  >
-                    {goal}
-                  </button>
-                ))}
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  await logout();
+                  router.push(`/${lang}`);
+                }}
+              >
+                <LogOut className="size-4" aria-hidden />
+                {dict.nav.logout}
+              </Button>
             </div>
-          )}
 
-          <Link href={`/${lang}/review`} className="mt-5 inline-block">
-            <Button>{dict.dashboard.startReview}</Button>
-          </Link>
-        </Card>
+            {!user.email_verified && (
+              <Alert tone="info" className="mt-6">
+                {dict.dashboard.verifyBanner}
+              </Alert>
+            )}
+
+            {stats && (
+              <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <StatCard icon={Flame} label={gam.streak} value={stats.current_streak} tone="text-orange-300" />
+                <StatCard
+                  icon={Zap}
+                  label={`${stats.xp_into_level}/${stats.xp_for_next_level} XP`}
+                  value={stats.level}
+                  tone="text-brand-300"
+                />
+                <StatCard icon={Coins} label={gam.coins} value={stats.coins} tone="text-amber-300" />
+                <Link href={`/${lang}/leaderboard`} className="block">
+                  <StatCard icon={Trophy} label={stats.league_tier} value="" tone="text-rose-300" />
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <Card className="light-sweep flex h-full flex-col justify-between bg-linear-to-br from-brand-500/16 via-card to-accent-400/12 p-5">
+            <div>
+              <span className="icon-tile size-12 rounded-lg">
+                <Target className="size-6 text-accent-300" aria-hidden />
+              </span>
+              <CardTitle className="mt-5 text-2xl">{dict.dashboard.reviewHeroTitle}</CardTitle>
+              <CardDescription>
+                {dueCount !== null && dueCount > 0
+                  ? `${dueCount} ${dict.dashboard.dueToday}`
+                  : dict.dashboard.reviewHeroBody}
+              </CardDescription>
+            </div>
+
+            {stats && (
+              <div className="mt-7">
+                <div className="flex items-center justify-between text-xs font-bold text-ink-soft">
+                  <span>{gam.dailyGoal}</span>
+                  <span>
+                    {stats.reviews_today}/{stats.daily_goal} {gam.goalReviews}
+                  </span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-line">
+                  <div
+                    className="h-full rounded-full bg-linear-to-r from-brand-400 via-accent-400 to-rose-300 transition-all"
+                    style={{ width: `${reviewProgress}%` }}
+                  />
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 text-xs font-bold text-ink-soft">{gam.setGoal}</span>
+                  {GOAL_OPTIONS.map((goal) => (
+                    <button
+                      key={goal}
+                      type="button"
+                      onClick={() => void changeGoal(goal)}
+                      className={
+                        "rounded-md border px-2.5 py-1 text-xs font-black transition-all " +
+                        (stats.daily_goal === goal
+                          ? "border-brand-400 bg-brand-600 text-white shadow-[0_10px_30px_rgba(50,108,255,0.24)]"
+                          : "border-line text-ink-soft hover:-translate-y-0.5 hover:bg-card hover:text-ink")
+                      }
+                    >
+                      {goal}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Link href={`/${lang}/review`} className="mt-6 inline-flex">
+              <Button>
+                <BookOpenCheck className="size-4" aria-hidden />
+                {dict.dashboard.startReview}
+              </Button>
+            </Link>
+          </Card>
+        </div>
       </section>
 
-      <section className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Link
+      <section className="mt-5 grid gap-4 sm:grid-cols-3">
+        <ActionCard
           href={`/${lang}/vocabulary`}
-          className="block rounded-xl2 border border-brand-400/50 bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-        >
-          <span aria-hidden className="text-2xl">
-            📚
-          </span>
-          <CardTitle className="mt-2 text-base text-brand-600 dark:text-brand-300">
-            {dict.dashboard.cardVocabulary} →
-          </CardTitle>
-          <CardDescription className="text-xs">
-            {dict.dashboard.cardVocabularyDesc}
-          </CardDescription>
-        </Link>
-
-        <Link
+          icon={LibraryBig}
+          title={dict.dashboard.cardVocabulary}
+          body={dict.dashboard.cardVocabularyDesc}
+          tone="text-brand-300"
+        />
+        <ActionCard
           href={`/${lang}/decks`}
-          className="relative block rounded-xl2 border border-accent-500/40 bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-        >
-          {dueCount !== null && dueCount > 0 && (
-            <span className="absolute right-3 top-3 rounded-full bg-accent-500 px-2 py-0.5 text-[11px] font-bold text-white">
-              {dueCount}
-            </span>
-          )}
-          <span aria-hidden className="text-2xl">
-            🃏
-          </span>
-          <CardTitle className="mt-2 text-base text-accent-600 dark:text-accent-300">
-            {dict.dashboard.cardReview} →
-          </CardTitle>
-          <CardDescription className="text-xs">{dict.dashboard.cardReviewDesc}</CardDescription>
-        </Link>
-
-        <Link
+          icon={BookOpenCheck}
+          title={dict.dashboard.cardReview}
+          body={
+            dueCount !== null && dueCount > 0
+              ? `${dueCount} ${dict.dashboard.dueToday}`
+              : dict.dashboard.cardReviewDesc
+          }
+          tone="text-accent-300"
+        />
+        <ActionCard
           href={`/${lang}/games`}
-          className="block rounded-xl2 border border-rose-400/40 bg-card p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
-        >
-          <span aria-hidden className="text-2xl">
-            🎮
-          </span>
-          <CardTitle className="mt-2 text-base text-rose-500">
-            {dict.dashboard.cardGames} →
-          </CardTitle>
-          <CardDescription className="text-xs">{dict.dashboard.cardGamesDesc}</CardDescription>
-        </Link>
+          icon={Gamepad2}
+          title={dict.dashboard.cardGames}
+          body={dict.dashboard.cardGamesDesc}
+          tone="text-rose-300"
+        />
       </section>
 
-      <section className="mt-4 grid gap-3 sm:grid-cols-2">
-        <Link
+      <section className="mt-4 grid gap-4 sm:grid-cols-2">
+        <WideLink
           href={`/${lang}/statistics`}
-          className="flex items-center justify-between rounded-xl2 border border-line bg-card px-5 py-4 transition-colors hover:border-brand-400/60"
-        >
-          <span className="flex items-center gap-3">
-            <span aria-hidden className="text-2xl">
-              📊
-            </span>
-            <span className="font-bold text-ink">{dict.dashboard.statsLink}</span>
-          </span>
-          <span className="text-ink-soft">→</span>
-        </Link>
-        <Link
-          href={`/${lang}/ai`}
-          className="flex items-center justify-between rounded-xl2 border border-brand-400/40 bg-linear-to-br from-brand-600/10 to-accent-500/5 px-5 py-4 transition-colors hover:border-brand-400/70"
-        >
-          <span className="flex items-center gap-3">
-            <span aria-hidden className="text-2xl">
-              ✨
-            </span>
-            <span className="font-bold text-brand-600 dark:text-brand-300">
-              {dict.ai.title}
-            </span>
-          </span>
-          <span className="text-ink-soft">→</span>
-        </Link>
+          icon={ChartNoAxesColumnIncreasing}
+          title={dict.dashboard.statsLink}
+        />
+        <WideLink href={`/${lang}/ai`} icon={Sparkles} title={dict.ai.title} accent />
       </section>
     </main>
+  );
+}
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string | number;
+  tone: string;
+}) {
+  return (
+    <div className="premium-card rounded-lg p-4">
+      <Icon className={`size-5 ${tone}`} aria-hidden />
+      <p className="mt-4 text-2xl font-black text-ink">{value}</p>
+      <p className="mt-1 text-xs font-bold capitalize text-ink-soft">{label}</p>
+    </div>
+  );
+}
+
+function ActionCard({
+  href,
+  icon: Icon,
+  title,
+  body,
+  tone,
+}: {
+  href: string;
+  icon: LucideIcon;
+  title: string;
+  body: string;
+  tone: string;
+}) {
+  return (
+    <Link href={href} className="premium-card group block rounded-lg p-5">
+      <div className="flex items-start justify-between gap-4">
+        <span className="icon-tile size-11 rounded-lg">
+          <Icon className={`size-5 ${tone}`} aria-hidden />
+        </span>
+        <ChevronRight className="size-5 text-ink-soft transition-transform group-hover:translate-x-1" aria-hidden />
+      </div>
+      <h2 className="mt-5 text-lg font-black text-ink">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-ink-soft">{body}</p>
+    </Link>
+  );
+}
+
+function WideLink({
+  href,
+  icon: Icon,
+  title,
+  accent = false,
+}: {
+  href: string;
+  icon: LucideIcon;
+  title: string;
+  accent?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className="premium-card group flex items-center justify-between rounded-lg px-5 py-4"
+    >
+      <span className="flex items-center gap-3">
+        <span className="icon-tile size-10 rounded-lg">
+          <Icon className={`size-5 ${accent ? "text-accent-300" : "text-brand-300"}`} aria-hidden />
+        </span>
+        <span className="font-black text-ink">{title}</span>
+      </span>
+      <ChevronRight className="size-5 text-ink-soft transition-transform group-hover:translate-x-1" aria-hidden />
+    </Link>
   );
 }

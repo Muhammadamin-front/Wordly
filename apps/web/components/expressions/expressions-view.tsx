@@ -1,8 +1,21 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertTriangle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Lightbulb,
+  MessageCircle,
+  Plus,
+  Search,
+  Volume2,
+  X,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -15,7 +28,6 @@ import {
 import { flashcardsApi } from "@/lib/flashcards";
 import { speak } from "@/lib/games";
 import { cn } from "@/lib/utils";
-import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type T = Dictionary["expressions"];
 
@@ -23,8 +35,15 @@ const CEFR_LEVELS = ["A2", "B1", "B2", "C1", "C2"];
 
 export function ExpressionsView({ t }: { lang: string; t: T }) {
   const { user } = useAuth();
-  // Slugs the user has added to their SRS deck this session (best-effort UI).
   const [added, setAdded] = useState<Set<string>>(new Set());
+  const [meta, setMeta] = useState<ExpressionMeta | null>(null);
+  const [items, setItems] = useState<ExpressionListItem[] | null>(null);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [category, setCategory] = useState<string | null>(null);
+  const [cefr, setCefr] = useState<string | null>(null);
+  const [q, setQ] = useState("");
+  const [open, setOpen] = useState<ExpressionDetail | null>(null);
 
   const addToCards = useCallback(
     async (e: ExpressionDetail | ExpressionListItem) => {
@@ -43,15 +62,6 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
     [added]
   );
 
-  const [meta, setMeta] = useState<ExpressionMeta | null>(null);
-  const [items, setItems] = useState<ExpressionListItem[] | null>(null);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [category, setCategory] = useState<string | null>(null);
-  const [cefr, setCefr] = useState<string | null>(null);
-  const [q, setQ] = useState("");
-  const [open, setOpen] = useState<ExpressionDetail | null>(null);
-
   useEffect(() => {
     expressionsApi.meta().then(setMeta).catch(() => {});
   }, []);
@@ -68,7 +78,7 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
   }, [page, category, cefr, q]);
 
   useEffect(() => {
-    const id = window.setTimeout(load, q ? 300 : 0); // debounce search only
+    const id = window.setTimeout(load, q ? 300 : 0);
     return () => window.clearTimeout(id);
   }, [load, q]);
 
@@ -80,45 +90,54 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
   const pageCount = Math.max(1, Math.ceil(total / 24));
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6">
-      <div className="flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-ink">💬 {t.title}</h1>
-          <p className="mt-1 text-sm text-ink-soft">{t.subtitle}</p>
-        </div>
-        {meta && (
-          <span className="shrink-0 rounded-xl border border-line bg-card px-3 py-2 text-center">
-            <span className="block text-lg font-extrabold text-brand-600 dark:text-brand-300">
-              {meta.total}
+    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+      <section className="surface-panel rounded-lg p-5 sm:p-7">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <span className="icon-tile size-12 rounded-lg">
+              <MessageCircle className="size-6 text-accent-300" aria-hidden />
             </span>
-            <span className="text-[10px] font-semibold uppercase text-ink-soft">{t.total}</span>
-          </span>
-        )}
-      </div>
-
-      {/* Search + CEFR filters */}
-      <div className="mt-6 space-y-3">
-        <input
-          value={q}
-          onChange={(e) => reset(() => setQ(e.target.value))}
-          placeholder={t.searchPlaceholder}
-          className="w-full rounded-xl border border-line bg-card px-4 py-2.5 text-sm text-ink focus:border-brand-400 focus:outline-none"
-        />
-        <div className="flex flex-wrap gap-1.5">
-          <Chip active={!cefr} onClick={() => reset(() => setCefr(null))}>
-            {t.allLevels}
-          </Chip>
-          {CEFR_LEVELS.map((lv) => (
-            <Chip key={lv} active={cefr === lv} onClick={() => reset(() => setCefr(lv))}>
-              {lv}
-            </Chip>
-          ))}
+            <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{t.title}</h1>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{t.subtitle}</p>
+          </div>
+          {meta && (
+            <span className="premium-card shrink-0 rounded-lg px-4 py-3 text-center">
+              <span className="block text-2xl font-black text-brand-600 dark:text-brand-200">
+                {meta.total}
+              </span>
+              <span className="text-[10px] font-black uppercase text-ink-soft">{t.total}</span>
+            </span>
+          )}
         </div>
-      </div>
 
-      {/* Category chips */}
+        <div className="mt-7 space-y-3">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-ink-soft"
+              aria-hidden
+            />
+            <input
+              value={q}
+              onChange={(e) => reset(() => setQ(e.target.value))}
+              placeholder={t.searchPlaceholder}
+              className="h-12 w-full rounded-lg border border-line bg-card/72 pl-11 pr-4 text-sm font-medium text-ink shadow-inner shadow-brand-950/5 backdrop-blur-xl placeholder:text-ink-soft/55 transition-all focus:-translate-y-0.5 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/25"
+            />
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            <Chip active={!cefr} onClick={() => reset(() => setCefr(null))}>
+              {t.allLevels}
+            </Chip>
+            {CEFR_LEVELS.map((lv) => (
+              <Chip key={lv} active={cefr === lv} onClick={() => reset(() => setCefr(lv))}>
+                {lv}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {meta && meta.categories.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="mt-5 flex flex-wrap gap-1.5">
           <Chip active={!category} onClick={() => reset(() => setCategory(null))}>
             {t.allCategories}
           </Chip>
@@ -134,10 +153,9 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
         </div>
       )}
 
-      {/* Cards */}
-      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+      <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items === null
-          ? Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)
+          ? Array.from({ length: 9 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-lg" />)
           : items.map((e, i) => (
               <motion.button
                 key={e.slug}
@@ -146,16 +164,16 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.02, 0.3) }}
                 onClick={() => expressionsApi.detail(e.slug).then(setOpen).catch(() => {})}
-                className="flex flex-col rounded-2xl border border-line bg-card p-4 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="premium-card group flex min-h-36 flex-col rounded-lg p-4 text-left"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold text-ink">{e.expression}</p>
-                  <span className={cn("shrink-0 text-xs font-bold", CEFR_COLOR(e.cefr))}>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-lg font-black leading-tight text-ink">{e.expression}</p>
+                  <span className={cn("shrink-0 text-xs font-black", CEFR_COLOR(e.cefr))}>
                     {e.cefr}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-ink-soft">{e.uzbek}</p>
-                <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+                <p className="mt-2 text-sm leading-6 text-ink-soft">{e.uzbek}</p>
+                <div className="mt-auto flex flex-wrap gap-1.5 pt-4 text-[11px]">
                   <Tag>{e.category}</Tag>
                   <Tag>IELTS {e.ielts_band}</Tag>
                   <Tag>{e.formality}</Tag>
@@ -165,30 +183,31 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
       </div>
 
       {items && items.length === 0 && (
-        <p className="mt-10 text-center text-ink-soft">{t.empty}</p>
+        <p className="surface-panel mt-10 rounded-lg p-6 text-center text-ink-soft">{t.empty}</p>
       )}
 
-      {/* Pagination */}
       {pageCount > 1 && (
         <div className="mt-6 flex items-center justify-center gap-3 text-sm">
           <button
             type="button"
             disabled={page <= 1}
             onClick={() => setPage((p) => p - 1)}
-            className="rounded-lg border border-line px-3 py-1.5 font-medium text-ink disabled:opacity-40"
+            className="icon-tile flex items-center gap-1 rounded-lg px-3 py-2 font-bold text-ink disabled:opacity-40"
           >
-            ← {t.prev}
+            <ChevronLeft className="size-4" aria-hidden />
+            {t.prev}
           </button>
-          <span className="text-ink-soft">
+          <span className="rounded-lg border border-line bg-card/70 px-3 py-2 font-bold text-ink-soft">
             {page} / {pageCount}
           </span>
           <button
             type="button"
             disabled={page >= pageCount}
             onClick={() => setPage((p) => p + 1)}
-            className="rounded-lg border border-line px-3 py-1.5 font-medium text-ink disabled:opacity-40"
+            className="icon-tile flex items-center gap-1 rounded-lg px-3 py-2 font-bold text-ink disabled:opacity-40"
           >
-            {t.next} →
+            {t.next}
+            <ChevronRight className="size-4" aria-hidden />
           </button>
         </div>
       )}
@@ -223,10 +242,10 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
+        "rounded-lg border px-3 py-1.5 text-xs font-black transition-all",
         active
-          ? "border-brand-500 bg-brand-600/10 text-brand-600 dark:text-brand-300"
-          : "border-line text-ink-soft hover:text-ink"
+          ? "border-brand-400 bg-brand-600/12 text-brand-600 shadow-[0_10px_26px_rgba(50,108,255,0.1)] dark:text-brand-200"
+          : "border-line bg-card/42 text-ink-soft hover:-translate-y-0.5 hover:text-ink"
       )}
     >
       {children}
@@ -236,7 +255,7 @@ function Chip({
 
 function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <span className="rounded-full bg-ink/5 px-2 py-0.5 font-medium text-ink-soft dark:bg-white/10">
+    <span className="rounded-md bg-ink/5 px-2 py-0.5 font-bold text-ink-soft dark:bg-white/10">
       {children}
     </span>
   );
@@ -245,8 +264,8 @@ function Tag({ children }: { children: React.ReactNode }) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{title}</p>
-      <div className="mt-1 text-sm text-ink">{children}</div>
+      <p className="text-xs font-black uppercase tracking-wide text-ink-soft">{title}</p>
+      <div className="mt-1 text-sm leading-7 text-ink">{children}</div>
     </div>
   );
 }
@@ -272,38 +291,38 @@ function DetailModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
     >
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 30, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-line bg-card p-6 sm:rounded-3xl"
+        className="surface-panel max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-lg p-5 sm:rounded-lg sm:p-6"
       >
         <div className="flex items-start justify-between gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-extrabold text-ink">{expr.expression}</h2>
+              <h2 className="text-2xl font-black text-ink">{expr.expression}</h2>
               <button
                 type="button"
                 onClick={() => speak(expr.expression)}
                 title={t.listen}
-                className="text-ink-soft transition-colors hover:text-brand-600"
+                className="icon-tile flex size-8 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
               >
-                🔊
+                <Volume2 className="size-4" aria-hidden />
               </button>
             </div>
-            <p className="mt-0.5 font-semibold text-brand-600 dark:text-brand-300">{expr.uzbek}</p>
+            <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.uzbek}</p>
           </div>
-          <button type="button" onClick={onClose} className="text-2xl leading-none text-ink-soft">
-            ×
+          <button type="button" onClick={onClose} className="icon-tile flex size-9 items-center justify-center rounded-lg text-ink-soft">
+            <X className="size-4" aria-hidden />
           </button>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+        <div className="mt-4 flex flex-wrap gap-1.5 text-[11px]">
           <Tag>{expr.category}</Tag>
-          <span className={cn("rounded-full bg-ink/5 px-2 py-0.5 font-bold dark:bg-white/10", CEFR_COLOR(expr.cefr))}>
+          <span className={cn("rounded-md bg-ink/5 px-2 py-0.5 font-black dark:bg-white/10", CEFR_COLOR(expr.cefr))}>
             {expr.cefr}
           </span>
           <Tag>IELTS {expr.ielts_band}</Tag>
@@ -316,26 +335,27 @@ function DetailModal({
             onClick={onAdd}
             disabled={isAdded}
             className={cn(
-              "mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-colors",
+              "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
               isAdded
                 ? "bg-success/10 text-success"
-                : "bg-brand-600 text-white hover:bg-brand-700"
+                : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(50,108,255,0.28)] hover:-translate-y-0.5 hover:bg-brand-700"
             )}
           >
-            {isAdded ? `✓ ${t.addedToCards}` : `➕ ${t.addToCards}`}
+            {isAdded ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
+            {isAdded ? t.addedToCards : t.addToCards}
           </button>
         )}
 
-        <div className="mt-5 space-y-4">
+        <div className="mt-6 space-y-5">
           <Section title={t.usage}>{expr.usage}</Section>
           <Section title={t.grammar}>
-            <code className="rounded bg-ink/5 px-1.5 py-0.5 text-[13px] dark:bg-white/10">
+            <code className="rounded-md bg-ink/5 px-1.5 py-0.5 text-[13px] dark:bg-white/10">
               {expr.grammar_pattern}
             </code>
           </Section>
           {expr.example_sentences.length > 0 && (
             <Section title={t.examples}>
-              <ul className="space-y-1.5">
+              <ul className="space-y-2">
                 {expr.example_sentences.map((s, i) => (
                   <li key={i} className="border-l-2 border-line pl-3 italic text-ink-soft">
                     {s}
@@ -358,18 +378,24 @@ function DetailModal({
           )}
           {expr.common_mistakes.length > 0 && (
             <Section title={t.mistakes}>
-              <ul className="space-y-1">
+              <ul className="space-y-2">
                 {expr.common_mistakes.map((m, i) => (
-                  <li key={i} className="text-danger">
-                    ⚠ {m}
+                  <li key={i} className="flex gap-2 text-danger">
+                    <AlertTriangle className="mt-1 size-4 shrink-0" aria-hidden />
+                    <span>{m}</span>
                   </li>
                 ))}
               </ul>
             </Section>
           )}
           {expr.native_notes && (
-            <div className="rounded-2xl bg-brand-600/5 p-3">
-              <Section title={`💡 ${t.nativeNotes}`}>{expr.native_notes}</Section>
+            <div className="rounded-lg border border-brand-400/20 bg-brand-600/5 p-4">
+              <Section title={t.nativeNotes}>
+                <span className="mb-2 flex items-center gap-2">
+                  <Lightbulb className="size-4 text-amber-300" aria-hidden />
+                </span>
+                {expr.native_notes}
+              </Section>
             </div>
           )}
         </div>

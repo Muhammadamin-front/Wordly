@@ -36,7 +36,7 @@ export function WordCard({
       onPointerMove={tilt.onPointerMove}
       onPointerLeave={tilt.onPointerLeave}
       onPointerCancel={tilt.onPointerCancel}
-      className="premium-card group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-white/10 p-5 shadow-[0_20px_58px_rgba(8,12,20,0.12)]"
+      className="premium-card group relative flex h-full flex-col overflow-hidden rounded-lg border border-white/10 p-5 shadow-[0_20px_58px_rgba(8,12,20,0.12)]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(124,60,255,0.12),transparent_32%),radial-gradient(circle_at_82%_0%,rgba(20,184,166,0.12),transparent_24%),linear-gradient(to_bottom,rgba(255,255,255,0.1),transparent_24%)]" />
       <div className="absolute inset-0 opacity-[0.12] mix-blend-soft-light [background-image:linear-gradient(135deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] [background-size:18px_18px]" />
@@ -44,7 +44,7 @@ export function WordCard({
       <div className="relative z-10 flex items-start justify-between gap-3">
         <div className="flex min-w-0 gap-3">
           {word.image_url && (
-            <div className="relative size-14 shrink-0 overflow-hidden rounded-2xl border border-white/15 bg-white/30 shadow-[0_12px_30px_rgba(8,12,20,0.08)]">
+            <div className="relative size-14 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-white/30 shadow-[0_12px_30px_rgba(8,12,20,0.08)]">
               <Image
                 src={word.image_url}
                 alt={word.headword}
@@ -94,7 +94,7 @@ export function WordCard({
           disabled={added}
           onClick={onAdd}
           className={cn(
-            "flex w-full items-center justify-center gap-2 rounded-2xl py-2.5 text-sm font-bold transition-all",
+            "flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-bold transition-all",
             added
               ? "border border-success/20 bg-success/10 text-success"
               : "border border-brand-400/20 bg-brand-600/10 text-brand-600 hover:-translate-y-0.5 hover:bg-brand-600/16 dark:text-brand-300"

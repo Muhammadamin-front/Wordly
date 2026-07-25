@@ -1,5 +1,6 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
@@ -30,17 +31,16 @@ function applyTheme(next: Theme) {
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const Icon = theme === "light" ? Moon : Sun;
 
   return (
     <button
       type="button"
       onClick={() => applyTheme(getSnapshot() === "dark" ? "light" : "dark")}
       aria-label="Toggle theme"
-      className="flex size-9 items-center justify-center rounded-lg text-ink-soft transition-colors hover:bg-line/60 hover:text-ink"
+      className="icon-tile flex size-9 items-center justify-center rounded-lg text-ink-soft transition-all hover:-translate-y-0.5 hover:text-ink"
     >
-      <span aria-hidden className="text-base">
-        {theme === null ? "◐" : theme === "dark" ? "☀️" : "🌙"}
-      </span>
+      <Icon className="size-4" aria-hidden />
     </button>
   );
 }

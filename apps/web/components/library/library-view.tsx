@@ -2,7 +2,17 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Plus, Sparkles } from "lucide-react";
+import {
+  BookOpenCheck,
+  CheckCircle2,
+  Layers3,
+  LibraryBig,
+  Plus,
+  Sparkles,
+  Target,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -64,10 +74,20 @@ function CircularProgress({ percent, size = 120 }: { percent: number; size?: num
   );
 }
 
-function StatTile({ icon, label, value }: { icon: string; label: string; value: string | number }) {
+function StatTile({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string | number;
+  tone: string;
+}) {
   return (
-    <div className="rounded-xl border border-line/60 bg-card/40 px-4 py-3 backdrop-blur-sm">
-      <p className="text-2xl">{icon}</p>
+    <div className="premium-card rounded-lg px-4 py-3">
+      <Icon className={`size-5 ${tone}`} aria-hidden />
       <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{label}</p>
       <p className="text-lg font-extrabold text-ink">{value}</p>
     </div>
@@ -168,21 +188,24 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="rounded-3xl border border-brand-400/30 bg-linear-to-br from-brand-600/15 to-brand-600/5 p-8 sm:p-10"
+        className="surface-panel light-sweep rounded-lg p-6 sm:p-8 lg:p-10"
       >
         <div className="grid gap-8 sm:grid-cols-2">
           {/* Left: title + description */}
           <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
-              📚 {t.title}
+            <span className="icon-tile size-12 rounded-lg">
+              <LibraryBig className="size-6 text-brand-300" aria-hidden />
+            </span>
+            <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">
+              {t.title}
             </h1>
             <p className="mt-4 max-w-lg text-base text-ink-soft sm:text-lg">{t.subtitle}</p>
 
             {/* Quick stats row */}
             <div className="mt-6 grid grid-cols-3 gap-3">
-              <StatTile icon="📖" label={t.words} value={totalAdded} />
-              <StatTile icon="✅" label={t.learned} value={totalLearned} />
-              <StatTile icon="🎯" label="Levels" value="6" />
+              <StatTile icon={BookOpenCheck} label={t.words} value={totalAdded} tone="text-brand-300" />
+              <StatTile icon={CheckCircle2} label={t.learned} value={totalLearned} tone="text-accent-300" />
+              <StatTile icon={Layers3} label="Levels" value="6" tone="text-rose-300" />
             </div>
           </div>
 
@@ -224,11 +247,11 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-10 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-6 sm:p-7"
+        className="surface-panel mt-10 rounded-lg p-5 sm:p-6"
         >
           <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
-            <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600/20 text-3xl">
-              🃏
+            <span className="icon-tile flex size-14 shrink-0 items-center justify-center rounded-lg">
+              <BookOpenCheck className="size-6 text-accent-300" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
               <h2 className="text-lg font-extrabold text-ink">{t.myCards}</h2>
@@ -262,7 +285,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
       {/* Level shelves */}
       <section className="mt-12">
         <div className="mb-6 flex items-center gap-2">
-          <span className="text-2xl">🎯</span>
+          <Target className="size-6 text-accent-300" aria-hidden />
           <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.title}</h2>
         </div>
         <p className="mb-6 text-sm text-ink-soft">{t.subtitle}</p>
@@ -329,7 +352,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
           <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="flex h-full min-h-44 flex-col items-stretch justify-center rounded-2xl border-2 border-dashed border-line bg-card/40 p-6 backdrop-blur-sm"
+            className="premium-card flex h-full min-h-44 flex-col items-stretch justify-center rounded-lg border-2 border-dashed border-line bg-card/40 p-6 backdrop-blur-sm"
           >
             {creating ? (
               <form onSubmit={onCreate} className="space-y-3">
@@ -346,7 +369,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
                     {t.create}
                   </Button>
                   <Button type="button" size="sm" variant="ghost" onClick={() => setCreating(false)}>
-                    ✕
+                    <X className="size-4" aria-hidden />
                   </Button>
                 </div>
               </form>
@@ -356,7 +379,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
                 onClick={() => setCreating(true)}
                 className="flex flex-col items-center gap-2 text-ink-soft transition-colors hover:text-ink"
               >
-                <span className="flex size-12 items-center justify-center rounded-full bg-brand-600/10 text-brand-600 dark:text-brand-300">
+                <span className="icon-tile flex size-12 items-center justify-center rounded-lg text-brand-600 dark:text-brand-300">
                   <Plus className="size-6" />
                 </span>
                 <span className="font-semibold">{t.newCollection}</span>

@@ -1,26 +1,30 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
+  ArrowRight,
+  AudioLines,
   BookOpenCheck,
   BrainCircuit,
   ChartNoAxesColumnIncreasing,
   Gamepad2,
   Languages,
+  Layers3,
   Mic2,
+  Rocket,
+  ShieldCheck,
   Sparkles,
   Target,
   Trophy,
-  Zap,
   type LucideIcon,
 } from "lucide-react";
 
-import { Reveal } from "@/components/site/reveal";
 import { HeroCta } from "@/components/site/hero-cta";
+import { Reveal } from "@/components/site/reveal";
 import { SiteHeader } from "@/components/site/header";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import type { Locale } from "@/lib/locales";
 import { getDictionary, hasLocale } from "./dictionaries";
-import { notFound } from "next/navigation";
 
 export default async function LandingPage({
   params,
@@ -31,7 +35,6 @@ export default async function LandingPage({
   if (!hasLocale(lang)) notFound();
   const dict = await getDictionary(lang);
   const { landing, nav, common } = dict;
-
   const visualCopy = landingVisualCopy[lang as Locale];
 
   const features: {
@@ -44,25 +47,25 @@ export default async function LandingPage({
       icon: BrainCircuit,
       title: landing.feature1Title,
       body: landing.feature1Body,
-      tone: "bg-brand-600/10 text-brand-600 dark:bg-brand-400/15 dark:text-brand-200",
+      tone: "text-brand-300",
     },
     {
       icon: Languages,
       title: landing.feature2Title,
       body: landing.feature2Body,
-      tone: "bg-accent-500/12 text-accent-600 dark:bg-accent-400/15 dark:text-accent-300",
+      tone: "text-accent-300",
     },
     {
       icon: Target,
       title: landing.feature3Title,
       body: landing.feature3Body,
-      tone: "bg-rose-500/10 text-rose-600 dark:bg-rose-400/15 dark:text-rose-300",
+      tone: "text-rose-300",
     },
     {
       icon: Gamepad2,
       title: landing.feature4Title,
       body: landing.feature4Body,
-      tone: "bg-amber-500/14 text-amber-700 dark:bg-amber-300/15 dark:text-amber-200",
+      tone: "text-amber-300",
     },
   ];
 
@@ -71,37 +74,35 @@ export default async function LandingPage({
       <SiteHeader lang={lang as Locale} nav={nav} />
 
       <main className="flex-1">
-        {/* Hero */}
-        <section className="relative overflow-hidden border-b border-line">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 -z-10"
-          >
-            <div className="absolute inset-x-0 top-0 h-44 bg-[linear-gradient(90deg,rgba(79,86,211,0.18),rgba(20,184,166,0.13),rgba(244,114,182,0.11))]" />
-            <div className="absolute left-1/2 top-6 h-[560px] w-[960px] -translate-x-1/2 rounded-[48px] bg-[radial-gradient(circle_at_22%_20%,rgba(45,212,191,0.25),transparent_34%),radial-gradient(circle_at_76%_10%,rgba(244,114,182,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.7),rgba(255,255,255,0))] blur-2xl dark:bg-[radial-gradient(circle_at_22%_20%,rgba(45,212,191,0.16),transparent_34%),radial-gradient(circle_at_76%_10%,rgba(244,114,182,0.11),transparent_30%),linear-gradient(135deg,rgba(79,86,211,0.16),rgba(12,13,28,0))]" />
-            <div className="absolute inset-0 bg-[linear-gradient(rgba(31,31,78,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(31,31,78,0.045)_1px,transparent_1px)] bg-[size:42px_42px] opacity-60 dark:opacity-20" />
+        <section className="relative isolate overflow-hidden pb-12 pt-8 sm:pb-16 lg:pb-20">
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-white/28 to-transparent" />
+            <div className="absolute left-1/2 top-10 h-[640px] w-[min(980px,90vw)] -translate-x-1/2 rounded-lg border border-white/8 bg-[linear-gradient(120deg,rgba(50,108,255,0.16),transparent_32%,rgba(16,201,150,0.14)_52%,transparent_74%,rgba(244,63,94,0.12))] opacity-90 blur-3xl" />
           </div>
 
-          <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-6 pt-10 sm:px-6 lg:min-h-[calc(100vh-8rem)] lg:grid-cols-[1fr_0.86fr] lg:pb-12 lg:pt-12">
-            <div className="max-w-3xl text-center lg:text-left">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[1.03fr_0.97fr]">
+            <div className="max-w-3xl">
               <Reveal>
-                <div className="mx-auto inline-flex items-center gap-2 rounded-full border border-line bg-card/80 px-3 py-1.5 text-xs font-bold uppercase text-brand-600 shadow-sm shadow-brand-950/5 dark:text-brand-200 lg:mx-0">
-                  <Sparkles className="size-4 text-accent-500" aria-hidden />
+                <div className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/74 px-3 py-2 text-xs font-black uppercase text-brand-600 shadow-[0_16px_48px_rgba(10,17,36,0.1)] backdrop-blur-xl dark:text-brand-200">
+                  <Sparkles className="size-4 text-accent-400" aria-hidden />
                   {visualCopy.eyebrow}
                 </div>
               </Reveal>
+
               <Reveal delay={0.06}>
-                <h1 className="mt-5 text-balance text-4xl font-extrabold leading-tight text-ink sm:text-6xl lg:text-7xl">
+                <h1 className="mt-7 max-w-4xl text-balance text-5xl font-black leading-[0.96] tracking-tight text-ink sm:text-7xl lg:text-8xl">
                   {landing.heroTitle}
                 </h1>
               </Reveal>
+
               <Reveal delay={0.12}>
-                <p className="mx-auto mt-5 max-w-2xl text-balance text-base leading-relaxed text-ink-soft sm:text-lg lg:mx-0">
+                <p className="mt-6 max-w-2xl text-pretty text-base leading-8 text-ink-soft sm:text-lg">
                   {landing.heroSubtitle}
                 </p>
               </Reveal>
+
               <Reveal delay={0.18}>
-                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                   <HeroCta
                     lang={lang}
                     guestLabel={landing.heroCta}
@@ -110,148 +111,50 @@ export default async function LandingPage({
                   <Link href={`/${lang}#features`}>
                     <Button size="lg" variant="secondary">
                       {landing.heroSecondary}
+                      <ArrowRight className="size-4" aria-hidden />
                     </Button>
                   </Link>
                 </div>
               </Reveal>
+
               <Reveal delay={0.24}>
-                <dl className="mt-10 grid grid-cols-3 gap-2 rounded-2xl border border-line bg-card/70 p-2 shadow-sm shadow-brand-950/5 backdrop-blur sm:max-w-2xl sm:gap-3 lg:max-w-xl">
-                  {[
-                    ["10 000+", landing.statWords],
-                    ["6", landing.statLevels],
-                    ["100%", landing.statPrice],
-                  ].map(([value, label]) => (
-                    <div key={label} className="rounded-xl bg-page/80 px-3 py-4">
-                      <dt className="sr-only">{label}</dt>
-                      <dd className="text-xl font-extrabold text-ink sm:text-2xl">
-                        {value}
-                      </dd>
-                      <dd className="mt-1 text-[11px] font-semibold leading-snug text-ink-soft sm:text-xs">
-                        {label}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
+                <div className="mt-10 grid max-w-2xl grid-cols-3 gap-2">
+                  <Metric icon={BookOpenCheck} value="10 000+" label={landing.statWords} />
+                  <Metric icon={Layers3} value="6" label={landing.statLevels} />
+                  <Metric icon={ShieldCheck} value="100%" label={landing.statPrice} />
+                </div>
               </Reveal>
             </div>
 
-            <Reveal delay={0.16} className="hidden lg:block">
-              <div className="relative mx-auto w-full max-w-[520px]">
-                <div className="absolute top-28 hidden w-28 rounded-2xl border border-line bg-card/90 p-3 shadow-xl shadow-brand-950/10 backdrop-blur lg:-left-32 lg:block">
-                  <div className="flex items-center gap-2 text-sm font-bold text-ink">
-                    <Trophy className="size-4 text-amber-500" aria-hidden />
-                    {visualCopy.streakTitle}
-                  </div>
-                  <div className="mt-2 text-3xl font-extrabold text-brand-600 dark:text-brand-300">
-                    12
-                  </div>
-                  <div className="text-xs font-semibold text-ink-soft">{visualCopy.streakUnit}</div>
-                </div>
-
-                <div className="overflow-hidden rounded-[28px] border border-line bg-card shadow-2xl shadow-brand-950/12">
-                  <div className="flex items-center justify-between border-b border-line bg-raised px-5 py-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase text-ink-soft">{visualCopy.panelKicker}</p>
-                      <h2 className="text-lg font-extrabold text-ink">{visualCopy.panelTitle}</h2>
-                    </div>
-                    <div className="flex size-11 items-center justify-center rounded-2xl bg-accent-500/12 text-accent-600 dark:text-accent-300">
-                      <BookOpenCheck className="size-5" aria-hidden />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 p-5">
-                    <div className="rounded-2xl bg-ink p-5 text-white dark:bg-white dark:text-brand-950">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <p className="text-sm font-semibold opacity-70">{visualCopy.wordLabel}</p>
-                          <p className="mt-1 text-4xl font-extrabold">achieve</p>
-                        </div>
-                        <span className="rounded-full bg-white/14 px-3 py-1 text-xs font-bold dark:bg-brand-950/10">
-                          B2
-                        </span>
-                      </div>
-                      <p className="mt-4 text-sm leading-relaxed opacity-80">
-                        to succeed in finishing something important
-                      </p>
-                    </div>
-
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {visualCopy.cards.map((card) => (
-                        <div key={card.title} className="rounded-2xl border border-line bg-page/70 p-4">
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="text-sm font-bold text-ink">{card.title}</p>
-                            <span className="text-xs font-extrabold text-brand-600 dark:text-brand-300">
-                              {card.value}
-                            </span>
-                          </div>
-                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-line">
-                            <div className={card.bar} />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center justify-between rounded-2xl border border-accent-500/25 bg-accent-500/8 p-4">
-                      <div className="flex items-center gap-3">
-                        <span className="flex size-10 items-center justify-center rounded-xl bg-accent-500 text-white">
-                          <Mic2 className="size-5" aria-hidden />
-                        </span>
-                        <div>
-                          <p className="text-sm font-extrabold text-ink">{visualCopy.speakingTitle}</p>
-                          <p className="text-xs font-medium text-ink-soft">{visualCopy.speakingBody}</p>
-                        </div>
-                      </div>
-                      <Zap className="size-5 text-amber-500" aria-hidden />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -right-3 bottom-8 hidden rounded-2xl border border-line bg-card/90 p-4 shadow-xl shadow-brand-950/10 backdrop-blur sm:block">
-                  <div className="flex items-center gap-2 text-sm font-bold text-ink">
-                    <ChartNoAxesColumnIncreasing className="size-4 text-rose-500" aria-hidden />
-                    IELTS
-                  </div>
-                  <div className="mt-3 flex items-end gap-1.5">
-                    {[34, 48, 40, 64, 76].map((height) => (
-                      <span
-                        key={height}
-                        className="w-3 rounded-full bg-gradient-to-t from-brand-600 to-rose-400"
-                        style={{ height }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
+            <Reveal delay={0.12}>
+              <LearningConsole visualCopy={visualCopy} />
             </Reveal>
           </div>
         </section>
 
-        {/* Features */}
-        <section id="features" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6 lg:py-20">
+        <section id="features" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-14 sm:px-6 lg:py-20">
           <Reveal>
-            <div className="mx-auto mb-9 max-w-3xl text-center">
-              <p className="text-sm font-extrabold uppercase text-accent-600 dark:text-accent-300">
+            <div className="mb-9 max-w-3xl">
+              <p className="text-sm font-black uppercase text-accent-600 dark:text-accent-300">
                 {visualCopy.featuresKicker}
               </p>
-              <h2 className="mt-3 text-balance text-3xl font-extrabold text-ink sm:text-4xl">
+              <h2 className="mt-3 text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl">
                 {visualCopy.featuresTitle}
               </h2>
             </div>
           </Reveal>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature, i) => (
-              <Reveal key={feature.title} delay={i * 0.07}>
-                <Card className="group h-full overflow-hidden p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-950/10">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className={`flex size-11 items-center justify-center rounded-2xl ${feature.tone}`}>
-                      <feature.icon className="size-5" aria-hidden />
-                    </span>
-                    <span className="text-xs font-extrabold text-ink-soft">0{i + 1}</span>
-                  </div>
-                  <CardTitle className="mt-5 text-base">{feature.title}</CardTitle>
+              <Reveal key={feature.title} delay={i * 0.06}>
+                <Card className="group h-full p-5 light-sweep">
+                  <span className="icon-tile size-11 rounded-lg">
+                    <feature.icon className={`size-5 ${feature.tone}`} aria-hidden />
+                  </span>
+                  <CardTitle className="mt-6 text-base">{feature.title}</CardTitle>
                   <CardDescription>{feature.body}</CardDescription>
-                  <div className="mt-5 h-1.5 overflow-hidden rounded-full bg-line">
-                    <div className="h-full w-1/2 rounded-full bg-gradient-to-r from-brand-500 via-accent-500 to-rose-400 transition-all duration-300 group-hover:w-full" />
+                  <div className="mt-7 h-1 overflow-hidden rounded-full bg-line/80">
+                    <div className="h-full w-1/3 rounded-full bg-linear-to-r from-brand-400 via-accent-400 to-rose-300 transition-all duration-500 group-hover:w-full" />
                   </div>
                 </Card>
               </Reveal>
@@ -259,68 +162,70 @@ export default async function LandingPage({
           </div>
         </section>
 
-        {/* Pricing */}
-        <section id="pricing" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-16 sm:px-6">
+        <section id="pricing" className="mx-auto max-w-7xl scroll-mt-24 px-4 py-14 sm:px-6">
           <Reveal>
-            <h2 className="text-center text-3xl font-extrabold text-ink sm:text-4xl">
-              {landing.pricingTitle}
-            </h2>
-          </Reveal>
-          <div className="mx-auto mt-10 grid max-w-4xl gap-5 sm:grid-cols-2">
-            <Reveal delay={0.05}>
-              <Card className="h-full p-7">
-                <CardTitle>{landing.pricingFreeName}</CardTitle>
-                <p className="mt-2 text-3xl font-extrabold text-ink">0</p>
-                <CardDescription>{landing.pricingFreeDesc}</CardDescription>
-              </Card>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <Card className="relative h-full overflow-hidden border-brand-400/50 bg-gradient-to-br from-brand-600/10 via-card to-accent-500/10 p-7">
-                <div className="absolute right-5 top-5 rounded-full bg-brand-600 px-3 py-1 text-xs font-extrabold text-white">
-                  Pro
+            <div className="surface-panel rounded-lg p-6 sm:p-8">
+              <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+                <div>
+                  <p className="text-sm font-black uppercase text-brand-600 dark:text-brand-200">
+                    {visualCopy.pricingKicker}
+                  </p>
+                  <h2 className="mt-3 text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl">
+                    {landing.pricingTitle}
+                  </h2>
+                  <p className="mt-4 max-w-lg text-sm leading-7 text-ink-soft">{landing.pricingNote}</p>
                 </div>
-                <CardTitle className="pr-14 text-brand-600 dark:text-brand-300">
-                  {landing.pricingPremiumName}
-                </CardTitle>
-                <p className="mt-2 text-3xl font-extrabold text-ink">
-                  {landing.pricingPremiumPrice}
-                </p>
-                <CardDescription>{landing.pricingPremiumDesc}</CardDescription>
-              </Card>
-            </Reveal>
-          </div>
-          <Reveal delay={0.18}>
-            <p className="mt-6 text-center text-sm text-ink-soft">{landing.pricingNote}</p>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Card className="p-5">
+                    <CardTitle>{landing.pricingFreeName}</CardTitle>
+                    <p className="mt-5 text-4xl font-black text-ink">0</p>
+                    <CardDescription>{landing.pricingFreeDesc}</CardDescription>
+                  </Card>
+                  <Card className="overflow-hidden border-brand-400/50 bg-linear-to-br from-brand-500/16 via-card to-accent-400/14 p-5">
+                    <div className="mb-5 inline-flex rounded-lg bg-brand-600 px-3 py-1 text-xs font-black text-white">
+                      Pro
+                    </div>
+                    <CardTitle className="text-brand-600 dark:text-brand-200">
+                      {landing.pricingPremiumName}
+                    </CardTitle>
+                    <p className="mt-5 text-4xl font-black text-ink">
+                      {landing.pricingPremiumPrice}
+                    </p>
+                    <CardDescription>{landing.pricingPremiumDesc}</CardDescription>
+                  </Card>
+                </div>
+              </div>
+            </div>
           </Reveal>
         </section>
 
-        {/* CTA */}
-        <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+        <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <Reveal>
-            <div className="overflow-hidden rounded-[28px] bg-ink text-white shadow-xl shadow-brand-950/20 dark:bg-white dark:text-brand-950">
-              <div className="grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-[1fr_auto]">
+            <div className="surface-panel rounded-lg bg-ink p-6 text-white dark:bg-white dark:text-brand-950 sm:p-10">
+              <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
                 <div>
-                  <h2 className="text-balance text-3xl font-extrabold sm:text-4xl">
+                  <h2 className="max-w-3xl text-balance text-3xl font-black tracking-tight sm:text-5xl">
                     {landing.ctaTitle}
                   </h2>
-                  <p className="mt-3 max-w-xl text-white/70 dark:text-brand-950/65">{landing.ctaBody}</p>
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 dark:text-brand-950/65">
+                    {landing.ctaBody}
+                  </p>
                 </div>
-                <div className="inline-block">
-                  <HeroCta
-                    lang={lang}
-                    guestLabel={landing.heroCta}
-                    userLabel={landing.heroCtaContinue}
-                    variant="accent"
-                  />
-                </div>
+                <HeroCta
+                  lang={lang}
+                  guestLabel={landing.heroCta}
+                  userLabel={landing.heroCtaContinue}
+                  variant="accent"
+                />
               </div>
             </div>
           </Reveal>
         </section>
       </main>
 
-      <footer className="border-t border-line py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 text-sm text-ink-soft sm:flex-row sm:px-6">
+      <footer className="border-t border-line/70 py-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-sm text-ink-soft sm:flex-row sm:px-6">
           <span>
             © {new Date().getFullYear()} {common.appName}. {landing.footerRights}
           </span>
@@ -328,6 +233,123 @@ export default async function LandingPage({
         </div>
       </footer>
     </>
+  );
+}
+
+function Metric({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: LucideIcon;
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="surface-panel rounded-lg px-3 py-4">
+      <Icon className="size-4 text-accent-400" aria-hidden />
+      <p className="mt-3 text-xl font-black text-ink sm:text-2xl">{value}</p>
+      <p className="mt-1 text-[11px] font-bold leading-snug text-ink-soft">{label}</p>
+    </div>
+  );
+}
+
+function LearningConsole({
+  visualCopy,
+}: {
+  visualCopy: (typeof landingVisualCopy)[Locale];
+}) {
+  return (
+    <div className="depth-scene relative mx-auto w-full max-w-[560px]">
+      <div className="surface-panel premium-card rounded-lg p-4 sm:p-5">
+        <div className="flex items-center justify-between border-b border-line pb-4">
+          <div>
+            <p className="text-xs font-black uppercase text-ink-soft">{visualCopy.panelKicker}</p>
+            <h2 className="mt-1 text-xl font-black text-ink">{visualCopy.panelTitle}</h2>
+          </div>
+          <span className="icon-tile size-11 rounded-lg">
+            <Rocket className="size-5 text-accent-300" aria-hidden />
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-4">
+          <div className="light-sweep rounded-lg border border-white/10 bg-ink p-5 text-white shadow-[0_28px_90px_rgba(0,0,0,0.24)] dark:bg-white dark:text-brand-950">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-sm font-bold opacity-64">{visualCopy.wordLabel}</p>
+                <p className="mt-2 text-5xl font-black tracking-tight">achieve</p>
+              </div>
+              <span className="rounded-lg border border-current/12 px-3 py-1 text-xs font-black">B2</span>
+            </div>
+            <p className="mt-4 max-w-sm text-sm leading-7 opacity-72">
+              to succeed in finishing something important
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {visualCopy.cards.map((card) => (
+              <div key={card.title} className="rounded-lg border border-line bg-page/62 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-black text-ink">{card.title}</p>
+                  <span className="text-xs font-black text-brand-600 dark:text-brand-200">
+                    {card.value}
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-line">
+                  <div className={card.bar} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <div className="rounded-lg border border-accent-500/25 bg-accent-500/8 p-4">
+              <div className="flex items-center gap-3">
+                <span className="icon-tile size-10 rounded-lg">
+                  <Mic2 className="size-5 text-accent-300" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-sm font-black text-ink">{visualCopy.speakingTitle}</p>
+                  <p className="text-xs font-medium text-ink-soft">{visualCopy.speakingBody}</p>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-lg border border-line bg-page/62 p-4">
+              <div className="flex items-center gap-2 text-sm font-black text-ink">
+                <Trophy className="size-4 text-amber-300" aria-hidden />
+                {visualCopy.streakTitle}
+              </div>
+              <p className="mt-2 text-3xl font-black text-brand-500 dark:text-brand-200">12</p>
+              <p className="text-xs font-semibold text-ink-soft">{visualCopy.streakUnit}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="surface-panel float-medium absolute -right-4 top-12 hidden rounded-lg p-3 lg:block">
+        <div className="flex items-center gap-2 text-sm font-black text-ink">
+          <ChartNoAxesColumnIncreasing className="size-4 text-rose-300" aria-hidden />
+          IELTS
+        </div>
+        <div className="mt-3 flex items-end gap-1.5">
+          {[34, 48, 40, 64, 76].map((height) => (
+            <span
+              key={height}
+              className="w-3 rounded-full bg-linear-to-t from-brand-500 via-accent-400 to-rose-300"
+              style={{ height }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="surface-panel float-slow absolute -left-6 bottom-12 hidden rounded-lg p-3 lg:block">
+        <div className="flex items-center gap-2 text-sm font-black text-ink">
+          <AudioLines className="size-4 text-accent-300" aria-hidden />
+          91%
+        </div>
+        <p className="mt-1 text-xs font-semibold text-ink-soft">{visualCopy.accuracyLabel}</p>
+      </div>
+    </div>
   );
 }
 
@@ -344,6 +366,8 @@ const landingVisualCopy: Record<
     speakingBody: string;
     featuresKicker: string;
     featuresTitle: string;
+    pricingKicker: string;
+    accuracyLabel: string;
     cards: { title: string; value: string; bar: string }[];
   }
 > = {
@@ -358,6 +382,8 @@ const landingVisualCopy: Record<
     speakingBody: "Qisqa gapni ovoz bilan ayting",
     featuresKicker: "Hammasi bir joyda",
     featuresTitle: "So'z yodlash, gapirish va IELTS tayyorgarligi bitta oqimda",
+    pricingKicker: "Oddiy va halol",
+    accuracyLabel: "aniqlik",
     cards: [
       { title: "Takrorlash", value: "18/24", bar: "h-full w-3/4 rounded-full bg-brand-500" },
       { title: "Aniqlik", value: "91%", bar: "h-full w-[91%] rounded-full bg-accent-500" },
@@ -374,6 +400,8 @@ const landingVisualCopy: Record<
     speakingBody: "Произнесите короткую фразу",
     featuresKicker: "Все в одном месте",
     featuresTitle: "Слова, говорение и IELTS-подготовка в одном потоке",
+    pricingKicker: "Просто и честно",
+    accuracyLabel: "точность",
     cards: [
       { title: "Повторение", value: "18/24", bar: "h-full w-3/4 rounded-full bg-brand-500" },
       { title: "Точность", value: "91%", bar: "h-full w-[91%] rounded-full bg-accent-500" },
@@ -390,6 +418,8 @@ const landingVisualCopy: Record<
     speakingBody: "Say a short sentence out loud",
     featuresKicker: "Everything in one place",
     featuresTitle: "Vocabulary, speaking, and IELTS prep in one learning flow",
+    pricingKicker: "Simple and honest",
+    accuracyLabel: "accuracy",
     cards: [
       { title: "Review", value: "18/24", bar: "h-full w-3/4 rounded-full bg-brand-500" },
       { title: "Accuracy", value: "91%", bar: "h-full w-[91%] rounded-full bg-accent-500" },

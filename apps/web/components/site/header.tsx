@@ -113,13 +113,13 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
   }, [open]);
 
   return (
-    <header className="glass sticky top-0 z-40 border-x-0 border-t-0 shadow-[0_18px_80px_rgba(15,16,33,0.14)]">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 px-3 py-3">
+      <div className="glass mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-lg px-3 shadow-[0_22px_80px_rgba(10,17,36,0.18)] sm:px-4">
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={nav.menu}
-          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-xl border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
+          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-lg border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
         >
           <Menu className="size-5" aria-hidden />
         </button>
@@ -142,13 +142,13 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
             <>
               <Link
                 href={`/${lang}#features`}
-                className="rounded-xl px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
+                className="rounded-lg px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
               >
                 {nav.features}
               </Link>
               <Link
                 href={`/${lang}#pricing`}
-                className="rounded-xl px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
+                className="rounded-lg px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
               >
                 {nav.pricing}
               </Link>
@@ -226,7 +226,7 @@ function MobileSidebar({
             className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
           />
           <motion.aside
-            className="absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col border-r border-line bg-page/92 shadow-2xl backdrop-blur-2xl"
+            className="surface-panel absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
@@ -238,7 +238,7 @@ function MobileSidebar({
                 type="button"
                 aria-label={nav.close}
                 onClick={onClose}
-                className="flex size-10 items-center justify-center rounded-xl border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
+                className="flex size-10 items-center justify-center rounded-lg border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
               >
                 <X className="size-5" aria-hidden />
               </button>
@@ -282,17 +282,17 @@ function MobileSidebar({
                   <Link
                     href={`/${lang}#features`}
                     onClick={onClose}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
                   >
-                    <span className="text-xl">✨</span>
+                    <Sparkles className="size-4 text-accent-500" aria-hidden />
                     {nav.features}
                   </Link>
                   <Link
                     href={`/${lang}#pricing`}
                     onClick={onClose}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
                   >
-                    <span className="text-xl">💎</span>
+                    <CreditCard className="size-4 text-brand-400" aria-hidden />
                     {nav.pricing}
                   </Link>
                 </>
@@ -355,9 +355,9 @@ function DesktopNavLink({
     <Link
       href={`/${lang}/${item.href}`}
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold transition-all",
+        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
         active
-          ? "bg-white/14 text-ink shadow-inner shadow-white/10 dark:bg-white/10"
+          ? "bg-white/14 text-ink shadow-inner shadow-white/10 ring-1 ring-white/12 dark:bg-white/10"
           : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
       )}
     >
@@ -384,7 +384,7 @@ function DesktopNavGroup({
       <button
         type="button"
         className={cn(
-          "flex items-center gap-1.5 rounded-xl px-3 py-2 text-[13px] font-bold transition-all",
+          "flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
           active
             ? "bg-white/14 text-ink dark:bg-white/10"
             : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
@@ -393,7 +393,7 @@ function DesktopNavGroup({
         {getNavGroupLabel(lang, group.key)}
         <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" aria-hidden />
       </button>
-      <div className="invisible absolute left-0 top-full z-50 mt-3 w-56 translate-y-2 rounded-2xl border border-line bg-card/88 p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+      <div className="surface-panel invisible absolute left-0 top-full z-50 mt-3 w-56 translate-y-2 rounded-lg p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
         {group.items.map((item) => {
           const Icon = item.icon;
           const itemActive = isActive(pathname, lang, item.href);
@@ -402,7 +402,7 @@ function DesktopNavGroup({
               key={item.key}
               href={`/${lang}/${item.href}`}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors",
                 itemActive
                   ? "bg-brand-600/12 text-brand-600 dark:text-brand-200"
                   : "text-ink-soft hover:bg-page/70 hover:text-ink"
@@ -459,13 +459,13 @@ function MobileNavLink({
       href={`/${lang}/${item.href}`}
       onClick={onClose}
       className={cn(
-        "flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-bold transition-all",
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-all",
         active
           ? "bg-brand-600/12 text-brand-600 shadow-inner shadow-brand-600/5 dark:text-brand-200"
           : "text-ink hover:bg-card/70"
       )}
     >
-      <span className="flex size-9 items-center justify-center rounded-xl border border-line bg-card/70">
+      <span className="icon-tile flex size-9 items-center justify-center rounded-lg">
         <Icon className="size-4" aria-hidden />
       </span>
       {nav[item.key]}

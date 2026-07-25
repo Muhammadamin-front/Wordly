@@ -1,5 +1,6 @@
 "use client";
 
+import { Coins, Flame, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -32,16 +33,24 @@ export function StatsWidget({ lang }: { lang: string }) {
   return (
     <Link
       href={`/${lang}/achievements`}
-      className="flex items-center gap-2.5 rounded-lg px-1.5 text-sm font-bold"
+      className="hidden items-center gap-1.5 rounded-lg border border-line bg-card/60 px-2 py-1.5 text-xs font-extrabold text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink sm:flex"
       title="XP · streak · coins"
     >
-      <span
-        className={stats.current_streak > 0 ? "text-orange-500" : "text-ink-soft opacity-60"}
-      >
-        🔥 {stats.current_streak}
+      <span className="inline-flex items-center gap-1">
+        <Flame
+          className={stats.current_streak > 0 ? "size-3.5 text-orange-500" : "size-3.5 text-ink-soft/60"}
+          aria-hidden
+        />
+        {stats.current_streak}
       </span>
-      <span className="text-brand-600 dark:text-brand-300">⚡ {stats.level}</span>
-      <span className="hidden text-amber-500 sm:inline">🪙 {stats.coins}</span>
+      <span className="inline-flex items-center gap-1">
+        <Zap className="size-3.5 text-brand-500" aria-hidden />
+        {stats.level}
+      </span>
+      <span className="inline-flex items-center gap-1">
+        <Coins className="size-3.5 text-amber-500" aria-hidden />
+        {stats.coins}
+      </span>
     </Link>
   );
 }

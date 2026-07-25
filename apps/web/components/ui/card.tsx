@@ -6,7 +6,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        "premium-card rounded-xl2 p-6 transition-all duration-300",
+        "premium-card rounded-lg p-6 transition-all duration-300",
         className
       )}
       {...props}
