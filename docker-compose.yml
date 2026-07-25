@@ -19,7 +19,8 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      # Override with REDIS_PORT if 6379 is taken on the host.
+      - "${REDIS_PORT:-6379}:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -47,7 +48,8 @@ services:
       FIREFLIES_API_KEY: ${FIREFLIES_API_KEY:-}
       PAYMENTS_SANDBOX: ${PAYMENTS_SANDBOX:-true}
     ports:
-      - "8000:8000"
+      # Override with API_PORT if 8000 is taken on the host.
+      - "${API_PORT:-8000}:8000"
     volumes:
       - tts_cache:/srv/api/tts_cache
     depends_on:
@@ -70,7 +72,8 @@ services:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
     ports:
-      - "3000:3000"
+      # Override with WEB_PORT if 3000 is taken on the host.
+      - "${WEB_PORT:-3000}:3000"
     depends_on:
       api:
         condition: service_healthy

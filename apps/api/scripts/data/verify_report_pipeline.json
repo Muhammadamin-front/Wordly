@@ -1,0 +1,154 @@
+[
+  {
+    "file": "useful_batch1.csv",
+    "headword": "date",
+    "pos": "noun",
+    "current_uz": "sana vaqt",
+    "issue": "The word 'vaqt' means time, which does not match the definition of a specific calendar date.",
+    "suggested_uz": "sana"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "form",
+    "pos": "noun",
+    "current_uz": "shakl blanka",
+    "issue": "The Uzbek word 'shakl' refers to shape or appearance, which is the wrong sense of 'form' for a document.",
+    "suggested_uz": "blanka anketa"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "stock",
+    "pos": "noun",
+    "current_uz": "zaxira ombor",
+    "issue": "'ombor' means warehouse, which is a physical building rather than the supply of goods itself.",
+    "suggested_uz": "zaxira tovarlar"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "join",
+    "pos": "verb",
+    "current_uz": "qo'shilmoq birlashmoq",
+    "issue": "The definition describes a transitive action of connecting things, but the translation uses intransitive verbs.",
+    "suggested_uz": "birlashtirmoq ulamoq"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "application",
+    "pos": "noun",
+    "current_uz": "ariza dastur",
+    "issue": "The translation 'ariza' refers to a written request or petition, which is the wrong sense for a computer application.",
+    "suggested_uz": "ilova dastur"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "court",
+    "pos": "noun",
+    "current_uz": "hovli sud",
+    "issue": "The translation includes 'sud' which refers to a legal court, representing the wrong sense of the word for this definition.",
+    "suggested_uz": "hovli"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "term",
+    "pos": "noun",
+    "current_uz": "muddat atama",
+    "issue": "The word 'atama' means a linguistic term, which does not match the definition of a period of time.",
+    "suggested_uz": "muddat"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "try",
+    "pos": "verb",
+    "current_uz": "urinish harakat qilish",
+    "issue": "The word 'urinish' is a noun, but the headword is a verb.",
+    "suggested_uz": "urinmoq harakat qilish"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "round",
+    "pos": "noun",
+    "current_uz": "davra aylanib yurish",
+    "issue": "The word 'davra' refers to a circle or gathering, which represents a different sense of 'round' than the defined series of visits.",
+    "suggested_uz": "aylanish aylanib chiqish"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "filter",
+    "pos": "noun",
+    "current_uz": "filtr süzgich",
+    "issue": "The translation uses the non-Uzbek character 'ü' in 'süzgich'.",
+    "suggested_uz": "filtr suzgich"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "background",
+    "pos": "noun",
+    "current_uz": "fon kelib chiqish",
+    "issue": "The word 'fon' refers to a visual or acoustic background and is incorrect for a person's life background.",
+    "suggested_uz": "kelib chiqish tarjimayi hol"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "wood",
+    "pos": "noun",
+    "current_uz": "yog'och o'rmon",
+    "issue": "The word 'o'rmon' means forest, which is the wrong sense of the word for a material.",
+    "suggested_uz": "yog'och"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "dark",
+    "pos": "adjective",
+    "current_uz": "qorong'i to'q",
+    "issue": "The word 'to'q' refers to dark colors, which does not match the definition of lacking light in a place.",
+    "suggested_uz": "qorong'i"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "associates",
+    "pos": "verb",
+    "current_uz": "bog'lamoq aloqador",
+    "issue": "The translation includes 'aloqador' which is an adjective meaning 'related' rather than a verb meaning 'to associate'.",
+    "suggested_uz": "bog'lamoq"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "worth",
+    "pos": "adjective",
+    "current_uz": "arzimaydigan arziydigan",
+    "issue": "The word 'arzimaydigan' means worthless, which is the opposite of the definition.",
+    "suggested_uz": "arziydigan loyiq"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "critical",
+    "pos": "adjective",
+    "current_uz": "tanqidiy muhim",
+    "issue": "The translation 'tanqidiy' refers to criticism, which is the wrong sense for the definition of extremely important.",
+    "suggested_uz": "hal qiluvchi"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "musical",
+    "pos": "adjective",
+    "current_uz": "musiqiy kuylar",
+    "issue": "The word 'kuylar' means melodies or sings, which is a noun or verb, not an adjective meaning musical.",
+    "suggested_uz": "musiqiy"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "suite",
+    "pos": "noun",
+    "current_uz": "raqam majmua",
+    "issue": "The translation uses 'majmua' (collection) and 'raqam' (standard room), failing to convey a set of connected hotel rooms.",
+    "suggested_uz": "lyuks"
+  },
+  {
+    "file": "useful_batch2.csv",
+    "headword": "skip",
+    "pos": "verb",
+    "current_uz": "sakrash tashlab ketish",
+    "issue": "The translation includes 'tashlab ketish' (to omit), which is the wrong meaning for the physical jumping definition.",
+    "suggested_uz": "irg'ish sakrash"
+  }
+]

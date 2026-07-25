@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import "../globals.css";
@@ -14,12 +13,6 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "#191927" },
   ],
 };
-
-// latin-ext covers Uzbek Latin (oʻ, gʻ); cyrillic covers Russian.
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-});
 
 export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -65,7 +58,7 @@ export default async function RootLayout({
   if (!hasLocale(lang)) notFound();
 
   return (
-    <html lang={lang} className={manrope.variable} suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
