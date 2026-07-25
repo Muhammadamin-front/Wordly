@@ -26,6 +26,7 @@ class Settings(BaseSettings):
 
     # Web
     FRONTEND_ORIGIN: str = "http://localhost:3000"
+    FRONTEND_ORIGINS: Optional[str] = None
     COOKIE_SECURE: bool = False  # True in production (HTTPS)
     COOKIE_DOMAIN: Optional[str] = None
 
@@ -122,7 +123,23 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> List[str]:
-        return [self.FRONTEND_ORIGIN]
+        origins = [self.FRONTEND_ORIGIN]
+        if self.FRONTEND_ORIGINS:
+            origins.extend(origin.strip() for origin in self.FRONTEND_ORIGINS.split(",") if origin.strip())
+        if self.ENVIRONMENT == "development":
+            origins.extend(
+                [
+                    "http://localhost:3000",
+                    "http://localhost:3001",
+                    "http://localhost:3002",
+                    "http://localhost:3006",
+                    "http://127.0.0.1:3000",
+                    "http://127.0.0.1:3001",
+                    "http://127.0.0.1:3002",
+                    "http://127.0.0.1:3006",
+                ]
+            )
+        return list(dict.fromkeys(origins))
 
 
 @lru_cache
