@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { StatsWidget } from "@/components/gamification/stats-widget";
@@ -381,16 +381,45 @@ function DesktopNavGroup({
   pathname: string;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
   const active = group.items.some((item) => isActive(pathname, lang, item.href));
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const openMenu = () => {
+    clearCloseTimer();
+    setExpanded(true);
+  };
+
+  const closeMenu = () => {
+    clearCloseTimer();
+    setExpanded(false);
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setExpanded(false);
+      closeTimerRef.current = null;
+    }, 180);
+  };
+
+  useEffect(() => clearCloseTimer, []);
+
   return (
     <div
       className="relative shrink-0"
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => setExpanded(false)}
-      onFocusCapture={() => setExpanded(true)}
+      onMouseEnter={openMenu}
+      onMouseLeave={scheduleClose}
+      onFocusCapture={openMenu}
       onBlurCapture={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          setExpanded(false);
+          closeMenu();
         }
       }}
     >
@@ -398,10 +427,10 @@ function DesktopNavGroup({
         type="button"
         aria-haspopup="menu"
         aria-expanded={expanded}
-        onClick={() => setExpanded(true)}
+        onClick={openMenu}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
-            setExpanded(false);
+            closeMenu();
           }
         }}
         className={cn(
@@ -418,6 +447,13 @@ function DesktopNavGroup({
         />
       </button>
       <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none !absolute left-0 top-full z-40 h-3 w-56",
+          expanded && "pointer-events-auto"
+        )}
+      />
+      <div
         role="menu"
         className={cn(
           "surface-panel invisible pointer-events-none !absolute left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all duration-150",
@@ -432,7 +468,7 @@ function DesktopNavGroup({
               key={item.key}
               href={`/${lang}/${item.href}`}
               role="menuitem"
-              onClick={() => setExpanded(false)}
+              onClick={closeMenu}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors",
                 itemActive
