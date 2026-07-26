@@ -9,8 +9,8 @@ import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#3f3fb4" },
-    { media: "(prefers-color-scheme: dark)", color: "#191927" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f1e8" },
+    { media: "(prefers-color-scheme: dark)", color: "#071410" },
   ],
 };
 
@@ -43,9 +43,8 @@ export async function generateMetadata({
   };
 }
 
-// Applies the saved theme before first paint to avoid a flash. Dark is the
-// default brand look (deep navy); users can still switch to light.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("words_theme")||"dark";document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
+// Applies the saved theme before first paint to avoid a flash.
+const themeInitScript = `(function(){try{var t=localStorage.getItem("words_theme")||"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 export default async function RootLayout({
   children,

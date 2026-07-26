@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
@@ -7,24 +6,15 @@ export function Logo({ lang, className }: { lang: string; className?: string }) 
   return (
     <Link
       href={`/${lang}`}
-      className={cn("inline-flex items-center gap-2 text-xl font-black tracking-tight", className)}
+      className={cn("inline-flex items-center gap-2.5 text-xl font-black tracking-tight", className)}
     >
-      <span className="icon-tile flex size-8 items-center justify-center rounded-lg">
-        <Image
-          src="/icons/icon-192.png"
-          alt="Wordly"
-          width={24}
-          height={24}
-          className="size-6 rounded-md"
-          priority
-        />
+      <span
+        aria-hidden
+        className="relative flex size-9 items-center justify-center text-[28px] font-black leading-none text-brand-900 dark:text-brand-200"
+      >
+        <span className="-rotate-6">w</span>
       </span>
-      <span>
-        <span className="text-ink">Word</span>
-        <span className="bg-gradient-to-r from-brand-400 via-accent-400 to-rose-300 bg-clip-text text-transparent">
-          ly
-        </span>
-      </span>
+      <span className="text-[21px] lowercase text-brand-950 dark:text-ink">wordly</span>
     </Link>
   );
 }

@@ -33,22 +33,22 @@ export function StatsWidget({ lang }: { lang: string }) {
   return (
     <Link
       href={`/${lang}/achievements`}
-      className="hidden items-center gap-1.5 rounded-lg border border-line bg-card/60 px-2 py-1.5 text-xs font-extrabold text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink sm:flex"
+      className="hidden items-center gap-3 rounded-full border border-line/70 bg-sand-50/80 px-3.5 py-2 text-xs font-extrabold text-ink shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised sm:flex"
       title="XP · streak · coins"
     >
-      <span className="inline-flex items-center gap-1">
+      <span className="inline-flex items-center gap-1.5">
         <Flame
           className={stats.current_streak > 0 ? "size-3.5 text-orange-500" : "size-3.5 text-ink-soft/60"}
           aria-hidden
         />
         {stats.current_streak}
       </span>
-      <span className="inline-flex items-center gap-1">
-        <Zap className="size-3.5 text-brand-500" aria-hidden />
+      <span className="inline-flex items-center gap-1.5">
+        <Zap className="size-3.5 text-brand-600" aria-hidden />
         {stats.level}
       </span>
-      <span className="inline-flex items-center gap-1">
-        <Coins className="size-3.5 text-amber-500" aria-hidden />
+      <span className="inline-flex items-center gap-1.5">
+        <Coins className="size-3.5 text-accent-500" aria-hidden />
         {stats.coins}
       </span>
     </Link>

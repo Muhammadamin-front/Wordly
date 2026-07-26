@@ -4,18 +4,18 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg font-bold transition-all duration-300 disabled:pointer-events-none disabled:opacity-55 active:scale-[0.98] cursor-pointer select-none before:absolute before:inset-0 before:-z-10 before:translate-x-[-120%] before:bg-gradient-to-r before:from-transparent before:via-white/25 before:to-transparent before:transition-transform before:duration-700 hover:before:translate-x-[120%]",
+  "relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg font-bold transition-all duration-300 disabled:pointer-events-none disabled:opacity-55 active:scale-[0.98] cursor-pointer select-none before:absolute before:inset-0 before:-z-10 before:translate-x-[-120%] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:transition-transform before:duration-700 hover:before:translate-x-[120%]",
   {
     variants: {
       variant: {
         primary:
-          "bg-gradient-to-br from-brand-400 via-brand-600 to-brand-900 text-white shadow-[0_16px_44px_rgba(50,108,255,0.3)] hover:-translate-y-0.5 hover:shadow-[0_24px_64px_rgba(50,108,255,0.42)]",
+          "bg-brand-900 text-white shadow-[0_14px_34px_rgba(7,58,53,0.22)] hover:-translate-y-0.5 hover:bg-brand-800 hover:shadow-[0_20px_46px_rgba(7,58,53,0.28)]",
         secondary:
-          "border border-line bg-card/72 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_12px_34px_rgba(10,17,36,0.08)] backdrop-blur-xl hover:-translate-y-0.5 hover:border-brand-400/70 hover:bg-raised/86 hover:text-brand-600 dark:hover:text-brand-200",
+          "border border-line bg-raised/76 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_26px_rgba(34,65,58,0.07)] backdrop-blur-xl hover:-translate-y-0.5 hover:border-brand-400/70 hover:bg-raised hover:text-brand-700 dark:hover:text-brand-200",
         accent:
-          "bg-gradient-to-br from-accent-300 via-accent-500 to-emerald-700 text-white shadow-[0_16px_44px_rgba(16,201,150,0.28)] hover:-translate-y-0.5 hover:shadow-[0_24px_64px_rgba(16,201,150,0.36)]",
+          "bg-accent-500 text-white shadow-[0_14px_34px_rgba(184,137,47,0.2)] hover:-translate-y-0.5 hover:bg-accent-600 hover:shadow-[0_20px_46px_rgba(184,137,47,0.26)]",
         ghost: "text-ink-soft hover:-translate-y-0.5 hover:bg-card/64 hover:text-ink",
-        danger: "bg-gradient-to-br from-danger to-rose-700 text-white shadow-lg shadow-danger/25 hover:-translate-y-0.5",
+        danger: "bg-danger text-white shadow-lg shadow-danger/20 hover:-translate-y-0.5 hover:brightness-95",
       },
       size: {
         sm: "h-9 px-3.5 text-sm",

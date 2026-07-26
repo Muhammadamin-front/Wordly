@@ -268,7 +268,7 @@ function Chip({
       className={cn(
         "rounded-lg border px-3 py-1.5 text-xs font-black transition-all",
         active
-          ? "border-brand-400 bg-brand-600/12 text-brand-600 shadow-[0_10px_26px_rgba(50,108,255,0.1)] dark:text-brand-200"
+          ? "border-brand-400 bg-brand-600/12 text-brand-600 shadow-[0_10px_26px_rgba(40,135,115,0.1)] dark:text-brand-200"
           : "border-line bg-card/42 text-ink-soft hover:-translate-y-0.5 hover:text-ink"
       )}
     >
@@ -372,7 +372,7 @@ function DetailModal({
                 "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
                 isAdded
                   ? "bg-success/10 text-success"
-                  : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(50,108,255,0.28)] hover:-translate-y-0.5 hover:bg-brand-700"
+                  : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(40,135,115,0.24)] hover:-translate-y-0.5 hover:bg-brand-700"
               )}
             >
               {isAdded ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}

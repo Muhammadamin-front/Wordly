@@ -9,7 +9,6 @@ import {
   CreditCard,
   Gamepad2,
   GraduationCap,
-  LayoutDashboard,
   LibraryBig,
   Menu,
   Sparkles,
@@ -52,9 +51,9 @@ interface NavItem {
 }
 
 const PRIMARY_NAV: NavItem[] = [
-  { key: "dashboard", href: "dashboard", icon: LayoutDashboard },
   { key: "decks", href: "decks", icon: LibraryBig },
   { key: "games", href: "games", icon: Gamepad2 },
+  { key: "ielts", href: "ielts", icon: GraduationCap },
 ];
 
 type NavGroupKey = "learn" | "community" | "more";
@@ -65,7 +64,6 @@ const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
     items: [
       { key: "skills", href: "skills", icon: BookOpen },
       { key: "grammar", href: "grammar", icon: Boxes },
-      { key: "ielts", href: "ielts", icon: GraduationCap },
     ],
   },
   {
@@ -113,8 +111,8 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 px-3 py-3">
-      <div className="glass mx-auto flex h-14 max-w-7xl items-center gap-3 rounded-lg px-3 shadow-[0_22px_80px_rgba(10,17,36,0.18)] sm:px-4">
+    <header className="sticky top-0 z-40 px-3 py-3 sm:px-5 sm:py-4">
+      <div className="glass mx-auto flex h-16 max-w-[1480px] items-center gap-3 rounded-[20px] px-3 shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -131,6 +129,17 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         <nav className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
           {authed ? (
             <>
+              <Link
+                href={`/${lang}`}
+                className={cn(
+                  "relative flex h-10 shrink-0 items-center whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors",
+                  pathname === `/${lang}`
+                    ? "text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+                    : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
+                )}
+              >
+                {getHomeLabel(lang)}
+              </Link>
               {PRIMARY_NAV.map((item) => (
                 <DesktopNavLink key={item.key} item={item} lang={lang} nav={nav} pathname={pathname} />
               ))}
@@ -143,16 +152,22 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           ) : (
             <>
               <Link
-                href={`/${lang}#features`}
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
+                href={`/${lang}`}
+                className="relative px-3 py-2 text-sm font-bold text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
               >
-                {nav.features}
+                {getHomeLabel(lang)}
               </Link>
               <Link
-                href={`/${lang}#pricing`}
-                className="rounded-lg px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:bg-card/60 hover:text-ink"
+                href={`/${lang}/vocabulary`}
+                className="px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-brand-900 dark:hover:text-ink"
               >
-                {nav.pricing}
+                {getWordsLabel(lang)}
+              </Link>
+              <Link
+                href={`/${lang}/ielts`}
+                className="px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-brand-900 dark:hover:text-ink"
+              >
+                IELTS
               </Link>
             </>
           )}
@@ -166,7 +181,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <ThemeToggle />
           {authed ? (
             <Link href={`/${lang}/dashboard`} className="hidden lg:block">
-              <Button size="sm">{nav.dashboard}</Button>
+              <Button size="sm">{getCabinetLabel(lang)}</Button>
             </Link>
           ) : (
             <>
@@ -352,19 +367,17 @@ function DesktopNavLink({
   pathname: string;
 }) {
   const active = isActive(pathname, lang, item.href);
-  const Icon = item.icon;
   return (
     <Link
       href={`/${lang}/${item.href}`}
       className={cn(
-        "flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
+        "relative flex h-10 shrink-0 items-center whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors",
         active
-          ? "bg-brand-600/10 text-brand-700 shadow-inner shadow-brand-600/5 ring-1 ring-brand-500/10 dark:bg-white/10 dark:text-ink"
-          : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
+          ? "text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+          : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
       )}
     >
-      <Icon className="size-4" aria-hidden />
-      {nav[item.key]}
+      {getPrimaryNavLabel(lang, item.key, nav)}
     </Link>
   );
 }
@@ -505,6 +518,47 @@ function getNavGroupLabel(lang: Locale, key: NavGroupKey): string {
     },
   };
   return labels[lang][key];
+}
+
+function getHomeLabel(lang: Locale): string {
+  return {
+    uz: "Bosh sahifa",
+    ru: "Главная",
+    en: "Home",
+  }[lang];
+}
+
+function getWordsLabel(lang: Locale): string {
+  return {
+    uz: "So'zlar",
+    ru: "Слова",
+    en: "Words",
+  }[lang];
+}
+
+function getCabinetLabel(lang: Locale): string {
+  return {
+    uz: "Kabinet",
+    ru: "Кабинет",
+    en: "Cabinet",
+  }[lang];
+}
+
+function getPrimaryNavLabel(
+  lang: Locale,
+  key: NavKey,
+  nav: Dictionary["nav"]
+): string {
+  if (key === "decks") return getWordsLabel(lang);
+  if (key === "games") {
+    return {
+      uz: "Mashqlar",
+      ru: "Практика",
+      en: "Practice",
+    }[lang];
+  }
+  if (key === "ielts") return "IELTS";
+  return nav[key];
 }
 
 function MobileNavLink({

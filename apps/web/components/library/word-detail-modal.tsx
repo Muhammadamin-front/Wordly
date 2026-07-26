@@ -139,7 +139,7 @@ export function WordDetailModal({
               "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
               added
                 ? "bg-success/10 text-success"
-                : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(50,108,255,0.28)] hover:-translate-y-0.5 hover:bg-brand-700"
+                : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(40,135,115,0.24)] hover:-translate-y-0.5 hover:bg-brand-700"
             )}
           >
             {added ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}

@@ -173,7 +173,7 @@ export function DashboardView({
                       className={
                         "rounded-md border px-2.5 py-1 text-xs font-black transition-all " +
                         (stats.daily_goal === goal
-                          ? "border-brand-400 bg-brand-600 text-white shadow-[0_10px_30px_rgba(50,108,255,0.24)]"
+                          ? "border-brand-400 bg-brand-600 text-white shadow-[0_10px_30px_rgba(40,135,115,0.22)]"
                           : "border-line text-ink-soft hover:-translate-y-0.5 hover:bg-card hover:text-ink")
                       }
                     >

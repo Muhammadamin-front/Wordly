@@ -4,27 +4,27 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Brand — editorial black, electric blue, mint, and coral accents. */
-  --color-brand-50: #eef5ff;
-  --color-brand-100: #dbeaff;
-  --color-brand-200: #bfd8ff;
-  --color-brand-300: #92bcff;
-  --color-brand-400: #5d94ff;
-  --color-brand-500: #326cff;
-  --color-brand-600: #1e4de5;
-  --color-brand-700: #1a3ab8;
-  --color-brand-800: #1c338f;
-  --color-brand-900: #1b2b70;
-  --color-brand-950: #0a1124;
+  /* Wordly — Uzbek emerald, turquoise tile, ivory paper, and warm brass. */
+  --color-brand-50: #eef8f4;
+  --color-brand-100: #d8eee6;
+  --color-brand-200: #b4ddcf;
+  --color-brand-300: #83c5b1;
+  --color-brand-400: #4ca78f;
+  --color-brand-500: #288773;
+  --color-brand-600: #176b5c;
+  --color-brand-700: #11564b;
+  --color-brand-800: #0c453d;
+  --color-brand-900: #073a35;
+  --color-brand-950: #032925;
 
-  --color-accent-300: #7cf7d4;
-  --color-accent-400: #38eab8;
-  --color-accent-500: #10c996;
-  --color-accent-600: #079e76;
+  --color-accent-300: #e4c47a;
+  --color-accent-400: #d2a84f;
+  --color-accent-500: #b8892f;
+  --color-accent-600: #8e681f;
 
-  --color-sand-50: #f7f8fb;
-  --color-sand-100: #eef1f7;
-  --color-sand-200: #dfe5ef;
+  --color-sand-50: #fbfaf6;
+  --color-sand-100: #f4f0e7;
+  --color-sand-200: #e8e0d1;
 
   --color-success: #16a34a;
   --color-danger: #dc2626;
@@ -101,24 +101,24 @@
 :root {
   --font-manrope: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  --surface-page: #eef4fb;
-  --surface-card: rgb(255 255 255 / 0.84);
-  --surface-raised: rgb(255 255 255 / 0.96);
-  --border-subtle: rgb(10 17 36 / 0.14);
-  --text-primary: #07111f;
-  --text-secondary: #415169;
+  --surface-page: #f5f1e8;
+  --surface-card: rgb(255 254 250 / 0.9);
+  --surface-raised: rgb(255 255 253 / 0.98);
+  --border-subtle: rgb(24 63 57 / 0.14);
+  --text-primary: #073a35;
+  --text-secondary: #52635f;
   --text-inverse: #ffffff;
-  --shadow-card: 0 24px 84px rgb(10 17 36 / 0.13), inset 0 1px 0 rgb(255 255 255 / 0.92);
+  --shadow-card: 0 18px 54px rgb(34 65 58 / 0.09), inset 0 1px 0 rgb(255 255 255 / 0.96);
 }
 
 [data-theme="dark"] {
-  --surface-page: #070807;
-  --surface-card: rgb(18 22 28 / 0.68);
-  --surface-raised: rgb(28 34 42 / 0.82);
+  --surface-page: #071410;
+  --surface-card: rgb(13 36 31 / 0.82);
+  --surface-raised: rgb(18 48 41 / 0.94);
   --border-subtle: rgb(255 255 255 / 0.12);
-  --text-primary: #f7fbff;
-  --text-secondary: #aab5bf;
-  --text-inverse: #070807;
+  --text-primary: #f7f4eb;
+  --text-secondary: #aebdb7;
+  --text-inverse: #06130f;
   --shadow-card: 0 30px 100px rgb(0 0 0 / 0.5), inset 0 1px 0 rgb(255 255 255 / 0.1);
 }
 
@@ -167,33 +167,25 @@ body::after {
 
 body::before {
   background:
-    linear-gradient(115deg, transparent 0 16%, rgb(50 108 255 / 0.2) 24%, transparent 38%),
-    linear-gradient(62deg, transparent 0 43%, rgb(16 201 150 / 0.16) 54%, transparent 69%),
-    conic-gradient(from 210deg at 52% 24%, rgb(255 255 255 / 0.34), transparent, rgb(244 63 94 / 0.13), transparent),
-    radial-gradient(ellipse at 18% 4%, rgb(50 108 255 / 0.22), transparent 34%),
-    radial-gradient(ellipse at 84% 18%, rgb(244 63 94 / 0.13), transparent 30%),
-    linear-gradient(135deg, #f9fbff 0%, #edf5ff 45%, #f6f0ff 100%);
-  animation: aurora-drift 18s ease-in-out infinite;
+    linear-gradient(90deg, rgb(255 255 255 / 0.46), transparent 36%, rgb(255 255 255 / 0.2)),
+    linear-gradient(135deg, #fbfaf6 0%, #f4efe5 52%, #f8f5ee 100%);
 }
 
 [data-theme="dark"] body::before {
   background:
-    linear-gradient(115deg, transparent 0 18%, rgb(50 108 255 / 0.16) 24%, transparent 36%),
-    linear-gradient(62deg, transparent 0 46%, rgb(16 201 150 / 0.16) 55%, transparent 68%),
-    conic-gradient(from 210deg at 52% 26%, rgb(255 255 255 / 0.18), transparent, rgb(244 63 94 / 0.1), transparent),
-    linear-gradient(135deg, var(--surface-page), color-mix(in srgb, var(--surface-page) 80%, #326cff 20%));
+    linear-gradient(120deg, rgb(23 107 92 / 0.12), transparent 42%),
+    linear-gradient(135deg, #06130f, #0b211b 58%, #0d1916);
 }
 
 body::after {
   z-index: -1;
   background:
-    linear-gradient(rgb(10 17 36 / 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(10 17 36 / 0.045) 1px, transparent 1px),
-    radial-gradient(rgb(10 17 36 / 0.12) 1px, transparent 1.2px);
-  background-size: 56px 56px, 56px 56px, 112px 112px;
+    linear-gradient(rgb(7 58 53 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(7 58 53 / 0.03) 1px, transparent 1px),
+    radial-gradient(rgb(184 137 47 / 0.12) 1px, transparent 1.2px);
+  background-size: 72px 72px, 72px 72px, 144px 144px;
   mask-image: linear-gradient(to bottom, black, transparent 86%);
-  opacity: 0.28;
-  animation: particle-drift 30s linear infinite;
+  opacity: 0.24;
 }
 
 [data-theme="dark"] body::after {
@@ -218,10 +210,10 @@ body::after {
 /* Shared premium surfaces. */
 .glass {
   background:
-    linear-gradient(180deg, rgb(255 255 255 / 0.86), rgb(255 255 255 / 0.48)),
+    linear-gradient(180deg, rgb(255 255 253 / 0.96), rgb(255 253 248 / 0.84)),
     color-mix(in srgb, var(--surface-raised) 88%, transparent);
-  backdrop-filter: blur(26px) saturate(1.45);
-  -webkit-backdrop-filter: blur(26px) saturate(1.45);
+  backdrop-filter: blur(24px) saturate(1.14);
+  -webkit-backdrop-filter: blur(24px) saturate(1.14);
   border: 1px solid var(--border-subtle);
 }
 
@@ -239,9 +231,9 @@ body::after {
   transform-origin: center;
   will-change: transform;
   background:
-    radial-gradient(ellipse at var(--shine-x, 50%) var(--shine-y, 30%), rgb(50 108 255 / 0.12), transparent 38%),
-    radial-gradient(ellipse at 20% 0%, rgb(16 201 150 / 0.08), transparent 34%),
-    linear-gradient(145deg, rgb(255 255 255 / 0.92), rgb(255 255 255 / 0.58) 48%, transparent),
+    radial-gradient(ellipse at var(--shine-x, 50%) var(--shine-y, 30%), rgb(40 135 115 / 0.1), transparent 38%),
+    radial-gradient(ellipse at 20% 0%, rgb(210 168 79 / 0.08), transparent 34%),
+    linear-gradient(145deg, rgb(255 255 253 / 0.94), rgb(255 253 248 / 0.66) 48%, transparent),
     var(--surface-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
@@ -266,7 +258,7 @@ body::after {
   z-index: 0;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgb(255 255 255 / 0.42), transparent 36%, rgb(16 201 150 / 0.12));
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.5), transparent 36%, rgb(40 135 115 / 0.1));
   content: "";
   opacity: 0.58;
 }
@@ -298,7 +290,7 @@ body::after {
   --card-lift: -6px;
   border-color: color-mix(in srgb, var(--border-subtle) 55%, var(--color-brand-400));
   box-shadow:
-    0 36px 120px rgb(10 17 36 / 0.2),
+    0 28px 78px rgb(7 58 53 / 0.16),
     inset 0 1px 0 rgb(255 255 255 / 0.85);
 }
 
@@ -351,7 +343,7 @@ body::after {
   overflow: hidden;
   border: 1px solid var(--border-subtle);
   background:
-    linear-gradient(135deg, rgb(255 255 255 / 0.58), transparent 42%),
+    linear-gradient(135deg, rgb(255 255 255 / 0.72), transparent 42%),
     color-mix(in srgb, var(--surface-card) 94%, white 6%);
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(26px) saturate(1.35);
@@ -420,7 +412,7 @@ body::after {
     color-mix(in srgb, var(--surface-raised) 88%, transparent);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.72),
-    0 16px 48px rgb(10 17 36 / 0.14);
+    0 16px 48px rgb(24 63 57 / 0.14);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
@@ -431,7 +423,7 @@ body::after {
     color-mix(in srgb, var(--surface-raised) 82%, transparent);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.22),
-    0 16px 48px rgb(10 17 36 / 0.12);
+    0 16px 48px rgb(24 63 57 / 0.12);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -18,7 +18,6 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { createTiltHandlers } from "@/components/ui/tilt-card";
@@ -77,79 +76,81 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "premium-card depth-scene group relative flex aspect-4/5 flex-col overflow-hidden rounded-lg border border-white/10 p-5 text-white shadow-[0_22px_70px_rgba(8,12,20,0.18)]",
-        locked ? "grayscale-[0.3]" : ""
+        "premium-card depth-scene group relative flex aspect-4/5 flex-col overflow-hidden rounded-lg p-5 text-ink",
+        locked ? "grayscale-[0.45] opacity-75" : ""
       )}
     >
-      <Image
-        alt=""
-        className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.055]"
-        fill
-        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
-        src={meta.cover}
+      <div
+        aria-hidden
+        className="absolute -right-7 top-8 h-40 w-28 overflow-hidden rounded-t-full border border-brand-900/10 bg-sand-50/48 transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:bg-white/4"
+      >
+        <div className={cn("absolute inset-x-5 bottom-0 h-28 rounded-t-full opacity-14", meta.bar)} />
+        <div className="absolute -inset-x-8 top-14 h-px rotate-45 bg-brand-900/12" />
+        <div className="absolute -inset-x-8 top-14 h-px -rotate-45 bg-brand-900/12" />
+        <div className="absolute inset-x-4 bottom-4 h-16 rounded-t-full border border-brand-900/12" />
+        <div className="absolute inset-x-8 bottom-0 h-10 rounded-t-full border border-brand-900/10" />
+      </div>
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.05] [background-image:linear-gradient(45deg,currentColor_1px,transparent_1px),linear-gradient(-45deg,currentColor_1px,transparent_1px)] [background-size:24px_24px]"
       />
-      <div className={cn("absolute inset-0 bg-linear-to-br opacity-30 mix-blend-color", meta.art)} />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_14%,rgba(255,255,255,0.18),transparent_24%),radial-gradient(circle_at_85%_8%,rgba(255,255,255,0.1),transparent_18%),linear-gradient(to_bottom,rgba(0,0,0,0.03),rgba(0,0,0,0.3)_42%,rgba(0,0,0,0.78)_74%,rgba(0,0,0,0.94))]" />
-      <div className="absolute inset-0 opacity-[0.18] mix-blend-soft-light [background-image:linear-gradient(135deg,rgba(255,255,255,0.12)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.12)_50%,rgba(255,255,255,0.12)_75%,transparent_75%,transparent)] [background-size:20px_20px]" />
-      <div className={cn("absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/26 to-transparent", meta.overlay)} />
 
-      <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between p-4">
-        <span className="flex items-center gap-2 rounded-full border border-white/15 bg-white/14 px-3 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/92 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
-          <span className="flex size-7 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm">
-            <Icon className="size-4" strokeWidth={2.3} />
+      <div className="relative z-20 flex items-start justify-between">
+        <span className="flex items-center gap-2">
+          <span className={cn("flex size-11 items-center justify-center rounded-full text-sm font-black text-white shadow-sm", meta.bar)}>
+            {meta.key}
           </span>
-          {meta.key}
+          <span className="flex size-9 items-center justify-center rounded-full border border-line bg-raised/76 text-ink-soft">
+            <Icon className="size-4" strokeWidth={2.1} />
+          </span>
         </span>
         {locked && (
-          <span className="flex items-center gap-1.5 rounded-full bg-black/30 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-white/90 backdrop-blur-2xl">
+          <span className="flex items-center gap-1.5 rounded-full border border-line bg-raised/80 px-3 py-2 text-[10px] font-bold uppercase text-ink-soft backdrop-blur-xl">
             <Lock className="size-3.5" /> {labels.soon}
           </span>
         )}
       </div>
 
       <div className="relative z-10 mt-auto pt-24">
-        <h3 className="max-w-[12ch] text-[1.7rem] font-black leading-[0.96] tracking-tight text-white drop-shadow-[0_10px_30px_rgba(0,0,0,0.24)]">
+        <h3 className="max-w-[13ch] text-[1.55rem] font-black leading-[1.02] tracking-tight text-ink">
           {strings.name}
         </h3>
-        <p className="mt-2 max-w-[28ch] text-sm/6 text-white/78">{strings.desc}</p>
+        <p className="mt-3 max-w-[27ch] text-sm/6 text-ink-soft">{strings.desc}</p>
 
         {custom ? (
-          <div className="mt-5 flex items-center justify-between border-t border-white/12 pt-4">
-            <span className="text-sm font-medium text-white/62">{labels.words}</span>
-            <span className="flex items-center gap-1.5 text-sm font-bold text-white transition-transform group-hover:translate-x-1">
+          <div className="mt-5 flex items-center justify-between border-t border-line/70 pt-4">
+            <span className="text-sm font-medium text-ink-soft">{labels.words}</span>
+            <span className="flex items-center gap-1.5 text-sm font-bold text-brand-800 transition-transform group-hover:translate-x-1 dark:text-brand-200">
               {labels.start}
               <ArrowRight className="size-4" />
             </span>
           </div>
         ) : (
           !locked && (
-            <div className="mt-5 space-y-3 border-t border-white/12 pt-4">
+            <div className="mt-5 space-y-3 border-t border-line/70 pt-4">
               <div className="flex items-end justify-between gap-3">
                 <div>
-                  <p className="text-3xl font-black tracking-tight text-white">
+                  <p className="text-3xl font-black tracking-tight text-ink">
                     {learned}
-                    <span className="text-white/45">/{total}</span>
+                    <span className="text-ink-soft/50">/{total}</span>
                   </p>
-                  <p className="text-sm text-white/70">{labels.learned}</p>
+                  <p className="text-sm text-ink-soft">{labels.learned}</p>
                 </div>
-                <span className="rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-sm font-extrabold text-white backdrop-blur-2xl">
+                <span className="rounded-full border border-line bg-raised/72 px-3 py-1.5 text-sm font-extrabold text-ink backdrop-blur-xl">
                   {pct}%
                 </span>
               </div>
 
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/16">
+              <div className="h-1.5 overflow-hidden rounded-full bg-line/60">
                 <div
-                  className={cn(
-                    "h-full rounded-full shadow-[0_0_24px_rgba(255,255,255,0.2)]",
-                    meta.bar
-                  )}
+                  className={cn("h-full rounded-full", meta.bar)}
                   style={{ width: `${pct}%` }}
                 />
               </div>
 
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-white/62">{labels.words}</span>
-                <span className="flex items-center gap-1.5 text-sm font-bold text-white transition-transform group-hover:translate-x-1">
+                <span className="text-sm font-medium text-ink-soft">{labels.words}</span>
+                <span className="flex items-center gap-1.5 text-sm font-bold text-brand-800 transition-transform group-hover:translate-x-1 dark:text-brand-200">
                   {learned > 0 ? labels.continue : labels.start}
                   <ArrowRight className="size-4" />
                 </span>
@@ -159,13 +160,6 @@ export function LevelCard({
         )}
       </div>
 
-      <div
-        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 25%), rgb(255 255 255 / 0.18), transparent 28%)",
-        }}
-      />
     </motion.div>
   );
 
