@@ -45,17 +45,17 @@ const GAME_ACCENT: Record<GameType, string> = {
   word_match: "from-brand-400/24 via-card to-accent-400/10",
   speed_quiz: "from-amber-400/24 via-card to-brand-400/10",
   fill_blank: "from-accent-400/24 via-card to-brand-400/10",
-  audio_guess: "from-sky-400/24 via-card to-rose-400/10",
-  typing_race: "from-cyan-400/24 via-card to-brand-400/10",
-  memory: "from-rose-400/24 via-card to-accent-400/10",
+  audio_guess: "from-brand-600/24 via-card to-accent-400/10",
+  typing_race: "from-teal-500/24 via-card to-brand-400/10",
+  memory: "from-brand-700/24 via-card to-accent-400/10",
   boss_battle: "from-red-400/24 via-card to-amber-400/10",
   hangman: "from-slate-400/24 via-card to-brand-400/10",
   spelling_bee: "from-yellow-400/24 via-card to-accent-400/10",
   sentence_builder: "from-emerald-400/24 via-card to-brand-400/10",
-  word_search: "from-cyan-400/24 via-card to-accent-400/10",
+  word_search: "from-teal-500/24 via-card to-accent-400/10",
   crossword: "from-lime-400/24 via-card to-brand-400/10",
-  listening: "from-sky-400/24 via-card to-accent-400/10",
-  speaking: "from-orange-400/24 via-card to-rose-400/10",
+  listening: "from-brand-600/24 via-card to-accent-400/10",
+  speaking: "from-accent-500/22 via-card to-brand-400/10",
 };
 
 export function GamesHub({ lang, games }: { lang: string; games: Dictionary["games"] }) {
@@ -70,7 +70,7 @@ export function GamesHub({ lang, games }: { lang: string; games: Dictionary["gam
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7">
         <span className="icon-tile size-12 rounded-lg">
-          <Gamepad2 className="size-6 text-rose-300" aria-hidden />
+          <Gamepad2 className="size-6 text-brand-300" aria-hidden />
         </span>
         <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{games.title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{games.subtitle}</p>
@@ -101,7 +101,7 @@ export function GamesHub({ lang, games }: { lang: string; games: Dictionary["gam
                   <span className="icon-tile size-12 rounded-lg">
                     <Icon className="size-6 text-ink" aria-hidden />
                   </span>
-                  <span className="h-1 w-14 rounded-full bg-linear-to-r from-brand-400 via-accent-400 to-rose-300 opacity-70 transition-all group-hover:w-20" />
+                  <span className="h-1 w-14 rounded-full bg-linear-to-r from-brand-400 via-brand-200 to-accent-300 opacity-70 transition-all group-hover:w-20" />
                 </div>
                 <h2 className="mt-6 text-xl font-black text-ink">{meta.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{meta.desc}</p>

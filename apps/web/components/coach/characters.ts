@@ -16,9 +16,9 @@ export const CHARACTER_THEMES: Record<CharacterKey, CharacterTheme> = {
     bubble: "bg-slate-100 dark:bg-slate-800/60",
   },
   mochi: {
-    gradient: "from-pink-400 to-rose-500",
-    accent: "ring-pink-400",
-    bubble: "bg-pink-50 dark:bg-pink-950/30",
+    gradient: "from-accent-300 to-brand-500",
+    accent: "ring-accent-300",
+    bubble: "bg-brand-50 dark:bg-brand-950/45",
   },
   alex: {
     gradient: "from-emerald-400 to-teal-500",
@@ -26,9 +26,9 @@ export const CHARACTER_THEMES: Record<CharacterKey, CharacterTheme> = {
     bubble: "bg-emerald-50 dark:bg-emerald-950/30",
   },
   examiner: {
-    gradient: "from-indigo-500 to-blue-600",
-    accent: "ring-indigo-400",
-    bubble: "bg-indigo-50 dark:bg-indigo-950/30",
+    gradient: "from-brand-500 to-brand-800",
+    accent: "ring-brand-400",
+    bubble: "bg-brand-50 dark:bg-brand-950/45",
   },
 };
 

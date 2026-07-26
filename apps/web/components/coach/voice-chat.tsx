@@ -118,7 +118,7 @@ function BandReport({ report, t }: { report: IeltsReport; t: Coach }) {
       className="rounded-2xl border border-line bg-card p-5"
     >
       <div className="flex items-center gap-4">
-        <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-blue-600 text-white">
+        <div className="flex size-20 shrink-0 flex-col items-center justify-center rounded-full bg-linear-to-br from-brand-400 to-brand-800 text-white">
           <span className="text-[10px] font-semibold uppercase opacity-80">{t.bandScore}</span>
           <span className="text-2xl font-extrabold">{report.band_overall.toFixed(1)}</span>
         </div>
@@ -305,7 +305,7 @@ export function VoiceChat({
           <p className="truncate text-sm font-bold text-ink">
             {character.name}
             {isIelts && (
-              <span className="ml-2 rounded-full bg-indigo-500/10 px-2 py-0.5 text-[11px] font-semibold text-indigo-600 dark:text-indigo-300">
+              <span className="ml-2 rounded-full bg-brand-500/10 px-2 py-0.5 text-[11px] font-semibold text-brand-600 dark:text-brand-300">
                 IELTS {t.ieltsPart} {session.ielts_part}
               </span>
             )}

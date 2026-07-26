@@ -15,7 +15,7 @@ const LEVEL_ACCENT: Record<GrammarLevel, string> = {
   A1: "border-accent-400/60 bg-accent-400/10 text-accent-600 dark:text-accent-300",
   A2: "border-success/50 bg-success/10 text-success",
   B1: "border-brand-400/60 bg-brand-500/10 text-brand-600 dark:text-brand-300",
-  B2: "border-indigo-400/60 bg-indigo-500/10 text-indigo-500 dark:text-indigo-300",
+  B2: "border-teal-400/60 bg-teal-500/10 text-teal-500 dark:text-teal-300",
   IELTS: "border-warning/50 bg-warning/10 text-warning",
 };
 
@@ -79,7 +79,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
             </div>
             <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full rounded-full bg-linear-to-r from-brand-500 via-accent-400 to-rose-400"
+                className="h-full rounded-full bg-linear-to-r from-brand-500 via-brand-300 to-accent-400"
                 style={{ width: `${progress}%` }}
               />
             </div>

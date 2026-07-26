@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* Theme toggle sets data-theme on <html>; default follows system. */
+/* Dark-green is the only active theme for now. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
@@ -379,7 +379,7 @@ body::after {
 }
 
 .prism-text {
-  background: linear-gradient(90deg, #f7fbff, #7cf7d4, #92bcff, #fda4af, #f7fbff);
+  background: linear-gradient(90deg, #f7fbf8, #7cf7d4, #d2a84f, #4ca78f, #f7fbf8);
   background-size: 240% 100%;
   -webkit-background-clip: text;
   background-clip: text;

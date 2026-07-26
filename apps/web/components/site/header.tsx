@@ -25,7 +25,6 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { StatsWidget } from "@/components/gamification/stats-widget";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
-import { ThemeToggle } from "@/components/site/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -178,7 +177,6 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <div className="hidden sm:block">
             <LocaleSwitcher current={lang} />
           </div>
-          <ThemeToggle />
           {authed ? (
             <Link href={`/${lang}/dashboard`} className="hidden lg:block">
               <Button size="sm">{getCabinetLabel(lang)}</Button>
@@ -317,9 +315,8 @@ function MobileSidebar({
             </nav>
 
             <div className="shrink-0 space-y-3 border-t border-line p-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center">
                 <LocaleSwitcher current={lang} />
-                <ThemeToggle />
               </div>
               {authed ? (
                 <Button

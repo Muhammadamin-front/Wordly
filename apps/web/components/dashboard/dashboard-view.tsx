@@ -130,7 +130,7 @@ export function DashboardView({
                 />
                 <StatCard icon={Coins} label={gam.coins} value={stats.coins} tone="text-amber-300" />
                 <Link href={`/${lang}/leaderboard`} className="block">
-                  <StatCard icon={Trophy} label={stats.league_tier} value="" tone="text-rose-300" />
+                  <StatCard icon={Trophy} label={stats.league_tier} value="" tone="text-brand-200" />
                 </Link>
               </div>
             )}
@@ -159,7 +159,7 @@ export function DashboardView({
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-line">
                   <div
-                    className="h-full rounded-full bg-linear-to-r from-brand-400 via-accent-400 to-rose-300 transition-all"
+                    className="h-full rounded-full bg-linear-to-r from-brand-400 via-brand-200 to-accent-300 transition-all"
                     style={{ width: `${reviewProgress}%` }}
                   />
                 </div>
@@ -218,7 +218,7 @@ export function DashboardView({
           icon={Gamepad2}
           title={dict.dashboard.cardGames}
           body={dict.dashboard.cardGamesDesc}
-          tone="text-rose-300"
+          tone="text-brand-200"
         />
       </section>
 

@@ -10,11 +10,11 @@ import { useAuth } from "@/components/auth/auth-provider";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const SECTIONS = [
-  { key: "listening", icon: Headphones, accent: "from-sky-500/20 via-accent-400/10 to-transparent" },
+  { key: "listening", icon: Headphones, accent: "from-brand-600/24 via-accent-400/10 to-transparent" },
   { key: "reading", icon: BookOpen, accent: "from-emerald-500/20 via-brand-400/10 to-transparent" },
-  { key: "writing", icon: PenLine, accent: "from-amber-500/20 via-rose-400/10 to-transparent" },
+  { key: "writing", icon: PenLine, accent: "from-accent-500/20 via-brand-400/10 to-transparent" },
   { key: "speaking", icon: Mic2, accent: "from-orange-500/20 via-accent-400/10 to-transparent" },
-  { key: "grammar", icon: Puzzle, accent: "from-indigo-500/20 via-brand-400/10 to-transparent" },
+  { key: "grammar", icon: Puzzle, accent: "from-brand-700/24 via-brand-400/10 to-transparent" },
 ] satisfies Array<{
   key: keyof Pick<Dictionary["skills"], "listening" | "reading" | "writing" | "speaking" | "grammar">;
   icon: LucideIcon;

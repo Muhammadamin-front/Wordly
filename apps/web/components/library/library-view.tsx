@@ -213,7 +213,7 @@ export function LibraryView({
             <div className="mt-6 grid grid-cols-3 gap-3">
               <StatTile icon={BookOpenCheck} label={t.words} value={totalAdded} tone="text-brand-300" />
               <StatTile icon={CheckCircle2} label={t.learned} value={totalLearned} tone="text-accent-300" />
-              <StatTile icon={Layers3} label="Levels" value="6" tone="text-rose-300" />
+              <StatTile icon={Layers3} label="Levels" value="6" tone="text-brand-200" />
             </div>
           </div>
 

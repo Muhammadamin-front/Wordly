@@ -193,7 +193,7 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
             {t.latestBand}
           </h2>
           <Card className="mt-3 flex items-center gap-4">
-            <div className="flex size-16 shrink-0 flex-col items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-blue-600 text-white">
+            <div className="flex size-16 shrink-0 flex-col items-center justify-center rounded-full bg-linear-to-br from-brand-400 to-brand-800 text-white">
               <span className="text-[9px] font-semibold uppercase opacity-80">{t.bandScore}</span>
               <span className="text-xl font-extrabold">
                 {dashboard.latest_report.band_overall.toFixed(1)}

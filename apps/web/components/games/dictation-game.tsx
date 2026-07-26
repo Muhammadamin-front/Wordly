@@ -82,7 +82,7 @@ function DictationRound({
         <button
           type="button"
           onClick={() => speak(sentence)}
-          className="mx-auto flex size-20 items-center justify-center rounded-full bg-sky-500/15 text-4xl transition-transform hover:scale-105"
+          className="mx-auto flex size-20 items-center justify-center rounded-full bg-brand-500/15 text-4xl transition-transform hover:scale-105"
           aria-label={games.tapToHear}
         >
           🎧

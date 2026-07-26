@@ -60,13 +60,13 @@ export const CEFR_COLOR = (cefr: string): string => {
     case "A2":
       return "text-emerald-600 dark:text-emerald-400";
     case "B1":
-      return "text-blue-600 dark:text-blue-400";
+      return "text-brand-500 dark:text-brand-300";
     case "B2":
-      return "text-indigo-600 dark:text-indigo-400";
+      return "text-teal-600 dark:text-teal-300";
     case "C1":
-      return "text-purple-600 dark:text-purple-400";
+      return "text-accent-500 dark:text-accent-300";
     case "C2":
-      return "text-violet-600 dark:text-violet-400";
+      return "text-emerald-700 dark:text-emerald-200";
     default:
       return "text-ink-soft";
   }

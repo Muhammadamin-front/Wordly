@@ -8,10 +8,7 @@ import { PwaRegister } from "@/components/site/pwa-register";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f1e8" },
-    { media: "(prefers-color-scheme: dark)", color: "#071410" },
-  ],
+  themeColor: "#071410",
 };
 
 export async function generateStaticParams() {
@@ -35,16 +32,13 @@ export async function generateMetadata({
     appleWebApp: {
       capable: true,
       title: dict.common.appName,
-      statusBarStyle: "default",
+      statusBarStyle: "black-translucent",
     },
     icons: {
       apple: "/icons/apple-touch-icon.png",
     },
   };
 }
-
-// Applies the saved theme before first paint to avoid a flash.
-const themeInitScript = `(function(){try{var t=localStorage.getItem("words_theme")||"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 export default async function RootLayout({
   children,
@@ -57,10 +51,7 @@ export default async function RootLayout({
   if (!hasLocale(lang)) notFound();
 
   return (
-    <html lang={lang} suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
+    <html lang={lang} data-theme="dark">
       <body className="flex min-h-dvh flex-col">
         <AuthProvider>{children}</AuthProvider>
         <PwaRegister />

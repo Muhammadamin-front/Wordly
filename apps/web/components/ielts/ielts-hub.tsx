@@ -34,10 +34,10 @@ interface SkillCard {
 
 const SKILLS: SkillCard[] = [
   { key: "reading", href: "ielts/reading", icon: BookOpen, gradient: "from-brand-500/24 via-accent-400/12 to-transparent" },
-  { key: "listening", href: "ielts/listening", icon: Headphones, gradient: "from-indigo-500/24 via-brand-400/12 to-transparent" },
+  { key: "listening", href: "ielts/listening", icon: Headphones, gradient: "from-brand-700/28 via-brand-400/12 to-transparent" },
   { key: "writing", href: "ielts/writing", icon: PenLine, gradient: "from-emerald-500/22 via-amber-400/12 to-transparent" },
   // Locked while the realtime AI examiner is too slow/flaky for learners.
-  { key: "speaking", href: "ielts/speaking", icon: Mic2, gradient: "from-orange-500/24 via-rose-400/12 to-transparent", locked: true },
+  { key: "speaking", href: "ielts/speaking", icon: Mic2, gradient: "from-accent-500/22 via-brand-500/12 to-transparent", locked: true },
 ];
 
 export function IeltsHub({ lang, t }: { lang: string; t: Ielts }) {
