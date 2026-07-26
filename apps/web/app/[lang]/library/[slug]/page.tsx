@@ -24,7 +24,7 @@ export default async function LibraryLevelPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <LevelView lang={lang} meta={meta} t={dict.library} />
+      <LevelView lang={lang} meta={meta} t={dict.library} vocab={dict.vocab} />
     </>
   );
 }

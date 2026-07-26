@@ -94,7 +94,15 @@ function StatTile({
   );
 }
 
-export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"] }) {
+export function LibraryView({
+  lang,
+  t,
+  vocab,
+}: {
+  lang: string;
+  t: Dictionary["library"];
+  vocab: Dictionary["vocab"];
+}) {
   const { user, ready } = useAuth();
   const router = useRouter();
   const [shelves, setShelves] = useState<Record<string, Shelf> | null>(null);
@@ -224,7 +232,7 @@ export function LibraryView({ lang, t }: { lang: string; t: Dictionary["library"
 
       {/* Corpus-wide search + add */}
       <div className="mt-8">
-        <SearchPanel lang={lang} t={t} />
+        <SearchPanel lang={lang} t={t} vocab={vocab} />
       </div>
 
       {report && (

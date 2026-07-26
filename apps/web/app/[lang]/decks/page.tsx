@@ -13,7 +13,7 @@ export default async function DecksPage({ params }: { params: Promise<{ lang: st
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <LibraryView lang={lang} t={dict.library} />
+      <LibraryView lang={lang} t={dict.library} vocab={dict.vocab} />
     </>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   BookOpen,
@@ -12,16 +12,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ProgressBar } from "@/components/library/progress-bar";
 import { WordCard } from "@/components/library/word-card";
+import { WordDetailModal } from "@/components/library/word-detail-modal";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 import { libraryApi, type Shelf, type ShelfMeta } from "@/lib/library";
-import { fetchWords, type WordListItem } from "@/lib/vocab";
+import { fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -29,10 +30,12 @@ export function LevelView({
   lang,
   meta,
   t,
+  vocab,
 }: {
   lang: string;
   meta: ShelfMeta;
   t: Dictionary["library"];
+  vocab: Dictionary["vocab"];
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
@@ -45,6 +48,10 @@ export function LevelView({
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [studying, setStudying] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [openWord, setOpenWord] = useState<WordListItem | null>(null);
+  const [wordDetail, setWordDetail] = useState<Word | null>(null);
+  const [wordDetailLoading, setWordDetailLoading] = useState(false);
+  const detailRequest = useRef(0);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -113,6 +120,32 @@ export function LevelView({
         }
       });
   };
+
+  const onOpenWord = (word: WordListItem) => {
+    const request = ++detailRequest.current;
+    setOpenWord(word);
+    setWordDetail(null);
+    setWordDetailLoading(true);
+    fetchWord(word.slug)
+      .then((result) => {
+        if (detailRequest.current !== request) return;
+        setWordDetail(result);
+      })
+      .catch(() => {
+        if (detailRequest.current !== request) return;
+        setWordDetail(null);
+      })
+      .finally(() => {
+        if (detailRequest.current === request) setWordDetailLoading(false);
+      });
+  };
+
+  const onCloseWord = useCallback(() => {
+    detailRequest.current += 1;
+    setOpenWord(null);
+    setWordDetail(null);
+    setWordDetailLoading(false);
+  }, []);
 
   if (!ready || !user) return null;
 
@@ -216,6 +249,7 @@ export function LevelView({
                 accentText={meta.text}
                 added={added.has(word.id)}
                 onAdd={() => onAdd(word)}
+                onOpen={() => onOpenWord(word)}
                 labels={{ add: t.addWord, addedLabel: t.addedWord, listen: t.listen }}
               />
             ))}
@@ -233,6 +267,21 @@ export function LevelView({
           )}
         </>
       )}
+
+      <AnimatePresence>
+        {openWord && (
+          <WordDetailModal
+            summary={openWord}
+            detail={wordDetail}
+            loading={wordDetailLoading}
+            lang={lang}
+            labels={vocab}
+            added={added.has(openWord.id)}
+            onAdd={() => onAdd(openWord)}
+            onClose={onCloseWord}
+          />
+        )}
+      </AnimatePresence>
     </main>
   );
 }

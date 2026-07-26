@@ -1,21 +1,34 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { WordCard } from "@/components/library/word-card";
+import { WordDetailModal } from "@/components/library/word-detail-modal";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
-import { fetchWords, type WordListItem } from "@/lib/vocab";
+import { fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 /** Corpus-wide word search with one-tap add to the learner's cards. */
-export function SearchPanel({ lang, t }: { lang: string; t: Dictionary["library"] }) {
+export function SearchPanel({
+  lang,
+  t,
+  vocab,
+}: {
+  lang: string;
+  t: Dictionary["library"];
+  vocab: Dictionary["vocab"];
+}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<WordListItem[] | null>(null);
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const [openWord, setOpenWord] = useState<WordListItem | null>(null);
+  const [wordDetail, setWordDetail] = useState<Word | null>(null);
+  const [wordDetailLoading, setWordDetailLoading] = useState(false);
+  const detailRequest = useRef(0);
 
   // Debounced search across the whole published corpus (no level filter).
   // setState happens only inside the timer/fetch callbacks, never in the body.
@@ -64,6 +77,30 @@ export function SearchPanel({ lang, t }: { lang: string; t: Dictionary["library"
       });
   };
 
+  const onOpenWord = (word: WordListItem) => {
+    const request = ++detailRequest.current;
+    setOpenWord(word);
+    setWordDetail(null);
+    setWordDetailLoading(true);
+    fetchWord(word.slug)
+      .then((result) => {
+        if (detailRequest.current === request) setWordDetail(result);
+      })
+      .catch(() => {
+        if (detailRequest.current === request) setWordDetail(null);
+      })
+      .finally(() => {
+        if (detailRequest.current === request) setWordDetailLoading(false);
+      });
+  };
+
+  const onCloseWord = useCallback(() => {
+    detailRequest.current += 1;
+    setOpenWord(null);
+    setWordDetail(null);
+    setWordDetailLoading(false);
+  }, []);
+
   return (
     <section className="mt-8">
       <div className="relative mx-auto max-w-2xl">
@@ -110,6 +147,7 @@ export function SearchPanel({ lang, t }: { lang: string; t: Dictionary["library"
                   accentText="text-brand-600 dark:text-brand-300"
                   added={added.has(word.id)}
                   onAdd={() => onAdd(word)}
+                  onOpen={() => onOpenWord(word)}
                   labels={{ add: t.addWord, addedLabel: t.addedWord, listen: t.listen }}
                 />
               ))}
@@ -117,6 +155,21 @@ export function SearchPanel({ lang, t }: { lang: string; t: Dictionary["library"
           )}
         </motion.div>
       )}
+
+      <AnimatePresence>
+        {openWord && (
+          <WordDetailModal
+            summary={openWord}
+            detail={wordDetail}
+            loading={wordDetailLoading}
+            lang={lang}
+            labels={vocab}
+            added={added.has(openWord.id)}
+            onAdd={() => onAdd(openWord)}
+            onClose={onCloseWord}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
