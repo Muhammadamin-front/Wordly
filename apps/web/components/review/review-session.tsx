@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -261,22 +261,24 @@ export function ReviewSession({
       </p>
 
       {/* Card: drag right = good, left = again (only when answer shown) */}
-      <motion.div
-        key={card.id + phase}
-        drag={isBack && !reduced ? "x" : false}
-        dragConstraints={{ left: 0, right: 0 }}
-        dragElastic={0.6}
-        onDragEnd={(_, info) => {
-          if (info.offset.x > 120) void rate("good");
-          else if (info.offset.x < -120) void rate("again");
-        }}
-        initial={reduced ? false : { rotateY: isBack ? -90 : 0, opacity: isBack ? 0 : 1 }}
-        animate={{ rotateY: 0, opacity: 1 }}
-        transition={{ duration: 0.28, ease: "easeOut" }}
-        style={{ transformPerspective: 1000 }}
-        className="mt-4 cursor-pointer select-none rounded-xl2 border border-line bg-card p-8 text-center shadow-lg shadow-brand-950/5"
-        onClick={() => (isBack ? undefined : flip())}
-      >
+      <AnimatePresence initial={false} mode="wait">
+        <motion.div
+          key={card.id + phase}
+          drag={isBack && !reduced ? "x" : false}
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.6}
+          onDragEnd={(_, info) => {
+            if (info.offset.x > 120) void rate("good");
+            else if (info.offset.x < -120) void rate("again");
+          }}
+          initial={reduced ? false : { rotateY: isBack ? -88 : 88, opacity: 0, scale: 0.985 }}
+          animate={{ rotateY: 0, opacity: 1, scale: 1 }}
+          exit={reduced ? undefined : { rotateY: isBack ? 88 : -88, opacity: 0, scale: 0.985 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformPerspective: 1100, transformStyle: "preserve-3d" }}
+          className="mt-4 cursor-pointer select-none rounded-xl2 border border-line bg-card p-8 text-center shadow-lg shadow-brand-950/5"
+          onClick={() => (isBack ? undefined : flip())}
+        >
         {word ? (
           <>
             <p className="flex items-center justify-center gap-3 text-4xl font-extrabold tracking-tight text-ink">
@@ -362,7 +364,8 @@ export function ReviewSession({
             )}
           </div>
         )}
-      </motion.div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Actions */}
       {isBack ? (

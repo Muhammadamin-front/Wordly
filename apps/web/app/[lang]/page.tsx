@@ -15,6 +15,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { HeroCta } from "@/components/site/hero-cta";
+import { AnimatedShaderBackground } from "@/components/site/animated-shader-background";
 import { SiteHeader } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
@@ -107,6 +108,7 @@ export default async function LandingPage({
               </div>
             ))}
           </div>
+          <AnimatedShaderBackground />
           <div aria-hidden className="absolute inset-0 bg-linear-to-r from-[#080c18]/96 via-[#080c18]/72 to-[#080c18]/28" />
           <div aria-hidden className="absolute inset-0 bg-linear-to-t from-[#080c18] via-transparent to-[#080c18]/26" />
           <div
