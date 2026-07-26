@@ -202,13 +202,13 @@ export default async function LandingPage({
 
         <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
           <Reveal>
-            <div className="surface-panel rounded-lg bg-ink p-6 text-white dark:bg-white dark:text-brand-950 sm:p-10">
+            <div className="surface-panel rounded-lg p-6 text-ink dark:text-white sm:p-10">
               <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
                 <div>
                   <h2 className="max-w-3xl text-balance text-3xl font-black tracking-tight sm:text-5xl">
                     {landing.ctaTitle}
                   </h2>
-                  <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 dark:text-brand-950/65">
+                  <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft dark:text-white/70">
                     {landing.ctaBody}
                   </p>
                 </div>
