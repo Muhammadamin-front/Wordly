@@ -326,7 +326,7 @@ function LearningConsole({
         </div>
       </div>
 
-      <div className="surface-panel float-medium absolute -right-4 top-12 hidden rounded-lg p-3 lg:block">
+      <div className="surface-panel float-medium !absolute -right-4 top-12 hidden rounded-lg p-3 lg:block">
         <div className="flex items-center gap-2 text-sm font-black text-ink">
           <ChartNoAxesColumnIncreasing className="size-4 text-rose-300" aria-hidden />
           IELTS
@@ -342,7 +342,7 @@ function LearningConsole({
         </div>
       </div>
 
-      <div className="surface-panel float-slow absolute -left-6 bottom-12 hidden rounded-lg p-3 lg:block">
+      <div className="surface-panel float-slow !absolute -left-6 bottom-12 hidden rounded-lg p-3 lg:block">
         <div className="flex items-center gap-2 text-sm font-black text-ink">
           <AudioLines className="size-4 text-accent-300" aria-hidden />
           91%

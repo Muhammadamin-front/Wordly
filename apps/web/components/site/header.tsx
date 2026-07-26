@@ -128,15 +128,17 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <Logo lang={lang} />
         </div>
 
-        <nav className="hidden min-w-0 flex-1 items-center gap-1.5 lg:flex">
+        <nav className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
           {authed ? (
             <>
               {PRIMARY_NAV.map((item) => (
                 <DesktopNavLink key={item.key} item={item} lang={lang} nav={nav} pathname={pathname} />
               ))}
-              {NAV_GROUPS.map((group) => (
-                <DesktopNavGroup key={group.key} group={group} lang={lang} nav={nav} pathname={pathname} />
-              ))}
+              <div className="hidden shrink-0 items-center gap-1.5 xl:flex">
+                {NAV_GROUPS.map((group) => (
+                  <DesktopNavGroup key={group.key} group={group} lang={lang} nav={nav} pathname={pathname} />
+                ))}
+              </div>
             </>
           ) : (
             <>
@@ -226,7 +228,7 @@ function MobileSidebar({
             className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
           />
           <motion.aside
-            className="surface-panel absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
+            className="surface-panel !absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
@@ -355,9 +357,9 @@ function DesktopNavLink({
     <Link
       href={`/${lang}/${item.href}`}
       className={cn(
-        "flex shrink-0 items-center gap-2 rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
+        "flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
         active
-          ? "bg-white/14 text-ink shadow-inner shadow-white/10 ring-1 ring-white/12 dark:bg-white/10"
+          ? "bg-brand-600/10 text-brand-700 shadow-inner shadow-brand-600/5 ring-1 ring-brand-500/10 dark:bg-white/10 dark:text-ink"
           : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
       )}
     >
@@ -378,22 +380,50 @@ function DesktopNavGroup({
   nav: Dictionary["nav"];
   pathname: string;
 }) {
+  const [expanded, setExpanded] = useState(false);
   const active = group.items.some((item) => isActive(pathname, lang, item.href));
   return (
-    <div className="group relative">
+    <div
+      className="relative shrink-0"
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
+      onFocusCapture={() => setExpanded(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setExpanded(false);
+        }
+      }}
+    >
       <button
         type="button"
+        aria-haspopup="menu"
+        aria-expanded={expanded}
+        onClick={() => setExpanded(true)}
+        onKeyDown={(event) => {
+          if (event.key === "Escape") {
+            setExpanded(false);
+          }
+        }}
         className={cn(
-          "flex items-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
+          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
           active
-            ? "bg-white/14 text-ink dark:bg-white/10"
+            ? "bg-brand-600/10 text-brand-700 dark:bg-white/10 dark:text-ink"
             : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
         )}
       >
         {getNavGroupLabel(lang, group.key)}
-        <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" aria-hidden />
+        <ChevronDown
+          className={cn("size-3.5 transition-transform", expanded && "rotate-180")}
+          aria-hidden
+        />
       </button>
-      <div className="surface-panel invisible absolute left-0 top-full z-50 mt-3 w-56 translate-y-2 rounded-lg p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+      <div
+        role="menu"
+        className={cn(
+          "surface-panel invisible pointer-events-none !absolute left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all duration-150",
+          expanded && "visible pointer-events-auto translate-y-0 opacity-100"
+        )}
+      >
         {group.items.map((item) => {
           const Icon = item.icon;
           const itemActive = isActive(pathname, lang, item.href);
@@ -401,6 +431,8 @@ function DesktopNavGroup({
             <Link
               key={item.key}
               href={`/${lang}/${item.href}`}
+              role="menuitem"
+              onClick={() => setExpanded(false)}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors",
                 itemActive

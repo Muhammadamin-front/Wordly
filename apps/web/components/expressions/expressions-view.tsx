@@ -63,6 +63,30 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
   );
 
   useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(null);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
     expressionsApi.meta().then(setMeta).catch(() => {});
   }, []);
 
@@ -291,113 +315,126 @@ function DetailModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-brand-950/60 p-3 backdrop-blur-xl dark:bg-black/72 sm:p-6"
     >
       <motion.div
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 30, opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        aria-label={expr.expression}
+        initial={{ y: 22, opacity: 0, scale: 0.98 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 22, opacity: 0, scale: 0.98 }}
         onClick={(e) => e.stopPropagation()}
-        className="surface-panel max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-lg p-5 sm:rounded-lg sm:p-6"
+        onWheel={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+        className="surface-panel flex max-h-[calc(100dvh-24px)] w-full max-w-2xl flex-col overflow-hidden rounded-lg p-0 shadow-2xl sm:max-h-[calc(100dvh-48px)]"
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-black text-ink">{expr.expression}</h2>
-              <button
-                type="button"
-                onClick={() => speak(expr.expression)}
-                title={t.listen}
-                className="icon-tile flex size-8 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
-              >
-                <Volume2 className="size-4" aria-hidden />
-              </button>
+        <div className="shrink-0 p-5 pb-0 sm:p-6 sm:pb-0">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-2xl font-black text-ink">{expr.expression}</h2>
+                <button
+                  type="button"
+                  onClick={() => speak(expr.expression)}
+                  title={t.listen}
+                  className="icon-tile flex size-8 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
+                >
+                  <Volume2 className="size-4" aria-hidden />
+                </button>
+              </div>
+              <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.uzbek}</p>
             </div>
-            <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.uzbek}</p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="icon-tile flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-ink"
+            >
+              <X className="size-4" aria-hidden />
+            </button>
           </div>
-          <button type="button" onClick={onClose} className="icon-tile flex size-9 items-center justify-center rounded-lg text-ink-soft">
-            <X className="size-4" aria-hidden />
-          </button>
+
+          <div className="mt-4 flex flex-wrap gap-1.5 text-[11px]">
+            <Tag>{expr.category}</Tag>
+            <span className={cn("rounded-md bg-ink/5 px-2 py-0.5 font-black dark:bg-white/10", CEFR_COLOR(expr.cefr))}>
+              {expr.cefr}
+            </span>
+            <Tag>IELTS {expr.ielts_band}</Tag>
+            <Tag>{expr.formality}</Tag>
+          </div>
+
+          {canAdd && (
+            <button
+              type="button"
+              onClick={onAdd}
+              disabled={isAdded}
+              className={cn(
+                "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
+                isAdded
+                  ? "bg-success/10 text-success"
+                  : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(50,108,255,0.28)] hover:-translate-y-0.5 hover:bg-brand-700"
+              )}
+            >
+              {isAdded ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
+              {isAdded ? t.addedToCards : t.addToCards}
+            </button>
+          )}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-1.5 text-[11px]">
-          <Tag>{expr.category}</Tag>
-          <span className={cn("rounded-md bg-ink/5 px-2 py-0.5 font-black dark:bg-white/10", CEFR_COLOR(expr.cefr))}>
-            {expr.cefr}
-          </span>
-          <Tag>IELTS {expr.ielts_band}</Tag>
-          <Tag>{expr.formality}</Tag>
-        </div>
-
-        {canAdd && (
-          <button
-            type="button"
-            onClick={onAdd}
-            disabled={isAdded}
-            className={cn(
-              "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
-              isAdded
-                ? "bg-success/10 text-success"
-                : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(50,108,255,0.28)] hover:-translate-y-0.5 hover:bg-brand-700"
-            )}
-          >
-            {isAdded ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
-            {isAdded ? t.addedToCards : t.addToCards}
-          </button>
-        )}
-
-        <div className="mt-6 space-y-5">
-          <Section title={t.usage}>{expr.usage}</Section>
-          <Section title={t.grammar}>
-            <code className="rounded-md bg-ink/5 px-1.5 py-0.5 text-[13px] dark:bg-white/10">
-              {expr.grammar_pattern}
-            </code>
-          </Section>
-          {expr.example_sentences.length > 0 && (
-            <Section title={t.examples}>
-              <ul className="space-y-2">
-                {expr.example_sentences.map((s, i) => (
-                  <li key={i} className="border-l-2 border-line pl-3 italic text-ink-soft">
-                    {s}
-                  </li>
-                ))}
-              </ul>
+        <div className="mt-5 min-h-0 flex-1 overflow-y-auto px-5 pb-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:pb-6 sm:pr-5">
+          <div className="space-y-5">
+            <Section title={t.usage}>{expr.usage}</Section>
+            <Section title={t.grammar}>
+              <code className="rounded-md bg-ink/5 px-1.5 py-0.5 text-[13px] dark:bg-white/10">
+                {expr.grammar_pattern}
+              </code>
             </Section>
-          )}
-          {expr.collocations.length > 0 && (
-            <Section title={t.collocations}>{expr.collocations.join(" · ")}</Section>
-          )}
-          {expr.alternatives.length > 0 && (
-            <Section title={t.alternatives}>{expr.alternatives.join(", ")}</Section>
-          )}
-          {expr.synonyms.length > 0 && (
-            <Section title={t.synonyms}>{expr.synonyms.join(", ")}</Section>
-          )}
-          {expr.opposites.length > 0 && (
-            <Section title={t.opposites}>{expr.opposites.join(", ")}</Section>
-          )}
-          {expr.common_mistakes.length > 0 && (
-            <Section title={t.mistakes}>
-              <ul className="space-y-2">
-                {expr.common_mistakes.map((m, i) => (
-                  <li key={i} className="flex gap-2 text-danger">
-                    <AlertTriangle className="mt-1 size-4 shrink-0" aria-hidden />
-                    <span>{m}</span>
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          )}
-          {expr.native_notes && (
-            <div className="rounded-lg border border-brand-400/20 bg-brand-600/5 p-4">
-              <Section title={t.nativeNotes}>
-                <span className="mb-2 flex items-center gap-2">
-                  <Lightbulb className="size-4 text-amber-300" aria-hidden />
-                </span>
-                {expr.native_notes}
+            {expr.example_sentences.length > 0 && (
+              <Section title={t.examples}>
+                <ul className="space-y-2">
+                  {expr.example_sentences.map((s, i) => (
+                    <li key={i} className="border-l-2 border-line pl-3 italic text-ink-soft">
+                      {s}
+                    </li>
+                  ))}
+                </ul>
               </Section>
-            </div>
-          )}
+            )}
+            {expr.collocations.length > 0 && (
+              <Section title={t.collocations}>{expr.collocations.join(" · ")}</Section>
+            )}
+            {expr.alternatives.length > 0 && (
+              <Section title={t.alternatives}>{expr.alternatives.join(", ")}</Section>
+            )}
+            {expr.synonyms.length > 0 && (
+              <Section title={t.synonyms}>{expr.synonyms.join(", ")}</Section>
+            )}
+            {expr.opposites.length > 0 && (
+              <Section title={t.opposites}>{expr.opposites.join(", ")}</Section>
+            )}
+            {expr.common_mistakes.length > 0 && (
+              <Section title={t.mistakes}>
+                <ul className="space-y-2">
+                  {expr.common_mistakes.map((m, i) => (
+                    <li key={i} className="flex gap-2 text-danger">
+                      <AlertTriangle className="mt-1 size-4 shrink-0" aria-hidden />
+                      <span>{m}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Section>
+            )}
+            {expr.native_notes && (
+              <div className="rounded-lg border border-brand-400/20 bg-brand-600/5 p-4">
+                <Section title={t.nativeNotes}>
+                  <span className="mb-2 flex items-center gap-2">
+                    <Lightbulb className="size-4 text-amber-300" aria-hidden />
+                  </span>
+                  {expr.native_notes}
+                </Section>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </motion.div>
