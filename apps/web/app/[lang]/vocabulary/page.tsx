@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { VocabularyWordCard } from "@/components/library/vocabulary-word-card";
 import { SiteHeader } from "@/components/site/header";
 import { Card } from "@/components/ui/card";
 import { fetchCategories, fetchWords, CEFR_LEVELS, type Category } from "@/lib/vocab";
@@ -148,28 +149,17 @@ export default async function VocabularyPage({
         ) : (
           <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {words.items.map((word) => (
-              <li key={word.id}>
-                <Link
-                  href={`/${lang}/words/${word.slug}`}
-                  className="block h-full rounded-xl2 border border-line bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:shadow-md"
-                >
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-lg font-bold text-ink">{word.headword}</span>
-                    <span className="rounded-md bg-brand-600/10 px-1.5 py-0.5 text-[11px] font-bold text-brand-600 dark:text-brand-300">
-                      {word.cefr_level}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-xs text-ink-soft">
-                    {word.pos}
-                    {word.ipa ? ` · /${word.ipa}/` : ""}
-                  </p>
-                  <p className="mt-2 text-sm font-medium text-ink">
-                    {lang === "ru" ? word.primary_translation_ru : word.primary_translation_uz}
-                    {lang !== "ru" && word.primary_translation_ru ? (
-                      <span className="font-normal text-ink-soft"> · {word.primary_translation_ru}</span>
-                    ) : null}
-                  </p>
-                </Link>
+              <li key={word.id} className="h-full">
+                <VocabularyWordCard
+                  word={word}
+                  lang={lang}
+                  labels={{
+                    listen: dict.library.listen,
+                    flip: dict.library.flipCard,
+                    unflip: dict.library.flipBack,
+                    details: dict.library.viewDetails,
+                  }}
+                />
               </li>
             ))}
           </ul>

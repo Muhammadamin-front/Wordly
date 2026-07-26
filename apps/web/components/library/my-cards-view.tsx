@@ -1,15 +1,15 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Play, Search, Trash2, Volume2 } from "lucide-react";
+import { ArrowLeft, Play, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { SavedWordCard } from "@/components/library/saved-word-card";
 import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut } from "@/lib/flashcards";
-import { speak } from "@/lib/games";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function MyCardsView({ lang, t }: { lang: string; t: Dictionary["library"] }) {
@@ -103,50 +103,24 @@ export function MyCardsView({ lang, t }: { lang: string; t: Dictionary["library"
         </div>
       ) : (
         <>
-          <ul className="mt-6 space-y-2">
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2">
             <AnimatePresence initial={false}>
-              {cards.map((card) => {
-                const sense = card.word?.senses[0];
-                const translation = lang === "ru" ? sense?.translation_ru : sense?.translation_uz;
-                return (
-                  <motion.li
-                    key={card.id}
-                    layout
-                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                    className="flex items-center gap-3 rounded-xl border border-line/60 bg-card/70 px-4 py-3"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => card.word && speak(card.word.headword)}
-                      aria-label={t.listen}
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink/5 text-ink-soft transition-colors hover:bg-brand-600/10 hover:text-brand-600 dark:bg-white/10 dark:hover:text-brand-300"
-                    >
-                      <Volume2 className="size-4" />
-                    </button>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-bold text-ink">
-                        {card.word?.headword ?? card.front_text}
-                      </p>
-                      <p className="truncate text-sm text-ink-soft">
-                        {translation ?? card.back_text}
-                        {card.word && (
-                          <span className="ml-2 rounded bg-ink/5 px-1.5 py-0.5 text-xs font-medium dark:bg-white/10">
-                            {card.word.cefr_level}
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => onDelete(card.id)}
-                      aria-label={t.delete}
-                      className="flex size-9 shrink-0 items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-danger/10 hover:text-danger"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </motion.li>
-                );
-              })}
+              {cards.map((card) => (
+                <motion.li
+                  key={card.id}
+                  layout
+                  exit={{ opacity: 0, x: -32, rotateY: -18, scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 250, damping: 24 }}
+                  className="h-full [perspective:1200px]"
+                >
+                  <SavedWordCard
+                    card={card}
+                    lang={lang}
+                    labels={t}
+                    onDelete={() => onDelete(card.id)}
+                  />
+                </motion.li>
+              ))}
             </AnimatePresence>
           </ul>
 

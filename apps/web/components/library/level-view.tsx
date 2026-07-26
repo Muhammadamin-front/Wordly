@@ -241,18 +241,27 @@ export function LevelView({
       ) : (
         <>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {words.map((word) => (
-              <WordCard
-                key={word.id}
-                word={word}
-                lang={lang}
-                accentText={meta.text}
-                added={added.has(word.id)}
-                onAdd={() => onAdd(word)}
-                onOpen={() => onOpenWord(word)}
-                labels={{ add: t.addWord, addedLabel: t.addedWord, listen: t.listen }}
-              />
-            ))}
+            <AnimatePresence>
+              {words.map((word) => (
+                <WordCard
+                  key={word.id}
+                  word={word}
+                  lang={lang}
+                  accentText={meta.text}
+                  added={added.has(word.id)}
+                  onAdd={() => onAdd(word)}
+                  onOpen={() => onOpenWord(word)}
+                  labels={{
+                    add: t.addWord,
+                    addedLabel: t.addedWord,
+                    listen: t.listen,
+                    flip: t.flipCard,
+                    unflip: t.flipBack,
+                    details: t.viewDetails,
+                  }}
+                />
+              ))}
+            </AnimatePresence>
           </div>
 
           {words.length < total && (

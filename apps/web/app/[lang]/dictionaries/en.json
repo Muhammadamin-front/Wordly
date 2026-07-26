@@ -836,7 +836,10 @@
     "searchAll": "Search any word…",
     "searchMyCards": "Search your cards…",
     "noCards": "No cards yet. Add words from the shelves or search above.",
-    "manage": "Manage"
+    "manage": "Manage",
+    "flipCard": "Flip to reveal the translation",
+    "flipBack": "Flip back to the word",
+    "viewDetails": "View details"
   },
   "grammar": {
     "title": "Grammar",

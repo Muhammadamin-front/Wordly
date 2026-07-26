@@ -139,18 +139,27 @@ export function SearchPanel({
             <p className="py-6 text-center text-sm text-ink-soft">{t.noResults}</p>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {results.map((word) => (
-                <WordCard
-                  key={word.id}
-                  word={word}
-                  lang={lang}
-                  accentText="text-brand-600 dark:text-brand-300"
-                  added={added.has(word.id)}
-                  onAdd={() => onAdd(word)}
-                  onOpen={() => onOpenWord(word)}
-                  labels={{ add: t.addWord, addedLabel: t.addedWord, listen: t.listen }}
-                />
-              ))}
+              <AnimatePresence>
+                {results.map((word) => (
+                  <WordCard
+                    key={word.id}
+                    word={word}
+                    lang={lang}
+                    accentText="text-brand-600 dark:text-brand-300"
+                    added={added.has(word.id)}
+                    onAdd={() => onAdd(word)}
+                    onOpen={() => onOpenWord(word)}
+                    labels={{
+                      add: t.addWord,
+                      addedLabel: t.addedWord,
+                      listen: t.listen,
+                      flip: t.flipCard,
+                      unflip: t.flipBack,
+                      details: t.viewDetails,
+                    }}
+                  />
+                ))}
+              </AnimatePresence>
             </div>
           )}
         </motion.div>

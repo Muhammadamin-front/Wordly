@@ -836,7 +836,10 @@
     "searchAll": "Istalgan so'zni qidiring…",
     "searchMyCards": "Kartalaringizni qidiring…",
     "noCards": "Hali karta yo'q. Tokchalardan yoki yuqoridagi qidiruvdan so'z qo'shing.",
-    "manage": "Boshqarish"
+    "manage": "Boshqarish",
+    "flipCard": "Tarjimani ko'rish uchun aylantirish",
+    "flipBack": "So'z tomoniga qaytarish",
+    "viewDetails": "Batafsil ko'rish"
   },
   "grammar": {
     "title": "Grammatika",
