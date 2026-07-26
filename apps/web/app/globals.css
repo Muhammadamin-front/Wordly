@@ -151,6 +151,11 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.hero-title {
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+
 body::before,
 body::after {
   pointer-events: none;
