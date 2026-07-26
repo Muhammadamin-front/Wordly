@@ -18,6 +18,7 @@ import {
   Target,
   type LucideIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { createTiltHandlers } from "@/components/ui/tilt-card";
@@ -80,17 +81,19 @@ export function LevelCard({
         locked ? "grayscale-[0.3]" : ""
       )}
     >
-      <div className={cn("absolute inset-0 bg-linear-to-br", meta.art)} />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_14%,rgba(255,255,255,0.24),transparent_24%),radial-gradient(circle_at_85%_8%,rgba(255,255,255,0.12),transparent_18%),linear-gradient(to_bottom,rgba(255,255,255,0.08),transparent_22%,rgba(0,0,0,0.34))]" />
+      <Image
+        alt=""
+        className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.055]"
+        fill
+        sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 25vw"
+        src={meta.cover}
+      />
+      <div className={cn("absolute inset-0 bg-linear-to-br opacity-30 mix-blend-color", meta.art)} />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_14%,rgba(255,255,255,0.18),transparent_24%),radial-gradient(circle_at_85%_8%,rgba(255,255,255,0.1),transparent_18%),linear-gradient(to_bottom,rgba(0,0,0,0.03),rgba(0,0,0,0.3)_42%,rgba(0,0,0,0.78)_74%,rgba(0,0,0,0.94))]" />
       <div className="absolute inset-0 opacity-[0.18] mix-blend-soft-light [background-image:linear-gradient(135deg,rgba(255,255,255,0.12)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.12)_50%,rgba(255,255,255,0.12)_75%,transparent_75%,transparent)] [background-size:20px_20px]" />
       <div className={cn("absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-black/26 to-transparent", meta.overlay)} />
 
-      <Icon
-        className="depth-parallax float-slow absolute -right-10 -top-12 size-52 rotate-12 text-white/10 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-6"
-        strokeWidth={1.45}
-      />
-
-      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
+      <div className="absolute inset-x-0 top-0 z-20 flex items-start justify-between p-4">
         <span className="flex items-center gap-2 rounded-full border border-white/15 bg-white/14 px-3 py-2 text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/92 shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
           <span className="flex size-7 items-center justify-center rounded-full bg-white/90 text-ink shadow-sm">
             <Icon className="size-4" strokeWidth={2.3} />
