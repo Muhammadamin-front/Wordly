@@ -17,6 +17,11 @@ export interface GrammarQuizItem {
   answer: number; // index into options
 }
 
+export interface GrammarKeyPoint {
+  title: string;
+  body: string;
+}
+
 /** One grammar lesson. Explanations are written in Uzbek (the app's audience)
  *  with English terminology kept inline; examples are bilingual. */
 export interface GrammarLesson {
@@ -27,6 +32,10 @@ export interface GrammarLesson {
   emoji: string;
   explanation: string[]; // paragraphs
   formula?: string;
+  highlights?: string[]; // words/structures to visually mark inside explanations and examples
+  keyPoints?: GrammarKeyPoint[]; // compact "why / how / when" teaching blocks
+  importantNotes?: string[]; // short high-priority warnings or exam notes
+  examTips?: string[]; // IELTS/CEFR usage tips for production practice
   examples: GrammarExample[];
   mistakes: GrammarMistake[];
   quiz: GrammarQuizItem[];

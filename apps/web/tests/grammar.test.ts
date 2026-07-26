@@ -3,9 +3,10 @@ import { describe, expect, it } from "vitest";
 import { ALL_LESSONS, GRAMMAR_LEVELS, LESSONS_BY_LEVEL } from "@/lib/grammar";
 
 describe("grammar course content", () => {
-  it("has 45 lessons across the five levels", () => {
-    expect(ALL_LESSONS).toHaveLength(45);
+  it("has a full course across the five levels", () => {
+    expect(ALL_LESSONS.length).toBeGreaterThanOrEqual(57);
     expect(GRAMMAR_LEVELS.every((lv) => LESSONS_BY_LEVEL[lv].length >= 8)).toBe(true);
+    expect(LESSONS_BY_LEVEL.IELTS.length).toBeGreaterThanOrEqual(20);
   });
 
   it("has unique slugs", () => {
@@ -20,6 +21,10 @@ describe("grammar course content", () => {
       expect(lesson.examples.length).toBeGreaterThanOrEqual(5);
       expect(lesson.mistakes.length).toBeGreaterThanOrEqual(3);
       expect(lesson.quiz.length).toBeGreaterThanOrEqual(4);
+      if (lesson.level === "IELTS") {
+        expect(lesson.explanation.length).toBeGreaterThanOrEqual(4);
+        expect(lesson.examples.length).toBeGreaterThanOrEqual(6);
+      }
       for (const ex of lesson.examples) {
         expect(ex.en.trim()).toBeTruthy();
         expect(ex.uz.trim()).toBeTruthy();
