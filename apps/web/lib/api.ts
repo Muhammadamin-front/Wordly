@@ -39,13 +39,35 @@ export class ApiError extends Error {
 // scoped to the API's auth path, so a page reload silently re-authenticates
 // via /auth/refresh.
 let accessToken: string | null = null;
+const accessTokenWaiters = new Set<(token: string | null) => void>();
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+  for (const resolve of accessTokenWaiters) resolve(token);
+  accessTokenWaiters.clear();
 }
 
 export function getAccessToken(): string | null {
   return accessToken;
+}
+
+/** Wait briefly for AuthProvider's silent refresh to finish.
+ *
+ * Audio buttons can be clicked while the page is visible but before the
+ * refresh request has restored the in-memory access token. Without this wait,
+ * that small race turns an otherwise healthy TTS request into a 401.
+ */
+export function waitForAccessToken(timeoutMs = 3000): Promise<string | null> {
+  if (accessToken) return Promise.resolve(accessToken);
+  return new Promise((resolve) => {
+    const finish = (token: string | null) => {
+      clearTimeout(timeout);
+      accessTokenWaiters.delete(finish);
+      resolve(token);
+    };
+    accessTokenWaiters.add(finish);
+    const timeout = setTimeout(() => finish(accessToken), timeoutMs);
+  });
 }
 
 export async function apiFetch<T>(

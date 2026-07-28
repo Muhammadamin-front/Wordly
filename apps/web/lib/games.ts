@@ -1,4 +1,4 @@
-import { API_URL, apiFetch, getAccessToken } from "@/lib/api";
+import { API_URL, apiFetch, getAccessToken, waitForAccessToken } from "@/lib/api";
 import type { Reward } from "@/lib/gamification";
 
 export const GAME_TYPES = [
@@ -96,15 +96,18 @@ async function playServerVoice(text: string): Promise<void> {
   let url = ttsCache.get(text);
   if (!url) {
     if (Date.now() < serverTtsPausedUntil) throw new Error("server tts cooling down");
-    const token = getAccessToken();
+    const token = getAccessToken() ?? (await waitForAccessToken());
     if (!token) throw new Error("not authenticated");
     const response = await fetch(`${API_URL}/api/v1/tts?text=${encodeURIComponent(text)}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!response.ok) {
-      // 429 (rate limit) recovers quickly; 503 (not configured) may be a
-      // deploy in progress — back off briefly either way, then retry.
-      serverTtsPausedUntil = Date.now() + (response.status === 429 ? 15_000 : 120_000);
+      // Authentication can settle just after a click, so never turn a 401
+      // into a provider cooldown. Only actual rate/provider failures back off.
+      if (response.status === 429) serverTtsPausedUntil = Date.now() + 15_000;
+      if (response.status === 502 || response.status === 503) {
+        serverTtsPausedUntil = Date.now() + 30_000;
+      }
       throw new Error(`tts ${response.status}`);
     }
     url = URL.createObjectURL(await response.blob());
