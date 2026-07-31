@@ -31,7 +31,8 @@ services:
     build: ./apps/api
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
-      SECRET_KEY: ${SECRET_KEY:-compose-dev-secret-change-me-32-bytes!}
+      # Safe only for local development; production startup rejects this value.
+      SECRET_KEY: ${SECRET_KEY:-dev-only-secret-change-me}
       DATABASE_URL: postgresql+asyncpg://words:words@postgres:5432/words
       REDIS_URL: redis://redis:6379/0
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}

@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 76 passed; API 233 passed; lint and production build passed |
+| Tests | Web 76 passed; API 241 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -109,6 +109,10 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P0. Production secret validation can accept a known Compose secret
 
+- **Status:** **Resolved 2026-07-31.** Production now rejects known development
+  and test defaults, placeholders, secrets shorter than 48 characters, and
+  low-entropy values. Compose uses the same explicitly rejected development
+  fallback, so switching only `ENVIRONMENT` to production fails safely.
 - **Problem:** Production startup rejects only `dev-only-secret-change-me`, while Compose supplies a different predictable fallback: `compose-dev-secret-change-me-32-bytes!`.
 - **Why it matters:** Setting `ENVIRONMENT=production` without overriding the Compose default starts production with a public, known signing key.
 - **User impact:** Attackers could forge access tokens.
@@ -300,7 +304,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 - [ ] Cookie-only refresh token for browser clients
 - [ ] Refresh/reset/verify/resend rate limits
 - [ ] Trusted proxy configuration for client IPs
-- [ ] Strong required production secret validation
+- [x] Strong required production secret validation
 - [ ] Idempotent review submissions
 - [ ] Unique/locked payment transitions and reconciliation
 - [ ] Payme/Click credentials actually injected by deployment

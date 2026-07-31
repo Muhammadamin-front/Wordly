@@ -1,7 +1,42 @@
+from collections import Counter
 from functools import lru_cache
+from math import log2
 from typing import List, Literal, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+DEV_SECRET_KEY = "dev-only-secret-change-me"
+MIN_PRODUCTION_SECRET_LENGTH = 48
+MIN_PRODUCTION_SECRET_ENTROPY_BITS = 192.0
+KNOWN_INSECURE_SECRET_KEYS = frozenset(
+    {
+        "",
+        DEV_SECRET_KEY,
+        "compose-dev-secret-change-me-32-bytes!",
+        "test-secret-key-with-at-least-32-bytes!!",
+    }
+)
+SECRET_PLACEHOLDER_MARKERS = (
+    "change-me",
+    "changeme",
+    "generate-with",
+    "python -c",
+    "replace-with",
+    "<python",
+    "<secret",
+)
+
+
+def estimated_secret_entropy_bits(secret: str) -> float:
+    """Conservative Shannon estimate used to reject obvious repeated patterns."""
+    counts = Counter(secret)
+    length = len(secret)
+    if length == 0:
+        return 0.0
+    entropy_per_character = -sum(
+        (count / length) * log2(count / length) for count in counts.values()
+    )
+    return entropy_per_character * length
 
 
 class Settings(BaseSettings):
@@ -11,9 +46,9 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"  # development | test | production
     API_V1_PREFIX: str = "/api/v1"
 
-    # Security. SECRET_KEY has no default on purpose in production; the dev
-    # fallback below is rejected when ENVIRONMENT=production (see main.py).
-    SECRET_KEY: str = "dev-only-secret-change-me"
+    # Development has a predictable fallback for zero-setup local runs.
+    # validate_runtime() rejects it and weak/placeholder values in production.
+    SECRET_KEY: str = DEV_SECRET_KEY
     ACCESS_TOKEN_TTL_SECONDS: int = 15 * 60
     REFRESH_TOKEN_TTL_SECONDS: int = 30 * 24 * 3600
     EMAIL_TOKEN_TTL_SECONDS: int = 24 * 3600
@@ -165,8 +200,24 @@ class Settings(BaseSettings):
     def validate_runtime(self) -> None:
         if self.ENVIRONMENT != "production":
             return
-        if self.SECRET_KEY == "dev-only-secret-change-me":
-            raise RuntimeError("SECRET_KEY must be set in production")
+        secret = self.SECRET_KEY.strip()
+        lower_secret = secret.lower()
+        if (
+            secret in KNOWN_INSECURE_SECRET_KEYS
+            or secret.startswith("<")
+            or any(marker in lower_secret for marker in SECRET_PLACEHOLDER_MARKERS)
+        ):
+            raise RuntimeError(
+                "SECRET_KEY must be replaced with a generated production secret"
+            )
+        if len(secret) < MIN_PRODUCTION_SECRET_LENGTH:
+            raise RuntimeError(
+                "SECRET_KEY must be at least {} characters in production".format(
+                    MIN_PRODUCTION_SECRET_LENGTH
+                )
+            )
+        if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
+            raise RuntimeError("SECRET_KEY must be a high-entropy production secret")
         if self.EMAIL_PROVIDER != "resend":
             raise RuntimeError("EMAIL_PROVIDER must be 'resend' in production")
         if not self.RESEND_API_KEY:

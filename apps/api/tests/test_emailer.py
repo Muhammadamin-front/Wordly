@@ -12,6 +12,10 @@ from app.services.emailer import (
     ResendEmailer,
 )
 
+PRODUCTION_SECRET = (
+    "G8vQ2mN7xR4kT9pL6sW1cD5fH0jB3yU8aE2zK7nM4qP9tV6wX1rC5gS0"
+)
+
 
 async def test_console_emailer_never_logs_message_body(caplog):
     caplog.set_level(logging.INFO, logger="words.emailer")
@@ -64,7 +68,7 @@ def test_production_requires_real_email_provider():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
-        SECRET_KEY="production-secret-with-at-least-32-bytes",
+        SECRET_KEY=PRODUCTION_SECRET,
         EMAIL_PROVIDER="console",
     )
 
@@ -76,7 +80,7 @@ def test_production_accepts_complete_resend_configuration():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
-        SECRET_KEY="production-secret-with-at-least-32-bytes",
+        SECRET_KEY=PRODUCTION_SECRET,
         EMAIL_PROVIDER="resend",
         RESEND_API_KEY="re_production",
         EMAIL_FROM="Wordly <noreply@words.uz>",

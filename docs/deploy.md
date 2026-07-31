@@ -11,7 +11,8 @@ Create a `.env` next to `docker-compose.yml` (compose reads it automatically):
 
 ```bash
 ENVIRONMENT=production
-SECRET_KEY=<python -c "import secrets; print(secrets.token_urlsafe(48))">
+# Generate once: python -c "import secrets; print(secrets.token_urlsafe(48))"
+SECRET_KEY=<paste-generated-output>
 FRONTEND_ORIGIN=https://words.uz
 COOKIE_SECURE=true
 EMAIL_PROVIDER=resend
@@ -33,7 +34,8 @@ PAYMENTS_SANDBOX=false
 
 Notes that will bite you if skipped:
 
-- `SECRET_KEY` — the API **refuses to boot** in production with the dev default.
+- `SECRET_KEY` — use the generator above. Production rejects known dev/test
+  values, placeholders, keys shorter than 48 characters, and low-entropy keys.
 - `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and `EMAIL_FROM` are required in
   production. The API refuses to boot with the console email backend.
 - `NEXT_PUBLIC_*` are **build-time** args: changing them means rebuilding the
