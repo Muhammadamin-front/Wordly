@@ -76,13 +76,13 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "premium-card depth-scene group relative flex aspect-4/5 flex-col overflow-hidden rounded-lg p-5 text-ink",
+        "premium-card depth-scene group relative flex aspect-[3/4] flex-col overflow-hidden rounded-lg p-2 text-ink sm:aspect-4/5 sm:p-5",
         locked ? "grayscale-[0.45] opacity-75" : ""
       )}
     >
       <div
         aria-hidden
-        className="absolute -right-7 top-8 h-40 w-28 overflow-hidden rounded-t-full border border-brand-900/10 bg-sand-50/48 transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03] dark:bg-white/4"
+        className="absolute -right-5 top-8 h-20 w-14 overflow-hidden rounded-t-full border border-brand-900/10 bg-sand-50/48 transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03] sm:-right-7 sm:h-40 sm:w-28 dark:bg-white/4"
       >
         <div className={cn("absolute inset-x-5 bottom-0 h-28 rounded-t-full opacity-14", meta.bar)} />
         <div className="absolute -inset-x-8 top-14 h-px rotate-45 bg-brand-900/12" />
@@ -97,46 +97,46 @@ export function LevelCard({
 
       <div className="relative z-20 flex items-start justify-between">
         <span className="flex items-center gap-2">
-          <span className={cn("flex size-11 items-center justify-center rounded-full text-sm font-black text-white shadow-sm", meta.bar)}>
+          <span className={cn("flex size-8 items-center justify-center rounded-full text-[10px] font-black text-white shadow-sm sm:size-11 sm:text-sm", meta.bar)}>
             {meta.key}
           </span>
-          <span className="flex size-9 items-center justify-center rounded-full border border-line bg-raised/76 text-ink-soft">
+          <span className="hidden size-9 items-center justify-center rounded-full border border-line bg-raised/76 text-ink-soft sm:flex">
             <Icon className="size-4" strokeWidth={2.1} />
           </span>
         </span>
         {locked && (
-          <span className="flex items-center gap-1.5 rounded-full border border-line bg-raised/80 px-3 py-2 text-[10px] font-bold uppercase text-ink-soft backdrop-blur-xl">
-            <Lock className="size-3.5" /> {labels.soon}
+          <span className="flex size-7 items-center justify-center rounded-full border border-line bg-raised/80 text-ink-soft backdrop-blur-xl sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3 sm:py-2 sm:text-[10px] sm:font-bold sm:uppercase">
+            <Lock className="size-3.5" /> <span className="hidden sm:inline">{labels.soon}</span>
           </span>
         )}
       </div>
 
-      <div className="relative z-10 mt-auto pt-24">
-        <h3 className="max-w-[13ch] text-[1.55rem] font-black leading-[1.02] tracking-tight text-ink">
+      <div className="relative z-10 mt-auto pt-4 sm:pt-24">
+        <h3 className="line-clamp-2 max-w-[13ch] text-xs font-black leading-tight tracking-tight text-ink sm:text-[1.55rem] sm:leading-[1.02]">
           {strings.name}
         </h3>
-        <p className="mt-3 max-w-[27ch] text-sm/6 text-ink-soft">{strings.desc}</p>
+        <p className="mt-3 hidden max-w-[27ch] text-sm/6 text-ink-soft sm:block">{strings.desc}</p>
 
         {custom ? (
-          <div className="mt-5 flex items-center justify-between border-t border-line/70 pt-4">
+          <div className="mt-2 flex items-center justify-between border-t border-line/70 pt-2 sm:mt-5 sm:pt-4">
             <span className="text-sm font-medium text-ink-soft">{labels.words}</span>
-            <span className="flex items-center gap-1.5 text-sm font-bold text-brand-800 transition-transform group-hover:translate-x-1 dark:text-brand-200">
-              {labels.start}
-              <ArrowRight className="size-4" />
+            <span className="flex items-center gap-1 text-[10px] font-bold text-brand-800 transition-transform group-hover:translate-x-1 sm:gap-1.5 sm:text-sm dark:text-brand-200">
+              <span className="hidden sm:inline">{labels.start}</span>
+              <ArrowRight className="size-3 sm:size-4" />
             </span>
           </div>
         ) : (
           !locked && (
-            <div className="mt-5 space-y-3 border-t border-line/70 pt-4">
+            <div className="mt-2 space-y-1.5 border-t border-line/70 pt-2 sm:mt-5 sm:space-y-3 sm:pt-4">
               <div className="flex items-end justify-between gap-3">
                 <div>
-                  <p className="text-3xl font-black tracking-tight text-ink">
+                  <p className="text-xs font-black tracking-tight text-ink sm:text-3xl">
                     {learned}
                     <span className="text-ink-soft/50">/{total}</span>
                   </p>
-                  <p className="text-sm text-ink-soft">{labels.learned}</p>
+                  <p className="hidden text-sm text-ink-soft sm:block">{labels.learned}</p>
                 </div>
-                <span className="rounded-full border border-line bg-raised/72 px-3 py-1.5 text-sm font-extrabold text-ink backdrop-blur-xl">
+                <span className="rounded-full border border-line bg-raised/72 px-1.5 py-0.5 text-[9px] font-extrabold text-ink backdrop-blur-xl sm:px-3 sm:py-1.5 sm:text-sm">
                   {pct}%
                 </span>
               </div>
@@ -148,7 +148,7 @@ export function LevelCard({
                 />
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="hidden items-center justify-between sm:flex">
                 <span className="text-sm font-medium text-ink-soft">{labels.words}</span>
                 <span className="flex items-center gap-1.5 text-sm font-bold text-brand-800 transition-transform group-hover:translate-x-1 dark:text-brand-200">
                   {learned > 0 ? labels.continue : labels.start}

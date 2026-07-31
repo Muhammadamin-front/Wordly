@@ -1,110 +1,287 @@
 "use client";
 
+import { motion } from "framer-motion";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  ArrowUpRight,
+  BadgeCheck,
+  BookMarked,
+  BookOpen,
+  Check,
+  CircleDot,
+  Headphones,
+  ListChecks,
+  Mic2,
+  PenLine,
+  Quote,
+  Sparkles,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-import { useAuth } from "@/components/auth/auth-provider";
-import { CheatsheetPanel } from "@/components/ielts/cheatsheet";
-import { ComprehensionTest } from "@/components/ielts/comprehension-test";
-import { WritingPractice } from "@/components/ielts/writing-practice";
-import { Button } from "@/components/ui/button";
-import { cheatsheetFor, type CheatsheetSkill } from "@/lib/ielts-content";
-import { cn } from "@/lib/utils";
-import type { Dictionary } from "@/app/[lang]/dictionaries";
+import {
+  IELTS_SKILL_CONTENT,
+  IELTS_VOCABULARY_RESOURCES,
+  SPEAKING_TOPICS,
+  type IeltsResourceSection,
+  type IeltsSkill,
+} from "@/lib/ielts-resources";
 
-type Ielts = Dictionary["ielts"];
-
-const EMOJI: Record<CheatsheetSkill, string> = {
-  reading: "📖",
-  listening: "🎧",
-  writing: "✍️",
-  speaking: "🎙️",
+const SKILL_META: Record<IeltsSkill, { label: string; icon: LucideIcon }> = {
+  reading: { label: "O'qish", icon: BookOpen },
+  listening: { label: "Tinglash", icon: Headphones },
+  writing: { label: "Yozish", icon: PenLine },
+  speaking: { label: "Gapirish", icon: Mic2 },
 };
 
-/** One IELTS skill page: Strategy (cheatsheet) first, Practice second. */
 export function SkillView({
   lang,
   skill,
-  t,
 }: {
   lang: string;
-  skill: CheatsheetSkill;
-  t: Ielts;
+  skill: IeltsSkill;
+  t: unknown;
 }) {
-  const { user, ready } = useAuth();
-  const router = useRouter();
-  const [tab, setTab] = useState<"strategy" | "practice">("strategy");
-
-  useEffect(() => {
-    if (ready && !user) router.replace(`/${lang}/auth/login`);
-  }, [ready, user, router, lang]);
-
-  if (!ready || !user) {
-    return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
-      </main>
-    );
-  }
-
-  const sheet = cheatsheetFor(skill, lang);
-  // Reading practice uses an exam-style two-pane layout that needs width.
-  const wide = tab === "practice" && skill === "reading";
+  const content = IELTS_SKILL_CONTENT[skill];
+  const meta = SKILL_META[skill];
+  const Icon = meta.icon;
 
   return (
-    <main className={cn("mx-auto w-full flex-1 px-4 py-8 sm:px-6", wide ? "max-w-6xl" : "max-w-3xl")}>
-      <div className="mb-5 flex items-center justify-between">
-        <Link href={`/${lang}/ielts`} className="text-sm font-medium text-ink-soft hover:text-ink">
-          ← IELTS
-        </Link>
-        <h1 className="text-lg font-bold text-ink">
-          {EMOJI[skill]} {t[skill]}
-        </h1>
-      </div>
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <Link
+        href={`/${lang}/ielts`}
+        className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink-soft transition-transform hover:-translate-y-0.5 hover:text-ink"
+      >
+        <ArrowLeft className="size-4" aria-hidden />
+        IELTS markazi
+      </Link>
 
-      <div className="mb-6 flex gap-1 rounded-xl border border-line p-1">
-        {(["strategy", "practice"] as const).map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setTab(key)}
-            className={cn(
-              "flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
-              tab === key ? "bg-brand-600 text-white" : "text-ink-soft hover:text-ink"
-            )}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="surface-panel mt-5 rounded-lg p-6 sm:p-8"
+      >
+        <div className="grid gap-7 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+              <Icon className="size-4" aria-hidden />
+              {content.eyebrow}
+            </span>
+            <h1 className="mt-5 max-w-3xl text-4xl font-black tracking-tight text-ink sm:text-6xl">
+              {content.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
+              {content.description}
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {content.stats.map((stat) => (
+              <div key={stat.label} className="premium-card rounded-lg p-3 text-center">
+                <p className="text-xl font-black text-ink sm:text-2xl">{stat.value}</p>
+                <p className="mt-1 text-[10px] font-bold uppercase text-ink-soft">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label="Page sections">
+        {content.sections.map((section) => (
+          <a
+            key={section.id}
+            href={`#${section.id}`}
+            className="shrink-0 rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400/50 hover:text-ink"
           >
-            {key === "strategy" ? `📋 ${t.strategyTab}` : `📝 ${t.practiceTab}`}
-          </button>
+            {section.title}
+          </a>
+        ))}
+        {skill === "speaking" && (
+          <a
+            href="#topics"
+            className="shrink-0 rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400/50 hover:text-ink"
+          >
+            120 topics
+          </a>
+        )}
+      </nav>
+
+      <div className="mt-5 space-y-5">
+        {content.sections.map((section, index) => (
+          <GuideSection key={section.id} section={section} index={index} />
         ))}
       </div>
 
-      {tab === "strategy" ? (
-        <>
-          <CheatsheetPanel sheet={sheet} t={t} />
-          <Button fullWidth className="mt-6" onClick={() => setTab("practice")}>
-            {t.startPractice} →
-          </Button>
-        </>
-      ) : skill === "writing" ? (
-        <WritingPractice lang={lang} t={t} embedded />
-      ) : skill === "speaking" ? (
-        <SpeakingPanel lang={lang} t={t} />
-      ) : (
-        <ComprehensionTest lang={lang} kind={skill} t={t} embedded />
-      )}
+      {skill === "speaking" && <SpeakingTopics />}
+
+      <section className="mt-10">
+        <div className="mb-4 flex items-center gap-3">
+          <span className="icon-tile size-10 rounded-lg text-accent-500">
+            <BookMarked className="size-4" aria-hidden />
+          </span>
+          <div>
+            <p className="text-xs font-extrabold uppercase text-accent-500">
+              Vocabulary next
+            </p>
+            <h2 className="text-2xl font-black text-ink">So&apos;z boyligini davom ettiring</h2>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+          {IELTS_VOCABULARY_RESOURCES.map((resource) => (
+            <Link
+              key={resource.slug}
+              href={`/${lang}/ielts/resources/${resource.slug}`}
+              className="premium-card group rounded-lg p-4 transition-transform hover:-translate-y-1"
+            >
+              <p className="text-[10px] font-extrabold uppercase text-accent-500">
+                {resource.eyebrow}
+              </p>
+              <h3 className="mt-2 text-base font-black leading-5 text-ink">{resource.title}</h3>
+              <ArrowUpRight className="mt-5 size-4 text-ink-soft transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
+            </Link>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }
 
-function SpeakingPanel({ t }: { lang: string; t: Ielts }) {
-  // Locked while the realtime AI examiner is too slow/flaky for learners —
-  // re-enable the Coach CTA once the streaming issues are fixed.
+function GuideSection({
+  section,
+  index,
+}: {
+  section: IeltsResourceSection;
+  index: number;
+}) {
   return (
-    <div className="rounded-2xl border border-line bg-card p-8 text-center">
-      <p className="text-5xl">🔒</p>
-      <h2 className="mt-3 text-xl font-bold text-ink">{t.speaking}</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">{t.speakingLocked}</p>
-    </div>
+    <motion.section
+      id={section.id}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ delay: Math.min(index * 0.03, 0.15) }}
+      className="surface-panel scroll-mt-24 rounded-lg p-5 sm:p-6"
+    >
+      <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
+        <div>
+          <p className="text-xs font-extrabold uppercase text-accent-500">{section.eyebrow}</p>
+          <h2 className="mt-2 text-2xl font-black text-ink">{section.title}</h2>
+          <p className="mt-3 text-sm leading-7 text-ink-soft">{section.description}</p>
+        </div>
+
+        <div className="space-y-3">
+          {section.steps && (
+            <div className="rounded-lg border border-line bg-card/60 p-4">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+                <ListChecks className="size-4 text-brand-500" aria-hidden />
+                Step-by-step
+              </h3>
+              <ol className="mt-3 space-y-2">
+                {section.steps.map((step, stepIndex) => (
+                  <li key={step} className="flex gap-3 text-sm leading-6 text-ink-soft">
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-[11px] font-black text-brand-500">
+                      {stepIndex + 1}
+                    </span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {section.example && (
+            <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+                <Quote className="size-4 text-accent-500" aria-hidden />
+                Model example
+              </h3>
+              <p className="mt-3 border-l-2 border-accent-400/40 pl-4 text-sm leading-7 text-ink">
+                {section.example}
+              </p>
+            </div>
+          )}
+
+          {section.vocabulary && (
+            <div className="rounded-lg border border-line bg-card/60 p-4">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+                <Sparkles className="size-4 text-accent-500" aria-hidden />
+                Vocabulary highlight
+              </h3>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {section.vocabulary.map((item) => (
+                  <span
+                    key={item}
+                    className="rounded-md border border-brand-400/20 bg-brand-600/8 px-2.5 py-1.5 text-xs font-bold leading-5 text-ink"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {section.traps && (
+            <div className="rounded-lg border border-warning/20 bg-warning/8 p-4">
+              <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+                <AlertTriangle className="size-4 text-warning" aria-hidden />
+                Common traps
+              </h3>
+              <ul className="mt-3 space-y-2">
+                {section.traps.map((trap) => (
+                  <li key={trap} className="flex gap-2 text-sm leading-6 text-ink-soft">
+                    <CircleDot className="mt-1 size-3.5 shrink-0 text-warning" aria-hidden />
+                    {trap}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+function SpeakingTopics() {
+  const topicCount = Object.values(SPEAKING_TOPICS).reduce(
+    (total, topics) => total + topics.length,
+    0
+  );
+  return (
+    <section id="topics" className="mt-8 scroll-mt-24">
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-extrabold uppercase text-accent-500">Cue card bank</p>
+          <h2 className="mt-1 text-2xl font-black text-ink">{topicCount} common topics</h2>
+        </div>
+        <span className="rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft">
+          12 topic families
+        </span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+        {Object.entries(SPEAKING_TOPICS).map(([group, topics]) => (
+          <div key={group} className="premium-card rounded-lg p-4">
+            <h3 className="flex items-center gap-2 text-sm font-black text-ink">
+              <Target className="size-4 text-brand-500" aria-hidden />
+              {group}
+            </h3>
+            <ul className="mt-3 space-y-2">
+              {topics.map((topic) => (
+                <li key={topic} className="flex gap-2 text-xs leading-5 text-ink-soft">
+                  <Check className="mt-0.5 size-3.5 shrink-0 text-accent-500" aria-hidden />
+                  {topic}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 flex items-center gap-2 rounded-lg border border-success/20 bg-success/8 p-4 text-sm text-ink-soft">
+        <BadgeCheck className="size-5 shrink-0 text-success" aria-hidden />
+        Har kuni bitta topic tanlang: 1 daqiqa reja, 2 daqiqa javob, 1 daqiqa
+        vocabulary tahlili.
+      </div>
+    </section>
   );
 }

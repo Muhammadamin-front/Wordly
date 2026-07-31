@@ -51,6 +51,7 @@ EXAMPLE_FILES = [
     "examples_a2_batch1.csv",
     "examples_a2_batch2.csv",
     "examples_b1_batch1.csv",
+    "examples_all_words.csv",
 ]
 
 CORPUS_FILES = [
@@ -89,6 +90,7 @@ CORPUS_FILES = [
     "useful_batch12.csv",
     "useful_batch13.csv",
     "useful_batch14.csv",
+    "phrasal_idioms_5.csv",
 ]
 
 

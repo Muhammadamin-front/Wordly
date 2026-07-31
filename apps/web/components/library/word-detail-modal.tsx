@@ -179,7 +179,7 @@ export function WordDetailModal({
                   {sense.examples.length > 0 && (
                     <Section title={labels.examples}>
                       <ul className="space-y-2">
-                        {sense.examples.map((example, exampleIndex) => {
+                        {sense.examples.slice(0, 3).map((example, exampleIndex) => {
                           const exampleTranslation =
                             lang === "uz"
                               ? example.text_uz

@@ -160,7 +160,7 @@ export function LibraryView({
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
         <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
         <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-3 gap-2 sm:gap-5 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <Skeleton key={i} className="aspect-4/5 rounded-2xl" />
           ))}
@@ -297,7 +297,7 @@ export function LibraryView({
           <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.title}</h2>
         </div>
         <p className="mb-6 text-sm text-ink-soft">{t.subtitle}</p>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-5 lg:grid-cols-4">
           {SHELVES.map((meta, i) => {
             const data = meta.soon ? undefined : shelves[meta.key];
             return (

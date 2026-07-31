@@ -138,7 +138,7 @@ export function SearchPanel({
           {results.length === 0 ? (
             <p className="py-6 text-center text-sm text-ink-soft">{t.noResults}</p>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:grid-cols-3">
               <AnimatePresence>
                 {results.map((word) => (
                   <WordCard

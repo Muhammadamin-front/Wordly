@@ -18,6 +18,7 @@ type WordFlipCardProps = {
   unflipTitle: string;
   className?: string;
   minHeight?: number;
+  responsiveHeightClass?: string;
 };
 
 export function WordFlipCard({
@@ -31,6 +32,7 @@ export function WordFlipCard({
   unflipTitle,
   className,
   minHeight = 272,
+  responsiveHeightClass,
 }: WordFlipCardProps) {
   const reducedMotion = useReducedMotion();
   const [flipped, setFlipped] = useState(false);
@@ -72,13 +74,13 @@ export function WordFlipCard({
       onPointerLeave={resetTilt}
       onPointerCancel={resetTilt}
       style={{
-        minHeight,
+        minHeight: responsiveHeightClass ? undefined : minHeight,
         rotateX: tiltX,
         rotateY: tiltY,
         transformPerspective: 1200,
         transformStyle: "preserve-3d",
       }}
-      className={cn("group relative h-full", className)}
+      className={cn("group relative h-full", responsiveHeightClass, className)}
       data-flipped={flipped}
     >
       <motion.div
@@ -88,8 +90,11 @@ export function WordFlipCard({
             ? { duration: 0 }
             : { type: "spring", stiffness: 220, damping: 24, mass: 0.8 }
         }
-        style={{ minHeight, transformStyle: "preserve-3d" }}
-        className="relative h-full w-full"
+        style={{
+          minHeight: responsiveHeightClass ? undefined : minHeight,
+          transformStyle: "preserve-3d",
+        }}
+        className={cn("relative h-full w-full", responsiveHeightClass)}
       >
         <section className={faceClass} aria-hidden={flipped} inert={flipped}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(40,135,115,0.16),transparent_34%),radial-gradient(circle_at_92%_2%,rgba(210,168,79,0.13),transparent_28%),linear-gradient(145deg,rgba(255,255,255,0.12),transparent_42%)]" />
@@ -105,13 +110,13 @@ export function WordFlipCard({
           />
           <div className="pointer-events-none relative z-20 h-full">{front}</div>
           {frontActions && (
-            <div className="pointer-events-auto absolute right-4 top-4 z-30 flex items-center gap-2">
+            <div className="pointer-events-auto absolute right-2 top-2 z-30 flex items-center gap-1 sm:right-4 sm:top-4 sm:gap-2">
               {frontActions}
             </div>
           )}
           <FlipHorizontal2
             aria-hidden
-            className="pointer-events-none absolute bottom-4 right-4 z-20 size-4 text-ink-soft/45 transition-transform duration-300 group-hover:scale-110"
+            className="pointer-events-none absolute bottom-2 right-2 z-20 size-3 text-ink-soft/45 transition-transform duration-300 group-hover:scale-110 sm:bottom-4 sm:right-4 sm:size-4"
           />
         </section>
 
@@ -130,13 +135,13 @@ export function WordFlipCard({
           />
           <div className="pointer-events-none relative z-20 h-full">{back}</div>
           {backActions && (
-            <div className="pointer-events-auto absolute inset-x-4 bottom-4 z-30 flex items-center gap-2">
+            <div className="pointer-events-auto absolute inset-x-2 bottom-2 z-30 flex items-center gap-1 sm:inset-x-4 sm:bottom-4 sm:gap-2">
               {backActions}
             </div>
           )}
           <FlipHorizontal2
             aria-hidden
-            className="pointer-events-none absolute right-4 top-4 z-20 size-4 rotate-180 text-ink-soft/45"
+            className="pointer-events-none absolute right-2 top-2 z-20 size-3 rotate-180 text-ink-soft/45 sm:right-4 sm:top-4 sm:size-4"
           />
         </section>
       </motion.div>

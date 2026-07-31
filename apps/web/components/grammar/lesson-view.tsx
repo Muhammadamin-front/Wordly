@@ -11,7 +11,9 @@ import {
   Highlighter,
   Lightbulb,
   ListChecks,
+  PanelsTopLeft,
   Quote,
+  ScanText,
   Sparkles,
   Target,
   XCircle,
@@ -129,6 +131,15 @@ function examTipsFor(lesson: GrammarLesson): string[] {
   ];
 }
 
+function solvedPatternExamples(lesson: GrammarLesson): string[] {
+  const existing = new Set(lesson.examples.map((example) => example.en.toLowerCase()));
+  const solved = lesson.quiz
+    .filter((item) => item.q.includes("___"))
+    .map((item) => item.q.replace("___", item.options[item.answer]).trim())
+    .filter((sentence) => !existing.has(sentence.toLowerCase()));
+  return [...new Set(solved)].slice(0, 4);
+}
+
 /** One lesson: explanation -> formula -> examples -> common mistakes -> quiz.
  * Passing the quiz (all answered, 60%+) marks the lesson complete. */
 export function LessonView({
@@ -157,6 +168,7 @@ export function LessonView({
   const keyPoints = useMemo(() => keyPointsFor(lesson), [lesson]);
   const importantNotes = useMemo(() => importantNotesFor(lesson), [lesson]);
   const examTips = useMemo(() => examTipsFor(lesson), [lesson]);
+  const patternExamples = useMemo(() => solvedPatternExamples(lesson), [lesson]);
 
   function check() {
     setChecked(true);
@@ -256,6 +268,7 @@ export function LessonView({
             ))}
           </section>
 
+          <LessonPatternLab lesson={lesson} terms={terms} examples={patternExamples} />
           <LessonExamples lesson={lesson} terms={terms} t={t} />
           <LessonMistakes lesson={lesson} terms={terms} t={t} />
           <LessonQuiz
@@ -352,6 +365,86 @@ export function LessonView({
         </aside>
       </div>
     </main>
+  );
+}
+
+function LessonPatternLab({
+  lesson,
+  terms,
+  examples,
+}: {
+  lesson: GrammarLesson;
+  terms: string[];
+  examples: string[];
+}) {
+  return (
+    <section className="surface-panel rounded-lg p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="flex items-center gap-2 text-xs font-extrabold uppercase text-accent-500">
+            <ScanText className="size-4" aria-hidden />
+            Chuqur grammar lab
+          </p>
+          <h2 className="mt-1 text-xl font-extrabold text-ink">
+            Qoidani gap ichida boshqaring
+          </h2>
+        </div>
+        <span className="rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-bold text-ink-soft">
+          {lesson.examples.length + examples.length} ta model gap
+        </span>
+      </div>
+
+      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_0.85fr]">
+        <div className="rounded-lg border border-line bg-card/60 p-4">
+          <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+            <PanelsTopLeft className="size-4 text-brand-500" aria-hidden />
+            Pattern examples
+          </h3>
+          <div className="mt-3 space-y-2">
+            {examples.length > 0 ? (
+              examples.map((sentence, index) => (
+                <div
+                  key={sentence}
+                  className="flex gap-3 rounded-lg border border-line/70 bg-raised/50 px-3 py-2.5"
+                >
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-[11px] font-black text-brand-500">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-semibold leading-6 text-ink">
+                    {highlightText(sentence, terms)}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm leading-6 text-ink-soft">
+                Formulani saqlagan holda ega, vaqt va kontekstni almashtirib yangi gaplar
+                tuzing.
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
+          <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
+            <Target className="size-4 text-accent-500" aria-hidden />
+            Production ladder
+          </h3>
+          <ol className="mt-3 space-y-2">
+            {[
+              "Bitta model gapni ovoz chiqarib o'qing va strukturani ajrating.",
+              "Ega yoki vaqtni almashtirib shu pattern bilan yangi gap tuzing.",
+              "Inkor yoki savol variantini yarating; yordamchi fe'lni tekshiring.",
+              "Mavzuni o'zingiz haqingizdagi yoki IELTS kontekstidagi gapda ishlating.",
+            ].map((step, index) => (
+              <li key={step} className="flex gap-3 text-sm leading-6 text-ink-soft">
+                <span className="font-black text-accent-500">{index + 1}.</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
   );
 }
 
