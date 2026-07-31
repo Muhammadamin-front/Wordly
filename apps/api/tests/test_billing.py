@@ -14,7 +14,7 @@ async def test_plans_listed(client):
     headers = await learner(client)
     body = (await client.get("/api/v1/billing/plans", headers=headers)).json()
     codes = {p["code"] for p in body["plans"]}
-    assert {"free", "premium_monthly", "premium_yearly", "family"} <= codes
+    assert codes == {"free", "premium_monthly", "premium_yearly"}
     monthly = next(p for p in body["plans"] if p["code"] == "premium_monthly")
     assert monthly["price_som"] == 29000
 
@@ -53,6 +53,7 @@ async def test_checkout_creates_order_and_url(client):
     headers = await learner(client)
     settings = get_settings()
     settings.PAYME_MERCHANT_ID = "test_merchant"
+    settings.PAYME_MERCHANT_KEY = "test_key"
     try:
         response = await client.post(
             "/api/v1/billing/checkout",
@@ -66,6 +67,60 @@ async def test_checkout_creates_order_and_url(client):
         assert body["order_id"]
     finally:
         settings.PAYME_MERCHANT_ID = None
+        settings.PAYME_MERCHANT_KEY = None
+
+
+async def test_billing_status_and_unconfigured_checkout(client):
+    headers = await learner(client)
+    status_response = await client.get("/api/v1/billing/status", headers=headers)
+    assert status_response.status_code == 200
+    assert status_response.json() == {
+        "checkout_enabled": False,
+        "sandbox_enabled": True,
+        "providers": {"payme": False, "click": False},
+        "family_plan_available": False,
+    }
+
+    checkout_response = await client.post(
+        "/api/v1/billing/checkout",
+        json={"plan_code": "premium_monthly", "provider": "payme"},
+        headers=headers,
+    )
+    assert checkout_response.status_code == 503
+
+    import app.db.session as db_session
+    from sqlalchemy import func, select
+    from app.models.billing import Payment
+
+    async with db_session.get_session_factory()() as session:
+        payment_count = await session.scalar(select(func.count(Payment.id)))
+    assert payment_count == 0
+
+
+async def test_sandbox_is_always_disabled_in_production(client):
+    headers = await learner(client)
+    settings = get_settings()
+    original_environment = settings.ENVIRONMENT
+    settings.ENVIRONMENT = "production"
+    try:
+        response = await client.post(
+            "/api/v1/billing/sandbox-activate",
+            json={"plan_code": "premium_monthly"},
+            headers=headers,
+        )
+        assert response.status_code == 403
+    finally:
+        settings.ENVIRONMENT = original_environment
+
+
+async def test_family_plan_is_not_for_sale(client):
+    headers = await learner(client)
+    response = await client.post(
+        "/api/v1/billing/sandbox-activate",
+        json={"plan_code": "family"},
+        headers=headers,
+    )
+    assert response.status_code == 400
 
 
 # --- Payme JSON-RPC (simulate the gateway calling our endpoint) -------------
@@ -99,6 +154,7 @@ async def test_payme_rejects_bad_auth(client):
         assert response.json()["error"]["code"] == -32504
     finally:
         settings.PAYME_MERCHANT_KEY = None
+        settings.PAYME_MERCHANT_ID = None
 
 
 async def test_payme_full_flow_activates_subscription(client):
@@ -148,6 +204,7 @@ async def test_payme_full_flow_activates_subscription(client):
         assert check2.json()["result"]["state"] == 2
     finally:
         settings.PAYME_MERCHANT_KEY = None
+        settings.PAYME_MERCHANT_ID = None
 
 
 async def test_payme_wrong_amount_rejected(client):
@@ -166,6 +223,7 @@ async def test_payme_wrong_amount_rejected(client):
         assert response.json()["error"]["code"] == -31001
     finally:
         settings.PAYME_MERCHANT_KEY = None
+        settings.PAYME_MERCHANT_ID = None
 
 
 async def test_payme_unknown_order_rejected(client):
@@ -204,6 +262,7 @@ async def test_payme_cancel_after_perform_revokes(client):
         assert sub["is_premium"] is False
     finally:
         settings.PAYME_MERCHANT_KEY = None
+        settings.PAYME_MERCHANT_ID = None
 
 
 # --- Click ------------------------------------------------------------------
@@ -214,6 +273,7 @@ async def test_click_prepare_and_complete(client):
     settings = get_settings()
     settings.CLICK_SECRET_KEY = "click-secret"
     settings.CLICK_SERVICE_ID = "svc1"
+    settings.CLICK_MERCHANT_ID = "merchant1"
     try:
         headers = await learner(client)
         order = (await client.post(
@@ -247,6 +307,7 @@ async def test_click_prepare_and_complete(client):
     finally:
         settings.CLICK_SECRET_KEY = None
         settings.CLICK_SERVICE_ID = None
+        settings.CLICK_MERCHANT_ID = None
 
 
 async def test_click_bad_signature_rejected(client):

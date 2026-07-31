@@ -106,6 +106,20 @@ class Settings(BaseSettings):
     PAYMENTS_SANDBOX: bool = True
     REFERRAL_REWARD_DAYS: int = 30
 
+    @property
+    def payme_enabled(self) -> bool:
+        return bool(self.PAYME_MERCHANT_ID and self.PAYME_MERCHANT_KEY)
+
+    @property
+    def click_enabled(self) -> bool:
+        return bool(
+            self.CLICK_SERVICE_ID and self.CLICK_MERCHANT_ID and self.CLICK_SECRET_KEY
+        )
+
+    @property
+    def payment_sandbox_enabled(self) -> bool:
+        return self.PAYMENTS_SANDBOX and self.ENVIRONMENT != "production"
+
     # Rate limits: "<max_requests>/<window_seconds>"
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_LOGIN: str = "10/60"

@@ -73,7 +73,9 @@ async def test_assignment_and_analytics(client):
 
     for card_id in cards[:2]:
         await client.post(
-            "/api/v1/review/{}".format(card_id), json={"rating": "good"}, headers=s_headers
+            "/api/v1/review/{}".format(card_id),
+            json={"rating": "good"},
+            headers={**s_headers, "Idempotency-Key": "teacher-{}".format(card_id)},
         )
 
     analytics = (

@@ -1,4 +1,5 @@
 from datetime import timedelta
+from uuid import uuid4
 
 from sqlalchemy import select
 
@@ -43,7 +44,9 @@ async def patch_stats(email: str, **fields) -> None:
 
 async def review(client, headers, card_id, rating="good") -> dict:
     response = await client.post(
-        "/api/v1/review/{}".format(card_id), json={"rating": rating}, headers=headers
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": rating},
+        headers={**headers, "Idempotency-Key": str(uuid4())},
     )
     assert response.status_code == 200, response.text
     return response.json()["reward"]

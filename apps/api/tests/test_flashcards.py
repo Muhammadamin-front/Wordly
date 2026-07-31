@@ -107,7 +107,7 @@ async def test_queue_and_review_cycle(client):
     reviewed = await client.post(
         "/api/v1/review/{}".format(card_id),
         json={"rating": "good", "duration_ms": 4200},
-        headers=headers,
+        headers={**headers, "Idempotency-Key": "review-cycle-good-1"},
     )
     assert reviewed.status_code == 200
     assert reviewed.json()["card"]["srs_state"] == "learning"
@@ -118,7 +118,9 @@ async def test_queue_and_review_cycle(client):
 
     # Second "good" graduates to review with a 1-day interval.
     reviewed = await client.post(
-        "/api/v1/review/{}".format(card_id), json={"rating": "good"}, headers=headers
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "good"},
+        headers={**headers, "Idempotency-Key": "review-cycle-good-2"},
     )
     body = reviewed.json()["card"]
     assert body["srs_state"] == "review"
@@ -134,7 +136,9 @@ async def test_review_writes_append_only_log(client):
     ).json()["id"]
 
     await client.post(
-        "/api/v1/review/{}".format(card_id), json={"rating": "easy"}, headers=headers
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "easy"},
+        headers={**headers, "Idempotency-Key": "append-log-easy-1"},
     )
 
     import app.db.session as db_session
@@ -150,6 +154,54 @@ async def test_review_writes_append_only_log(client):
     assert logs[0].duration_ms is None
 
 
+async def test_review_retry_is_idempotent(client):
+    word = await seed_word(client)
+    headers = await learner(client)
+    card_id = (
+        await client.post("/api/v1/cards", json={"word_id": word["id"]}, headers=headers)
+    ).json()["id"]
+    request_headers = {**headers, "Idempotency-Key": "review-retry-0001"}
+
+    first = await client.post(
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "easy", "duration_ms": 900},
+        headers=request_headers,
+    )
+    retry = await client.post(
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "again", "duration_ms": 1200},
+        headers=request_headers,
+    )
+
+    assert first.status_code == retry.status_code == 200
+    assert retry.json() == first.json()
+
+    import app.db.session as db_session
+    from sqlalchemy import func, select
+    from app.models.flashcards import ReviewLog, ReviewReceipt
+
+    async with db_session.get_session_factory()() as session:
+        log_count = await session.scalar(select(func.count(ReviewLog.id)))
+        receipt_count = await session.scalar(select(func.count(ReviewReceipt.id)))
+    assert log_count == 1
+    assert receipt_count == 1
+
+
+async def test_review_requires_idempotency_key(client):
+    word = await seed_word(client)
+    headers = await learner(client)
+    card_id = (
+        await client.post("/api/v1/cards", json={"word_id": word["id"]}, headers=headers)
+    ).json()["id"]
+
+    response = await client.post(
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "good"},
+        headers=headers,
+    )
+    assert response.status_code == 422
+
+
 async def test_review_other_users_card_404(client):
     word = await seed_word(client)
     headers = await learner(client)
@@ -160,7 +212,9 @@ async def test_review_other_users_card_404(client):
     other = await register_user(client, email="other2@words.uz")
     other_headers = {"Authorization": "Bearer " + other["access_token"]}
     response = await client.post(
-        "/api/v1/review/{}".format(card_id), json={"rating": "good"}, headers=other_headers
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "good"},
+        headers={**other_headers, "Idempotency-Key": "other-user-good-1"},
     )
     assert response.status_code == 404
 

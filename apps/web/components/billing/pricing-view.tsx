@@ -7,7 +7,13 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
-import { billingApi, formatSom, type Plan, type Subscription } from "@/lib/billing";
+import {
+  billingApi,
+  formatSom,
+  type BillingStatus,
+  type Plan,
+  type Subscription,
+} from "@/lib/billing";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -32,6 +38,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   const { user, ready } = useAuth();
   const router = useRouter();
   const [plans, setPlans] = useState<Plan[] | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<BillingStatus | null>(null);
   const [sub, setSub] = useState<Subscription | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -45,11 +52,14 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   useEffect(() => {
     if (!ready || !user) return;
     let cancelled = false;
-    Promise.all([billingApi.plans(), billingApi.subscription()]).then(([p, s]) => {
-      if (cancelled) return;
-      setPlans(p.plans);
-      setSub(s);
-    });
+    Promise.all([billingApi.plans(), billingApi.subscription(), billingApi.status()]).then(
+      ([p, s, status]) => {
+        if (cancelled) return;
+        setPlans(p.plans);
+        setSub(s);
+        setPaymentStatus(status);
+      }
+    );
     return () => {
       cancelled = true;
     };
@@ -85,7 +95,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     }
   }
 
-  if (!ready || !user || plans === null) {
+  if (!ready || !user || plans === null || paymentStatus === null) {
     return (
       <main className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
@@ -108,13 +118,19 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
           {error}
         </Alert>
       )}
+      {!paymentStatus.checkout_enabled && !paymentStatus.sandbox_enabled && (
+        <Alert tone="info" className="mx-auto mt-4 max-w-md">
+          {t.notConfigured}
+        </Alert>
+      )}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {plans.map((plan) => {
           const isCurrent = sub?.plan_code === plan.code && sub?.is_premium;
           const popular = plan.code === "premium_yearly";
           const perUnit =
             plan.code === "premium_monthly" ? t.perMonth : plan.code === "free" ? "" : t.perYear;
+          const canPurchase = paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled;
           return (
             <div
               key={plan.code}
@@ -150,31 +166,56 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                   </span>
                 ) : selected === plan.code ? (
                   <div className="mt-4 space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button size="sm" loading={busy} onClick={() => void pay(plan.code, "payme")}>
-                        {t.payme}
-                      </Button>
+                    {paymentStatus.checkout_enabled && (
+                      <div
+                        className={cn(
+                          "grid gap-2",
+                          paymentStatus.providers.payme && paymentStatus.providers.click
+                            ? "grid-cols-2"
+                            : "grid-cols-1"
+                        )}
+                      >
+                        {paymentStatus.providers.payme && (
+                          <Button
+                            size="sm"
+                            loading={busy}
+                            onClick={() => void pay(plan.code, "payme")}
+                          >
+                            {t.payme}
+                          </Button>
+                        )}
+                        {paymentStatus.providers.click && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            loading={busy}
+                            onClick={() => void pay(plan.code, "click")}
+                          >
+                            {t.click}
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                    {paymentStatus.sandbox_enabled && (
                       <Button
                         size="sm"
-                        variant="secondary"
+                        variant="ghost"
+                        fullWidth
                         loading={busy}
-                        onClick={() => void pay(plan.code, "click")}
+                        onClick={() => void demoActivate(plan.code)}
                       >
-                        {t.click}
+                        {t.sandboxActivate}
                       </Button>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      fullWidth
-                      loading={busy}
-                      onClick={() => void demoActivate(plan.code)}
-                    >
-                      🧪 {t.sandboxActivate}
-                    </Button>
+                    )}
                   </div>
                 ) : (
-                  <Button size="sm" className="mt-4" fullWidth onClick={() => setSelected(plan.code)}>
+                  <Button
+                    size="sm"
+                    className="mt-4"
+                    fullWidth
+                    disabled={!canPurchase}
+                    onClick={() => setSelected(plan.code)}
+                  >
                     {t.choosePlan}
                   </Button>
                 ))}
@@ -183,7 +224,9 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         })}
       </div>
 
-      <p className="mt-4 text-center text-xs text-ink-soft">{t.sandboxNote}</p>
+      {paymentStatus.sandbox_enabled && (
+        <p className="mt-4 text-center text-xs text-ink-soft">{t.sandboxNote}</p>
+      )}
     </main>
   );
 }

@@ -61,11 +61,12 @@ export const flashcardsApi = {
   queue: (deckId?: string) =>
     apiFetch<Queue>(`/review/queue${deckId ? `?deck_id=${deckId}` : ""}`, { auth: true }),
 
-  review: (cardId: string, rating: Rating, durationMs?: number) =>
+  review: (cardId: string, rating: Rating, idempotencyKey: string, durationMs?: number) =>
     apiFetch<{ card: CardOut; next_due_at: string; reward: Reward }>(`/review/${cardId}`, {
       method: "POST",
       body: { rating, duration_ms: durationMs },
       auth: true,
+      headers: { "Idempotency-Key": idempotencyKey },
     }),
 
   updateCard: (cardId: string, body: { memory_note?: string; is_favorite?: boolean }) =>

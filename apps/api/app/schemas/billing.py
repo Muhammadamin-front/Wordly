@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -14,6 +14,13 @@ class PlanOut(BaseModel):
 
 class PlansOut(BaseModel):
     plans: List[PlanOut]
+
+
+class BillingStatusOut(BaseModel):
+    checkout_enabled: bool
+    sandbox_enabled: bool
+    providers: Dict[str, bool]
+    family_plan_available: bool = False
 
 
 class SubscriptionOut(BaseModel):

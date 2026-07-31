@@ -51,6 +51,7 @@ export function ReviewSession({
   const [error, setError] = useState<string | null>(null);
   const shownAt = useRef<number>(0);
   const submitting = useRef(false);
+  const reviewKeys = useRef(new Map<string, string>());
 
   const card: CardOut | undefined = queue?.cards[index];
 
@@ -103,11 +104,18 @@ export function ReviewSession({
       if (!card || submitting.current) return;
       submitting.current = true;
       try {
+        let idempotencyKey = reviewKeys.current.get(card.id);
+        if (!idempotencyKey) {
+          idempotencyKey = crypto.randomUUID();
+          reviewKeys.current.set(card.id, idempotencyKey);
+        }
         const { reward } = await flashcardsApi.review(
           card.id,
           rating,
+          idempotencyKey,
           Date.now() - shownAt.current
         );
+        reviewKeys.current.delete(card.id);
         setReviewedCount((count) => count + 1);
         setSessionXp((xp) => xp + reward.xp_gained);
         if (reward.new_achievements.length > 0) {

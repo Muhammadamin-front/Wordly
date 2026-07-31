@@ -18,6 +18,12 @@ os.environ["EMAIL_PROVIDER"] = "console"
 os.environ["RESEND_API_KEY"] = ""
 os.environ["EMAIL_FROM"] = ""
 os.environ["EMAIL_REPLY_TO"] = ""
+os.environ["PAYME_MERCHANT_ID"] = ""
+os.environ["PAYME_MERCHANT_KEY"] = ""
+os.environ["CLICK_SERVICE_ID"] = ""
+os.environ["CLICK_MERCHANT_ID"] = ""
+os.environ["CLICK_SECRET_KEY"] = ""
+os.environ["PAYMENTS_SANDBOX"] = "true"
 
 import pytest
 from httpx import ASGITransport, AsyncClient

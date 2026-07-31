@@ -63,7 +63,9 @@ async def test_statistics_forgotten_words(client):
     # Force it into review state via the flashcard endpoint (easy graduates fast),
     # then a wrong game answer lapses it.
     await client.post(
-        "/api/v1/review/{}".format(cards[0]), json={"rating": "easy"}, headers=headers
+        "/api/v1/review/{}".format(cards[0]),
+        json={"rating": "easy"},
+        headers={**headers, "Idempotency-Key": "statistics-easy-1"},
     )
     await client.post(
         "/api/v1/games/answer",

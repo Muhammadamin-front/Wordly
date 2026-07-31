@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { setAccessToken, waitForAccessToken } from "@/lib/api";
+import { flashcardsApi } from "@/lib/flashcards";
 
 describe("waitForAccessToken", () => {
   afterEach(() => {
@@ -25,5 +26,31 @@ describe("waitForAccessToken", () => {
     await vi.advanceTimersByTimeAsync(1000);
 
     await expect(pending).resolves.toBeNull();
+  });
+});
+
+describe("review requests", () => {
+  afterEach(() => {
+    setAccessToken(null);
+    vi.unstubAllGlobals();
+  });
+
+  it("sends the stable idempotency key in a request header", async () => {
+    setAccessToken("access-token");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ reward: {} }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await flashcardsApi.review("card-1", "good", "review-key-0001", 900);
+
+    const options = fetchMock.mock.calls[0][1] as RequestInit;
+    expect(options.headers).toMatchObject({
+      Authorization: "Bearer access-token",
+      "Idempotency-Key": "review-key-0001",
+    });
   });
 });

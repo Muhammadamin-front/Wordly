@@ -20,6 +20,12 @@ PLANS: Dict[str, Plan] = {
 }
 
 PAID_PLANS = [p for p in PLANS.values() if p.tier == "premium"]
+PUBLIC_PLAN_CODES = ("free", "premium_monthly", "premium_yearly")
+SELLABLE_PLAN_CODES = frozenset(("premium_monthly", "premium_yearly"))
+
+
+def public_plans() -> list[Plan]:
+    return [PLANS[code] for code in PUBLIC_PLAN_CODES]
 
 
 def get_plan(code: str) -> Optional[Plan]:

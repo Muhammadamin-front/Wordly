@@ -10,7 +10,9 @@ async def test_overview_reports_progress(client):
     queue = (await client.get("/api/v1/review/queue", headers=headers)).json()
     card_id = queue["cards"][0]["id"]
     r = await client.post(
-        "/api/v1/review/{}".format(card_id), json={"rating": "easy"}, headers=headers
+        "/api/v1/review/{}".format(card_id),
+        json={"rating": "easy"},
+        headers={**headers, "Idempotency-Key": "library-easy-1"},
     )
     assert r.status_code == 200
 

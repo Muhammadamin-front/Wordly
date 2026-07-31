@@ -71,9 +71,17 @@ export function waitForAccessToken(timeoutMs = 3000): Promise<string | null> {
 
 export async function apiFetch<T>(
   path: string,
-  options: { method?: string; body?: unknown; auth?: boolean } = {}
+  options: {
+    method?: string;
+    body?: unknown;
+    auth?: boolean;
+    headers?: Record<string, string>;
+  } = {}
 ): Promise<T> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
   if (options.auth && accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
   let response: Response | null = null;

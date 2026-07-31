@@ -3,14 +3,15 @@ import io
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, UploadFile, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
-from app.models.flashcards import Card, Deck
+from app.models.flashcards import Card, Deck, ReviewReceipt
 from app.models.user import User
 from app.models.vocabulary import Category, Word, WordSense
 from app.schemas.auth import MessageOut
@@ -404,14 +405,57 @@ async def review_queue(
 async def review_card(
     card_id: UUID,
     payload: ReviewRequest,
+    idempotency_key: str = Header(
+        ..., alias="Idempotency-Key", min_length=8, max_length=64
+    ),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    existing = await db.scalar(
+        select(ReviewReceipt).where(
+            ReviewReceipt.user_id == user.id,
+            ReviewReceipt.idempotency_key == idempotency_key,
+        )
+    )
+    if existing is not None:
+        if existing.card_id != card_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Idempotency key already used for another card",
+            )
+        return ReviewResult.model_validate(existing.result_json)
+
     card = await get_own_card(db, user, card_id)
     after, reward = await record_review(db, user, card, payload.rating, payload.duration_ms)
-    await db.commit()
-    return ReviewResult(
+    result = ReviewResult(
         card=CardOut.model_validate(card),
         next_due_at=after.due_at,
         reward=RewardOut(**reward.__dict__),
     )
+    db.add(
+        ReviewReceipt(
+            user_id=user.id,
+            card_id=card.id,
+            idempotency_key=idempotency_key,
+            result_json=result.model_dump(mode="json"),
+        )
+    )
+    try:
+        await db.commit()
+    except IntegrityError:
+        await db.rollback()
+        existing = await db.scalar(
+            select(ReviewReceipt).where(
+                ReviewReceipt.user_id == user.id,
+                ReviewReceipt.idempotency_key == idempotency_key,
+            )
+        )
+        if existing is None:
+            raise
+        if existing.card_id != card_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Idempotency key already used for another card",
+            )
+        return ReviewResult.model_validate(existing.result_json)
+    return result

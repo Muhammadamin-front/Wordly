@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 75 passed; API 228 passed; lint and production build passed |
+| Tests | Web 76 passed; API 233 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -82,6 +82,11 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P0. Paid launch is not operational
 
+- **Status:** **Engineering risks mitigated 2026-07-31.** Docker now forwards
+  Payme/Click credentials, the API publishes provider readiness, unconfigured
+  checkout cannot create orders, production sandbox is always disabled, and
+  the family plan is not publicly listed or purchasable. A real paid launch
+  still requires merchant onboarding and production credentials.
 - **Problem:** The local environment has no payment credentials; Docker Compose does not forward Payme/Click credential variables; the pricing UI always shows a sandbox activation action; the family plan is sold but has no family-member management flow.
 - **Why it matters:** A payment adapter existing in code is not the same as an end-to-end purchasable product.
 - **User impact:** Checkout fails or looks like a demo, and a purchased family benefit cannot be used.
@@ -91,6 +96,10 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P0. Review submission is not idempotent
 
+- **Status:** **Resolved 2026-07-31.** Review requests require an
+  `Idempotency-Key`; durable response receipts and a database unique constraint
+  guarantee retries return the original result without advancing SRS or XP
+  twice.
 - **Problem:** `POST /review/{card_id}` has no idempotency key or duplicate-submission guard.
 - **Why it matters:** A retry, double tap, or flaky network can advance the SRS state twice and award XP twice.
 - **User impact:** Incorrect due dates, inflated stats, and reduced trust in the core learning system.

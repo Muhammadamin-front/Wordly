@@ -23,6 +23,16 @@ export interface Checkout {
   amount_som: number;
 }
 
+export interface BillingStatus {
+  checkout_enabled: boolean;
+  sandbox_enabled: boolean;
+  providers: {
+    payme: boolean;
+    click: boolean;
+  };
+  family_plan_available: boolean;
+}
+
 export interface ReferralInfo {
   code: string;
   invited: number;
@@ -32,6 +42,8 @@ export interface ReferralInfo {
 
 export const billingApi = {
   plans: () => apiFetch<{ plans: Plan[] }>("/billing/plans", { auth: true }),
+
+  status: () => apiFetch<BillingStatus>("/billing/status", { auth: true }),
 
   subscription: () => apiFetch<Subscription>("/billing/subscription", { auth: true }),
 

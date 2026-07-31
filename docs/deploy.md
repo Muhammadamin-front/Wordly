@@ -22,7 +22,13 @@ NEXT_PUBLIC_API_URL=https://api.words.uz   # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
 ANTHROPIC_API_KEY=...                       # optional: AI tutor (off without it)
-PAYMENTS_SANDBOX=false                      # real Payme/Click creds via api env
+PAYME_MERCHANT_ID=...
+PAYME_MERCHANT_KEY=...
+# Or configure all three Click values:
+CLICK_SERVICE_ID=...
+CLICK_MERCHANT_ID=...
+CLICK_SECRET_KEY=...
+PAYMENTS_SANDBOX=false
 ```
 
 Notes that will bite you if skipped:
@@ -34,6 +40,9 @@ Notes that will bite you if skipped:
   web image, not just restarting it.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
   cookies (`COOKIE_SECURE=true`).
+- Checkout is exposed only for fully configured providers. Sandbox activation
+  is always disabled in production, and the family plan is hidden until member
+  management is implemented.
 
 ## 2. Build & run
 

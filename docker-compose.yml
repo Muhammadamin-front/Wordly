@@ -50,6 +50,13 @@ services:
       BEDROCK_MODEL: ${BEDROCK_MODEL:-us.anthropic.claude-haiku-4-5-20251001-v1:0}
       DEEPGRAM_API_KEY: ${DEEPGRAM_API_KEY:-}
       FIREFLIES_API_KEY: ${FIREFLIES_API_KEY:-}
+      PAYME_MERCHANT_ID: ${PAYME_MERCHANT_ID:-}
+      PAYME_MERCHANT_KEY: ${PAYME_MERCHANT_KEY:-}
+      PAYME_CHECKOUT_URL: ${PAYME_CHECKOUT_URL:-https://checkout.paycom.uz}
+      CLICK_SERVICE_ID: ${CLICK_SERVICE_ID:-}
+      CLICK_MERCHANT_ID: ${CLICK_MERCHANT_ID:-}
+      CLICK_SECRET_KEY: ${CLICK_SECRET_KEY:-}
+      CLICK_CHECKOUT_URL: ${CLICK_CHECKOUT_URL:-https://my.click.uz/services/pay}
       PAYMENTS_SANDBOX: ${PAYMENTS_SANDBOX:-true}
     ports:
       # Override with API_PORT if 8000 is taken on the host.
