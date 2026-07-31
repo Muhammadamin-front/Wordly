@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -29,6 +29,13 @@ class Settings(BaseSettings):
     FRONTEND_ORIGINS: Optional[str] = None
     COOKIE_SECURE: bool = False  # True in production (HTTPS)
     COOKIE_DOMAIN: Optional[str] = None
+
+    # Transactional email. Console is intentionally limited to development and
+    # tests; production must use a real provider and a verified sender.
+    EMAIL_PROVIDER: Literal["console", "resend"] = "console"
+    RESEND_API_KEY: Optional[str] = None
+    EMAIL_FROM: Optional[str] = None
+    EMAIL_REPLY_TO: Optional[str] = None
 
     # OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
@@ -140,6 +147,18 @@ class Settings(BaseSettings):
                 ]
             )
         return list(dict.fromkeys(origins))
+
+    def validate_runtime(self) -> None:
+        if self.ENVIRONMENT != "production":
+            return
+        if self.SECRET_KEY == "dev-only-secret-change-me":
+            raise RuntimeError("SECRET_KEY must be set in production")
+        if self.EMAIL_PROVIDER != "resend":
+            raise RuntimeError("EMAIL_PROVIDER must be 'resend' in production")
+        if not self.RESEND_API_KEY:
+            raise RuntimeError("RESEND_API_KEY must be set in production")
+        if not self.EMAIL_FROM:
+            raise RuntimeError("EMAIL_FROM must be set in production")
 
 
 @lru_cache

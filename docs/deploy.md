@@ -14,6 +14,10 @@ ENVIRONMENT=production
 SECRET_KEY=<python -c "import secrets; print(secrets.token_urlsafe(48))">
 FRONTEND_ORIGIN=https://words.uz
 COOKIE_SECURE=true
+EMAIL_PROVIDER=resend
+RESEND_API_KEY=re_...
+EMAIL_FROM=Wordly <noreply@words.uz>       # domain must be verified in Resend
+EMAIL_REPLY_TO=support@words.uz
 NEXT_PUBLIC_API_URL=https://api.words.uz   # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
@@ -24,6 +28,8 @@ PAYMENTS_SANDBOX=false                      # real Payme/Click creds via api env
 Notes that will bite you if skipped:
 
 - `SECRET_KEY` — the API **refuses to boot** in production with the dev default.
+- `EMAIL_PROVIDER=resend`, `RESEND_API_KEY`, and `EMAIL_FROM` are required in
+  production. The API refuses to boot with the console email backend.
 - `NEXT_PUBLIC_*` are **build-time** args: changing them means rebuilding the
   web image, not just restarting it.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS

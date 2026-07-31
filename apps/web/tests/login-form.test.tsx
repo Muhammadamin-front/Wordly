@@ -41,7 +41,6 @@ const USER = {
 
 const PAIR = {
   access_token: "acc",
-  refresh_token: "ref",
   token_type: "bearer",
   expires_in: 900,
   user: USER,

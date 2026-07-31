@@ -1,10 +1,12 @@
+from app.services.emailer import ConsoleEmailer
 from tests.conftest import REGISTER_PAYLOAD, extract_token_from_outbox, register_user
 
 
 async def test_register_returns_tokens_and_user(client):
     data = await register_user(client)
     assert data["access_token"]
-    assert data["refresh_token"]
+    assert "refresh_token" not in data
+    assert client.cookies.get("words_refresh")
     assert data["user"]["email"] == REGISTER_PAYLOAD["email"]
     assert data["user"]["email_verified"] is False
     assert data["user"]["profile"]["display_name"] == "Dilnoza"
@@ -68,6 +70,7 @@ async def test_me_requires_token(client):
 async def test_email_verification_flow(client):
     data = await register_user(client)
     token = extract_token_from_outbox("verify-email")
+    assert "/uz/auth/verify-email?token=" in ConsoleEmailer.outbox[-1]["body"]
 
     verify = await client.post("/api/v1/auth/verify-email", json={"token": token})
     assert verify.status_code == 200

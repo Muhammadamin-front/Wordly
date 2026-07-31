@@ -1,10 +1,8 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import REFRESH_COOKIE_NAME, get_current_user, refresh_token_from_request
+from app.api.deps import REFRESH_COOKIE_NAME, get_current_user, refresh_token_from_cookie
 from app.core.config import Settings, get_settings
 from app.core.rate_limit import client_ip, rate_limit
 from app.core.security import create_access_token, hash_password, utcnow, verify_password
@@ -15,7 +13,6 @@ from app.schemas.auth import (
     GoogleLoginRequest,
     LoginRequest,
     MessageOut,
-    RefreshRequest,
     RegisterRequest,
     ResetPasswordRequest,
     TokenPair,
@@ -60,14 +57,21 @@ async def build_token_pair(
     set_refresh_cookie(response, refresh, settings)
     return TokenPair(
         access_token=create_access_token(user.id),
-        refresh_token=refresh,
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
 
 
-def verification_email_body(display_name: str, token: str, settings: Settings) -> str:
-    link = "{}/auth/verify-email?token={}".format(settings.FRONTEND_ORIGIN, token)
+def localized_auth_link(settings: Settings, locale: str, page: str, token: str) -> str:
+    return "{}/{}/auth/{}?token={}".format(
+        settings.FRONTEND_ORIGIN.rstrip("/"), locale, page, token
+    )
+
+
+def verification_email_body(
+    display_name: str, locale: str, token: str, settings: Settings
+) -> str:
+    link = localized_auth_link(settings, locale, "verify-email", token)
     return (
         "Assalomu alaykum, {}!\n\n"
         "Wordly hisobingizni tasdiqlash uchun havola / "
@@ -111,7 +115,9 @@ async def register(
     await emailer.send(
         to=user.email,
         subject="Wordly — hisobni tasdiqlash / Verify your account",
-        body=verification_email_body(user.profile.display_name, verify_token, settings),
+        body=verification_email_body(
+            user.profile.display_name, user.profile.ui_locale, verify_token, settings
+        ),
     )
     return await build_token_pair(db, user, request, response)
 
@@ -176,11 +182,10 @@ async def google_login(
 async def refresh(
     request: Request,
     response: Response,
-    payload: Optional[RefreshRequest] = None,
     db: AsyncSession = Depends(get_db),
 ):
     settings = get_settings()
-    raw = refresh_token_from_request(request, payload.refresh_token if payload else None)
+    raw = refresh_token_from_cookie(request)
     if not raw:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
     rotated = await auth_service.rotate_refresh_token(
@@ -196,7 +201,6 @@ async def refresh(
     set_refresh_cookie(response, new_refresh, settings)
     return TokenPair(
         access_token=create_access_token(user.id),
-        refresh_token=new_refresh,
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
@@ -206,11 +210,10 @@ async def refresh(
 async def logout(
     request: Request,
     response: Response,
-    payload: Optional[RefreshRequest] = None,
     db: AsyncSession = Depends(get_db),
 ):
     settings = get_settings()
-    raw = refresh_token_from_request(request, payload.refresh_token if payload else None)
+    raw = refresh_token_from_cookie(request)
     if raw:
         await auth_service.revoke_refresh_token(db, raw)
         await db.commit()
@@ -249,13 +252,15 @@ async def forgot_password(
         token = await auth_service.create_one_time_token(
             db, user, "reset_password", settings.RESET_TOKEN_TTL_SECONDS
         )
-        await db.commit()
-        link = "{}/auth/reset-password?token={}".format(settings.FRONTEND_ORIGIN, token)
+        link = localized_auth_link(
+            settings, user.profile.ui_locale, "reset-password", token
+        )
         await emailer.send(
             to=user.email,
             subject="Wordly — parolni tiklash / Reset your password",
             body="Parolni tiklash havolasi / Reset link:\n{}\n".format(link),
         )
+        await db.commit()
     # Identical response either way: no account enumeration.
     return MessageOut(message="If that email exists, a reset link has been sent")
 

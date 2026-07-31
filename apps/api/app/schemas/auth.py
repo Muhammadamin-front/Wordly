@@ -21,11 +21,6 @@ class GoogleLoginRequest(BaseModel):
     id_token: str = Field(min_length=10)
 
 
-class RefreshRequest(BaseModel):
-    # Optional in body — web clients send it via httpOnly cookie instead.
-    refresh_token: Optional[str] = None
-
-
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
@@ -61,7 +56,6 @@ class UserOut(BaseModel):
 
 class TokenPair(BaseModel):
     access_token: str
-    refresh_token: str
     token_type: str = "bearer"
     expires_in: int
     user: UserOut

@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 75 passed; API 223 passed; lint passed |
+| Tests | Web 75 passed; API 228 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -58,6 +58,10 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P0. Production email does not exist
 
+- **Status:** **Resolved 2026-07-31.** Resend delivery, production fail-fast
+  configuration, locale-aware links, masked provider failures, and token-safe
+  development logging are implemented. A resend-verification action remains a
+  later product enhancement.
 - **Problem:** `ConsoleEmailer` is the only email implementation. It stores messages in process memory and writes verification/reset links, including tokens, to logs.
 - **Why it matters:** Real users cannot receive verification or password-reset email. Tokens in logs create an unnecessary secret exposure.
 - **User impact:** Password recovery and email verification are effectively broken outside development.
@@ -67,6 +71,8 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P0. Refresh-token protection is undermined
 
+- **Status:** **Resolved 2026-07-31.** Refresh credentials are cookie-only;
+  browser JSON responses and request bodies no longer expose or accept them.
 - **Problem:** The refresh token is set as an `httpOnly` cookie but is also returned in every register/login/Google/refresh JSON response.
 - **Why it matters:** JavaScript can read the response body, so an XSS can steal the long-lived token despite the cookie protection.
 - **User impact:** Account takeover risk is larger than the UI and comments imply.

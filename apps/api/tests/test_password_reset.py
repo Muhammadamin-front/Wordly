@@ -14,8 +14,9 @@ async def test_forgot_password_no_account_enumeration(client):
 
 
 async def test_full_reset_flow_revokes_sessions(client):
-    data = await register_user(client)
-    old_refresh = data["refresh_token"]
+    await register_user(client)
+    old_refresh = client.cookies.get("words_refresh")
+    assert old_refresh
 
     await client.post("/api/v1/auth/forgot-password", json={"email": REGISTER_PAYLOAD["email"]})
     token = extract_token_from_outbox("reset-password")
@@ -40,7 +41,8 @@ async def test_full_reset_flow_revokes_sessions(client):
 
     # All pre-reset sessions revoked.
     client.cookies.clear()
-    replay = await client.post("/api/v1/auth/refresh", json={"refresh_token": old_refresh})
+    client.cookies.set("words_refresh", old_refresh)
+    replay = await client.post("/api/v1/auth/refresh", json={})
     assert replay.status_code == 401
 
     # Reset token is single-use.

@@ -14,6 +14,10 @@ os.environ["GEMINI_API_KEY"] = ""
 os.environ["ANTHROPIC_API_KEY"] = ""
 os.environ["SERPER_API_KEY"] = ""
 os.environ["BEDROCK_API_KEY"] = ""
+os.environ["EMAIL_PROVIDER"] = "console"
+os.environ["RESEND_API_KEY"] = ""
+os.environ["EMAIL_FROM"] = ""
+os.environ["EMAIL_REPLY_TO"] = ""
 
 import pytest
 from httpx import ASGITransport, AsyncClient

@@ -37,10 +37,9 @@ async def get_current_user(
     return user
 
 
-def refresh_token_from_request(request: Request, body_token: Optional[str]) -> Optional[str]:
-    """Web clients carry the refresh token in an httpOnly cookie;
-    non-browser clients may send it in the request body."""
-    return body_token or request.cookies.get(REFRESH_COOKIE_NAME)
+def refresh_token_from_cookie(request: Request) -> Optional[str]:
+    """Refresh credentials are accepted only from the httpOnly cookie."""
+    return request.cookies.get(REFRESH_COOKIE_NAME)
 
 
 async def require_admin(user: User = Depends(get_current_user)) -> User:

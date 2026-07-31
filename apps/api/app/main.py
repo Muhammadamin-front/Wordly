@@ -32,8 +32,7 @@ SECURITY_HEADERS = {
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
-    if settings.ENVIRONMENT == "production" and settings.SECRET_KEY == "dev-only-secret-change-me":
-        raise RuntimeError("SECRET_KEY must be set in production")
+    settings.validate_runtime()
     init_engine()
     if settings.REDIS_URL:
         app.state.rate_limit_storage = RedisStorage(settings.REDIS_URL)
