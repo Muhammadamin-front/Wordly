@@ -121,16 +121,31 @@ export function DashboardView({
 
             {stats && (
               <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <StatCard icon={Flame} label={gam.streak} value={stats.current_streak} tone="text-orange-300" />
+                <StatCard
+                  icon={Flame}
+                  label={gam.streak}
+                  value={stats.current_streak}
+                  tone="text-orange-600 dark:text-orange-300"
+                />
                 <StatCard
                   icon={Zap}
                   label={`${stats.xp_into_level}/${stats.xp_for_next_level} XP`}
                   value={stats.level}
-                  tone="text-brand-300"
+                  tone="text-brand-600 dark:text-brand-300"
                 />
-                <StatCard icon={Coins} label={gam.coins} value={stats.coins} tone="text-amber-300" />
+                <StatCard
+                  icon={Coins}
+                  label={gam.coins}
+                  value={stats.coins}
+                  tone="text-amber-600 dark:text-amber-300"
+                />
                 <Link href={`/${lang}/leaderboard`} className="block">
-                  <StatCard icon={Trophy} label={stats.league_tier} value="" tone="text-brand-200" />
+                  <StatCard
+                    icon={Trophy}
+                    label={stats.league_tier}
+                    value=""
+                    tone="text-brand-600 dark:text-brand-200"
+                  />
                 </Link>
               </div>
             )}
@@ -139,7 +154,7 @@ export function DashboardView({
           <Card className="light-sweep flex h-full flex-col justify-between bg-linear-to-br from-brand-500/16 via-card to-accent-400/12 p-5">
             <div>
               <span className="icon-tile size-12 rounded-lg">
-                <Target className="size-6 text-accent-300" aria-hidden />
+                <Target className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
               </span>
               <CardTitle className="mt-5 text-2xl">{dict.dashboard.reviewHeroTitle}</CardTitle>
               <CardDescription>
@@ -200,7 +215,7 @@ export function DashboardView({
           icon={LibraryBig}
           title={dict.dashboard.cardVocabulary}
           body={dict.dashboard.cardVocabularyDesc}
-          tone="text-brand-300"
+          tone="text-brand-600 dark:text-brand-300"
         />
         <ActionCard
           href={`/${lang}/decks`}
@@ -211,14 +226,14 @@ export function DashboardView({
               ? `${dueCount} ${dict.dashboard.dueToday}`
               : dict.dashboard.cardReviewDesc
           }
-          tone="text-accent-300"
+          tone="text-accent-600 dark:text-accent-300"
         />
         <ActionCard
           href={`/${lang}/games`}
           icon={Gamepad2}
           title={dict.dashboard.cardGames}
           body={dict.dashboard.cardGamesDesc}
-          tone="text-brand-200"
+          tone="text-brand-600 dark:text-brand-200"
         />
       </section>
 
@@ -299,7 +314,14 @@ function WideLink({
     >
       <span className="flex items-center gap-3">
         <span className="icon-tile size-10 rounded-lg">
-          <Icon className={`size-5 ${accent ? "text-accent-300" : "text-brand-300"}`} aria-hidden />
+          <Icon
+            className={`size-5 ${
+              accent
+                ? "text-accent-600 dark:text-accent-300"
+                : "text-brand-600 dark:text-brand-300"
+            }`}
+            aria-hidden
+          />
         </span>
         <span className="font-black text-ink">{title}</span>
       </span>

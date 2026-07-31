@@ -119,7 +119,7 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
         <div className="flex items-end justify-between gap-3">
           <div>
             <span className="icon-tile size-12 rounded-lg">
-              <MessageCircle className="size-6 text-accent-300" aria-hidden />
+              <MessageCircle className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
             </span>
             <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{t.title}</h1>
             <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{t.subtitle}</p>
@@ -337,6 +337,7 @@ function DetailModal({
                 <button
                   type="button"
                   onClick={() => speak(expr.expression)}
+                  aria-label={t.listen}
                   title={t.listen}
                   className="icon-tile flex size-8 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
                 >
@@ -348,6 +349,8 @@ function DetailModal({
             <button
               type="button"
               onClick={onClose}
+              aria-label={t.close}
+              title={t.close}
               className="icon-tile flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-ink"
             >
               <X className="size-4" aria-hidden />
@@ -428,7 +431,7 @@ function DetailModal({
               <div className="rounded-lg border border-brand-400/20 bg-brand-600/5 p-4">
                 <Section title={t.nativeNotes}>
                   <span className="mb-2 flex items-center gap-2">
-                    <Lightbulb className="size-4 text-amber-300" aria-hidden />
+                    <Lightbulb className="size-4 text-amber-600 dark:text-amber-300" aria-hidden />
                   </span>
                   {expr.native_notes}
                 </Section>

@@ -69,8 +69,8 @@ export function IeltsHub({ lang }: { lang: string; t: unknown }) {
             ))}
           </div>
         </div>
-        <div className="border-t border-line bg-brand-950/45 px-6 py-3 sm:px-8">
-          <p className="flex items-center gap-2 text-xs font-bold text-ink-soft">
+        <div className="border-t border-line bg-brand-600/6 px-6 py-3 dark:bg-brand-950/45 sm:px-8">
+          <p className="flex items-center gap-2 text-xs font-bold text-brand-800 dark:text-ink-soft">
             <LibraryBig className="size-4 text-accent-500" aria-hidden />
             Wordly avvalo vocabulary platformasi. IELTS bu so&apos;z boyligini real imtihon
             kontekstida mustahkamlovchi qo&apos;shimcha markaz.

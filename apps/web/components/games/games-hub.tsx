@@ -70,7 +70,7 @@ export function GamesHub({ lang, games }: { lang: string; games: Dictionary["gam
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7">
         <span className="icon-tile size-12 rounded-lg">
-          <Gamepad2 className="size-6 text-brand-300" aria-hidden />
+          <Gamepad2 className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
         </span>
         <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{games.title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{games.subtitle}</p>

@@ -25,6 +25,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { StatsWidget } from "@/components/gamification/stats-widget";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
+import { ThemeToggle } from "@/components/site/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -174,6 +175,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
 
         <div className="ml-auto flex shrink-0 items-center gap-2">
           {authed && <StatsWidget lang={lang} />}
+          <ThemeToggle lang={lang} className="hidden lg:flex" />
           <div className="hidden sm:block">
             <LocaleSwitcher current={lang} />
           </div>
@@ -315,8 +317,9 @@ function MobileSidebar({
             </nav>
 
             <div className="shrink-0 space-y-3 border-t border-line p-3">
-              <div className="flex items-center">
+              <div className="flex items-center justify-between gap-3">
                 <LocaleSwitcher current={lang} />
+                <ThemeToggle lang={lang} />
               </div>
               {authed ? (
                 <Button

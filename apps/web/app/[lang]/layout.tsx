@@ -5,11 +5,26 @@ import "../globals.css";
 
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { PwaRegister } from "@/components/site/pwa-register";
+import { ThemeProvider } from "@/components/site/theme-provider";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 export const viewport: Viewport = {
-  themeColor: "#071410",
+  themeColor: "#f3f5ef",
 };
+
+const themeScript = `
+  (() => {
+    try {
+      const saved = localStorage.getItem("wordly-theme");
+      const theme = saved === "dark" || saved === "light" ? saved : "light";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    } catch {
+      document.documentElement.dataset.theme = "light";
+      document.documentElement.style.colorScheme = "light";
+    }
+  })();
+`;
 
 export async function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -51,10 +66,15 @@ export default async function RootLayout({
   if (!hasLocale(lang)) notFound();
 
   return (
-    <html lang={lang} data-theme="dark">
+    <html lang={lang} data-theme="light" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="flex min-h-dvh flex-col">
-        <AuthProvider>{children}</AuthProvider>
-        <PwaRegister />
+        <ThemeProvider>
+          <AuthProvider>{children}</AuthProvider>
+          <PwaRegister />
+        </ThemeProvider>
       </body>
     </html>
   );

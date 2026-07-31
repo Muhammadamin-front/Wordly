@@ -77,7 +77,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
                 <p className="text-[11px] font-extrabold uppercase text-ink-soft">{t.completed}</p>
               </div>
             </div>
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-5 h-2 overflow-hidden rounded-full bg-ink/10 dark:bg-white/10">
               <div
                 className="h-full rounded-full bg-linear-to-r from-brand-500 via-brand-300 to-accent-400"
                 style={{ width: `${progress}%` }}

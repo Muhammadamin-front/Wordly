@@ -202,7 +202,7 @@ export function LibraryView({
           {/* Left: title + description */}
           <div>
             <span className="icon-tile size-12 rounded-lg">
-              <LibraryBig className="size-6 text-brand-300" aria-hidden />
+              <LibraryBig className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
             <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">
               {t.title}
@@ -211,9 +211,24 @@ export function LibraryView({
 
             {/* Quick stats row */}
             <div className="mt-6 grid grid-cols-3 gap-3">
-              <StatTile icon={BookOpenCheck} label={t.words} value={totalAdded} tone="text-brand-300" />
-              <StatTile icon={CheckCircle2} label={t.learned} value={totalLearned} tone="text-accent-300" />
-              <StatTile icon={Layers3} label="Levels" value="6" tone="text-brand-200" />
+              <StatTile
+                icon={BookOpenCheck}
+                label={t.words}
+                value={totalAdded}
+                tone="text-brand-600 dark:text-brand-300"
+              />
+              <StatTile
+                icon={CheckCircle2}
+                label={t.learned}
+                value={totalLearned}
+                tone="text-accent-600 dark:text-accent-300"
+              />
+              <StatTile
+                icon={Layers3}
+                label="Levels"
+                value="6"
+                tone="text-brand-600 dark:text-brand-200"
+              />
             </div>
           </div>
 
@@ -259,7 +274,7 @@ export function LibraryView({
         >
           <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
             <span className="icon-tile flex size-14 shrink-0 items-center justify-center rounded-lg">
-              <BookOpenCheck className="size-6 text-accent-300" aria-hidden />
+              <BookOpenCheck className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
               <h2 className="text-lg font-extrabold text-ink">{t.myCards}</h2>
@@ -293,7 +308,7 @@ export function LibraryView({
       {/* Level shelves */}
       <section className="mt-12">
         <div className="mb-6 flex items-center gap-2">
-          <Target className="size-6 text-accent-300" aria-hidden />
+          <Target className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
           <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.title}</h2>
         </div>
         <p className="mb-6 text-sm text-ink-soft">{t.subtitle}</p>
