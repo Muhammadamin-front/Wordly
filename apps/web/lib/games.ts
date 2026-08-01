@@ -31,6 +31,7 @@ export interface GameQuestion {
 }
 
 export interface GameSession {
+  session_id: string;
   game_type: GameType;
   difficulty: "guided" | "balanced" | "challenge";
   recent_accuracy: number;
@@ -40,6 +41,16 @@ export interface GameSession {
 export interface GameAnswerResult {
   rating: string;
   reward: Reward;
+  run: {
+    answered_count: number;
+    correct_count: number;
+    total_questions: number;
+    best_combo: number;
+    completed: boolean;
+    xp_earned: number;
+    completion_bonus: number;
+  } | null;
+  quest_completions: string[];
 }
 
 /** Where a game pulls its words from: the learner's own due cards, a CEFR
@@ -58,10 +69,22 @@ export const gamesApi = {
   },
 
   // The server grades `answer` against the card — never trusts a client flag.
-  answer: (cardId: string, gameType: GameType, answer: string, durationMs?: number) =>
+  answer: (
+    sessionId: string,
+    cardId: string,
+    gameType: GameType,
+    answer: string,
+    durationMs?: number
+  ) =>
     apiFetch<GameAnswerResult>("/games/answer", {
       method: "POST",
-      body: { card_id: cardId, game_type: gameType, answer, duration_ms: durationMs },
+      body: {
+        session_id: sessionId,
+        card_id: cardId,
+        game_type: gameType,
+        answer,
+        duration_ms: durationMs,
+      },
       auth: true,
     }),
 };

@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -217,6 +218,8 @@ export function DashboardView({
           </Card>
         </div>
       </section>
+
+      <DailyQuestsPanel lang={lang} gam={gam} />
 
       <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <ActionCard

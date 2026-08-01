@@ -222,3 +222,98 @@ async def test_grade_answer_per_game_type():
     assert grade_answer(card, "speaking", "the word is apple") is True  # includes match
     assert grade_answer(card, "word_search", "APPLE") is True
     assert grade_answer(card, "crossword", "apple") is True
+
+
+async def test_game_run_unlocks_daily_quests_and_completion_xp(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    session = (await client.get("/api/v1/games/speed_quiz?count=6", headers=headers)).json()
+    assert session["session_id"]
+
+    quest_codes = set()
+    last = None
+    for question in session["questions"]:
+        response = await client.post(
+            "/api/v1/games/answer",
+            json={
+                "session_id": session["session_id"],
+                "card_id": question["card_id"],
+                "game_type": "speed_quiz",
+                "answer": question["answer"],
+                "duration_ms": 1000,
+            },
+            headers=headers,
+        )
+        assert response.status_code == 200, response.text
+        last = response.json()
+        quest_codes.update(last["quest_completions"])
+
+    assert {"correct_5", "combo_3"}.issubset(quest_codes)
+    assert last["run"] == {
+        "answered_count": 6,
+        "correct_count": 6,
+        "total_questions": 6,
+        "best_combo": 6,
+        "completed": True,
+        "xp_earned": last["run"]["xp_earned"],
+        "completion_bonus": 20,
+    }
+    assert last["run"]["xp_earned"] > last["run"]["completion_bonus"]
+
+    quests = (await client.get("/api/v1/me/daily-quests", headers=headers)).json()
+    completed = {quest["code"] for quest in quests["quests"] if quest["completed"]}
+    assert {"correct_5", "combo_3"}.issubset(completed)
+    assert quests["completed_count"] >= 2
+    assert quests["game_xp_today"] >= last["run"]["xp_earned"] + 30
+
+
+async def test_game_run_rejects_duplicate_answer_without_more_xp(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    session = (await client.get("/api/v1/games/speed_quiz?count=6", headers=headers)).json()
+    question = session["questions"][0]
+    payload = {
+        "session_id": session["session_id"],
+        "card_id": question["card_id"],
+        "game_type": "speed_quiz",
+        "answer": question["answer"],
+        "duration_ms": 1000,
+    }
+    first = await client.post("/api/v1/games/answer", json=payload, headers=headers)
+    assert first.status_code == 200
+    xp_after_first = (await client.get("/api/v1/me/stats", headers=headers)).json()["xp"]
+
+    duplicate = await client.post("/api/v1/games/answer", json=payload, headers=headers)
+    assert duplicate.status_code == 409
+    assert (await client.get("/api/v1/me/stats", headers=headers)).json()["xp"] == xp_after_first
+
+
+async def test_server_combo_resets_after_wrong_answer(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    session = (await client.get("/api/v1/games/speed_quiz?count=6", headers=headers)).json()
+    first, second, third = session["questions"][:3]
+
+    async def submit(question, answer):
+        return (
+            await client.post(
+                "/api/v1/games/answer",
+                json={
+                    "session_id": session["session_id"],
+                    "card_id": question["card_id"],
+                    "game_type": "speed_quiz",
+                    "answer": answer,
+                    "duration_ms": 1000,
+                },
+                headers=headers,
+            )
+        ).json()
+
+    await submit(first, first["answer"])
+    await submit(second, "not the answer")
+    result = await submit(third, third["answer"])
+    assert result["run"]["best_combo"] == 1
+    combo_quest = next(
+        quest
+        for quest in (await client.get("/api/v1/me/daily-quests", headers=headers)).json()["quests"]
+        if quest["code"] == "combo_3"
+    )
+    assert combo_quest["progress"] == 1
+    assert combo_quest["completed"] is False

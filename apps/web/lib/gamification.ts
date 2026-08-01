@@ -58,8 +58,27 @@ export interface Leaderboard {
   members: LeaderboardMember[];
 }
 
+export interface DailyQuest {
+  code: string;
+  progress: number;
+  target: number;
+  xp_reward: number;
+  completed: boolean;
+  game_type: string;
+  source_category: string | null;
+}
+
+export interface DailyQuests {
+  day: string;
+  game_xp_today: number;
+  completed_count: number;
+  total_count: number;
+  quests: DailyQuest[];
+}
+
 /** Header/dashboard listen for this to refetch stats after a review session. */
 export const STATS_CHANGED_EVENT = "words:stats-changed";
+export const QUESTS_CHANGED_EVENT = "words:quests-changed";
 
 export function notifyStatsChanged() {
   if (typeof window !== "undefined") {
@@ -67,8 +86,16 @@ export function notifyStatsChanged() {
   }
 }
 
+export function notifyQuestsChanged() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new Event(QUESTS_CHANGED_EVENT));
+  }
+}
+
 export const gamificationApi = {
   stats: () => apiFetch<Stats>("/me/stats", { auth: true }),
+
+  dailyQuests: () => apiFetch<DailyQuests>("/me/daily-quests", { auth: true }),
 
   achievements: () => apiFetch<Achievement[]>("/me/achievements", { auth: true }),
 

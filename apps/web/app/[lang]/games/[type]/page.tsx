@@ -13,14 +13,21 @@ export function generateStaticParams() {
 
 export default async function GameTypePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string; type: string }>;
+  searchParams: Promise<{ category?: string | string[] }>;
 }) {
   const { lang, type } = await params;
+  const query = await searchParams;
   if (!hasLocale(lang)) notFound();
   if (!(GAME_TYPES as readonly string[]).includes(type)) notFound();
   const dict = await getDictionary(lang);
   const gameType = type as (typeof GAME_TYPES)[number];
+  const category = typeof query.category === "string" ? query.category : undefined;
+  const initialSource = ["ielts", "phrasal", "idioms"].includes(category ?? "")
+    ? { category }
+    : undefined;
 
   return (
     <>
@@ -35,7 +42,13 @@ export default async function GameTypePage({
           </Link>
           <h1 className="text-lg font-bold text-ink">{dict.games[gameType].name}</h1>
         </div>
-        <GamePlayer lang={lang} gameType={gameType} games={dict.games} />
+        <GamePlayer
+          lang={lang}
+          gameType={gameType}
+          games={dict.games}
+          gam={dict.gam}
+          initialSource={initialSource}
+        />
       </main>
     </>
   );

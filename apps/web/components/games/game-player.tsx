@@ -17,11 +17,12 @@ import {
   Trophy,
   VolumeX,
   X,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ChoiceGame } from "@/components/games/choice-game";
@@ -41,7 +42,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { buildOptions, gamesApi, shuffle, type GameQuestion, type GameSource, type GameType } from "@/lib/games";
-import { notifyStatsChanged } from "@/lib/gamification";
+import { notifyQuestsChanged, notifyStatsChanged } from "@/lib/gamification";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export interface ChoiceItem {
@@ -92,7 +93,7 @@ export interface GameProps {
   onComplete: () => void;
 }
 
-type Phase = "choosing" | "loading" | "empty" | "error" | "playing" | "done";
+type Phase = "choosing" | "loading" | "empty" | "error" | "playing" | "finishing" | "done";
 
 // Games where the learner must hear spoken words clearly — no background music.
 const AUDIO_GAMES: GameType[] = ["listening", "audio_guess", "speaking", "spelling_bee"];
@@ -124,12 +125,16 @@ export function GamePlayer({
   lang,
   gameType,
   games,
+  gam,
   exitPath = "games",
+  initialSource,
 }: {
   lang: string;
   gameType: GameType;
   games: Dictionary["games"];
+  gam: Dictionary["gam"];
   exitPath?: string;
+  initialSource?: GameSource;
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
@@ -144,6 +149,11 @@ export function GamePlayer({
   const [source, setSource] = useState<GameSource>({});
   const [difficulty, setDifficulty] = useState<"guided" | "balanced" | "challenge">("guided");
   const [recentAccuracy, setRecentAccuracy] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [sessionXp, setSessionXp] = useState(0);
+  const [questCompletions, setQuestCompletions] = useState<string[]>([]);
+  const answerQueue = useRef<Promise<void>>(Promise.resolve());
+  const autoStarted = useRef(false);
   const musicEligible = !AUDIO_GAMES.includes(gameType);
   const music = useAmbientMusic(musicEligible && phase === "playing");
 
@@ -159,6 +169,7 @@ export function GamePlayer({
       gamesApi
         .session(gameType, 10, chosen)
         .then((session) => {
+          setSessionId(session.session_id);
           setPrepared(prepare(session.questions, gameType));
           setDifficulty(session.difficulty);
           setRecentAccuracy(session.recent_accuracy);
@@ -167,6 +178,9 @@ export function GamePlayer({
           setAttempts(0);
           setCombo(0);
           setBestCombo(0);
+          setSessionXp(0);
+          setQuestCompletions([]);
+          answerQueue.current = Promise.resolve();
           setLastResult(null);
           setPhase("playing");
         })
@@ -176,6 +190,13 @@ export function GamePlayer({
     },
     [gameType]
   );
+
+  useEffect(() => {
+    if (!ready || !user || !initialSource || autoStarted.current) return;
+    autoStarted.current = true;
+    setSource(initialSource);
+    fetchSession(initialSource);
+  }, [fetchSession, initialSource, ready, user]);
 
   const start = (chosen: GameSource) => {
     music.arm(); // inside the click gesture, so the browser allows audio
@@ -202,12 +223,38 @@ export function GamePlayer({
       } else {
         setCombo(0);
       }
-      gamesApi.answer(cardId, gameType, submitted, durationMs).then(notifyStatsChanged).catch(() => {});
+      if (!sessionId) return;
+      answerQueue.current = answerQueue.current
+        .then(async () => {
+          const result = await gamesApi.answer(
+            sessionId,
+            cardId,
+            gameType,
+            submitted,
+            durationMs
+          );
+          setSessionXp((value) => value + result.reward.xp_gained);
+          if (result.quest_completions.length) {
+            setQuestCompletions((current) => [
+              ...new Set([...current, ...result.quest_completions]),
+            ]);
+          }
+          notifyStatsChanged();
+          notifyQuestsChanged();
+        })
+        .catch(() => {});
     },
-    [gameType]
+    [gameType, sessionId]
   );
 
-  const onComplete = useCallback(() => setPhase("done"), []);
+  const onComplete = useCallback(() => {
+    setPhase("finishing");
+    void answerQueue.current.finally(() => {
+      notifyStatsChanged();
+      notifyQuestsChanged();
+      setPhase("done");
+    });
+  }, []);
 
   if (!ready || !user) {
     return (
@@ -259,7 +306,7 @@ export function GamePlayer({
     );
   }
 
-  if (phase === "loading") {
+  if (phase === "loading" || phase === "finishing") {
     return (
       <div className="flex flex-1 items-center justify-center py-20">
         <span
@@ -327,6 +374,18 @@ export function GamePlayer({
           {score}/{total}
         </motion.p>
         <p className="mt-1 text-sm text-ink-soft">{games.yourScore}</p>
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-md border border-accent-400/40 bg-accent-400/10 px-3 py-2 text-sm font-black text-ink">
+            <Zap className="size-4 text-accent-600 dark:text-accent-300" aria-hidden />
+            +{sessionXp} XP · {gam.sessionXp}
+          </span>
+          {questCompletions.length > 0 && (
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/35 bg-success/10 px-3 py-2 text-sm font-black text-success">
+              <Check className="size-4" aria-hidden />
+              {questCompletions.length} {gam.questsUnlocked}
+            </span>
+          )}
+        </div>
         <div className="mt-6 grid grid-cols-2 divide-x divide-line border-y border-line py-4">
           <div>
             <p className="text-2xl font-black text-ink">{pct}%</p>

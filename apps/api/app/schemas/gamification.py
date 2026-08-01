@@ -81,3 +81,21 @@ class HeatmapDay(BaseModel):
 
 class HeatmapOut(BaseModel):
     days: List[HeatmapDay]
+
+
+class DailyQuestOut(BaseModel):
+    code: str
+    progress: int
+    target: int
+    xp_reward: int
+    completed: bool
+    game_type: str
+    source_category: Optional[str] = None
+
+
+class DailyQuestsOut(BaseModel):
+    day: date
+    game_xp_today: int
+    completed_count: int
+    total_count: int
+    quests: List[DailyQuestOut]

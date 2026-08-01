@@ -24,7 +24,13 @@ export default async function ListeningPage({ params }: { params: Promise<{ lang
           </Link>
           <h1 className="text-lg font-bold text-ink">🎧 {dict.skills.listening.name}</h1>
         </div>
-        <GamePlayer lang={lang} gameType="listening" games={dict.games} exitPath="skills" />
+        <GamePlayer
+          lang={lang}
+          gameType="listening"
+          games={dict.games}
+          gam={dict.gam}
+          exitPath="skills"
+        />
       </main>
     </>
   );

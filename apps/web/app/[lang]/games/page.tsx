@@ -13,7 +13,7 @@ export default async function GamesPage({ params }: { params: Promise<{ lang: st
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <GamesHub lang={lang} games={dict.games} />
+      <GamesHub lang={lang} games={dict.games} gam={dict.gam} />
     </>
   );
 }

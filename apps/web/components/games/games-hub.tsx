@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { GAME_TYPES, type GameType } from "@/lib/games";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -61,7 +62,15 @@ const GAME_ACCENT: Record<GameType, string> = {
   speaking: "from-accent-500/22 via-card to-brand-400/10",
 };
 
-export function GamesHub({ lang, games }: { lang: string; games: Dictionary["games"] }) {
+export function GamesHub({
+  lang,
+  games,
+  gam,
+}: {
+  lang: string;
+  games: Dictionary["games"];
+  gam: Dictionary["gam"];
+}) {
   const { user, ready } = useAuth();
   const router = useRouter();
 
@@ -78,6 +87,8 @@ export function GamesHub({ lang, games }: { lang: string; games: Dictionary["gam
         <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{games.title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{games.subtitle}</p>
       </section>
+
+      <DailyQuestsPanel lang={lang} gam={gam} />
 
       <motion.div
         variants={{ show: { transition: { staggerChildren: 0.04 } } }}

@@ -11,6 +11,7 @@ from app.models.user import Profile, User
 from app.schemas.gamification import (
     AchievementOut,
     DailyGoalUpdate,
+    DailyQuestsOut,
     FreezePurchaseOut,
     HeatmapDay,
     HeatmapOut,
@@ -21,6 +22,7 @@ from app.schemas.gamification import (
 from app.services import leagues
 from app.services.achievements import ACHIEVEMENTS
 from app.services.gamification import get_or_create_stats
+from app.services.quests import daily_quest_snapshot
 from app.services.leveling import (
     FREEZE_COST_COINS,
     MAX_STREAK_FREEZES,
@@ -30,6 +32,13 @@ from app.services.leveling import (
 )
 
 router = APIRouter(tags=["gamification"], dependencies=[Depends(get_current_user)])
+
+
+@router.get("/me/daily-quests", response_model=DailyQuestsOut)
+async def my_daily_quests(
+    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    return DailyQuestsOut(**(await daily_quest_snapshot(db, user)))
 
 
 @router.get("/me/stats", response_model=StatsOut)
