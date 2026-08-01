@@ -46,3 +46,18 @@ def test_production_rejects_low_entropy_secret():
 def test_production_accepts_generated_secret():
     assert estimated_secret_entropy_bits(VALID_PRODUCTION_SECRET) >= 192
     production_settings(VALID_PRODUCTION_SECRET).validate_runtime()
+
+
+@pytest.mark.parametrize(
+    ("trusted_proxies", "message"),
+    [
+        ("10.0.0.0/8,not-a-network", "invalid IP or CIDR"),
+        ("0.0.0.0/0", "must not trust every IP address"),
+    ],
+)
+def test_runtime_rejects_unsafe_trusted_proxy_cidr(trusted_proxies, message):
+    settings = production_settings(VALID_PRODUCTION_SECRET)
+    settings.TRUSTED_PROXY_CIDRS = trusted_proxies
+
+    with pytest.raises(RuntimeError, match=message):
+        settings.validate_runtime()

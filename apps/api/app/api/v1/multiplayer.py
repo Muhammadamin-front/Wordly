@@ -2,7 +2,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from sqlalchemy import select
 
 from app.core.config import get_settings
-from app.core.rate_limit import parse_rule
+from app.core.rate_limit import client_ip, parse_rule
 from app.core.security import decode_access_token
 from app.db.session import get_session_factory
 from app.models.user import Profile, User
@@ -51,7 +51,7 @@ async def quiz_socket(websocket: WebSocket):
                 settings = get_settings()
                 if settings.RATE_LIMIT_ENABLED:
                     limit, window = parse_rule(settings.RATE_LIMIT_MULTIPLAYER)
-                    ip = websocket.client.host if websocket.client else "unknown"
+                    ip = client_ip(websocket)
                     allowed, _ = await websocket.app.state.rate_limit_storage.hit(
                         "mp_create:{}".format(ip), limit, window
                     )

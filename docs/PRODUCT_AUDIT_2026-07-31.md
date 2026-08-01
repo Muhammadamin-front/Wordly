@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 76 passed; API 241 passed; lint and production build passed |
+| Tests | Web 76 passed; API 251 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -122,6 +122,10 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P1. Rate limiting trusts spoofable proxy headers
 
+- **Status:** **Resolved 2026-08-01.** Forwarded IPs are accepted only from
+  explicitly configured `TRUSTED_PROXY_CIDRS`; trusted chains are evaluated
+  from right to left for HTTP and WebSocket limits, malformed chains fall back
+  to the socket peer, and Uvicorn's independent proxy parsing is disabled.
 - **Problem:** `client_ip()` trusts the first `X-Forwarded-For` value from every request.
 - **Why it matters:** Unless a trusted reverse proxy strips and rewrites the header, clients can choose their own rate-limit key.
 - **User impact:** Login/register/AI abuse protection can be bypassed.
@@ -303,7 +307,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 - [ ] Real email provider; never log one-time tokens
 - [ ] Cookie-only refresh token for browser clients
 - [ ] Refresh/reset/verify/resend rate limits
-- [ ] Trusted proxy configuration for client IPs
+- [x] Trusted proxy configuration for client IPs
 - [x] Strong required production secret validation
 - [ ] Idempotent review submissions
 - [ ] Unique/locked payment transitions and reconciliation

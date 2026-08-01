@@ -1,7 +1,8 @@
 from collections import Counter
 from functools import lru_cache
+from ipaddress import IPv4Network, IPv6Network, ip_network
 from math import log2
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple, Union
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -165,6 +166,19 @@ class Settings(BaseSettings):
     RATE_LIMIT_SOCIAL: str = "30/60"  # friend requests / profile lookups
     RATE_LIMIT_MULTIPLAYER: str = "20/60"  # room creation
     RATE_LIMIT_DEFAULT: str = "120/60"
+    # Comma-separated IPs/CIDRs of reverse proxies allowed to supply
+    # X-Forwarded-For. Empty means forwarded headers are never trusted.
+    TRUSTED_PROXY_CIDRS: str = ""
+
+    @property
+    def trusted_proxy_networks(
+        self,
+    ) -> Tuple[Union[IPv4Network, IPv6Network], ...]:
+        return tuple(
+            ip_network(value.strip(), strict=False)
+            for value in self.TRUSTED_PROXY_CIDRS.split(",")
+            if value.strip()
+        )
 
     # Response cache (public corpus reads). TTLs in seconds.
     CACHE_ENABLED: bool = True
@@ -198,6 +212,14 @@ class Settings(BaseSettings):
         return list(dict.fromkeys(origins))
 
     def validate_runtime(self) -> None:
+        try:
+            trusted_proxy_networks = self.trusted_proxy_networks
+        except ValueError as exc:
+            raise RuntimeError(
+                "TRUSTED_PROXY_CIDRS contains an invalid IP or CIDR"
+            ) from exc
+        if any(network.prefixlen == 0 for network in trusted_proxy_networks):
+            raise RuntimeError("TRUSTED_PROXY_CIDRS must not trust every IP address")
         if self.ENVIRONMENT != "production":
             return
         secret = self.SECRET_KEY.strip()

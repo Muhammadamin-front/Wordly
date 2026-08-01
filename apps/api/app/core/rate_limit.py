@@ -1,7 +1,9 @@
 import time
+from ipaddress import ip_address
 from typing import Dict, List, Optional, Protocol, Tuple
 
 from fastapi import HTTPException, Request, status
+from starlette.requests import HTTPConnection
 
 from app.core.config import get_settings
 
@@ -57,11 +59,42 @@ def parse_rule(rule: str) -> Tuple[int, int]:
     return int(max_requests), int(window)
 
 
-def client_ip(request: Request) -> str:
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
+MAX_FORWARDED_FOR_LENGTH = 2048
+MAX_FORWARDED_FOR_HOPS = 20
+
+
+def client_ip(connection: HTTPConnection) -> str:
+    """Resolve the client without trusting headers from arbitrary peers."""
+    peer = connection.client.host if connection.client else "unknown"
+    try:
+        peer_address = ip_address(peer)
+    except ValueError:
+        return peer
+
+    trusted_networks = get_settings().trusted_proxy_networks
+    if not any(peer_address in network for network in trusted_networks):
+        return str(peer_address)
+
+    forwarded = connection.headers.get("x-forwarded-for", "")
+    if not forwarded or len(forwarded) > MAX_FORWARDED_FOR_LENGTH:
+        return str(peer_address)
+
+    hops = [value.strip() for value in forwarded.split(",")]
+    if not hops or len(hops) > MAX_FORWARDED_FOR_HOPS or any(not hop for hop in hops):
+        return str(peer_address)
+
+    try:
+        addresses = [ip_address(hop) for hop in hops]
+    except ValueError:
+        return str(peer_address)
+
+    # A trusted proxy may append to an existing client-supplied chain. Walking
+    # from the socket peer inward selects the nearest untrusted address, so a
+    # spoofed left-most value cannot become the rate-limit key.
+    for address in reversed(addresses):
+        if not any(address in network for network in trusted_networks):
+            return str(address)
+    return str(addresses[0])
 
 
 def rate_limit(scope: str, rule: Optional[str] = None):

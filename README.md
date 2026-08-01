@@ -24,7 +24,7 @@ The API falls back to SQLite and in-memory rate limiting, so nothing else is req
 cd apps/api
 python3 -m venv .venv && .venv/bin/pip install -r requirements-dev.txt
 .venv/bin/alembic upgrade head
-.venv/bin/uvicorn app.main:app --reload --port 8000
+.venv/bin/uvicorn app.main:app --reload --port 8000 --no-proxy-headers
 
 # Web (repo root)
 npm install

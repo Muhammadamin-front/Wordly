@@ -13,6 +13,8 @@ Create a `.env` next to `docker-compose.yml` (compose reads it automatically):
 ENVIRONMENT=production
 # Generate once: python -c "import secrets; print(secrets.token_urlsafe(48))"
 SECRET_KEY=<paste-generated-output>
+# Use only the immediate reverse proxy/LB addresses or private CIDRs.
+TRUSTED_PROXY_CIDRS=10.0.0.10/32
 FRONTEND_ORIGIN=https://words.uz
 COOKIE_SECURE=true
 EMAIL_PROVIDER=resend
@@ -66,7 +68,14 @@ Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
 - `words.uz` → `:3000`.
 - Enforce a request-body limit at the proxy (the API's 5 MB cap is a backstop,
   not a substitute).
-- Forward `X-Forwarded-For` — rate limiting keys on it.
+- Set `TRUSTED_PROXY_CIDRS` to the exact reverse-proxy/LB socket peers that can
+  reach the API. The API ignores `X-Forwarded-For` from every other source and
+  walks trusted proxy chains from right to left, preventing a client-supplied
+  left-most value from choosing its rate-limit key. Do not use `0.0.0.0/0` or
+  `::/0`.
+- Configure the proxy to append or overwrite `X-Forwarded-For`. Uvicorn's own
+  proxy-header parsing is disabled so this application allowlist is the single
+  trust boundary.
 
 ## 4. Health & observability
 

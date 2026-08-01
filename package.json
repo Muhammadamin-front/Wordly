@@ -10,7 +10,7 @@
     "build:web": "npm run build --workspace web",
     "test:web": "npm run test --workspace web",
     "lint:web": "npm run lint --workspace web",
-    "dev:api": "cd apps/api && .venv/bin/uvicorn app.main:app --reload --port 8000",
+    "dev:api": "cd apps/api && .venv/bin/uvicorn app.main:app --reload --port 8000 --no-proxy-headers",
     "test:api": "cd apps/api && .venv/bin/python -m pytest"
   }
 }
