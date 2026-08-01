@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { Check, Search } from "lucide-react";
 
 import type { GameProps } from "@/components/games/game-player";
 import type { GameQuestion } from "@/lib/games";
@@ -123,11 +125,15 @@ export function WordSearchGame({
 
   return (
     <div>
-      <p className="mb-3 text-center text-sm font-semibold text-ink-soft">
-        {found.size}/{search.targets.length}
-      </p>
+      <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
+        <span className="flex items-center gap-2 text-sm font-bold text-ink">
+          <Search className="size-4 text-brand-500" aria-hidden />
+          {found.size}/{search.targets.length}
+        </span>
+        <span className="text-xs font-semibold text-ink-soft">{start ? "2" : "1"}</span>
+      </div>
       <div
-        className="mx-auto grid gap-0.5"
+        className="surface-panel mx-auto grid gap-0.5 rounded-lg p-2 sm:p-3"
         style={{ gridTemplateColumns: `repeat(${search.size}, minmax(0, 1fr))`, maxWidth: 420 }}
       >
         {search.grid.map((row, r) =>
@@ -136,7 +142,7 @@ export function WordSearchGame({
             const isFound = foundCells.has(key);
             const isStart = start && start[0] === r && start[1] === c;
             return (
-              <button
+              <motion.button
                 key={key}
                 type="button"
                 onClick={() => click(r, c)}
@@ -146,9 +152,10 @@ export function WordSearchGame({
                   isStart && "bg-brand-600 text-white",
                   !isFound && !isStart && "bg-card text-ink hover:bg-brand-600/10"
                 )}
+                whileTap={{ scale: 0.82 }}
               >
                 {ch}
-              </button>
+              </motion.button>
             );
           })
         )}
@@ -156,7 +163,7 @@ export function WordSearchGame({
 
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         {search.targets.map((t) => (
-          <span
+          <motion.span
             key={t.cardId}
             className={cn(
               "rounded-full px-2.5 py-1 text-xs font-semibold",
@@ -164,9 +171,11 @@ export function WordSearchGame({
                 ? "bg-success/10 text-success line-through"
                 : "bg-line/60 text-ink-soft"
             )}
+            animate={found.has(t.cardId) ? { scale: [1, 1.08, 1] } : { scale: 1 }}
           >
+            {found.has(t.cardId) && <Check className="mr-1 inline size-3" aria-hidden />}
             {t.word}
-          </span>
+          </motion.span>
         ))}
       </div>
     </div>

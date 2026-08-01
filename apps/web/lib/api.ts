@@ -44,6 +44,7 @@ export class ApiError extends Error {
 // scoped to the API's auth path, so a page reload silently re-authenticates
 // via /auth/refresh.
 let accessToken: string | null = null;
+let tokenRefresh: Promise<string | null> | null = null;
 const accessTokenWaiters = new Set<(token: string | null) => void>();
 
 export function setAccessToken(token: string | null) {
@@ -75,6 +76,27 @@ export function waitForAccessToken(timeoutMs = 3000): Promise<string | null> {
   });
 }
 
+function refreshAccessToken(): Promise<string | null> {
+  if (tokenRefresh) return tokenRefresh;
+  tokenRefresh = fetch(`${API_URL}/api/v1/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: "{}",
+    credentials: "include",
+  })
+    .then(async (response) => {
+      if (!response.ok) return null;
+      const pair = (await response.json()) as TokenPair;
+      setAccessToken(pair.access_token);
+      return pair.access_token;
+    })
+    .catch(() => null)
+    .finally(() => {
+      tokenRefresh = null;
+    });
+  return tokenRefresh;
+}
+
 export async function apiFetch<T>(
   path: string,
   options: {
@@ -90,15 +112,25 @@ export async function apiFetch<T>(
   };
   if (options.auth && accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
-  let response: Response | null = null;
-  let networkError: unknown = null;
-  try {
-    response = await fetch(`${API_URL}/api/v1${path}`, {
+  const request = () =>
+    fetch(`${API_URL}/api/v1${path}`, {
       method: options.method ?? "GET",
       headers,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
       credentials: "include",
     });
+
+  let response: Response | null = null;
+  let networkError: unknown = null;
+  try {
+    response = await request();
+    if (response.status === 401 && options.auth) {
+      const freshToken = await refreshAccessToken();
+      if (freshToken) {
+        headers.Authorization = `Bearer ${freshToken}`;
+        response = await request();
+      }
+    }
   } catch (error) {
     networkError = error;
   }

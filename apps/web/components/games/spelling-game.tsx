@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { motion } from "framer-motion";
+import { SpellCheck2, Volume2 } from "lucide-react";
 
-import { Progress } from "@/components/games/choice-game";
 import type { GameProps } from "@/components/games/game-player";
 import { Button } from "@/components/ui/button";
 import { normalize, speak, type GameQuestion } from "@/lib/games";
@@ -25,7 +26,6 @@ export function SpellingGame({
 
   return (
     <div>
-      <Progress index={index} total={questions.length} />
       <SpellingRound
         key={index}
         question={question}
@@ -68,16 +68,21 @@ function SpellingRound({
 
   return (
     <div>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-8 text-center">
-        <button
+      <div className="surface-panel mt-6 rounded-lg p-7 text-center sm:p-8">
+        <motion.button
           type="button"
           onClick={() => speak(word)}
-          className="mx-auto flex size-20 items-center justify-center rounded-full bg-yellow-500/15 text-4xl transition-transform hover:scale-105"
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          className="mx-auto flex size-20 items-center justify-center rounded-full border border-accent-400/35 bg-accent-400/12 text-accent-700 shadow-[0_14px_38px_rgba(184,137,47,0.18)] dark:text-accent-300"
           aria-label={games.tapToHear}
         >
-          🐝
-        </button>
-        <p className="mt-3 text-sm text-ink-soft">🇺🇿 {question.prompt}</p>
+          <Volume2 className="size-8" aria-hidden />
+        </motion.button>
+        <p className="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-ink-soft">
+          <SpellCheck2 className="size-4" aria-hidden />
+          {question.prompt}
+        </p>
       </div>
 
       <form onSubmit={submit} className="mt-4">
@@ -90,7 +95,7 @@ function SpellingRound({
           spellCheck={false}
           placeholder={games.typeAnswer}
           className={cn(
-            "h-14 w-full rounded-xl border-2 bg-card px-4 text-center text-xl font-bold text-ink outline-none transition-colors",
+            "h-14 w-full rounded-lg border-2 bg-card px-4 text-center text-xl font-bold text-ink outline-none transition-colors",
             result === "correct" && "border-success bg-success/10 text-success",
             result === "wrong" && "border-danger bg-danger/10 text-danger",
             !result && "border-line focus:border-brand-400"

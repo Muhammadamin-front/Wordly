@@ -1,5 +1,7 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ShieldAlert, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { ChoiceItem, GameProps } from "@/components/games/game-player";
@@ -28,11 +30,14 @@ export function ChoiceGame({
   return (
     <div>
       {boss && (
-        <div className="mb-3">
+        <div className="mb-5 rounded-lg border border-danger/25 bg-danger/5 p-3">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-2xl" aria-hidden>
-              {hits >= items.length ? "💥" : "🐉"}
-            </span>
+            <motion.span
+              animate={hits ? { rotate: [0, -8, 8, 0], scale: [1, 0.9, 1] } : undefined}
+              className="flex size-9 items-center justify-center rounded-lg bg-danger/10 text-danger"
+            >
+              <ShieldAlert className="size-5" aria-hidden />
+            </motion.span>
             <span className="text-xs font-bold text-danger">{games.bossHp}</span>
           </div>
           <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-line">
@@ -43,7 +48,6 @@ export function ChoiceGame({
           </div>
         </div>
       )}
-      <Progress index={index} total={items.length} />
       <ChoiceQuestion
         key={index}
         item={item}
@@ -96,15 +100,19 @@ function ChoiceQuestion({
 
   return (
     <>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-8 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 10, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="surface-panel mt-6 rounded-lg p-7 text-center sm:p-8"
+      >
         {isAudio ? (
           <button
             type="button"
             onClick={() => speak(question.audio_text ?? question.answer)}
-            className="mx-auto flex size-20 items-center justify-center rounded-full bg-brand-600/10 text-4xl transition-transform hover:scale-105"
+            className="mx-auto flex size-20 items-center justify-center rounded-full border border-brand-400/30 bg-brand-600/10 text-brand-600 shadow-[0_14px_38px_rgba(7,58,53,0.16)] transition-transform hover:scale-105 dark:text-brand-200"
             aria-label={games.tapToHear}
           >
-            🔊
+            <Volume2 className="size-8" aria-hidden />
           </button>
         ) : fill ? (
           <p className="text-xl font-semibold leading-relaxed text-ink">{question.prompt}</p>
@@ -112,7 +120,7 @@ function ChoiceQuestion({
           <p className="text-4xl font-extrabold tracking-tight text-ink">{question.prompt}</p>
         )}
         {isAudio && <p className="mt-3 text-sm text-ink-soft">{games.tapToHear}</p>}
-      </div>
+      </motion.div>
 
       <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {options.map((option) => {
@@ -125,21 +133,36 @@ function ChoiceQuestion({
                 : "idle"
             : "idle";
           return (
-            <button
+            <motion.button
               key={option}
               type="button"
               data-option={option}
               disabled={!!picked}
               onClick={choose}
+              whileHover={!picked ? { y: -2 } : undefined}
+              whileTap={!picked ? { scale: 0.98 } : undefined}
+              animate={state === "wrong" ? { x: [0, -5, 5, 0] } : undefined}
               className={cn(
-                "rounded-xl border px-4 py-3.5 text-left font-semibold transition-colors",
+                "flex min-h-14 items-center justify-between rounded-lg border px-4 py-3.5 text-left font-semibold shadow-sm transition-colors",
                 state === "idle" && "border-line bg-card text-ink hover:border-brand-400",
                 state === "correct" && "border-success bg-success/10 text-success",
                 state === "wrong" && "border-danger bg-danger/10 text-danger"
               )}
             >
-              {option}
-            </button>
+              <span>{option}</span>
+              <AnimatePresence>
+                {state === "correct" && (
+                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                    <Check className="size-5" aria-hidden />
+                  </motion.span>
+                )}
+                {state === "wrong" && (
+                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                    <X className="size-5" aria-hidden />
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
           );
         })}
       </div>

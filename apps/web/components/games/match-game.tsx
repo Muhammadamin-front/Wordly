@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
+import { Check, Link2, MousePointer2 } from "lucide-react";
 
 import type { GameProps } from "@/components/games/game-player";
 import type { GameQuestion } from "@/lib/games";
@@ -44,7 +46,7 @@ export function MatchGame({
 
   const cell = (active: boolean, done: boolean, isWrong: boolean) =>
     cn(
-      "w-full rounded-xl border px-3 py-3.5 text-center font-semibold transition-colors",
+      "relative w-full overflow-hidden rounded-lg border px-3 py-3.5 text-center font-semibold transition-colors",
       done && "border-success/40 bg-success/10 text-success opacity-50",
       isWrong && "border-danger bg-danger/10 text-danger",
       active && "border-brand-400 bg-brand-600/10 text-brand-600 dark:text-brand-300",
@@ -53,34 +55,48 @@ export function MatchGame({
 
   return (
     <div>
-      <p className="mb-4 text-center text-sm font-semibold text-ink-soft">
-        {matched.size}/{left.length}
-      </p>
+      <div className="mb-4 flex items-center justify-between border-b border-line pb-3">
+        <span className="flex items-center gap-2 text-sm font-bold text-ink">
+          <Link2 className="size-4 text-brand-500" aria-hidden />
+          {matched.size}/{left.length}
+        </span>
+        <span className="flex items-center gap-1.5 text-xs font-semibold text-ink-soft">
+          <MousePointer2 className="size-3.5" aria-hidden />
+          {selected ? "2" : "1"}
+        </span>
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
           {left.map((q) => (
-            <button
+            <motion.button
               key={q.card_id}
               type="button"
               disabled={matched.has(q.card_id)}
               onClick={() => pickWord(q.card_id)}
               className={cell(selected === q.card_id, matched.has(q.card_id), false)}
+              whileTap={{ scale: 0.97 }}
+              layout
             >
               {q.prompt}
-            </button>
+              {matched.has(q.card_id) && <Check className="absolute right-2 top-2 size-3.5" aria-hidden />}
+            </motion.button>
           ))}
         </div>
         <div className="space-y-2">
           {right.map((q) => (
-            <button
+            <motion.button
               key={q.card_id}
               type="button"
               disabled={matched.has(q.card_id)}
               onClick={() => pickTranslation(q.card_id)}
               className={cell(false, matched.has(q.card_id), wrong === q.card_id)}
+              animate={wrong === q.card_id ? { x: [0, -6, 6, -3, 0] } : { x: 0 }}
+              whileTap={{ scale: 0.97 }}
+              layout
             >
               {q.answer}
-            </button>
+              {matched.has(q.card_id) && <Check className="absolute right-2 top-2 size-3.5" aria-hidden />}
+            </motion.button>
           ))}
         </div>
       </div>

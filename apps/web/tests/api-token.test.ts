@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { setAccessToken, waitForAccessToken } from "@/lib/api";
+import { apiFetch, setAccessToken, waitForAccessToken } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 
 describe("waitForAccessToken", () => {
@@ -51,6 +51,33 @@ describe("review requests", () => {
     expect(options.headers).toMatchObject({
       Authorization: "Bearer access-token",
       "Idempotency-Key": "review-key-0001",
+    });
+  });
+
+  it("refreshes once and retries an authenticated request after a 401", async () => {
+    setAccessToken("expired-token");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ detail: "Expired" }), { status: 401 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ access_token: "fresh-token", user: {} }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(apiFetch<{ ok: boolean }>("/protected", { auth: true })).resolves.toEqual({ ok: true });
+
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+    expect((fetchMock.mock.calls[2][1] as RequestInit).headers).toMatchObject({
+      Authorization: "Bearer fresh-token",
     });
   });
 });

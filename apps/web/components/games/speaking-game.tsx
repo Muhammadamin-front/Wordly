@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
+import { Mic2, Volume2 } from "lucide-react";
 
-import { Progress } from "@/components/games/choice-game";
 import type { GameProps } from "@/components/games/game-player";
 import { Button } from "@/components/ui/button";
 import { normalize, speak, type GameQuestion } from "@/lib/games";
@@ -50,7 +51,6 @@ export function SpeakingGame({
 
   return (
     <div>
-      <Progress index={index} total={questions.length} />
       <SpeakingRound
         key={index}
         question={question}
@@ -123,15 +123,15 @@ function SpeakingRound({
 
   return (
     <div>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-8 text-center">
-        <p className="text-sm text-ink-soft">🇺🇿</p>
+      <div className="surface-panel mt-6 rounded-lg p-7 text-center sm:p-8">
+        <Mic2 className="mx-auto size-5 text-brand-500" aria-hidden />
         <p className="mt-1 text-3xl font-extrabold tracking-tight text-ink">{question.prompt}</p>
         <button
           type="button"
           onClick={() => speak(question.answer)}
           className="mt-3 text-sm text-ink-soft underline-offset-2 hover:underline"
         >
-          🔊 {games.tapToHear}
+          <Volume2 className="mr-1 inline size-4" aria-hidden /> {games.tapToHear}
         </button>
 
         {result && (
@@ -152,20 +152,23 @@ function SpeakingRound({
       </div>
 
       {supported ? (
-        <button
+        <motion.button
           type="button"
           disabled={!!result}
           onClick={startListening}
           className={cn(
-            "mx-auto mt-6 flex size-24 items-center justify-center rounded-full text-4xl transition-all",
+            "mx-auto mt-6 flex size-24 items-center justify-center rounded-full border transition-all",
             listening
-              ? "animate-pulse bg-danger/20 ring-4 ring-danger/40"
-              : "bg-brand-600/10 hover:scale-105"
+              ? "border-danger/40 bg-danger/20 text-danger ring-4 ring-danger/20"
+              : "border-brand-400/35 bg-brand-600/10 text-brand-600 shadow-[0_16px_42px_rgba(7,58,53,0.18)] dark:text-brand-200"
           )}
+          animate={listening ? { scale: [1, 1.08, 1] } : { scale: 1 }}
+          transition={listening ? { repeat: Infinity, duration: 1.1 } : undefined}
+          whileTap={{ scale: 0.94 }}
           aria-label={games.sayIt}
         >
-          🎤
-        </button>
+          <Mic2 className="size-9" aria-hidden />
+        </motion.button>
       ) : (
         <div className="mt-6 text-center">
           <p className="text-sm text-ink-soft">{games.micUnsupported}</p>

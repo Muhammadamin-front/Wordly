@@ -1,6 +1,23 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BookOpen,
+  Check,
+  Flame,
+  GraduationCap,
+  Layers3,
+  Link2,
+  MessageCircle,
+  Music2,
+  RotateCcw,
+  Sparkles,
+  Target,
+  Trophy,
+  VolumeX,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -83,21 +100,22 @@ interface SourceOption {
   label: string;
   source: GameSource;
   accent: string;
+  icon: LucideIcon;
 }
 
 /** Word sources a player can pick before a game: their own cards, a CEFR
  *  level, or a corpus category. */
 const SOURCE_OPTIONS = (games: Dictionary["games"]): SourceOption[] => [
-  { key: "mine", label: games.sourceMine, source: {}, accent: "border-brand-400 bg-brand-500/10 text-ink" },
-  { key: "A1", label: "A1", source: { level: "A1" }, accent: "border-green-400/50 text-green-600 dark:text-green-400" },
-  { key: "A2", label: "A2", source: { level: "A2" }, accent: "border-emerald-400/50 text-emerald-600 dark:text-emerald-400" },
-  { key: "B1", label: "B1", source: { level: "B1" }, accent: "border-brand-400/50 text-brand-500 dark:text-brand-300" },
-  { key: "B2", label: "B2", source: { level: "B2" }, accent: "border-teal-400/50 text-teal-600 dark:text-teal-300" },
-  { key: "C1", label: "C1", source: { level: "C1" }, accent: "border-accent-400/50 text-accent-600 dark:text-accent-300" },
-  { key: "C2", label: "C2", source: { level: "C2" }, accent: "border-emerald-300/50 text-emerald-700 dark:text-emerald-200" },
-  { key: "ielts", label: "🎓 IELTS", source: { category: "ielts" }, accent: "border-orange-400/50 text-orange-600 dark:text-orange-400" },
-  { key: "phrasal", label: `🔗 ${games.sourcePhrasal}`, source: { category: "phrasal" }, accent: "border-yellow-400/50 text-yellow-600 dark:text-yellow-400" },
-  { key: "idioms", label: `💬 ${games.sourceIdioms}`, source: { category: "idioms" }, accent: "border-amber-500/50 text-amber-700 dark:text-amber-400" },
+  { key: "mine", label: games.sourceMine, source: {}, accent: "border-brand-400 bg-brand-500/10 text-ink", icon: Layers3 },
+  { key: "A1", label: "A1", source: { level: "A1" }, accent: "border-green-400/50 text-green-600 dark:text-green-400", icon: BookOpen },
+  { key: "A2", label: "A2", source: { level: "A2" }, accent: "border-emerald-400/50 text-emerald-600 dark:text-emerald-400", icon: BookOpen },
+  { key: "B1", label: "B1", source: { level: "B1" }, accent: "border-brand-400/50 text-brand-500 dark:text-brand-300", icon: BookOpen },
+  { key: "B2", label: "B2", source: { level: "B2" }, accent: "border-teal-400/50 text-teal-600 dark:text-teal-300", icon: BookOpen },
+  { key: "C1", label: "C1", source: { level: "C1" }, accent: "border-accent-400/50 text-accent-600 dark:text-accent-300", icon: Sparkles },
+  { key: "C2", label: "C2", source: { level: "C2" }, accent: "border-emerald-300/50 text-emerald-700 dark:text-emerald-200", icon: Sparkles },
+  { key: "ielts", label: "IELTS", source: { category: "ielts" }, accent: "border-orange-400/50 text-orange-600 dark:text-orange-400", icon: GraduationCap },
+  { key: "phrasal", label: games.sourcePhrasal, source: { category: "phrasal" }, accent: "border-yellow-400/50 text-yellow-600 dark:text-yellow-400", icon: Link2 },
+  { key: "idioms", label: games.sourceIdioms, source: { category: "idioms" }, accent: "border-amber-500/50 text-amber-700 dark:text-amber-400", icon: MessageCircle },
 ];
 
 export function GamePlayer({
@@ -117,6 +135,10 @@ export function GamePlayer({
   const [prepared, setPrepared] = useState<Prepared | null>(null);
   const [score, setScore] = useState(0);
   const [total, setTotal] = useState(0);
+  const [attempts, setAttempts] = useState(0);
+  const [combo, setCombo] = useState(0);
+  const [bestCombo, setBestCombo] = useState(0);
+  const [lastResult, setLastResult] = useState<boolean | null>(null);
   const [source, setSource] = useState<GameSource>({});
   const musicEligible = !AUDIO_GAMES.includes(gameType);
   const music = useAmbientMusic(musicEligible && phase === "playing");
@@ -136,6 +158,10 @@ export function GamePlayer({
           setPrepared(prepare(session.questions, gameType));
           setTotal(session.questions.length);
           setScore(0);
+          setAttempts(0);
+          setCombo(0);
+          setBestCombo(0);
+          setLastResult(null);
           setPhase("playing");
         })
         .catch((err) => {
@@ -158,7 +184,18 @@ export function GamePlayer({
     (cardId: string, correct: boolean, durationMs: number, submitted: string) => {
       // `correct` drives only the cosmetic on-screen score; the server grades
       // `submitted` for XP/streak/league so those can't be farmed.
-      if (correct) setScore((s) => s + 1);
+      setAttempts((value) => value + 1);
+      setLastResult(correct);
+      if (correct) {
+        setScore((s) => s + 1);
+        setCombo((value) => {
+          const next = value + 1;
+          setBestCombo((best) => Math.max(best, next));
+          return next;
+        });
+      } else {
+        setCombo(0);
+      }
       gamesApi.answer(cardId, gameType, submitted, durationMs).then(notifyStatsChanged).catch(() => {});
     },
     [gameType]
@@ -179,24 +216,40 @@ export function GamePlayer({
 
   if (phase === "choosing") {
     return (
-      <div className="mx-auto w-full max-w-md py-10 text-center">
-        <p className="text-sm font-semibold uppercase tracking-wide text-ink-soft">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="surface-panel mx-auto w-full max-w-lg rounded-lg p-5 text-center sm:p-7"
+      >
+        <span className="icon-tile mx-auto size-12 rounded-lg">
+          <Target className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
+        </span>
+        <p className="mt-4 text-sm font-semibold uppercase tracking-wide text-ink-soft">
           {games.chooseSource}
         </p>
-        <div className="mt-5 grid grid-cols-3 gap-2.5">
-          {SOURCE_OPTIONS(games).map((opt) => (
-            <button
-              key={opt.key}
-              type="button"
-              onClick={() => start(opt.source)}
-              className={`rounded-xl border-2 bg-card px-2 py-3 text-sm font-bold transition-all hover:-translate-y-0.5 hover:shadow-md ${opt.accent}`}
-            >
-              {opt.label}
-            </button>
-          ))}
+        <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+          {SOURCE_OPTIONS(games).map((opt, index) => {
+            const Icon = opt.icon;
+            return (
+              <motion.button
+                key={opt.key}
+                type="button"
+                onClick={() => start(opt.source)}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.025 }}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                className={`flex min-h-16 items-center gap-3 rounded-lg border bg-card/78 px-3 py-3 text-left text-sm font-bold shadow-sm backdrop-blur transition-shadow hover:shadow-lg ${opt.accent}`}
+              >
+                <Icon className="size-5 shrink-0" aria-hidden />
+                <span>{opt.label}</span>
+              </motion.button>
+            );
+          })}
         </div>
         <p className="mt-4 text-xs text-ink-soft">{games.sourceHint}</p>
-      </div>
+      </motion.div>
     );
   }
 
@@ -230,32 +283,37 @@ export function GamePlayer({
 
   if (phase === "error") {
     return (
-      <div className="mx-auto max-w-md py-16">
-        <Alert tone="error">{games.loading}</Alert>
+      <div className="mx-auto max-w-md py-12 text-center">
+        <Alert tone="error">{games.loadError}</Alert>
+        <div className="mt-5 flex justify-center gap-3">
+          <Button onClick={() => fetchSession(source)}>{games.tryAgain}</Button>
+          <Button variant="secondary" onClick={changeSource}>{games.chooseSource}</Button>
+        </div>
       </div>
     );
   }
 
   if (phase === "done") {
     const pct = total ? Math.round((score / total) * 100) : 0;
+    const resultLabel = pct === 100 ? games.perfectRound : pct >= 70 ? games.strongRound : games.keepGoing;
     return (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="mx-auto max-w-md py-16 text-center"
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="surface-panel mx-auto max-w-lg overflow-hidden rounded-lg p-6 text-center sm:p-8"
       >
-        <motion.p
-          className="text-6xl"
-          aria-hidden
-          initial={{ scale: 0, rotate: -20 }}
+        <motion.div
+          className="mx-auto flex size-20 items-center justify-center rounded-full border border-accent-400/40 bg-accent-400/12 text-accent-600 shadow-[0_18px_60px_rgba(184,137,47,0.24)] dark:text-accent-300"
+          initial={{ scale: 0, rotate: -18 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", stiffness: 260, damping: 14, delay: 0.05 }}
         >
-          {pct >= 80 ? "🏆" : pct >= 50 ? "🎉" : "💪"}
-        </motion.p>
+          <Trophy className="size-9" aria-hidden />
+        </motion.div>
         <h2 className="mt-4 text-2xl font-extrabold text-ink">{games.roundComplete}</h2>
+        <p className="mt-1 text-sm font-semibold text-ink-soft">{resultLabel}</p>
         <motion.p
-          className="mt-2 text-4xl font-extrabold text-brand-600 dark:text-brand-300"
+          className="mt-5 text-5xl font-black text-brand-700 dark:text-brand-200"
           initial={{ scale: 0.6, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 18, delay: 0.2 }}
@@ -263,8 +321,21 @@ export function GamePlayer({
           {score}/{total}
         </motion.p>
         <p className="mt-1 text-sm text-ink-soft">{games.yourScore}</p>
+        <div className="mt-6 grid grid-cols-2 divide-x divide-line border-y border-line py-4">
+          <div>
+            <p className="text-2xl font-black text-ink">{pct}%</p>
+            <p className="mt-1 text-xs font-semibold uppercase text-ink-soft">{games.accuracy}</p>
+          </div>
+          <div>
+            <p className="text-2xl font-black text-ink">{bestCombo}</p>
+            <p className="mt-1 text-xs font-semibold uppercase text-ink-soft">{games.bestCombo}</p>
+          </div>
+        </div>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Button onClick={playAgain}>{games.playAgain}</Button>
+          <Button onClick={playAgain}>
+            <RotateCcw className="size-4" aria-hidden />
+            {games.playAgain}
+          </Button>
           <Button variant="secondary" onClick={changeSource}>
             {games.chooseSource}
           </Button>
@@ -281,19 +352,61 @@ export function GamePlayer({
 
   return (
     <div className={`mx-auto w-full ${gameType === "crossword" ? "max-w-5xl" : "max-w-xl"}`}>
-      {musicEligible && (
-        <div className="mb-2 flex justify-end">
+      <div className="mb-5 flex min-h-12 items-center gap-3 border-b border-line pb-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-3 text-xs font-bold uppercase text-ink-soft">
+            <span>{games.progress}</span>
+            <span>{Math.min(attempts, total)}/{total}</span>
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+            <motion.div
+              className="h-full rounded-full bg-linear-to-r from-brand-500 via-emerald-400 to-accent-400"
+              animate={{ width: `${total ? (Math.min(attempts, total) / total) * 100 : 0}%` }}
+              transition={{ type: "spring", stiffness: 180, damping: 24 }}
+            />
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {lastResult !== null && (
+            <motion.span
+              key={attempts}
+              initial={{ opacity: 0, scale: 0.7, y: 5 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className={`flex size-9 items-center justify-center rounded-full ${lastResult ? "bg-success/14 text-success" : "bg-danger/14 text-danger"}`}
+              aria-label={lastResult ? games.correct : games.wrong}
+            >
+              {lastResult ? <Check className="size-5" /> : <X className="size-5" />}
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        <div className="flex h-9 items-center gap-1.5 rounded-full border border-line bg-card/72 px-3 text-sm font-black text-ink shadow-sm">
+          <Target className="size-4 text-brand-500" aria-hidden />
+          {score}
+        </div>
+        <motion.div
+          animate={combo > 1 ? { scale: [1, 1.12, 1] } : { scale: 1 }}
+          className={`flex h-9 items-center gap-1.5 rounded-full border px-3 text-sm font-black ${combo > 1 ? "border-accent-400/50 bg-accent-400/12 text-accent-700 dark:text-accent-300" : "border-line bg-card/72 text-ink-soft"}`}
+          title={games.combo}
+        >
+          <Flame className="size-4" aria-hidden />
+          {combo}x
+        </motion.div>
+
+        {musicEligible && (
           <button
             type="button"
             onClick={music.toggle}
             aria-label={games.music}
             title={games.music}
-            className="rounded-full border border-line bg-card px-2.5 py-1 text-sm text-ink-soft transition-colors hover:text-ink"
+            className="flex size-9 items-center justify-center rounded-full border border-line bg-card text-ink-soft transition-colors hover:text-ink"
           >
-            {music.enabled ? "🎵" : "🔇"}
+            {music.enabled ? <Music2 className="size-4" /> : <VolumeX className="size-4" />}
           </button>
-        </div>
-      )}
+        )}
+      </div>
       {gameType === "typing_race" ? (
         <TypingGame {...shared} questions={prepared.questions} />
       ) : gameType === "word_match" ? (

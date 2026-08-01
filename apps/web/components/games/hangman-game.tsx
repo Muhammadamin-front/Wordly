@@ -1,8 +1,9 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { Heart, HeartCrack, Sparkles, Skull } from "lucide-react";
 import { useRef, useState, type MouseEvent } from "react";
 
-import { Progress } from "@/components/games/choice-game";
 import type { GameProps } from "@/components/games/game-player";
 import type { GameQuestion } from "@/lib/games";
 import { cn } from "@/lib/utils";
@@ -25,7 +26,6 @@ export function HangmanGame({
 
   return (
     <div>
-      <Progress index={index} total={questions.length} />
       <HangmanRound
         key={index}
         question={question}
@@ -75,15 +75,29 @@ function HangmanRound({
 
   return (
     <div>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-6 text-center">
-        <p className="text-6xl" aria-hidden>
-          {lost ? "💀" : solved ? "🎉" : "🪢"}
-        </p>
-        <p className="mt-2 text-sm text-ink-soft">
-          {"❤️".repeat(MAX_WRONG - wrong)}
-          <span className="opacity-30">{"🖤".repeat(wrong)}</span>
-        </p>
-        <p className="mt-3 text-sm text-ink-soft">🇺🇿 {question.prompt}</p>
+      <div className="surface-panel mt-6 rounded-lg p-5 text-center sm:p-6">
+        <motion.div
+          animate={solved ? { rotate: [0, -8, 8, 0], scale: [1, 1.15, 1] } : lost ? { y: [0, -3, 0] } : { y: [0, -4, 0] }}
+          transition={solved || lost ? { duration: 0.45 } : { repeat: Infinity, duration: 2.4 }}
+          className={cn(
+            "mx-auto flex size-16 items-center justify-center rounded-full border",
+            solved && "border-success/35 bg-success/10 text-success",
+            lost && "border-danger/35 bg-danger/10 text-danger",
+            !solved && !lost && "border-brand-400/35 bg-brand-500/10 text-brand-600 dark:text-brand-200"
+          )}
+        >
+          {lost ? <Skull className="size-7" /> : <Sparkles className="size-7" />}
+        </motion.div>
+        <div className="mt-4 flex justify-center gap-1.5" aria-label={`${MAX_WRONG - wrong} lives`}>
+          {Array.from({ length: MAX_WRONG }, (_, index) =>
+            index < MAX_WRONG - wrong ? (
+              <Heart key={index} className="size-4 fill-danger text-danger" aria-hidden />
+            ) : (
+              <HeartCrack key={index} className="size-4 text-ink-soft/35" aria-hidden />
+            )
+          )}
+        </div>
+        <p className="mt-4 text-sm font-semibold text-ink-soft">{question.prompt}</p>
         <div className="mt-3 flex flex-wrap justify-center gap-1.5">
           {letters.map((ch, i) =>
             ch === " " ? (
@@ -93,7 +107,11 @@ function HangmanRound({
                 key={i}
                 className="flex size-8 items-center justify-center border-b-2 border-ink text-xl font-extrabold text-ink"
               >
-                {guessed.has(ch) || lost ? ch : ""}
+                {(guessed.has(ch) || lost) && (
+                  <motion.span initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                    {ch}
+                  </motion.span>
+                )}
               </span>
             )
           )}
@@ -110,21 +128,22 @@ function HangmanRound({
           const used = guessed.has(letter);
           const hit = used && answer.includes(letter);
           return (
-            <button
+            <motion.button
               key={letter}
               type="button"
               data-letter={letter}
               disabled={used || solved || lost}
               onClick={guess}
               className={cn(
-                "aspect-square rounded-lg text-sm font-bold transition-colors",
-                !used && "bg-card text-ink hover:bg-brand-600/10",
-                hit && "bg-success/20 text-success",
-                used && !hit && "bg-danger/15 text-danger"
+                "aspect-square rounded-lg border text-sm font-bold transition-colors",
+                !used && "border-line bg-card text-ink hover:border-brand-400 hover:bg-brand-600/10",
+                hit && "border-success/40 bg-success/20 text-success",
+                used && !hit && "border-danger/30 bg-danger/15 text-danger"
               )}
+              whileTap={!used ? { scale: 0.88 } : undefined}
             >
               {letter}
-            </button>
+            </motion.button>
           );
         })}
       </div>

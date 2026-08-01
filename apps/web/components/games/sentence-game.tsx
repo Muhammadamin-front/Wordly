@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Blocks, CheckCircle2 } from "lucide-react";
 
-import { Progress } from "@/components/games/choice-game";
 import type { GameProps } from "@/components/games/game-player";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,6 @@ export function SentenceGame({
 
   return (
     <div>
-      <Progress index={index} total={items.length} />
       <SentenceRound
         key={index}
         item={item}
@@ -74,24 +74,33 @@ function SentenceRound({
 
   return (
     <div>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-5 text-center">
-        <p className="text-sm text-ink-soft">🇺🇿 {item.prompt}</p>
+      <div className="surface-panel mt-6 rounded-lg p-5 text-center">
+        <p className="flex items-center justify-center gap-2 text-sm font-semibold text-ink-soft">
+          <Blocks className="size-4" aria-hidden />
+          {item.prompt}
+        </p>
         {/* Built sentence */}
         <div className="mt-3 flex min-h-12 flex-wrap items-center justify-center gap-2 rounded-lg bg-page px-3 py-2">
           {built.length === 0 ? (
             <span className="text-sm text-ink-soft/60">{games.buildSentence}…</span>
           ) : (
-            built.map((pos, slot) => (
-              <button
+            <AnimatePresence mode="popLayout">
+            {built.map((pos, slot) => (
+              <motion.button
                 key={pos}
                 type="button"
                 disabled={!!result}
                 onClick={() => setBuilt(built.filter((_, i) => i !== slot))}
-                className="rounded-lg bg-brand-600/10 px-2.5 py-1 text-sm font-semibold text-brand-600 dark:text-brand-300"
+                layout
+                initial={{ opacity: 0, scale: 0.75, y: 8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.75 }}
+                className="rounded-lg border border-brand-400/30 bg-brand-600/10 px-2.5 py-1 text-sm font-semibold text-brand-600 dark:text-brand-300"
               >
                 {item.scrambled[pos].w}
-              </button>
+              </motion.button>
             ))
+            }</AnimatePresence>
           )}
         </div>
         {result === "wrong" && (
@@ -107,15 +116,17 @@ function SentenceRound({
               {tile.w}
             </span>
           ) : (
-            <button
+            <motion.button
               key={pos}
               type="button"
               disabled={!!result}
               onClick={() => setBuilt([...built, pos])}
               className="rounded-lg border border-line bg-card px-3 py-1.5 text-sm font-semibold text-ink transition-colors hover:border-brand-400"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.94 }}
             >
               {tile.w}
-            </button>
+            </motion.button>
           )
         )}
       </div>
@@ -130,6 +141,7 @@ function SentenceRound({
           onClick={check}
           className={cn(result === "correct" && "bg-success", result === "wrong" && "bg-danger")}
         >
+          <CheckCircle2 className="size-4" aria-hidden />
           {games.check}
         </Button>
       </div>

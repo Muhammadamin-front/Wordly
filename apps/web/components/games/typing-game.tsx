@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { motion } from "framer-motion";
+import { Keyboard, Timer } from "lucide-react";
 
-import { Progress } from "@/components/games/choice-game";
 import type { GameProps } from "@/components/games/game-player";
 import { Button } from "@/components/ui/button";
 import { normalize, type GameQuestion } from "@/lib/games";
@@ -25,7 +26,6 @@ export function TypingGame({
 
   return (
     <div>
-      <Progress index={index} total={questions.length} />
       <TypingQuestion
         key={index}
         question={question}
@@ -68,10 +68,16 @@ function TypingQuestion({
 
   return (
     <>
-      <div className="mt-6 rounded-xl2 border border-line bg-card p-8 text-center">
-        <p className="text-sm text-ink-soft">🇺🇿</p>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="surface-panel mt-6 rounded-lg p-7 text-center sm:p-8"
+      >
+        <span className="mx-auto flex size-10 items-center justify-center rounded-lg border border-brand-400/30 bg-brand-500/10 text-brand-600 dark:text-brand-200">
+          <Timer className="size-5" aria-hidden />
+        </span>
         <p className="mt-1 text-3xl font-extrabold tracking-tight text-ink">{question.prompt}</p>
-      </div>
+      </motion.div>
 
       <form onSubmit={submit} className="mt-4">
         <input
@@ -84,7 +90,7 @@ function TypingQuestion({
           spellCheck={false}
           placeholder={games.typeAnswer}
           className={cn(
-            "h-14 w-full rounded-xl border-2 bg-card px-4 text-center text-xl font-bold text-ink outline-none transition-colors",
+            "h-14 w-full rounded-lg border-2 bg-card px-4 text-center text-xl font-bold text-ink outline-none transition-colors",
             result === "correct" && "border-success bg-success/10 text-success",
             result === "wrong" && "border-danger bg-danger/10 text-danger",
             !result && "border-line focus:border-brand-400"
@@ -96,6 +102,7 @@ function TypingQuestion({
           </p>
         )}
         <Button type="submit" fullWidth className="mt-4" disabled={!!result || !value.trim()}>
+          <Keyboard className="size-4" aria-hidden />
           {games.check}
         </Button>
       </form>
