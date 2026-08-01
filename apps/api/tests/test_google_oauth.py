@@ -35,6 +35,7 @@ async def test_google_login_creates_verified_user(client):
         assert user["email"] == "jasur@example.uz"
         assert user["email_verified"] is True
         assert user["profile"]["display_name"] == "Jasur"
+        assert user["profile"]["onboarding_completed"] is False
     finally:
         app.dependency_overrides.clear()
 

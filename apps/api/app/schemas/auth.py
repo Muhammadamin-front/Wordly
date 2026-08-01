@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
@@ -42,6 +42,12 @@ class ProfileOut(BaseModel):
     ui_locale: str
     timezone: str
     bio: Optional[str] = None
+    cefr_level: str
+    learning_goal: str
+    daily_minutes: int
+    learning_interests: List[str]
+    onboarding_completed: bool
+    starter_deck_id: Optional[UUID] = None
 
 
 class UserOut(BaseModel):
@@ -71,3 +77,18 @@ class ProfileUpdate(BaseModel):
     ui_locale: Optional[str] = Field(default=None, pattern="^(uz|ru|en)$")
     timezone: Optional[str] = Field(default=None, max_length=64)
     bio: Optional[str] = Field(default=None, max_length=500)
+
+
+class OnboardingRequest(BaseModel):
+    cefr_level: Literal["A1", "A2", "B1", "B2", "C1", "C2"]
+    learning_goal: Literal["general", "travel", "career", "ielts"]
+    daily_minutes: Literal[5, 10, 15, 20]
+    learning_interests: List[
+        Literal["daily-life", "travel", "work", "education", "technology", "culture"]
+    ] = Field(min_length=1, max_length=3)
+
+
+class OnboardingOut(BaseModel):
+    user: UserOut
+    starter_deck_id: UUID
+    starter_cards: int

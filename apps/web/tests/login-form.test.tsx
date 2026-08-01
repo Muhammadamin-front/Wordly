@@ -36,6 +36,12 @@ const USER = {
     ui_locale: "en",
     timezone: "Asia/Tashkent",
     bio: null,
+    cefr_level: "B1",
+    learning_goal: "general",
+    daily_minutes: 10,
+    learning_interests: ["daily-life"],
+    onboarding_completed: true,
+    starter_deck_id: "deck-1",
   },
 };
 
@@ -115,5 +121,35 @@ describe("LoginForm", () => {
     await userEvent.click(screen.getByRole("button", { name: en.auth.loginButton }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/en/dashboard"));
+  });
+
+  it("continues an incomplete account into onboarding", async () => {
+    const incompletePair = {
+      ...PAIR,
+      user: {
+        ...USER,
+        profile: {
+          ...USER.profile,
+          onboarding_completed: false,
+          starter_deck_id: null,
+        },
+      },
+    };
+    mockFetch((url) => {
+      if (url.includes("/auth/refresh")) return json(401, { detail: "No refresh token" });
+      if (url.includes("/auth/login")) return json(200, incompletePair);
+      throw new Error(`unexpected fetch: ${url}`);
+    });
+
+    render(
+      <AuthProvider>
+        <LoginForm lang="en" auth={en.auth} />
+      </AuthProvider>
+    );
+    await userEvent.type(screen.getByLabelText(en.auth.email), USER.email);
+    await userEvent.type(screen.getByLabelText(en.auth.password), "correct-password");
+    await userEvent.click(screen.getByRole("button", { name: en.auth.loginButton }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/en/onboarding"));
   });
 });

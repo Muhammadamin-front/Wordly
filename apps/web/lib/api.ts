@@ -8,6 +8,12 @@ export interface Profile {
   ui_locale: string;
   timezone: string;
   bio: string | null;
+  cefr_level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  learning_goal: "general" | "travel" | "career" | "ielts";
+  daily_minutes: 5 | 10 | 15 | 20;
+  learning_interests: string[];
+  onboarding_completed: boolean;
+  starter_deck_id: string | null;
 }
 
 export interface User {
@@ -144,4 +150,26 @@ export const authApi = {
     }),
 
   me: () => apiFetch<User>("/auth/me", { auth: true }),
+};
+
+export interface OnboardingInput {
+  cefr_level: Profile["cefr_level"];
+  learning_goal: Profile["learning_goal"];
+  daily_minutes: Profile["daily_minutes"];
+  learning_interests: string[];
+}
+
+export interface OnboardingResult {
+  user: User;
+  starter_deck_id: string;
+  starter_cards: number;
+}
+
+export const onboardingApi = {
+  complete: (body: OnboardingInput) =>
+    apiFetch<OnboardingResult>("/users/me/onboarding", {
+      method: "PUT",
+      body,
+      auth: true,
+    }),
 };

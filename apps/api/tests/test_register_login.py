@@ -11,6 +11,7 @@ async def test_register_returns_tokens_and_user(client):
     assert data["user"]["email_verified"] is False
     assert data["user"]["profile"]["display_name"] == "Dilnoza"
     assert data["user"]["profile"]["ui_locale"] == "uz"
+    assert data["user"]["profile"]["onboarding_completed"] is False
 
 
 async def test_register_duplicate_email_conflicts(client):

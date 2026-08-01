@@ -35,7 +35,9 @@ export function GoogleButton({ lang, divider }: { lang: string; divider: string 
       try {
         const pair = await authApi.google(response.credential);
         applySession(pair);
-        router.push(`/${lang}/dashboard`);
+        router.push(
+          `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        );
       } catch {
         // Surfacing Google-side failures is handled by the form's generic error UI paths;
         // a failed exchange simply leaves the user on the page.

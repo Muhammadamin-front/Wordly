@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 76 passed; API 251 passed; lint and production build passed |
+| Tests | Web 78 passed; API 255 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -135,6 +135,11 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P1. No onboarding or personalized first learning path
 
+- **Status:** **Resolved 2026-08-01.** New email and Google accounts enter a
+  localized four-step setup for CEFR level, goal, interests, and daily pace.
+  Completion persists the path, creates one retry-safe five-word starter deck,
+  and opens that deck as the learner's first SRS lesson. Existing accounts are
+  backfilled as complete and continue to their dashboard.
 - **Problem:** Registration goes directly to the dashboard. Profile data has no level, goal, IELTS target, interests, daily time, or onboarding state.
 - **Why it matters:** A new user faces many destinations without a recommended first lesson.
 - **User impact:** Lower first-lesson completion and weak D1 retention.

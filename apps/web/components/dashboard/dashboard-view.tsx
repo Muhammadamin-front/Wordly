@@ -45,6 +45,9 @@ export function DashboardView({
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
+    if (ready && user && !user.profile.onboarding_completed) {
+      router.replace(`/${lang}/onboarding`);
+    }
   }, [ready, user, router, lang]);
 
   useEffect(() => {

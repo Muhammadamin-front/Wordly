@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import DateTime, ForeignKey, Index, String, Uuid
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.security import utcnow
@@ -46,6 +46,14 @@ class Profile(Base):
     ui_locale: Mapped[str] = mapped_column(String(5), default="uz", nullable=False)  # uz|ru|en
     timezone: Mapped[str] = mapped_column(String(64), default="Asia/Tashkent", nullable=False)
     bio: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    cefr_level: Mapped[str] = mapped_column(String(2), default="A1", nullable=False)
+    learning_goal: Mapped[str] = mapped_column(String(20), default="general", nullable=False)
+    daily_minutes: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    learning_interests: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    onboarding_completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    starter_deck_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        Uuid, ForeignKey("decks.id", ondelete="SET NULL"), nullable=True
+    )
 
     user: Mapped[User] = relationship(back_populates="profile")
 

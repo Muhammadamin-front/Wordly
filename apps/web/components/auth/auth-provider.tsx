@@ -17,6 +17,7 @@ interface AuthState {
   /** false until the silent-refresh attempt on first load has settled */
   ready: boolean;
   applySession: (pair: TokenPair) => void;
+  updateUser: (user: User) => void;
   logout: () => Promise<void>;
 }
 
@@ -51,6 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(pair.user);
   }, []);
 
+  const updateUser = useCallback((nextUser: User) => {
+    setUser(nextUser);
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await authApi.logout();
@@ -61,8 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, ready, applySession, logout }),
-    [user, ready, applySession, logout]
+    () => ({ user, ready, applySession, updateUser, logout }),
+    [user, ready, applySession, updateUser, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

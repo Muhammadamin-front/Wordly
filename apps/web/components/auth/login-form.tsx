@@ -19,9 +19,13 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
   const { applySession, user, ready } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
-  // Already signed in? These pages have nothing to offer — go to the app.
+  // Already signed in? Continue the account's current setup path.
   useEffect(() => {
-    if (ready && user) router.replace(`/${lang}/dashboard`);
+    if (ready && user) {
+      router.replace(
+        `/${lang}/${user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+      );
+    }
   }, [ready, user, router, lang]);
   const [loading, setLoading] = useState(false);
 
@@ -36,7 +40,9 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
         password: String(form.get("password")),
       });
       applySession(pair);
-      router.push(`/${lang}/dashboard`);
+      router.push(
+        `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+      );
     } catch (err) {
       setError(authErrorMessage(err, auth));
       setLoading(false);

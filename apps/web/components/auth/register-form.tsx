@@ -20,9 +20,13 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
   const { applySession, user, ready } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
-  // Already signed in? These pages have nothing to offer — go to the app.
+  // Already signed in? Continue the account's current setup path.
   useEffect(() => {
-    if (ready && user) router.replace(`/${lang}/dashboard`);
+    if (ready && user) {
+      router.replace(
+        `/${lang}/${user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+      );
+    }
   }, [ready, user, router, lang]);
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +45,7 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
         referral_code: ref,
       });
       applySession(pair);
-      router.push(`/${lang}/dashboard`);
+      router.push(`/${lang}/onboarding`);
     } catch (err) {
       setError(authErrorMessage(err, auth));
       setLoading(false);
