@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.statistics import StatisticsOut
+from app.schemas.statistics import LearningPlanOut, MistakeNotebookOut, StatisticsOut
 from app.services import statistics as stats_service
 
 router = APIRouter(tags=["statistics"], dependencies=[Depends(get_current_user)])
@@ -28,3 +28,19 @@ async def my_statistics(
         mastered=await stats_service.mastered_words(db, user),
         weak_categories=await stats_service.weak_categories(db, user),
     )
+
+
+@router.get("/me/learning-plan", response_model=LearningPlanOut)
+async def my_learning_plan(
+    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    return LearningPlanOut(**(await stats_service.learning_plan(db, user)))
+
+
+@router.get("/me/mistakes", response_model=MistakeNotebookOut)
+async def my_mistakes(
+    limit: int = Query(20, ge=1, le=50),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    return MistakeNotebookOut(**(await stats_service.mistake_notebook(db, user, limit)))

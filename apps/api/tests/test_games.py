@@ -79,6 +79,37 @@ async def test_multiple_choice_games_have_distractors(client):
     assert all(len(q["distractors"]) >= 1 for q in body["questions"])
 
 
+async def test_new_learners_receive_guided_game_sessions(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    body = (await client.get("/api/v1/games/speed_quiz", headers=headers)).json()
+    assert body["difficulty"] == "guided"
+    assert body["recent_accuracy"] == 0.0
+    assert all(len(q["distractors"]) == 2 for q in body["questions"])
+
+
+async def test_high_accuracy_unlocks_challenge_sessions(client):
+    headers, cards = await learner_with_cards(client, count=6)
+    for index in range(10):
+        card_id = cards[index % len(cards)]
+        answer = await card_submission(client, headers, card_id)
+        response = await client.post(
+            "/api/v1/games/answer",
+            json={
+                "card_id": card_id,
+                "game_type": "speed_quiz",
+                "answer": answer,
+                "duration_ms": 1000,
+            },
+            headers=headers,
+        )
+        assert response.status_code == 200, response.text
+
+    body = (await client.get("/api/v1/games/speed_quiz", headers=headers)).json()
+    assert body["difficulty"] == "challenge"
+    assert body["recent_accuracy"] == 100.0
+    assert all(len(q["distractors"]) == 4 for q in body["questions"])
+
+
 async def test_audio_guess_carries_audio_text(client):
     headers, _ = await learner_with_cards(client, count=6)
     body = (await client.get("/api/v1/games/audio_guess", headers=headers)).json()

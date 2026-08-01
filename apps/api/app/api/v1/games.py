@@ -18,6 +18,7 @@ from app.schemas.games import (
     GameSessionOut,
 )
 from app.services import games as games_service
+from app.services import statistics as stats_service
 from app.services.review import record_review
 
 router = APIRouter(
@@ -45,8 +46,15 @@ async def game_session(
 ):
     if game_type not in games_service.GAME_TYPES:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown game")
+    profile = await stats_service.recent_learning_profile(db, user)
     questions, usable = await games_service.build_session(
-        db, user, game_type, count, level=level, category=category
+        db,
+        user,
+        game_type,
+        count,
+        level=level,
+        category=category,
+        difficulty=str(profile["difficulty"]),
     )
     if not questions:
         raise HTTPException(
@@ -60,6 +68,8 @@ async def game_session(
         await db.commit()
     return GameSessionOut(
         game_type=game_type,
+        difficulty=str(profile["difficulty"]),
+        recent_accuracy=float(profile["recent_accuracy"]),
         questions=[
             GameQuestionOut(
                 card_id=q.card_id,

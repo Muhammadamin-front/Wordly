@@ -4,7 +4,8 @@ from tests.test_games import learner_with_cards
 
 
 @pytest.mark.parametrize(
-    "game_type", ["boss_battle", "hangman", "spelling_bee", "word_search", "crossword"]
+    "game_type",
+    ["boss_battle", "hangman", "spelling_bee", "word_search", "crossword", "story_mode"],
 )
 async def test_new_games_build_sessions(client, game_type):
     headers, _ = await learner_with_cards(client, count=6)
@@ -51,3 +52,13 @@ async def test_sentence_builder_needs_examples(client):
     body = (await client.get("/api/v1/games/sentence_builder", headers=headers)).json()
     # answer is a full sentence.
     assert all(" " in q["answer"] for q in body["questions"])
+
+
+async def test_story_mode_uses_example_as_a_cloze_scene(client):
+    headers, _ = await learner_with_cards(client, count=6)
+    body = (await client.get("/api/v1/games/story_mode", headers=headers)).json()
+    assert body["difficulty"] == "guided"
+    for question in body["questions"]:
+        assert "____" in question["prompt"]
+        assert question["answer"].lower() not in question["prompt"].lower()
+        assert len(question["distractors"]) == 2

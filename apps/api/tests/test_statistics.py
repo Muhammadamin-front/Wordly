@@ -78,3 +78,56 @@ async def test_statistics_forgotten_words(client):
 
 async def test_statistics_requires_auth(client):
     assert (await client.get("/api/v1/me/statistics")).status_code == 401
+
+
+async def test_learning_plan_starts_guided_and_tracks_today(client):
+    headers, cards = await learner_with_cards(client, count=6)
+    before = (await client.get("/api/v1/me/learning-plan", headers=headers)).json()
+    assert before["difficulty"] == "guided"
+    assert before["recommended_game"] == "memory"
+    assert before["daily_target"] == 10
+    assert before["new_count"] == 6
+
+    answer = await card_submission(client, headers, cards[0])
+    await client.post(
+        "/api/v1/games/answer",
+        json={
+            "card_id": cards[0],
+            "game_type": "speed_quiz",
+            "answer": answer,
+            "duration_ms": 1000,
+        },
+        headers=headers,
+    )
+    after = (await client.get("/api/v1/me/learning-plan", headers=headers)).json()
+    assert after["reviewed_today"] == 1
+    assert after["recent_reviews"] == 1
+    assert after["recent_accuracy"] == 100.0
+
+
+async def test_mistake_notebook_contains_learning_context(client):
+    headers, cards = await learner_with_cards(client, count=6)
+    await client.post(
+        "/api/v1/games/answer",
+        json={
+            "card_id": cards[0],
+            "game_type": "speed_quiz",
+            "answer": "wrong",
+            "duration_ms": 1000,
+        },
+        headers=headers,
+    )
+
+    response = await client.get("/api/v1/me/mistakes", headers=headers)
+    assert response.status_code == 200, response.text
+    notebook = response.json()
+    assert notebook["total"] == 1
+    item = notebook["items"][0]
+    assert item["card_id"] == cards[0]
+    assert item["headword"].startswith("word")
+    assert item["translation_uz"].startswith("tarjima")
+    assert item["translation_ru"].startswith("perevod")
+    assert item["definition_en"].startswith("meaning number")
+    assert item["example_en"].startswith("I use word")
+    assert item["wrong_count"] == 1
+    assert item["status"] == "needs_practice"

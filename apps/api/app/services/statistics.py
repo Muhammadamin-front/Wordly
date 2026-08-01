@@ -10,6 +10,40 @@ from app.models.user import User
 from app.models.vocabulary import Category, Word
 from app.services.leveling import MASTERED_INTERVAL_DAYS
 
+RECENT_REVIEW_LIMIT = 40
+DAILY_REVIEW_TARGET = 10
+
+
+async def recent_learning_profile(
+    db: AsyncSession, user: User, limit: int = RECENT_REVIEW_LIMIT
+) -> Dict[str, object]:
+    ratings = list(
+        (
+            await db.scalars(
+                select(ReviewLog.rating)
+                .where(ReviewLog.user_id == user.id)
+                .order_by(ReviewLog.reviewed_at.desc())
+                .limit(limit)
+            )
+        ).all()
+    )
+    accuracy = _accuracy(len(ratings), ratings.count("again"))
+    if len(ratings) < 10 or accuracy < 65:
+        difficulty = "guided"
+        recommended_game = "memory"
+    elif accuracy < 85:
+        difficulty = "balanced"
+        recommended_game = "fill_blank"
+    else:
+        difficulty = "challenge"
+        recommended_game = "typing_race"
+    return {
+        "recent_accuracy": accuracy,
+        "recent_reviews": len(ratings),
+        "difficulty": difficulty,
+        "recommended_game": recommended_game,
+    }
+
 
 async def card_state_counts(db: AsyncSession, user: User) -> Dict[str, int]:
     rows = await db.execute(
@@ -171,3 +205,169 @@ async def weak_categories(db: AsyncSession, user: User, limit: int = 5) -> List[
             }
         )
     return result
+
+
+async def learning_plan(db: AsyncSession, user: User) -> Dict[str, object]:
+    now = utcnow()
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    due_count = int(
+        await db.scalar(
+            select(func.count(Card.id)).where(
+                Card.user_id == user.id,
+                Card.word_id.isnot(None),
+                Card.srs_state != "new",
+                Card.due_at <= now,
+            )
+        )
+        or 0
+    )
+    new_count = int(
+        await db.scalar(
+            select(func.count(Card.id)).where(
+                Card.user_id == user.id,
+                Card.word_id.isnot(None),
+                Card.srs_state == "new",
+            )
+        )
+        or 0
+    )
+    reviewed_today = int(
+        await db.scalar(
+            select(func.count(ReviewLog.id)).where(
+                ReviewLog.user_id == user.id,
+                ReviewLog.reviewed_at >= today_start,
+            )
+        )
+        or 0
+    )
+
+    latest_review = (
+        select(
+            ReviewLog.card_id.label("card_id"),
+            func.max(ReviewLog.reviewed_at).label("reviewed_at"),
+        )
+        .where(ReviewLog.user_id == user.id)
+        .group_by(ReviewLog.card_id)
+        .subquery()
+    )
+    mistake_count = int(
+        await db.scalar(
+            select(func.count(func.distinct(Card.id)))
+            .join(latest_review, latest_review.c.card_id == Card.id)
+            .join(
+                ReviewLog,
+                (ReviewLog.card_id == latest_review.c.card_id)
+                & (ReviewLog.reviewed_at == latest_review.c.reviewed_at),
+            )
+            .where(
+                Card.user_id == user.id,
+                Card.word_id.isnot(None),
+                ReviewLog.rating.in_(("again", "hard")),
+            )
+        )
+        or 0
+    )
+
+    profile = await recent_learning_profile(db, user)
+    return {
+        "due_count": due_count,
+        "new_count": new_count,
+        "reviewed_today": reviewed_today,
+        "mistake_count": mistake_count,
+        "daily_target": DAILY_REVIEW_TARGET,
+        **profile,
+    }
+
+
+async def mistake_notebook(db: AsyncSession, user: User, limit: int = 20) -> Dict[str, object]:
+    total = int(
+        await db.scalar(
+            select(func.count(func.distinct(ReviewLog.card_id)))
+            .join(Card, Card.id == ReviewLog.card_id)
+            .where(
+                ReviewLog.user_id == user.id,
+                Card.user_id == user.id,
+                Card.word_id.isnot(None),
+                ReviewLog.rating == "again",
+            )
+        )
+        or 0
+    )
+    missed = list(
+        (
+            await db.execute(
+                select(
+                    ReviewLog.card_id,
+                    func.count(ReviewLog.id).label("wrong_count"),
+                    func.max(ReviewLog.reviewed_at).label("last_missed_at"),
+                )
+                .join(Card, Card.id == ReviewLog.card_id)
+                .where(
+                    ReviewLog.user_id == user.id,
+                    Card.user_id == user.id,
+                    Card.word_id.isnot(None),
+                    ReviewLog.rating == "again",
+                )
+                .group_by(ReviewLog.card_id)
+                .order_by(func.max(ReviewLog.reviewed_at).desc())
+                .limit(limit)
+            )
+        ).all()
+    )
+    if not missed:
+        return {"items": [], "total": 0}
+
+    card_ids = [row.card_id for row in missed]
+    cards = list(
+        (
+            await db.scalars(
+                select(Card).where(Card.user_id == user.id, Card.id.in_(card_ids))
+            )
+        ).unique()
+    )
+    cards_by_id = {card.id: card for card in cards}
+
+    latest_ratings: Dict[object, str] = {}
+    rating_rows = await db.execute(
+        select(ReviewLog.card_id, ReviewLog.rating)
+        .where(ReviewLog.user_id == user.id, ReviewLog.card_id.in_(card_ids))
+        .order_by(ReviewLog.reviewed_at.desc())
+    )
+    for card_id, rating in rating_rows:
+        latest_ratings.setdefault(card_id, rating)
+
+    items = []
+    for card_id, wrong_count, last_missed_at in missed:
+        card = cards_by_id.get(card_id)
+        if not card or not card.word or not card.word.senses:
+            continue
+        word = card.word
+        sense = word.senses[0]
+        example = sense.examples[0] if sense.examples else None
+        last_rating = latest_ratings.get(card_id, "again")
+        items.append(
+            {
+                "card_id": card.id,
+                "headword": word.headword,
+                "slug": word.slug,
+                "pos": word.pos,
+                "cefr_level": word.cefr_level,
+                "translation_uz": sense.translation_uz,
+                "translation_ru": sense.translation_ru,
+                "definition_en": sense.definition_en,
+                "example_en": example.text_en if example else None,
+                "example_uz": example.text_uz if example else None,
+                "example_ru": example.text_ru if example else None,
+                "lapses": card.lapses,
+                "wrong_count": int(wrong_count),
+                "last_missed_at": last_missed_at,
+                "last_rating": last_rating,
+                "status": (
+                    "needs_practice"
+                    if last_rating in ("again", "hard")
+                    else "improving"
+                ),
+            }
+        )
+    return {"items": items, "total": total}

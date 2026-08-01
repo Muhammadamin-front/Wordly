@@ -1,4 +1,6 @@
+from datetime import datetime
 from typing import List, Optional
+from uuid import UUID
 
 from pydantic import BaseModel
 
@@ -44,3 +46,39 @@ class StatisticsOut(BaseModel):
     forgotten: List[WordRef]
     mastered: List[WordRef]
     weak_categories: List[WeakCategory]
+
+
+class LearningPlanOut(BaseModel):
+    due_count: int
+    new_count: int
+    reviewed_today: int
+    mistake_count: int
+    recent_accuracy: float
+    recent_reviews: int
+    difficulty: str
+    recommended_game: str
+    daily_target: int
+
+
+class MistakeWord(BaseModel):
+    card_id: UUID
+    headword: str
+    slug: str
+    pos: str
+    cefr_level: str
+    translation_uz: str
+    translation_ru: str
+    definition_en: str
+    example_en: Optional[str] = None
+    example_uz: Optional[str] = None
+    example_ru: Optional[str] = None
+    lapses: int
+    wrong_count: int
+    last_missed_at: datetime
+    last_rating: str
+    status: str
+
+
+class MistakeNotebookOut(BaseModel):
+    items: List[MistakeWord]
+    total: int

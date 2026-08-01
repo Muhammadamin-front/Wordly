@@ -4,11 +4,13 @@ import {
   BookOpenCheck,
   ChartNoAxesColumnIncreasing,
   ChevronRight,
+  CircleAlert,
   Coins,
   Flame,
   Gamepad2,
   LibraryBig,
   LogOut,
+  Route,
   Sparkles,
   Target,
   Trophy,
@@ -23,8 +25,8 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import { flashcardsApi } from "@/lib/flashcards";
 import { gamificationApi, STATS_CHANGED_EVENT, type Stats } from "@/lib/gamification";
+import { learningApi, type LearningPlan } from "@/lib/learning";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const GOAL_OPTIONS = [10, 20, 30, 50];
@@ -41,6 +43,7 @@ export function DashboardView({
   const { user, ready, logout } = useAuth();
   const router = useRouter();
   const [dueCount, setDueCount] = useState<number | null>(null);
+  const [learningPlan, setLearningPlan] = useState<LearningPlan | null>(null);
   const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
@@ -55,10 +58,13 @@ export function DashboardView({
     let cancelled = false;
     const loadStats = () =>
       gamificationApi.stats().then((s) => !cancelled && setStats(s)).catch(() => {});
-    flashcardsApi
-      .queue()
-      .then((queue) => {
-        if (!cancelled) setDueCount(queue.due_count + queue.new_count);
+    learningApi
+      .plan()
+      .then((plan) => {
+        if (!cancelled) {
+          setLearningPlan(plan);
+          setDueCount(plan.due_count + plan.new_count);
+        }
       })
       .catch(() => {});
     loadStats();
@@ -157,13 +163,13 @@ export function DashboardView({
           <Card className="light-sweep flex h-full flex-col justify-between bg-linear-to-br from-brand-500/16 via-card to-accent-400/12 p-5">
             <div>
               <span className="icon-tile size-12 rounded-lg">
-                <Target className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
+                <Route className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
               </span>
-              <CardTitle className="mt-5 text-2xl">{dict.dashboard.reviewHeroTitle}</CardTitle>
+              <CardTitle className="mt-5 text-2xl">{dict.dashboard.dailyPathTitle}</CardTitle>
               <CardDescription>
-                {dueCount !== null && dueCount > 0
-                  ? `${dueCount} ${dict.dashboard.dueToday}`
-                  : dict.dashboard.reviewHeroBody}
+                {learningPlan
+                  ? `${learningPlan.due_count} ${dict.dashboard.dueToday} · ${learningPlan.mistake_count} ${dict.dashboard.cardMistakes.toLowerCase()}`
+                  : dict.dashboard.dailyPathDesc}
               </CardDescription>
             </div>
 
@@ -202,17 +208,17 @@ export function DashboardView({
               </div>
             )}
 
-            <Link href={`/${lang}/review`} className="mt-6 inline-flex">
+            <Link href={`/${lang}/today`} className="mt-6 inline-flex">
               <Button>
-                <BookOpenCheck className="size-4" aria-hidden />
-                {dict.dashboard.startReview}
+                <Target className="size-4" aria-hidden />
+                {dict.dashboard.openDailyPath}
               </Button>
             </Link>
           </Card>
         </div>
       </section>
 
-      <section className="mt-5 grid gap-4 sm:grid-cols-3">
+      <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <ActionCard
           href={`/${lang}/vocabulary`}
           icon={LibraryBig}
@@ -237,6 +243,17 @@ export function DashboardView({
           title={dict.dashboard.cardGames}
           body={dict.dashboard.cardGamesDesc}
           tone="text-brand-600 dark:text-brand-200"
+        />
+        <ActionCard
+          href={`/${lang}/mistakes`}
+          icon={CircleAlert}
+          title={dict.dashboard.cardMistakes}
+          body={
+            learningPlan
+              ? `${learningPlan.mistake_count} · ${dict.dashboard.cardMistakesDesc}`
+              : dict.dashboard.cardMistakesDesc
+          }
+          tone="text-accent-600 dark:text-accent-300"
         />
       </section>
 

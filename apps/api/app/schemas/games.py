@@ -16,6 +16,8 @@ class GameQuestionOut(BaseModel):
 
 class GameSessionOut(BaseModel):
     game_type: str
+    difficulty: str = "balanced"
+    recent_accuracy: float = 0.0
     questions: List[GameQuestionOut]
 
 

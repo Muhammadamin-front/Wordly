@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   AudioLines,
   BrainCircuit,
+  BookOpenText,
   CircleDot,
   Crosshair,
   Gamepad2,
@@ -37,6 +38,7 @@ const GAME_ICONS: Record<GameType, LucideIcon> = {
   sentence_builder: Puzzle,
   word_search: Search,
   crossword: Gamepad2,
+  story_mode: BookOpenText,
   listening: AudioLines,
   speaking: Mic2,
 };
@@ -54,6 +56,7 @@ const GAME_ACCENT: Record<GameType, string> = {
   sentence_builder: "from-emerald-400/24 via-card to-brand-400/10",
   word_search: "from-teal-500/24 via-card to-accent-400/10",
   crossword: "from-lime-400/24 via-card to-brand-400/10",
+  story_mode: "from-accent-400/22 via-card to-brand-500/12",
   listening: "from-brand-600/24 via-card to-accent-400/10",
   speaking: "from-accent-500/22 via-card to-brand-400/10",
 };

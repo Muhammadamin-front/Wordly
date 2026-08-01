@@ -28,6 +28,7 @@ GAME_TYPES = (
     "sentence_builder",
     "word_search",
     "crossword",
+    "story_mode",
     # M11 skill drills — same session/answer plumbing, surfaced under /skills.
     "listening",
     "speaking",
@@ -380,11 +381,12 @@ async def build_session(
     count: int = DEFAULT_COUNT,
     level: Optional[str] = None,
     category: Optional[str] = None,
+    difficulty: str = "balanced",
 ) -> Tuple[List[GameQuestion], int]:
     if game_type in BOARD_GAMES:
         count = min(count, BOARD_GAME_MAX)
 
-    need_example = game_type in ("sentence_builder", "listening")
+    need_example = game_type in ("sentence_builder", "listening", "story_mode")
     if level or category:
         # Practice a specific level/category from the shared corpus.
         cards = await _ensure_cards_for_source(
@@ -406,8 +408,12 @@ async def build_session(
         answers.add(_card_translation(card) if want_translation else card.word.headword)
     pool = [p for p in await _distractor_pool(db, [], want_translation) if p not in answers]
 
+    distractor_count = {"guided": 2, "balanced": 3, "challenge": 4}.get(
+        difficulty, 3
+    )
+
     def sample_distractors() -> List[str]:
-        return random.sample(pool, min(3, len(pool)))
+        return random.sample(pool, min(distractor_count, len(pool)))
 
     questions: List[GameQuestion] = []
     for card in usable:
@@ -431,7 +437,7 @@ async def build_session(
             # Pronunciation: see the uz word, say the English one; the client
             # compares the SpeechRecognition transcript to the answer.
             questions.append(GameQuestion(card.id, translation, headword, [], audio_text=headword))
-        elif game_type == "fill_blank":
+        elif game_type in ("fill_blank", "story_mode"):
             example = _first_example(card)
             blanked = _blank_sentence(example, headword) if example else None
             prompt = blanked or "“{}”".format(card.word.senses[0].definition_en)

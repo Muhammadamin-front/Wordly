@@ -14,6 +14,7 @@ export const GAME_TYPES = [
   "sentence_builder",
   "word_search",
   "crossword",
+  "story_mode",
 ] as const;
 
 /** M11 skill drills — same session/answer API, surfaced under /skills. */
@@ -31,6 +32,8 @@ export interface GameQuestion {
 
 export interface GameSession {
   game_type: GameType;
+  difficulty: "guided" | "balanced" | "challenge";
+  recent_accuracy: number;
   questions: GameQuestion[];
 }
 
@@ -73,9 +76,10 @@ export function shuffle<T>(items: T[]): T[] {
   return copy;
 }
 
-/** Options for a multiple-choice question: correct answer + up to 3 distractors. */
+/** Options for a multiple-choice question. The adaptive backend sends fewer
+ * distractors for guided sessions and more for challenge sessions. */
 export function buildOptions(question: GameQuestion): string[] {
-  return shuffle([question.answer, ...question.distractors.slice(0, 3)]);
+  return shuffle([question.answer, ...question.distractors]);
 }
 
 export function normalize(text: string): string {
