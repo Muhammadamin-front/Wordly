@@ -913,7 +913,8 @@
       },
       "expressions": {
         "name": "Iboralar",
-        "desc": "Ravon gapirish uchun native iboralar."
+        "desc": "Ravon gapirish uchun native iboralar.",
+        "unit": "ibora"
       },
       "business": {
         "name": "Biznes ingliz tili",

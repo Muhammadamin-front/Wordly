@@ -240,7 +240,7 @@ export function LevelView({
         </div>
       ) : (
         <>
-          <div className="mt-6 grid grid-cols-3 gap-2 sm:gap-4 lg:grid-cols-3">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
             <AnimatePresence>
               {words.map((word) => (
                 <WordCard

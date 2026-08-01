@@ -43,6 +43,7 @@ const ICONS: Record<string, LucideIcon> = {
 export interface ShelfStrings {
   name: string;
   desc: string;
+  unit?: string;
 }
 
 export function LevelCard({
@@ -119,7 +120,9 @@ export function LevelCard({
 
         {custom ? (
           <div className="mt-2 flex items-center justify-between border-t border-line/70 pt-2 sm:mt-5 sm:pt-4">
-            <span className="text-sm font-medium text-ink-soft">{labels.words}</span>
+            <span className="text-[10px] font-bold text-ink-soft sm:text-sm">
+              {total.toLocaleString(lang)} {strings.unit ?? labels.words}
+            </span>
             <span className="flex items-center gap-1 text-[10px] font-bold text-brand-800 transition-transform group-hover:translate-x-1 sm:gap-1.5 sm:text-sm dark:text-brand-200">
               <span className="hidden sm:inline">{labels.start}</span>
               <ArrowRight className="size-3 sm:size-4" />

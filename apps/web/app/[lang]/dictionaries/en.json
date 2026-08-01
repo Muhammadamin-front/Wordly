@@ -913,7 +913,8 @@
       },
       "expressions": {
         "name": "Expressions",
-        "desc": "Native phrases for IELTS Band 7-9."
+        "desc": "Native phrases for IELTS Band 7-9.",
+        "unit": "expressions"
       },
       "business": {
         "name": "Business English",

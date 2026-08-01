@@ -147,7 +147,7 @@ export default async function VocabularyPage({
         {words.items.length === 0 ? (
           <Card className="mt-4 text-center text-ink-soft">{vocab.empty}</Card>
         ) : (
-          <ul className="mt-4 grid grid-cols-3 gap-2 sm:gap-3 lg:grid-cols-3">
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:gap-3 lg:grid-cols-3">
             {words.items.map((word) => (
               <li key={word.id} className="h-full">
                 <VocabularyWordCard

@@ -69,7 +69,7 @@ export default async function PublicLevelPreview({
           </div>
         </section>
 
-        <ul className="mt-7 grid grid-cols-3 gap-2 sm:gap-3">
+        <ul className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {words.items.map((word) => (
             <li key={word.id} className="h-full">
               <VocabularyWordCard
