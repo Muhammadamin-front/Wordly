@@ -49,7 +49,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 | Expressions | 812 across 32 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 78 passed; API 255 passed; lint and production build passed |
+| Tests | Web 82 passed; API 257 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -149,6 +149,11 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P1. Guest exploration CTAs lead to an auth wall
 
+- **Status:** **Resolved 2026-08-01.** Home exploration CTAs and CEFR cards now
+  open public five-word level previews. Guests can flip cards, listen, open word
+  details, search the full public vocabulary corpus, and register only when
+  they choose to save progress. The dead mobile pricing anchor now opens the
+  real localized pricing route.
 - **Problem:** “Darajalarni ko‘rish” and level cards imply public preview, but `/decks` and `/library/{level}` redirect guests to login.
 - **Why it matters:** The secondary CTA promises exploration, not registration.
 - **User impact:** High-intent visitors hit an unexpected wall before seeing the learning experience.
@@ -158,6 +163,12 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P1. Localization is incomplete and misleading
 
+- **Status:** **Resolved 2026-08-01.** Expressions now carry reviewed-source
+  Russian translations and the public API searches/returns meaning by requested
+  locale instead of exposing Uzbek on Russian routes. IELTS navigation,
+  pedagogical explanations, strategies, traps, stats, and resource guidance are
+  static localized content for Uzbek and Russian; English model answers and
+  target vocabulary intentionally remain English for study.
 - **Problem:** Russian Expressions UI displays Uzbek translations. IELTS skill descriptions and most learning content remain English inside Uzbek/Russian routes. `ExpressionsView` receives `lang` but ignores it.
 - **Why it matters:** Uzbek-first localization is the product’s primary differentiation.
 - **User impact:** Russian users receive incorrect-language content; beginner Uzbek users cannot understand advanced IELTS guidance.
@@ -167,6 +178,11 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P1. Content count and capability claims are stale
 
+- **Status:** **Resolved 2026-08-01.** A cached public catalog metadata endpoint
+  is now the source for total and per-CEFR counts on the home page. Hard-coded
+  progress and obsolete counts were removed, while IELTS copy now advertises
+  the shipped model answers, strategies, topics, and collocations rather than
+  AI feedback or speaking simulation.
 - **Problem:** Home cards hard-code A2 1,414, B1 1,768, and B2 2,814 while the database contains 1,425, 1,855, and 3,025. Home IELTS copy promises AI feedback and speaking simulation while the current IELTS hub explicitly positions itself as static and zero-AI.
 - **Why it matters:** Product claims must reflect the shipped product and current corpus.
 - **User impact:** Users see inconsistent totals and expect unavailable features.

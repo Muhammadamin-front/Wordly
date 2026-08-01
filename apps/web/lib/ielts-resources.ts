@@ -1,3 +1,5 @@
+import localizedIelts from "./ielts-localized.json";
+
 export type IeltsSkill = "reading" | "listening" | "writing" | "speaking";
 
 export interface IeltsResourceSection {
@@ -792,6 +794,40 @@ export const IELTS_VOCABULARY_RESOURCES: VocabularyResource[] = [
   },
 ];
 
-export function vocabularyResourceBySlug(slug: string): VocabularyResource | undefined {
-  return IELTS_VOCABULARY_RESOURCES.find((resource) => resource.slug === slug);
+type SupportedLocale = "uz" | "ru" | "en";
+type LocalizedIelts = Record<
+  "uz" | "ru",
+  {
+    skills: Record<IeltsSkill, IeltsSkillContent>;
+    resources: VocabularyResource[];
+    topicGroups: Record<string, string>;
+  }
+>;
+
+const LOCALIZED_IELTS = localizedIelts as unknown as LocalizedIelts;
+
+export function ieltsSkillContent(lang: string, skill: IeltsSkill): IeltsSkillContent {
+  if (lang === "uz" || lang === "ru") return LOCALIZED_IELTS[lang].skills[skill];
+  return IELTS_SKILL_CONTENT[skill];
+}
+
+export function ieltsVocabularyResources(lang: string): VocabularyResource[] {
+  if (lang === "uz" || lang === "ru") return LOCALIZED_IELTS[lang].resources;
+  return IELTS_VOCABULARY_RESOURCES;
+}
+
+export function speakingTopicGroups(lang: string) {
+  const locale = (lang === "uz" || lang === "ru" ? lang : "en") as SupportedLocale;
+  return Object.entries(SPEAKING_TOPICS).map(([group, topics]) => ({
+    group:
+      locale === "en" ? group : LOCALIZED_IELTS[locale].topicGroups[group] ?? group,
+    topics,
+  }));
+}
+
+export function vocabularyResourceBySlug(
+  slug: string,
+  lang = "en"
+): VocabularyResource | undefined {
+  return ieltsVocabularyResources(lang).find((resource) => resource.slug === slug);
 }

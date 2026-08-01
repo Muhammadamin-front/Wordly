@@ -34,6 +34,13 @@ export interface WordPage {
   page_size: number;
 }
 
+export interface CatalogMeta {
+  word_total: number;
+  expression_total: number;
+  learning_item_total: number;
+  levels: Record<string, number>;
+}
+
 export interface Example {
   id?: string;
   text_en: string;
@@ -119,14 +126,25 @@ export async function fetchCategories(): Promise<Category[]> {
 
 export async function fetchWords(params: {
   page?: number;
+  pageSize?: number;
   level?: string;
   category?: string;
   q?: string;
 }): Promise<WordPage> {
-  const response = await fetch(`${API_URL}/api/v1/words${buildQuery(params)}`, {
+  const { pageSize, ...query } = params;
+  const response = await fetch(`${API_URL}/api/v1/words${buildQuery({
+    ...query,
+    page_size: pageSize,
+  })}`, {
     cache: "no-store",
   });
   if (!response.ok) throw new Error("words fetch failed");
+  return response.json();
+}
+
+export async function fetchCatalogMeta(): Promise<CatalogMeta> {
+  const response = await fetch(`${API_URL}/api/v1/catalog/meta`, { cache: "no-store" });
+  if (!response.ok) throw new Error("catalog metadata fetch failed");
   return response.json();
 }
 

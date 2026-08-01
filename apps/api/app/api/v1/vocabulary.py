@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_admin
@@ -10,9 +10,11 @@ from app.core.cache import cached_response
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.vocabulary import Category, Word
+from app.models.expression import Expression
 from app.schemas.auth import MessageOut
 from app.schemas.vocabulary import (
     CategoryOut,
+    CatalogMeta,
     ImportReport,
     WordCreate,
     WordListItem,
@@ -53,6 +55,29 @@ async def list_categories(request: Request, db: AsyncSession = Depends(get_db)):
 
     return await cached_response(
         request, "categories", get_settings().CACHE_TTL_CATEGORIES, produce
+    )
+
+
+@router.get("/catalog/meta", response_model=CatalogMeta)
+async def catalog_meta(request: Request, db: AsyncSession = Depends(get_db)):
+    async def produce():
+        rows = await db.execute(
+            select(Word.cefr_level, func.count(Word.id))
+            .where(Word.status == "published")
+            .group_by(Word.cefr_level)
+        )
+        levels = {level: int(count) for level, count in rows.all()}
+        word_total = sum(levels.values())
+        expression_total = int(await db.scalar(select(func.count(Expression.id))) or 0)
+        return CatalogMeta(
+            word_total=word_total,
+            expression_total=expression_total,
+            learning_item_total=word_total + expression_total,
+            levels=levels,
+        )
+
+    return await cached_response(
+        request, "catalog-meta", get_settings().CACHE_TTL_CATEGORIES, produce
     )
 
 

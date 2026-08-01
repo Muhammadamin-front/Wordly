@@ -20,7 +20,7 @@ from app.db.session import get_session_factory  # noqa: E402
 from app.models.expression import Expression  # noqa: E402
 
 DATA_DIR = pathlib.Path(__file__).parent / "data" / "expressions"
-STR_FIELDS = ["uzbek", "cefr", "ielts_band", "category", "formality", "usage",
+STR_FIELDS = ["uzbek", "russian", "cefr", "ielts_band", "category", "formality", "usage",
               "grammar_pattern", "native_notes"]
 LIST_FIELDS = ["common_mistakes", "alternatives", "example_sentences",
                "collocations", "synonyms", "opposites"]

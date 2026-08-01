@@ -22,14 +22,14 @@ export default async function IeltsResourcePage({
 }) {
   const { lang, slug } = await params;
   if (!hasLocale(lang)) notFound();
-  const resource = vocabularyResourceBySlug(slug);
-  if (!resource) notFound();
   const dict = await getDictionary(lang);
+  const resource = vocabularyResourceBySlug(slug, lang);
+  if (!resource) notFound();
 
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <VocabularyResourceView lang={lang} resource={resource} />
+      <VocabularyResourceView lang={lang} resource={resource} t={dict.ieltsHub} />
     </>
   );
 }

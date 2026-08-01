@@ -78,6 +78,15 @@ async def test_public_list_hides_unpublished(client):
     assert "apple-noun" in slugs and "banana-noun" not in slugs
     assert public.json()["total"] == 1
 
+    meta = await client.get("/api/v1/catalog/meta")
+    assert meta.status_code == 200
+    assert meta.json() == {
+        "word_total": 1,
+        "expression_total": 0,
+        "learning_item_total": 1,
+        "levels": {"A1": 1},
+    }
+
     # Draft detail page 404s publicly but is visible to admin.
     assert (await client.get("/api/v1/words/banana-noun")).status_code == 404
     admin_list = await client.get("/api/v1/admin/words?status=draft", headers=headers)

@@ -305,7 +305,7 @@ function MobileSidebar({
                     {nav.features}
                   </Link>
                   <Link
-                    href={`/${lang}#pricing`}
+                    href={`/${lang}/pricing`}
                     onClick={onClose}
                     className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
                   >

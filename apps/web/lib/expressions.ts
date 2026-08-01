@@ -4,6 +4,7 @@ export interface ExpressionListItem {
   slug: string;
   expression: string;
   uzbek: string;
+  translation: string;
   cefr: string;
   ielts_band: string;
   category: string;
@@ -39,6 +40,7 @@ export interface ExpressionQuery {
   cefr?: string;
   category?: string;
   q?: string;
+  locale?: string;
 }
 
 export const expressionsApi = {
@@ -49,10 +51,12 @@ export const expressionsApi = {
     if (query.cefr) params.set("cefr", query.cefr);
     if (query.category) params.set("category", query.category);
     if (query.q) params.set("q", query.q);
+    if (query.locale) params.set("locale", query.locale);
     return apiFetch<ExpressionPage>(`/expressions?${params}`);
   },
 
-  detail: (slug: string) => apiFetch<ExpressionDetail>(`/expressions/${slug}`),
+  detail: (slug: string, locale = "uz") =>
+    apiFetch<ExpressionDetail>(`/expressions/${slug}?locale=${encodeURIComponent(locale)}`),
 };
 
 export const CEFR_COLOR = (cefr: string): string => {

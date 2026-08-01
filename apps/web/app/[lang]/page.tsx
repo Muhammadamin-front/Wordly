@@ -24,14 +24,22 @@ import { SiteHeader } from "@/components/site/header";
 import { Reveal } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
+import { fetchCatalogMeta, type CatalogMeta } from "@/lib/vocab";
 import { getDictionary, hasLocale } from "./dictionaries";
 
 const LEVELS = [
-  { slug: "a1", level: "A1", total: 816, tone: "bg-[#9a9668]", progress: 23 },
-  { slug: "a2", level: "A2", total: 1414, tone: "bg-brand-600", progress: 0 },
-  { slug: "b1", level: "B1", total: 1768, tone: "bg-[#327f8d]", progress: 0 },
-  { slug: "b2", level: "B2", total: 2814, tone: "bg-[#3d6264]", progress: 0 },
+  { slug: "a1", level: "A1", tone: "bg-[#9a9668]" },
+  { slug: "a2", level: "A2", tone: "bg-brand-600" },
+  { slug: "b1", level: "B1", tone: "bg-[#327f8d]" },
+  { slug: "b2", level: "B2", tone: "bg-[#3d6264]" },
 ] as const;
+
+const FALLBACK_CATALOG: CatalogMeta = {
+  word_total: 8963,
+  expression_total: 812,
+  learning_item_total: 9775,
+  levels: { A1: 816, A2: 1425, B1: 1855, B2: 3025, C1: 1609, C2: 233 },
+};
 
 export default async function LandingPage({
   params,
@@ -42,8 +50,10 @@ export default async function LandingPage({
   if (!hasLocale(lang)) notFound();
 
   const dict = await getDictionary(lang);
+  const catalog = await fetchCatalogMeta().catch(() => FALLBACK_CATALOG);
   const { common, landing, library, nav } = dict;
   const copy = homeCopy[lang as Locale];
+  const itemCount = new Intl.NumberFormat(lang).format(catalog.learning_item_total);
   const shelfLabels = library.shelves as Record<string, { name: string; desc: string }>;
 
   const features: { icon: LucideIcon; title: string; body: string }[] = [
@@ -93,7 +103,7 @@ export default async function LandingPage({
 
               <Reveal delay={0.12}>
                 <p className="mt-5 max-w-[570px] text-pretty text-base leading-7 text-ink-soft sm:text-lg">
-                  {copy.subtitle}
+                  {copy.subtitle.replace("{count}", itemCount)}
                 </p>
               </Reveal>
 
@@ -104,7 +114,7 @@ export default async function LandingPage({
                     lang={lang}
                     userLabel={landing.heroCtaContinue}
                   />
-                  <Link href={`/${lang}/decks`}>
+                  <Link href={`/${lang}/preview/a1`}>
                     <Button size="lg" variant="secondary">
                       {copy.exploreLevels}
                       <ArrowRight className="size-4" aria-hidden />
@@ -116,7 +126,7 @@ export default async function LandingPage({
 
             <Reveal delay={0.24}>
               <div className="mt-auto grid max-w-[630px] grid-cols-3 gap-3 pt-9">
-                <HeroMetric icon={BookOpen} value="10 000+" label={copy.wordsMetric} />
+                <HeroMetric icon={BookOpen} value={itemCount} label={copy.wordsMetric} />
                 <HeroMetric
                   icon={ChartNoAxesColumnIncreasing}
                   value="6"
@@ -214,7 +224,7 @@ export default async function LandingPage({
                   </h2>
                   <p className="mt-4 text-sm leading-6 text-ink-soft">{copy.pathBody}</p>
                   <Link
-                    href={`/${lang}/decks`}
+                    href={`/${lang}/vocabulary`}
                     className="mt-auto inline-flex items-center gap-2 pt-7 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
                   >
                     {copy.allLevels}
@@ -226,7 +236,7 @@ export default async function LandingPage({
                   {LEVELS.map((item, index) => (
                     <Reveal delay={index * 0.05} key={item.level}>
                       <Link
-                        href={`/${lang}/library/${item.slug}`}
+                        href={`/${lang}/preview/${item.slug}`}
                         className="group flex h-full min-h-[258px] flex-col overflow-hidden rounded-xl border border-line/80 bg-raised/72 p-4 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
                       >
                         <div className="flex items-start justify-between gap-3">
@@ -244,21 +254,11 @@ export default async function LandingPage({
                           {shelfLabels[item.slug].desc}
                         </p>
                         <div className="mt-auto pt-5">
-                          <div className="flex items-center justify-between text-[11px] text-ink-soft">
-                            <span>
-                              {item.progress ? Math.round((item.total * item.progress) / 100) : 0} /{" "}
-                              {item.total}
-                            </span>
-                            <strong>{item.progress}%</strong>
-                          </div>
-                          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line/60">
-                            <div
-                              className={`h-full rounded-full ${item.tone}`}
-                              style={{ width: `${item.progress}%` }}
-                            />
-                          </div>
+                          <p className="text-[11px] font-bold text-ink-soft">
+                            {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)} {library.words}
+                          </p>
                           <p className="mt-5 flex items-center justify-end gap-1.5 text-xs font-black text-brand-900 dark:text-brand-200">
-                            {item.progress ? library.continue : library.start}
+                            {copy.previewLevel}
                             <ArrowRight className="size-3.5" aria-hidden />
                           </p>
                         </div>
@@ -448,13 +448,14 @@ const homeCopy: Record<
     openIelts: string;
     systemKicker: string;
     systemTitle: string;
+    previewLevel: string;
   }
 > = {
   uz: {
     eyebrow: "O'zbeklar uchun yaratilgan ingliz tili platformasi",
     title: "Ingliz tilini ishonch bilan o'rganing",
     subtitle:
-      "O'zbek tilida tushuntirilgan 10 000+ so'z, aqlli takrorlash, talaffuz mashqlari va IELTS uchun amaliy topshiriqlar.",
+      "O'zbek tilida tushuntirilgan {count} ta so'z va ibora, aqlli takrorlash, talaffuz hamda IELTS uchun statik o'quv resurslari.",
     heroImageAlt: "Ingliz tilini o'rganayotgan o'zbek studenti",
     exploreLevels: "Darajalarni ko'rish",
     wordsMetric: "so'z va ibora",
@@ -475,22 +476,23 @@ const homeCopy: Record<
     allLevels: "Barcha darajalarni ko'rish",
     ieltsTitle: "IELTS natijangizni bosqichma-bosqich oshiring",
     ieltsBody:
-      "Writing, speaking, reading va listening mashqlari, AI feedback va real imtihon formatidagi topshiriqlar.",
+      "Writing, speaking, reading va listening uchun model javoblar, strategiyalar va akademik lug'at.",
     ieltsFeatures: [
-      "AI writing feedback",
-      "Speaking simulyatsiya",
-      "Talaffuz va listening",
-      "Band score tahlili",
+      "Band 7–9 model javoblar",
+      "Speaking topic va native iboralar",
+      "Reading va listening strategiyalari",
+      "Academic collocationlar",
     ],
     openIelts: "IELTS bo'limini ochish",
     systemKicker: "Bitta o'quv tizimi",
     systemTitle: "So'z yodlashdan ravon gapirishgacha hammasi bir joyda",
+    previewLevel: "5 ta so'zni sinash",
   },
   ru: {
     eyebrow: "Платформа английского для Узбекистана",
     title: "Учите английский уверенно",
     subtitle:
-      "Более 10 000 слов с понятными объяснениями, умное повторение, произношение и практика IELTS.",
+      "{count} слов и выражений с понятными объяснениями, умное повторение, произношение и статические ресурсы IELTS.",
     heroImageAlt: "Узбекский студент изучает английский язык",
     exploreLevels: "Смотреть уровни",
     wordsMetric: "слов и фраз",
@@ -511,22 +513,23 @@ const homeCopy: Record<
     allLevels: "Смотреть все уровни",
     ieltsTitle: "Повышайте результат IELTS шаг за шагом",
     ieltsBody:
-      "Writing, speaking, reading и listening, AI-обратная связь и задания в формате экзамена.",
+      "Модельные ответы, стратегии и академическая лексика для Writing, Speaking, Reading и Listening.",
     ieltsFeatures: [
-      "AI-проверка writing",
-      "Симуляция speaking",
-      "Произношение и listening",
-      "Анализ band score",
+      "Модельные ответы Band 7–9",
+      "Темы Speaking и живые фразы",
+      "Стратегии Reading и Listening",
+      "Академические коллокации",
     ],
     openIelts: "Открыть IELTS",
     systemKicker: "Единая система обучения",
     systemTitle: "От запоминания слов до свободной речи в одном месте",
+    previewLevel: "Попробовать 5 слов",
   },
   en: {
     eyebrow: "English learning built for Uzbekistan",
     title: "Learn English with confidence",
     subtitle:
-      "10,000+ clearly explained words, smart review, pronunciation practice, and practical IELTS tasks.",
+      "{count} clearly explained words and expressions, smart review, pronunciation, and static IELTS resources.",
     heroImageAlt: "Uzbek student learning English",
     exploreLevels: "Explore levels",
     wordsMetric: "words and phrases",
@@ -547,15 +550,16 @@ const homeCopy: Record<
     allLevels: "Explore all levels",
     ieltsTitle: "Improve your IELTS score step by step",
     ieltsBody:
-      "Writing, speaking, reading, and listening practice with AI feedback and exam-style tasks.",
+      "Model answers, strategies, and academic vocabulary for Writing, Speaking, Reading, and Listening.",
     ieltsFeatures: [
-      "AI writing feedback",
-      "Speaking simulation",
-      "Pronunciation and listening",
-      "Band score analysis",
+      "Band 7–9 model answers",
+      "Speaking topics and natural phrases",
+      "Reading and listening strategies",
+      "Academic collocations",
     ],
     openIelts: "Open IELTS",
     systemKicker: "One learning system",
     systemTitle: "Everything from memorizing words to speaking fluently",
+    previewLevel: "Try 5 words",
   },
 };

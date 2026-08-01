@@ -2,13 +2,16 @@ import { ArrowLeft, ArrowUpRight, BookMarked, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import type { VocabularyResource } from "@/lib/ielts-resources";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function VocabularyResourceView({
   lang,
   resource,
+  t,
 }: {
   lang: string;
   resource: VocabularyResource;
+  t: Dictionary["ieltsHub"];
 }) {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
@@ -17,7 +20,7 @@ export function VocabularyResourceView({
         className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink-soft transition-transform hover:-translate-y-0.5 hover:text-ink"
       >
         <ArrowLeft className="size-4" aria-hidden />
-        IELTS markazi
+        {t.center}
       </Link>
 
       <section className="surface-panel mt-5 rounded-lg p-6 sm:p-8">
@@ -36,7 +39,7 @@ export function VocabularyResourceView({
       <div className="mt-6 space-y-5">
         {resource.groups.map((group) => (
           <section key={group.title} className="surface-panel rounded-lg p-5 sm:p-6">
-            <p className="text-xs font-extrabold uppercase text-accent-500">Word bank</p>
+            <p className="text-xs font-extrabold uppercase text-accent-500">{t.wordBank}</p>
             <h2 className="mt-1 text-2xl font-black text-ink">{group.title}</h2>
             <p className="mt-2 text-sm text-ink-soft">{group.note}</p>
             <div className="mt-5 grid gap-3">
@@ -47,14 +50,14 @@ export function VocabularyResourceView({
                 >
                   <div>
                     <p className="text-[10px] font-extrabold uppercase text-ink-soft">
-                      Basic
+                      {t.basic}
                     </p>
                     <p className="mt-1 text-lg font-black text-ink">{item.basic}</p>
                   </div>
                   <div>
                     <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-accent-500">
                       <Sparkles className="size-3.5" aria-hidden />
-                      Precise alternatives
+                      {t.preciseAlternatives}
                     </p>
                     <p className="mt-1 font-bold text-ink">{item.advanced}</p>
                     <p className="mt-3 border-l-2 border-brand-400/35 pl-3 text-sm leading-6 text-ink-soft">
@@ -73,14 +76,14 @@ export function VocabularyResourceView({
           href={`/${lang}/vocabulary?category=ielts`}
           className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white transition-transform hover:-translate-y-0.5"
         >
-          IELTS so&apos;z kartalarini ochish
+          {t.openCards}
           <ArrowUpRight className="size-4" aria-hidden />
         </Link>
         <Link
           href={`/${lang}/expressions`}
           className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-4 py-3 text-sm font-bold text-ink transition-transform hover:-translate-y-0.5"
         >
-          Iboralar kutubxonasi
+          {t.expressionLibrary}
           <ArrowUpRight className="size-4" aria-hidden />
         </Link>
       </div>

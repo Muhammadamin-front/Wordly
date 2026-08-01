@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -146,6 +146,13 @@ class WordPage(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class CatalogMeta(BaseModel):
+    word_total: int
+    expression_total: int
+    learning_item_total: int
+    levels: Dict[str, int]
 
 
 class ImportReport(BaseModel):

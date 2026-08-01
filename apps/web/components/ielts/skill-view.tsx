@@ -22,29 +22,32 @@ import {
 import Link from "next/link";
 
 import {
-  IELTS_SKILL_CONTENT,
-  IELTS_VOCABULARY_RESOURCES,
-  SPEAKING_TOPICS,
+  ieltsSkillContent,
+  ieltsVocabularyResources,
+  speakingTopicGroups,
   type IeltsResourceSection,
   type IeltsSkill,
 } from "@/lib/ielts-resources";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-const SKILL_META: Record<IeltsSkill, { label: string; icon: LucideIcon }> = {
-  reading: { label: "O'qish", icon: BookOpen },
-  listening: { label: "Tinglash", icon: Headphones },
-  writing: { label: "Yozish", icon: PenLine },
-  speaking: { label: "Gapirish", icon: Mic2 },
+const SKILL_META: Record<IeltsSkill, { icon: LucideIcon }> = {
+  reading: { icon: BookOpen },
+  listening: { icon: Headphones },
+  writing: { icon: PenLine },
+  speaking: { icon: Mic2 },
 };
 
 export function SkillView({
   lang,
   skill,
+  t,
 }: {
   lang: string;
   skill: IeltsSkill;
-  t: unknown;
+  t: Dictionary["ieltsHub"];
 }) {
-  const content = IELTS_SKILL_CONTENT[skill];
+  const content = ieltsSkillContent(lang, skill);
+  const vocabularyResources = ieltsVocabularyResources(lang);
   const meta = SKILL_META[skill];
   const Icon = meta.icon;
 
@@ -55,7 +58,7 @@ export function SkillView({
         className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink-soft transition-transform hover:-translate-y-0.5 hover:text-ink"
       >
         <ArrowLeft className="size-4" aria-hidden />
-        IELTS markazi
+        {t.center}
       </Link>
 
       <motion.section
@@ -87,7 +90,7 @@ export function SkillView({
         </div>
       </motion.section>
 
-      <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label="Page sections">
+      <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label={t.pageSections}>
         {content.sections.map((section) => (
           <a
             key={section.id}
@@ -102,18 +105,18 @@ export function SkillView({
             href="#topics"
             className="shrink-0 rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400/50 hover:text-ink"
           >
-            120 topics
+            120 {t.topics}
           </a>
         )}
       </nav>
 
       <div className="mt-5 space-y-5">
         {content.sections.map((section, index) => (
-          <GuideSection key={section.id} section={section} index={index} />
+          <GuideSection key={section.id} section={section} index={index} t={t} />
         ))}
       </div>
 
-      {skill === "speaking" && <SpeakingTopics />}
+      {skill === "speaking" && <SpeakingTopics lang={lang} t={t} />}
 
       <section className="mt-10">
         <div className="mb-4 flex items-center gap-3">
@@ -122,13 +125,13 @@ export function SkillView({
           </span>
           <div>
             <p className="text-xs font-extrabold uppercase text-accent-500">
-              Vocabulary next
+              {t.vocabularyNext}
             </p>
-            <h2 className="text-2xl font-black text-ink">So&apos;z boyligini davom ettiring</h2>
+            <h2 className="text-2xl font-black text-ink">{t.continueVocabulary}</h2>
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          {IELTS_VOCABULARY_RESOURCES.map((resource) => (
+          {vocabularyResources.map((resource) => (
             <Link
               key={resource.slug}
               href={`/${lang}/ielts/resources/${resource.slug}`}
@@ -150,9 +153,11 @@ export function SkillView({
 function GuideSection({
   section,
   index,
+  t,
 }: {
   section: IeltsResourceSection;
   index: number;
+  t: Dictionary["ieltsHub"];
 }) {
   return (
     <motion.section
@@ -175,7 +180,7 @@ function GuideSection({
             <div className="rounded-lg border border-line bg-card/60 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
                 <ListChecks className="size-4 text-brand-500" aria-hidden />
-                Step-by-step
+                {t.stepByStep}
               </h3>
               <ol className="mt-3 space-y-2">
                 {section.steps.map((step, stepIndex) => (
@@ -194,7 +199,7 @@ function GuideSection({
             <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
                 <Quote className="size-4 text-accent-500" aria-hidden />
-                Model example
+                {t.modelExample}
               </h3>
               <p className="mt-3 border-l-2 border-accent-400/40 pl-4 text-sm leading-7 text-ink">
                 {section.example}
@@ -206,7 +211,7 @@ function GuideSection({
             <div className="rounded-lg border border-line bg-card/60 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
                 <Sparkles className="size-4 text-accent-500" aria-hidden />
-                Vocabulary highlight
+                {t.vocabularyHighlight}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
                 {section.vocabulary.map((item) => (
@@ -225,7 +230,7 @@ function GuideSection({
             <div className="rounded-lg border border-warning/20 bg-warning/8 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
                 <AlertTriangle className="size-4 text-warning" aria-hidden />
-                Common traps
+                {t.commonTraps}
               </h3>
               <ul className="mt-3 space-y-2">
                 {section.traps.map((trap) => (
@@ -243,24 +248,22 @@ function GuideSection({
   );
 }
 
-function SpeakingTopics() {
-  const topicCount = Object.values(SPEAKING_TOPICS).reduce(
-    (total, topics) => total + topics.length,
-    0
-  );
+function SpeakingTopics({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }) {
+  const groups = speakingTopicGroups(lang);
+  const topicCount = groups.reduce((total, group) => total + group.topics.length, 0);
   return (
     <section id="topics" className="mt-8 scroll-mt-24">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-extrabold uppercase text-accent-500">Cue card bank</p>
-          <h2 className="mt-1 text-2xl font-black text-ink">{topicCount} common topics</h2>
+          <p className="text-xs font-extrabold uppercase text-accent-500">{t.cueCardBank}</p>
+          <h2 className="mt-1 text-2xl font-black text-ink">{topicCount} {t.commonTopics}</h2>
         </div>
         <span className="rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft">
-          12 topic families
+          {groups.length} {t.topicFamilies}
         </span>
       </div>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {Object.entries(SPEAKING_TOPICS).map(([group, topics]) => (
+        {groups.map(({ group, topics }) => (
           <div key={group} className="premium-card rounded-lg p-4">
             <h3 className="flex items-center gap-2 text-sm font-black text-ink">
               <Target className="size-4 text-brand-500" aria-hidden />
@@ -279,8 +282,7 @@ function SpeakingTopics() {
       </div>
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-success/20 bg-success/8 p-4 text-sm text-ink-soft">
         <BadgeCheck className="size-5 shrink-0 text-success" aria-hidden />
-        Har kuni bitta topic tanlang: 1 daqiqa reja, 2 daqiqa javob, 1 daqiqa
-        vocabulary tahlili.
+        {t.dailyChallenge}
       </div>
     </section>
   );

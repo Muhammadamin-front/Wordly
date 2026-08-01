@@ -12,12 +12,14 @@ from app.models.expression import Expression
 router = APIRouter(prefix="/expressions", tags=["expressions"])
 
 CEFR_PATTERN = "^(A2|B1|B2|C1|C2)$"
+LOCALE_PATTERN = "^(uz|ru|en)$"
 
 
 class ExpressionOut(BaseModel):
     slug: str
     expression: str
     uzbek: str
+    translation: str
     cefr: str
     ielts_band: str
     category: str
@@ -39,6 +41,7 @@ class ExpressionListItem(BaseModel):
     slug: str
     expression: str
     uzbek: str
+    translation: str
     cefr: str
     ielts_band: str
     category: str
@@ -64,6 +67,49 @@ class ExpressionMeta(BaseModel):
     categories: List[CategoryCount]
 
 
+def localized_translation(expression: Expression, locale: str) -> str:
+    if locale == "uz":
+        return expression.uzbek
+    if locale == "ru":
+        return expression.russian or expression.expression
+    return expression.usage
+
+
+def to_list_item(expression: Expression, locale: str) -> ExpressionListItem:
+    return ExpressionListItem(
+        slug=expression.slug,
+        expression=expression.expression,
+        uzbek=expression.uzbek,
+        translation=localized_translation(expression, locale),
+        cefr=expression.cefr,
+        ielts_band=expression.ielts_band,
+        category=expression.category,
+        formality=expression.formality,
+    )
+
+
+def to_detail(expression: Expression, locale: str) -> ExpressionOut:
+    return ExpressionOut(
+        slug=expression.slug,
+        expression=expression.expression,
+        uzbek=expression.uzbek,
+        translation=localized_translation(expression, locale),
+        cefr=expression.cefr,
+        ielts_band=expression.ielts_band,
+        category=expression.category,
+        formality=expression.formality,
+        usage=expression.usage,
+        grammar_pattern=expression.grammar_pattern,
+        native_notes=expression.native_notes,
+        common_mistakes=expression.common_mistakes,
+        alternatives=expression.alternatives,
+        example_sentences=expression.example_sentences,
+        collocations=expression.collocations,
+        synonyms=expression.synonyms,
+        opposites=expression.opposites,
+    )
+
+
 @router.get("/meta", response_model=ExpressionMeta)
 async def expression_meta(db: AsyncSession = Depends(get_db)):
     total = await db.scalar(select(func.count(Expression.id))) or 0
@@ -85,6 +131,7 @@ async def browse_expressions(
     cefr: Optional[str] = Query(None, pattern=CEFR_PATTERN),
     category: Optional[str] = Query(None, max_length=60),
     q: Optional[str] = Query(None, max_length=80),
+    locale: str = Query("uz", pattern=LOCALE_PATTERN),
     db: AsyncSession = Depends(get_db),
 ):
     conds = []
@@ -94,7 +141,12 @@ async def browse_expressions(
         conds.append(Expression.category == category)
     if q:
         like = f"%{q.strip()}%"
-        conds.append(or_(Expression.expression.ilike(like), Expression.uzbek.ilike(like)))
+        translated = {
+            "uz": Expression.uzbek,
+            "ru": Expression.russian,
+            "en": Expression.usage,
+        }[locale]
+        conds.append(or_(Expression.expression.ilike(like), translated.ilike(like)))
 
     base = select(Expression)
     count_q = select(func.count(distinct(Expression.id)))
@@ -109,7 +161,7 @@ async def browse_expressions(
         .limit(page_size)
     )
     return ExpressionPage(
-        items=[ExpressionListItem.model_validate(e) for e in rows],
+        items=[to_list_item(e, locale) for e in rows],
         total=total,
         page=page,
         page_size=page_size,
@@ -117,8 +169,12 @@ async def browse_expressions(
 
 
 @router.get("/{slug}", response_model=ExpressionOut)
-async def expression_detail(slug: str, db: AsyncSession = Depends(get_db)):
+async def expression_detail(
+    slug: str,
+    locale: str = Query("uz", pattern=LOCALE_PATTERN),
+    db: AsyncSession = Depends(get_db),
+):
     expr = await db.scalar(select(Expression).where(Expression.slug == slug))
     if expr is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Expression not found")
-    return ExpressionOut.model_validate(expr)
+    return to_detail(expr, locale)

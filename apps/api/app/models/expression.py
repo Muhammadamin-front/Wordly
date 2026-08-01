@@ -26,6 +26,7 @@ class Expression(Base):
     slug: Mapped[str] = mapped_column(String(160), unique=True, nullable=False)
     expression: Mapped[str] = mapped_column(String(200), nullable=False)
     uzbek: Mapped[str] = mapped_column(Text, nullable=False)
+    russian: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     cefr: Mapped[str] = mapped_column(String(2), nullable=False)
     ielts_band: Mapped[str] = mapped_column(String(8), nullable=False)
     category: Mapped[str] = mapped_column(String(60), nullable=False)

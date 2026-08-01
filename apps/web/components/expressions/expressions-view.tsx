@@ -33,7 +33,7 @@ type T = Dictionary["expressions"];
 
 const CEFR_LEVELS = ["A2", "B1", "B2", "C1", "C2"];
 
-export function ExpressionsView({ t }: { lang: string; t: T }) {
+export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
   const { user } = useAuth();
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [meta, setMeta] = useState<ExpressionMeta | null>(null);
@@ -50,7 +50,7 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
       if (added.has(e.slug)) return;
       setAdded((prev) => new Set(prev).add(e.slug));
       try {
-        await flashcardsApi.createCustomCard(e.expression, e.uzbek);
+        await flashcardsApi.createCustomCard(e.expression, e.translation);
       } catch {
         setAdded((prev) => {
           const next = new Set(prev);
@@ -93,13 +93,19 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
   const load = useCallback(() => {
     setItems(null);
     expressionsApi
-      .list({ page, category: category ?? undefined, cefr: cefr ?? undefined, q: q || undefined })
+      .list({
+        page,
+        category: category ?? undefined,
+        cefr: cefr ?? undefined,
+        q: q || undefined,
+        locale: lang,
+      })
       .then((res) => {
         setItems(res.items);
         setTotal(res.total);
       })
       .catch(() => setItems([]));
-  }, [page, category, cefr, q]);
+  }, [page, category, cefr, q, lang]);
 
   useEffect(() => {
     const id = window.setTimeout(load, q ? 300 : 0);
@@ -187,7 +193,7 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.02, 0.3) }}
-                onClick={() => expressionsApi.detail(e.slug).then(setOpen).catch(() => {})}
+                onClick={() => expressionsApi.detail(e.slug, lang).then(setOpen).catch(() => {})}
                 className="premium-card group flex min-h-36 flex-col rounded-lg p-4 text-left"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -196,7 +202,7 @@ export function ExpressionsView({ t }: { lang: string; t: T }) {
                     {e.cefr}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-ink-soft">{e.uzbek}</p>
+                <p className="mt-2 text-sm leading-6 text-ink-soft">{e.translation}</p>
                 <div className="mt-auto flex flex-wrap gap-1.5 pt-4 text-[11px]">
                   <Tag>{e.category}</Tag>
                   <Tag>IELTS {e.ielts_band}</Tag>
@@ -344,7 +350,7 @@ function DetailModal({
                   <Volume2 className="size-4" aria-hidden />
                 </button>
               </div>
-              <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.uzbek}</p>
+              <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.translation}</p>
             </div>
             <button
               type="button"
