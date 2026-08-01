@@ -67,6 +67,25 @@ def _blank_sentence(example: str, headword: str) -> str:
     return example[:index] + "____" + example[index + len(headword) :]
 
 
+def _crossword_clue(card: Card) -> str:
+    """Return a definition clue without leaking the English answer."""
+    headword = card.word.headword.strip()
+    definition = (card.word.senses[0].definition_en or "").strip()
+    if definition:
+        # Some imports begin with `"word" means ...`; remove that boilerplate,
+        # then mask any remaining occurrence of the answer.
+        definition = re.sub(
+            r'^\s*["“”]?{}["“”]?\s+(?:means|is)\s+'.format(re.escape(headword)),
+            "",
+            definition,
+            flags=re.IGNORECASE,
+        )
+        definition = re.sub(
+            re.escape(headword), "___", definition, flags=re.IGNORECASE
+        )
+    return definition or "A word meaning: {}".format(_card_translation(card))
+
+
 async def _distractor_pool(
     db: AsyncSession, exclude_card_ids: List[UUID], want_translation: bool, limit: int = 60
 ) -> List[str]:
@@ -417,6 +436,8 @@ async def build_session(
             blanked = _blank_sentence(example, headword) if example else None
             prompt = blanked or "“{}”".format(card.word.senses[0].definition_en)
             questions.append(GameQuestion(card.id, prompt, headword, sample_distractors()))
+        elif game_type == "crossword":
+            questions.append(GameQuestion(card.id, _crossword_clue(card), headword, []))
         elif game_type == "audio_guess":
             questions.append(
                 GameQuestion(card.id, "", translation, sample_distractors(), audio_text=headword)

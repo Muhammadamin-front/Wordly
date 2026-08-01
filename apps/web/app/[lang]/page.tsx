@@ -35,10 +35,10 @@ const LEVELS = [
 ] as const;
 
 const FALLBACK_CATALOG: CatalogMeta = {
-  word_total: 8963,
-  expression_total: 812,
-  learning_item_total: 9775,
-  levels: { A1: 816, A2: 1425, B1: 1855, B2: 3025, C1: 1609, C2: 233 },
+  word_total: 9003,
+  expression_total: 852,
+  learning_item_total: 9855,
+  levels: { A1: 816, A2: 1425, B1: 1856, B2: 3056, C1: 1617, C2: 233 },
 };
 
 export default async function LandingPage({

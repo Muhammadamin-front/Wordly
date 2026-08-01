@@ -280,7 +280,7 @@ export function GamePlayer({
   const shared: GameProps = { games, onAnswer, onComplete };
 
   return (
-    <div className="mx-auto w-full max-w-xl">
+    <div className={`mx-auto w-full ${gameType === "crossword" ? "max-w-5xl" : "max-w-xl"}`}>
       {musicEligible && (
         <div className="mb-2 flex justify-end">
           <button

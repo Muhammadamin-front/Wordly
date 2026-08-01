@@ -52,6 +52,7 @@ EXAMPLE_FILES = [
     "examples_a2_batch2.csv",
     "examples_b1_batch1.csv",
     "examples_all_words.csv",
+    "examples_phrasal_idioms_6.csv",
 ]
 
 CORPUS_FILES = [
@@ -91,6 +92,7 @@ CORPUS_FILES = [
     "useful_batch13.csv",
     "useful_batch14.csv",
     "phrasal_idioms_5.csv",
+    "phrasal_idioms_6.csv",
 ]
 
 
@@ -153,6 +155,7 @@ async def main() -> None:
                         example_order=len(sense.examples) + 1,
                         text_en=row["example_en"].strip(),
                         text_uz=(row.get("example_uz") or "").strip() or None,
+                        text_ru=(row.get("example_ru") or "").strip() or None,
                     )
                 )
                 ex_added += 1

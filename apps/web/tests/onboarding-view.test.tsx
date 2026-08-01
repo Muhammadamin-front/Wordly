@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import en from "@/app/[lang]/dictionaries/en.json";
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { OnboardingView } from "@/components/onboarding/onboarding-view";
+import { PLACEMENT_QUESTIONS } from "@/lib/placement-test";
 
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -89,6 +90,9 @@ describe("OnboardingView", () => {
     );
 
     await screen.findByRole("heading", { name: en.onboarding.levelTitle });
+    await userEvent.click(
+      screen.getByRole("button", { name: en.onboarding.placementSkip })
+    );
     await userEvent.click(screen.getByRole("button", { name: /B1/ }));
     await userEvent.click(screen.getByRole("button", { name: en.onboarding.continue }));
 
@@ -112,6 +116,53 @@ describe("OnboardingView", () => {
       expect(replace).toHaveBeenCalledWith(
         "/en/review?deck=starter-deck-1&onboarding=1"
       )
+    );
+  });
+
+  it("recommends and applies a level from the diagnostic test", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn((input: RequestInfo | URL) => {
+        if (String(input).includes("/auth/refresh")) return Promise.resolve(json(200, PAIR));
+        throw new Error(`unexpected fetch: ${String(input)}`);
+      })
+    );
+
+    render(
+      <AuthProvider>
+        <OnboardingView lang="en" copy={en.onboarding} />
+      </AuthProvider>
+    );
+
+    await screen.findByRole("heading", { name: en.onboarding.levelTitle });
+    await userEvent.click(
+      screen.getByRole("button", { name: en.onboarding.placementBegin })
+    );
+
+    for (const question of PLACEMENT_QUESTIONS) {
+      await screen.findByRole("heading", { name: question.prompt });
+      await userEvent.click(
+        screen.getByRole("button", {
+          name: `${String.fromCharCode(65 + question.correctIndex)} ${question.options[question.correctIndex]}`,
+        })
+      );
+    }
+
+    expect(
+      await screen.findByText(en.onboarding.placementResultBody.replace("{level}", "C2"))
+    ).toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole("button", {
+        name: en.onboarding.placementUseLevel.replace("{level}", "C2"),
+      })
+    );
+
+    expect(
+      screen.getByText(en.onboarding.placementApplied.replace("{level}", "C2"))
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /C2/ })).toHaveAttribute(
+      "aria-pressed",
+      "true"
     );
   });
 });

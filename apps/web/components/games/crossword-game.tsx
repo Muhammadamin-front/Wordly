@@ -1,22 +1,31 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  CheckCircle2,
+  Eraser,
+  Lightbulb,
+  LockKeyhole,
+  Puzzle,
+  XCircle,
+} from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { GameProps } from "@/components/games/game-player";
-import { shuffle, type GameQuestion } from "@/lib/games";
+import { Button } from "@/components/ui/button";
+import type { GameQuestion } from "@/lib/games";
 import { cn } from "@/lib/utils";
 
-/** Fill-in crossword: answers are woven into a grid by shared letters, the
- *  translations serve as numbered clues. Some letters are pre-revealed (like
- *  the classic newspaper fill-ins); difficulty comes from the word source the
- *  player picked (A1…C2/IELTS). */
+/** Definition crossword: answers are woven into a grid by shared letters and
+ * every answer starts hidden. The player may reveal a limited number of hints. */
 
 export type Dir = "across" | "down";
 
 export interface Placement {
   cardId: string;
   answer: string; // UPPERCASE
-  prompt: string; // translation clue
+  submission: string; // original server answer (keeps spaces in phrases)
+  prompt: string; // definition clue, with the answer masked
   row: number;
   col: number;
   dir: Dir;
@@ -33,7 +42,8 @@ export interface Crossword {
 }
 
 const MAX_WORDS = 10;
-const REVEAL_FRACTION = 0.32;
+const MAX_ANSWER_LENGTH = 15;
+const MAX_HINTS_PER_WORD = 2;
 
 interface Slot {
   word: string;
@@ -72,9 +82,20 @@ function canPlace(
 
 export function buildCrossword(questions: GameQuestion[]): Crossword {
   const usable = questions
-    .filter((q) => /^[a-z]{3,12}$/i.test(q.answer))
+    .map((q) => ({
+      q,
+      word: q.answer.replace(/[^a-z]/gi, "").toUpperCase(),
+    }))
+    .filter(({ q, word }) => word.length >= 3 && word.length <= MAX_ANSWER_LENGTH && q.prompt.trim())
     .slice(0, MAX_WORDS)
-    .map((q) => ({ q, word: q.answer.toUpperCase() }));
+    .map(({ q, word }) => ({
+      q: { ...q, prompt: maskAnswer(q.prompt, q.answer) },
+      word,
+    }));
+
+  if (!usable.length) {
+    return { rows: 0, cols: 0, solution: [], revealed: [], placements: [] };
+  }
 
   const grid = new Map<string, string>();
   const slots: Slot[] = [];
@@ -153,6 +174,7 @@ export function buildCrossword(questions: GameQuestion[]): Crossword {
     placements.push({
       cardId: slot.q.card_id,
       answer: slot.word,
+      submission: slot.q.answer,
       prompt: slot.q.prompt,
       row,
       col,
@@ -161,26 +183,23 @@ export function buildCrossword(questions: GameQuestion[]): Crossword {
     });
   }
 
-  // Pre-reveal a share of letters; every word gets at least one.
+  // Classic crossword: all letters start hidden. `revealed` is retained as a
+  // board contract and becomes the initial state for player-requested hints.
   const revealed = Array.from({ length: rows }, () => Array<boolean>(cols).fill(false));
-  const letterCells: Array<[number, number]> = [];
-  solution.forEach((line, r) => line.forEach((ch, c) => ch && letterCells.push([r, c])));
-  for (const [r, c] of shuffle(letterCells).slice(0, Math.ceil(letterCells.length * REVEAL_FRACTION))) {
-    revealed[r][c] = true;
-  }
-  for (const p of placements) {
-    const has = Array.from({ length: p.answer.length }).some((_, i) =>
-      p.dir === "across" ? revealed[p.row][p.col + i] : revealed[p.row + i][p.col]
-    );
-    if (!has) revealed[p.row][p.col] = true;
-  }
 
   return { rows, cols, solution, revealed, placements };
+}
+
+export function maskAnswer(prompt: string, answer: string): string {
+  const escaped = answer.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  if (!escaped) return prompt.trim();
+  return prompt.replace(new RegExp(escaped, "gi"), "___").trim();
 }
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
 type WordState = "correct" | "wrong";
+type Feedback = "incomplete" | "wrong" | "correct" | "hint";
 
 export function CrosswordGame({
   games,
@@ -197,7 +216,10 @@ export function CrosswordGame({
   const [letters, setLetters] = useState<string[][]>(() =>
     solution.map((line, r) => line.map((ch, c) => (ch && revealed[r][c] ? ch : "")))
   );
+  const [hinted, setHinted] = useState<boolean[][]>(() => revealed.map((line) => [...line]));
+  const [hintsUsed, setHintsUsed] = useState<Record<string, number>>({});
   const [wordState, setWordState] = useState<Record<string, WordState>>({});
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [active, setActive] = useState<{ r: number; c: number; dir: Dir } | null>(() => {
     const first = placements[0];
     return first ? { r: first.row, c: first.col, dir: first.dir } : null;
@@ -223,37 +245,13 @@ export function CrosswordGame({
 
   const isLocked = useCallback(
     (r: number, c: number): boolean => {
-      if (revealed[r][c]) return true;
+      if (hinted[r][c]) return true;
       // Cells of a correctly solved word stay fixed.
       return placements.some(
         (p) => wordState[p.cardId] === "correct" && cellsOf(p).some(([pr, pc]) => pr === r && pc === c)
       );
     },
-    [revealed, placements, wordState, cellsOf]
-  );
-
-  /** Grade any newly-filled words exactly once each. */
-  const maybeSubmit = useCallback(
-    (next: string[][]) => {
-      const state = { ...wordState };
-      let changed = false;
-      for (const p of placements) {
-        if (state[p.cardId]) continue;
-        const filled = cellsOf(p).map(([r, c]) => next[r][c]);
-        if (filled.some((ch) => !ch)) continue;
-        const submitted = filled.join("");
-        const correct = submitted === p.answer;
-        state[p.cardId] = correct ? "correct" : "wrong";
-        changed = true;
-        onAnswer(p.cardId, correct, Date.now() - startRef.current, submitted.toLowerCase());
-      }
-      if (changed) setWordState(state);
-      if (!doneRef.current && placements.every((p) => state[p.cardId])) {
-        doneRef.current = true;
-        window.setTimeout(onComplete, 900);
-      }
-    },
-    [wordState, placements, cellsOf, onAnswer, onComplete]
+    [hinted, placements, wordState, cellsOf]
   );
 
   const advance = useCallback(
@@ -283,9 +281,21 @@ export function CrosswordGame({
         setLetters((prev) => {
           const next = prev.map((line) => [...line]);
           next[active.r][active.c] = key.toUpperCase();
-          maybeSubmit(next);
           return next;
         });
+        setWordState((current) => {
+          const next = { ...current };
+          placements.forEach((p) => {
+            if (
+              next[p.cardId] === "wrong" &&
+              cellsOf(p).some(([r, c]) => r === active.r && c === active.c)
+            ) {
+              delete next[p.cardId];
+            }
+          });
+          return next;
+        });
+        setFeedback(null);
         advance(active, 1);
       } else if (key === "Backspace") {
         setLetters((prev) => {
@@ -293,10 +303,11 @@ export function CrosswordGame({
           if (next[active.r][active.c]) next[active.r][active.c] = "";
           return next;
         });
+        setFeedback(null);
         advance(active, -1);
       }
     },
-    [active, isLocked, advance, maybeSubmit]
+    [active, isLocked, advance, placements, cellsOf]
   );
 
   useEffect(() => {
@@ -315,7 +326,7 @@ export function CrosswordGame({
       if (cellsOf(p).some(([pr, pc]) => pr === r && pc === c)) {
         const state = wordState[p.cardId];
         if (state === "correct") return "correct";
-        if (state === "wrong" && !revealed[r][c]) return "wrong";
+        if (state === "wrong" && !hinted[r][c]) return "wrong";
       }
     }
     return undefined;
@@ -327,109 +338,334 @@ export function CrosswordGame({
   const inActiveWord = (r: number, c: number): boolean =>
     !!activePlacement && cellsOf(activePlacement).some(([pr, pc]) => pr === r && pc === c);
 
+  const selectPlacement = useCallback(
+    (placement: Placement) => {
+      const cells = cellsOf(placement);
+      const target = cells.find(([r, c]) => !isLocked(r, c)) ?? cells[0];
+      setActive({ r: target[0], c: target[1], dir: placement.dir });
+      setFeedback(null);
+    },
+    [cellsOf, isLocked]
+  );
+
+  const checkActiveWord = useCallback(() => {
+    if (!activePlacement || wordState[activePlacement.cardId] === "correct") return;
+    const cells = cellsOf(activePlacement);
+    const filled = cells.map(([r, c]) => letters[r][c]);
+    if (filled.some((letter) => !letter)) {
+      setFeedback("incomplete");
+      return;
+    }
+
+    const submitted = filled.join("");
+    const correct = submitted === activePlacement.answer;
+    const nextState = {
+      ...wordState,
+      [activePlacement.cardId]: correct ? ("correct" as const) : ("wrong" as const),
+    };
+    setWordState(nextState);
+    setFeedback(correct ? "correct" : "wrong");
+    onAnswer(
+      activePlacement.cardId,
+      correct,
+      Date.now() - startRef.current,
+      correct ? activePlacement.submission : submitted.toLowerCase()
+    );
+
+    if (correct) {
+      setLetters((current) => {
+        const next = current.map((line) => [...line]);
+        cells.forEach(([r, c], index) => {
+          next[r][c] = activePlacement.answer[index];
+        });
+        return next;
+      });
+      if (!doneRef.current && placements.every((p) => nextState[p.cardId] === "correct")) {
+        doneRef.current = true;
+        window.setTimeout(onComplete, 700);
+      }
+    }
+  }, [activePlacement, wordState, cellsOf, letters, onAnswer, placements, onComplete]);
+
+  const revealHint = useCallback(() => {
+    if (!activePlacement || wordState[activePlacement.cardId] === "correct") return;
+    const used = hintsUsed[activePlacement.cardId] ?? 0;
+    if (used >= MAX_HINTS_PER_WORD) return;
+    const candidates = cellsOf(activePlacement).filter(([r, c], index) =>
+      !isLocked(r, c) && letters[r][c] !== activePlacement.answer[index]
+    );
+    const target = candidates.find(([r, c]) => !letters[r][c]) ?? candidates[0];
+    if (!target) return;
+    const [r, c] = target;
+    const answerIndex = cellsOf(activePlacement).findIndex(([cr, cc]) => cr === r && cc === c);
+    setLetters((current) => {
+      const next = current.map((line) => [...line]);
+      next[r][c] = activePlacement.answer[answerIndex];
+      return next;
+    });
+    setHinted((current) => {
+      const next = current.map((line) => [...line]);
+      next[r][c] = true;
+      return next;
+    });
+    setHintsUsed((current) => ({ ...current, [activePlacement.cardId]: used + 1 }));
+    setWordState((current) => {
+      const next = { ...current };
+      if (next[activePlacement.cardId] === "wrong") delete next[activePlacement.cardId];
+      return next;
+    });
+    setFeedback("hint");
+  }, [activePlacement, wordState, hintsUsed, cellsOf, isLocked, letters]);
+
+  const clearActiveWord = useCallback(() => {
+    if (!activePlacement || wordState[activePlacement.cardId] === "correct") return;
+    setLetters((current) => {
+      const next = current.map((line) => [...line]);
+      cellsOf(activePlacement).forEach(([r, c]) => {
+        if (!isLocked(r, c)) next[r][c] = "";
+      });
+      return next;
+    });
+    setWordState((current) => {
+      const next = { ...current };
+      delete next[activePlacement.cardId];
+      return next;
+    });
+    setFeedback(null);
+    selectPlacement(activePlacement);
+  }, [activePlacement, wordState, cellsOf, isLocked, selectPlacement]);
+
+  const solvedCount = placements.filter((p) => wordState[p.cardId] === "correct").length;
+  const activeHintsUsed = activePlacement ? hintsUsed[activePlacement.cardId] ?? 0 : 0;
+  const hintsLeft = MAX_HINTS_PER_WORD - activeHintsUsed;
+
+  const feedbackText = feedback === "incomplete"
+    ? games.crosswordIncomplete
+    : feedback === "wrong"
+      ? games.crosswordTryAgain
+      : feedback === "correct"
+        ? games.crosswordSolved
+        : feedback === "hint"
+          ? games.crosswordHintUsed.replace("{count}", String(hintsLeft))
+          : null;
+
   return (
     <div className="space-y-5">
-      <div className="overflow-x-auto pb-1">
-        <div
-          className="mx-auto grid w-fit gap-px rounded-lg border border-line bg-line p-px"
-          style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-        >
-          {solution.map((line, r) =>
-            line.map((ch, c) => {
-              if (!ch) {
-                return <div key={`${r}-${c}`} className="size-8 bg-slate-800 dark:bg-slate-950 sm:size-9" />;
-              }
-              const state = wordStateAt(r, c);
-              const isActive = active?.r === r && active?.c === c;
-              const number = numberAt(r, c);
-              return (
-                <button
-                  key={`${r}-${c}`}
-                  type="button"
-                  onClick={() =>
-                    setActive((prev) => ({
-                      r,
-                      c,
-                      // Clicking the same cell again flips typing direction.
-                      dir: prev?.r === r && prev?.c === c ? (prev.dir === "across" ? "down" : "across") : (prev?.dir ?? "across"),
-                    }))
-                  }
-                  className={cn(
-                    "relative size-8 bg-card text-center text-sm font-extrabold uppercase text-ink sm:size-9 sm:text-base",
-                    inActiveWord(r, c) && "bg-brand-600/10",
-                    isActive && "ring-2 ring-inset ring-brand-500",
-                    revealed[r][c] && "text-ink-soft",
-                    state === "correct" && "bg-success/15 text-success",
-                    state === "wrong" && "bg-danger/10 text-danger"
-                  )}
-                >
-                  {number && (
-                    <span className="absolute left-0.5 top-0 text-[8px] font-semibold leading-3 text-ink-soft">
-                      {number}
-                    </span>
-                  )}
-                  {letters[r][c]}
-                </button>
-              );
-            })
-          )}
+      <div className="flex flex-col gap-3 border-b border-line pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-extrabold text-brand-700 dark:text-brand-200">
+            <Puzzle className="size-4" />
+            {games.crossword.name}
+          </div>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-ink-soft">
+            {games.crosswordInstruction}
+          </p>
+        </div>
+        <div className="min-w-48">
+          <p className="text-right text-xs font-bold text-ink-soft">
+            {games.crosswordProgress
+              .replace("{solved}", String(solvedCount))
+              .replace("{total}", String(placements.length))}
+          </p>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+            <motion.div
+              className="h-full rounded-full bg-brand-600"
+              animate={{ width: `${placements.length ? (solvedCount / placements.length) * 100 : 0}%` }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* On-screen letter bank (mobile has no physical keyboard). */}
-      <div className="mx-auto grid w-fit grid-cols-9 gap-1.5">
-        {LETTERS.map((letter) => (
-          <button
-            key={letter}
-            type="button"
-            onClick={() => input(letter)}
-            className="size-8 rounded-lg border border-line bg-card text-sm font-bold text-ink transition-colors hover:bg-brand-600/10 active:scale-95"
-          >
-            {letter}
-          </button>
-        ))}
-        <button
-          type="button"
-          onClick={() => input("Backspace")}
-          className="col-span-2 flex h-8 items-center justify-center rounded-lg border border-line bg-card text-sm font-bold text-ink transition-colors hover:bg-danger/10"
-          aria-label="Backspace"
-        >
-          ⌫
-        </button>
-      </div>
-
-      {/* Clues, split the way real crosswords do. */}
-      <div className="grid gap-4 sm:grid-cols-2">
-        {(["across", "down"] as const).map((dir) => {
-          const list = placements.filter((p) => p.dir === dir);
-          if (!list.length) return null;
-          return (
-            <div key={dir} className="rounded-2xl border border-line bg-card p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wide text-ink-soft">
-                {dir === "across" ? `→ ${games.across}` : `↓ ${games.down}`}
-              </h3>
-              <ul className="mt-2 space-y-1">
-                {list.map((p) => (
-                  <li key={p.cardId}>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.8fr)]">
+        <div className="min-w-0">
+          <div className="overflow-x-auto pb-2">
+            <div
+              className="mx-auto grid w-fit gap-px rounded-lg border border-line bg-line p-px shadow-[0_18px_50px_rgba(8,55,47,0.12)]"
+              style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+            >
+              {solution.map((line, r) =>
+                line.map((ch, c) => {
+                  if (!ch) {
+                    return <div key={`${r}-${c}`} aria-hidden className="size-8 bg-brand-950 sm:size-9" />;
+                  }
+                  const state = wordStateAt(r, c);
+                  const isActive = active?.r === r && active?.c === c;
+                  const number = numberAt(r, c);
+                  return (
                     <button
+                      key={`${r}-${c}`}
                       type="button"
-                      onClick={() => setActive({ r: p.row, c: p.col, dir: p.dir })}
+                      aria-label={`${games.crosswordCell} ${r + 1}, ${c + 1}`}
+                      onClick={() => {
+                        const covering = placements.filter((p) =>
+                          cellsOf(p).some(([pr, pc]) => pr === r && pc === c)
+                        );
+                        const nextDir = active?.r === r && active?.c === c
+                          ? active.dir === "across" ? "down" : "across"
+                          : active?.dir ?? covering[0]?.dir ?? "across";
+                        const placement = covering.find((p) => p.dir === nextDir) ?? covering[0];
+                        setActive({ r, c, dir: placement?.dir ?? nextDir });
+                        setFeedback(null);
+                      }}
                       className={cn(
-                        "w-full rounded-lg px-2 py-1 text-left text-sm text-ink transition-colors hover:bg-line/40",
-                        wordState[p.cardId] === "correct" && "text-success line-through",
-                        wordState[p.cardId] === "wrong" && "text-danger",
-                        activePlacement?.cardId === p.cardId && "bg-brand-600/10"
+                        "relative size-8 bg-card text-center text-sm font-extrabold uppercase text-ink transition-colors sm:size-9 sm:text-base",
+                        inActiveWord(r, c) && "bg-brand-600/12",
+                        isActive && "z-10 ring-2 ring-inset ring-brand-500",
+                        hinted[r][c] && "bg-accent-500/12 text-accent-700 dark:text-accent-300",
+                        state === "correct" && "bg-success/15 text-success",
+                        state === "wrong" && "bg-danger/12 text-danger"
                       )}
                     >
-                      <span className="font-bold">{p.number}.</span> {p.prompt}{" "}
-                      <span className="text-xs text-ink-soft">({p.answer.length})</span>
+                      {number && (
+                        <span className="absolute left-0.5 top-0 text-[8px] font-semibold leading-3 text-ink-soft">
+                          {number}
+                        </span>
+                      )}
+                      {letters[r][c]}
+                      {(hinted[r][c] || state === "correct") && (
+                        <LockKeyhole className="absolute bottom-0.5 right-0.5 size-2.5 opacity-45" />
+                      )}
                     </button>
-                  </li>
-                ))}
-              </ul>
+                  );
+                })
+              )}
             </div>
-          );
-        })}
+          </div>
+
+          <div className="mx-auto mt-5 grid w-fit grid-cols-9 gap-1.5">
+            {LETTERS.map((letter) => (
+              <button
+                key={letter}
+                type="button"
+                onClick={() => input(letter)}
+                className="size-8 rounded-lg border border-line bg-card text-sm font-bold text-ink transition-all hover:-translate-y-0.5 hover:bg-brand-600/10 active:scale-95"
+              >
+                {letter}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={() => input("Backspace")}
+              className="col-span-2 flex h-8 items-center justify-center rounded-lg border border-line bg-card text-sm font-bold text-ink transition-colors hover:bg-danger/10"
+              aria-label={games.crosswordBackspace}
+              title={games.crosswordBackspace}
+            >
+              <Eraser className="size-4" />
+            </button>
+          </div>
+        </div>
+
+        <aside className="min-w-0 space-y-4">
+          {activePlacement && (
+            <div className="rounded-lg border border-brand-300/70 bg-brand-600/8 p-5 shadow-[0_16px_40px_rgba(8,55,47,0.09)]">
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-extrabold text-brand-700 dark:text-brand-200">
+                  {activePlacement.number} · {activePlacement.dir === "across" ? games.across : games.down}
+                </span>
+                <span className="rounded-md bg-card px-2 py-1 text-xs font-bold text-ink-soft">
+                  {activePlacement.answer.length} {games.crosswordLetters}
+                </span>
+              </div>
+              <p className="mt-4 text-xs font-bold text-ink-soft">{games.crosswordDefinition}</p>
+              <p className="mt-1 text-base font-extrabold leading-6 text-ink">
+                {activePlacement.prompt}
+              </p>
+
+              <AnimatePresence mode="wait">
+                {feedbackText && (
+                  <motion.div
+                    key={feedback}
+                    role="status"
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className={cn(
+                      "mt-4 flex items-start gap-2 rounded-lg px-3 py-2 text-xs font-semibold leading-5",
+                      feedback === "correct" && "bg-success/12 text-success",
+                      feedback === "wrong" && "bg-danger/10 text-danger",
+                      feedback === "incomplete" && "bg-accent-500/12 text-accent-700 dark:text-accent-300",
+                      feedback === "hint" && "bg-brand-600/10 text-brand-700 dark:text-brand-200"
+                    )}
+                  >
+                    {feedback === "correct" ? (
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+                    ) : feedback === "wrong" ? (
+                      <XCircle className="mt-0.5 size-4 shrink-0" />
+                    ) : (
+                      <Lightbulb className="mt-0.5 size-4 shrink-0" />
+                    )}
+                    {feedbackText}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                <Button
+                  type="button"
+                  onClick={checkActiveWord}
+                  disabled={wordState[activePlacement.cardId] === "correct"}
+                >
+                  <CheckCircle2 className="size-4" />
+                  {games.crosswordCheck}
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={revealHint}
+                  disabled={hintsLeft <= 0 || wordState[activePlacement.cardId] === "correct"}
+                >
+                  <Lightbulb className="size-4" />
+                  {hintsLeft > 0 ? `${games.crosswordHint} · ${hintsLeft}` : games.crosswordNoHints}
+                </Button>
+              </div>
+              <button
+                type="button"
+                onClick={clearActiveWord}
+                disabled={wordState[activePlacement.cardId] === "correct"}
+                className="mt-3 inline-flex items-center gap-2 text-xs font-bold text-ink-soft transition-colors hover:text-ink disabled:opacity-40"
+              >
+                <Eraser className="size-3.5" />
+                {games.crosswordClear}
+              </button>
+            </div>
+          )}
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            {(["across", "down"] as const).map((dir) => {
+              const list = placements.filter((p) => p.dir === dir);
+              if (!list.length) return null;
+              return (
+                <section key={dir} className="rounded-lg border border-line bg-card/70 p-3">
+                  <h3 className="px-2 text-xs font-extrabold text-ink-soft">
+                    {dir === "across" ? `→ ${games.across}` : `↓ ${games.down}`}
+                  </h3>
+                  <ul className="mt-2 space-y-1">
+                    {list.map((p) => (
+                      <li key={p.cardId}>
+                        <button
+                          type="button"
+                          onClick={() => selectPlacement(p)}
+                          className={cn(
+                            "w-full rounded-lg px-2 py-2 text-left text-sm text-ink transition-colors hover:bg-brand-600/8",
+                            wordState[p.cardId] === "correct" && "text-success",
+                            wordState[p.cardId] === "wrong" && "text-danger",
+                            activePlacement?.cardId === p.cardId && "bg-brand-600/10"
+                          )}
+                        >
+                          <span className="font-extrabold">{p.number}.</span> {p.prompt}{" "}
+                          <span className="text-xs text-ink-soft">({p.answer.length})</span>
+                          {wordState[p.cardId] === "correct" && (
+                            <CheckCircle2 className="ml-1 inline size-3.5" />
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
+          </div>
+        </aside>
       </div>
     </div>
   );

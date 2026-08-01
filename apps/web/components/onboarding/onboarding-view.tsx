@@ -13,6 +13,7 @@ import {
   Laptop,
   MessageCircleMore,
   Plane,
+  ScanSearch,
   Sparkles,
   Target,
   type LucideIcon,
@@ -21,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { PlacementTest } from "@/components/onboarding/placement-test";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { onboardingApi, type OnboardingInput } from "@/lib/api";
@@ -55,6 +57,8 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   const { user, ready, updateUser } = useAuth();
   const [step, setStep] = useState(1);
   const [level, setLevel] = useState<Level>("A1");
+  const [placementOpen, setPlacementOpen] = useState(true);
+  const [placementLevel, setPlacementLevel] = useState<Level | null>(null);
   const [goal, setGoal] = useState<Goal>("general");
   const [interests, setInterests] = useState<string[]>([]);
   const [minutes, setMinutes] = useState<Minutes>(10);
@@ -103,6 +107,12 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   }
 
   const canContinue = step !== 3 || interests.length > 0;
+
+  function applyPlacementLevel(value: Level) {
+    setLevel(value);
+    setPlacementLevel(value);
+    setPlacementOpen(false);
+  }
 
   return (
     <section className="relative mx-auto flex min-h-[calc(100dvh-5.5rem)] w-full max-w-5xl items-center py-6 sm:py-10">
@@ -153,17 +163,53 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
               >
                 {step === 1 && (
                   <StepSection title={copy.levelTitle} body={copy.levelBody}>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {LEVELS.map((value) => (
-                        <OptionButton
-                          key={value}
-                          selected={level === value}
-                          onClick={() => setLevel(value)}
-                          title={value}
-                          body={copy[`level${value}`]}
-                        />
-                      ))}
-                    </div>
+                    {placementOpen ? (
+                      <PlacementTest
+                        copy={copy}
+                        reducedMotion={Boolean(reducedMotion)}
+                        onApply={applyPlacementLevel}
+                        onCancel={() => setPlacementOpen(false)}
+                      />
+                    ) : (
+                      <>
+                        {placementLevel && (
+                          <div className="mb-5 flex items-center gap-3 rounded-lg border border-brand-300/70 bg-brand-600/8 p-4">
+                            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-900 text-sm font-black text-white">
+                              {placementLevel}
+                            </span>
+                            <div>
+                              <p className="font-extrabold text-ink">
+                                {copy.placementApplied.replace("{level}", placementLevel)}
+                              </p>
+                              <p className="mt-0.5 text-xs leading-5 text-ink-soft">
+                                {copy.placementOverride}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                          {LEVELS.map((value) => (
+                            <OptionButton
+                              key={value}
+                              selected={level === value}
+                              onClick={() => setLevel(value)}
+                              title={value}
+                              body={copy[`level${value}`]}
+                            />
+                          ))}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          fullWidth
+                          className="mt-4"
+                          onClick={() => setPlacementOpen(true)}
+                        >
+                          <ScanSearch className="size-4" />
+                          {copy.placementStartAgain}
+                        </Button>
+                      </>
+                    )}
                   </StepSection>
                 )}
 
@@ -234,32 +280,34 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
               </motion.div>
             </AnimatePresence>
 
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-5">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setStep((current) => Math.max(1, current - 1))}
-                disabled={step === 1 || loading}
-              >
-                <ArrowLeft className="size-4" />
-                {copy.back}
-              </Button>
-              {step < 4 ? (
+            {!(step === 1 && placementOpen) && (
+              <div className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-5">
                 <Button
                   type="button"
-                  onClick={() => setStep((current) => Math.min(4, current + 1))}
-                  disabled={!canContinue}
+                  variant="ghost"
+                  onClick={() => setStep((current) => Math.max(1, current - 1))}
+                  disabled={step === 1 || loading}
                 >
-                  {copy.continue}
-                  <ArrowRight className="size-4" />
+                  <ArrowLeft className="size-4" />
+                  {copy.back}
                 </Button>
-              ) : (
-                <Button type="button" onClick={() => void finish()} loading={loading}>
-                  {copy.startLesson}
-                  <ArrowRight className="size-4" />
-                </Button>
-              )}
-            </div>
+                {step < 4 ? (
+                  <Button
+                    type="button"
+                    onClick={() => setStep((current) => Math.min(4, current + 1))}
+                    disabled={!canContinue}
+                  >
+                    {copy.continue}
+                    <ArrowRight className="size-4" />
+                  </Button>
+                ) : (
+                  <Button type="button" onClick={() => void finish()} loading={loading}>
+                    {copy.startLesson}
+                    <ArrowRight className="size-4" />
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

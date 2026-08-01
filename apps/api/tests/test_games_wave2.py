@@ -3,7 +3,9 @@ import pytest
 from tests.test_games import learner_with_cards
 
 
-@pytest.mark.parametrize("game_type", ["boss_battle", "hangman", "spelling_bee", "word_search"])
+@pytest.mark.parametrize(
+    "game_type", ["boss_battle", "hangman", "spelling_bee", "word_search", "crossword"]
+)
 async def test_new_games_build_sessions(client, game_type):
     headers, _ = await learner_with_cards(client, count=6)
     response = await client.get("/api/v1/games/{}".format(game_type), headers=headers)
@@ -11,6 +13,17 @@ async def test_new_games_build_sessions(client, game_type):
     body = response.json()
     assert len(body["questions"]) >= 4
     assert body["questions"][0]["answer"]
+
+
+async def test_crossword_uses_definition_without_revealing_answer(client):
+    headers, _ = await learner_with_cards(client, count=6)
+
+    response = await client.get("/api/v1/games/crossword", headers=headers)
+    assert response.status_code == 200, response.text
+    for question in response.json()["questions"]:
+        assert question["prompt"]
+        assert question["answer"].lower() not in question["prompt"].lower()
+        assert question["distractors"] == []
 
 
 async def test_boss_battle_has_options(client):

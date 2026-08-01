@@ -19,14 +19,14 @@ The current risk is not a lack of features. It is the opposite: the product surf
 - The home page communicates the Uzbek-first vocabulary value within 5–10 seconds.
 - The visual system is now distinctive: emerald, ivory, brass, subtle cultural geometry, good dark/light foundations, and reduced-motion support.
 - Vocabulary storage is relational and extensible: words, senses, examples, categories, and relations.
-- The running database has 8,963 published words, 8,963 senses, 26,889 examples, and 812 expressions.
+- The running database has 9,003 published words, 9,003 senses, 27,009 examples, and 852 expressions.
 - Every published word currently has exactly three English examples.
 - There are no duplicate published `(headword, part of speech)` groups and no duplicate expressions.
 - SRS cards are user-owned, due-card queries are indexed, and review history is append-only.
 - Authentication already has bcrypt, short-lived access tokens, refresh rotation, hashed one-time tokens, generic login/reset responses, and session revocation after reset.
 - Public vocabulary endpoints have pagination, cache headers, ETags, and sensible limits.
 - CI covers backend on SQLite and PostgreSQL, migration + seed, frontend type checking, lint, unit tests, and production build.
-- Current verification is green: web tests `75/75`, API tests `223/223`, lint passed, database migration is at Alembic head.
+- Current verification is green: web tests `90/90`, API tests `261/261`, lint passed, database migration is at Alembic head.
 
 ### Main product diagnosis
 
@@ -44,12 +44,12 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 |---|---|
 | Web | Next.js 16, App Router, TypeScript, Tailwind v4, 48 localized page routes |
 | API | FastAPI, async SQLAlchemy, 37 PostgreSQL tables, 28 test modules |
-| Data | 8,963 published words; A1 816, A2 1,425, B1 1,855, B2 3,025, C1 1,609, C2 233 |
-| Examples | 26,889 total; exactly 3 English examples per word |
-| Expressions | 812 across 32 categories; 3+ examples and usage notes present |
+| Data | 9,003 published words; A1 816, A2 1,425, B1 1,856, B2 3,056, C1 1,617, C2 233 |
+| Examples | 27,009 total; exactly 3 English examples per word |
+| Expressions | 852 across 34 categories; 3+ examples and usage notes present |
 | Missing content | 17,683 Uzbek example translations; 26,721 Russian example translations; 191 IPA values; 7,128 images |
 | Audio | 0 stored word audio URLs; ElevenLabs is configured locally and audio is generated/cached on demand |
-| Tests | Web 82 passed; API 257 passed; lint and production build passed |
+| Tests | Web 90 passed; API 261 passed; lint and production build passed |
 | Runtime | API, web, PostgreSQL, and Redis containers healthy; migration at head |
 | Analytics | No product analytics SDK or event pipeline found |
 | Legal/data rights | No privacy, terms, cookie, full data export, or account deletion flow found |
@@ -183,7 +183,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
   progress and obsolete counts were removed, while IELTS copy now advertises
   the shipped model answers, strategies, topics, and collocations rather than
   AI feedback or speaking simulation.
-- **Problem:** Home cards hard-code A2 1,414, B1 1,768, and B2 2,814 while the database contains 1,425, 1,855, and 3,025. Home IELTS copy promises AI feedback and speaking simulation while the current IELTS hub explicitly positions itself as static and zero-AI.
+- **Problem:** Home cards hard-coded A2 1,414, B1 1,768, and B2 2,814 while the database now contains 1,425, 1,856, and 3,056. Home IELTS copy promised AI feedback and speaking simulation while the current IELTS hub explicitly positions itself as static and zero-AI.
 - **Why it matters:** Product claims must reflect the shipped product and current corpus.
 - **User impact:** Users see inconsistent totals and expect unavailable features.
 - **Recommended solution:** Fetch public aggregate counts from one API/cache; replace AI claims with static learning-resource benefits; define a claim-review checklist for releases.
@@ -298,7 +298,7 @@ Wordly should launch as a focused vocabulary product, not as an AI tutor, social
 
 ### P2. Content breadth is ahead of pedagogical quality control
 
-- **Problem:** All words have three English examples, but most translated examples are absent. Some spot-checked entries contain spelling issues (`hayrli`), obscure items (`han`), or awkward learner phrasing. Images cover only 1,835 of 8,963 words.
+- **Problem:** All words have three English examples, but most translated examples are absent. Some spot-checked entries contain spelling issues (`hayrli`), obscure items (`han`), or awkward learner phrasing. Images cover only 1,835 of 9,003 words.
 - **Why it matters:** A 10k count is less valuable than a trusted 3k learning path.
 - **User impact:** Confusion, weaker comprehension, and reduced confidence in translations.
 - **Recommended solution:** Launch a reviewed “Core 3,000” first, add content quality states and reviewer attribution, run automated anomaly checks, and prioritize example translations by frequency.

@@ -190,3 +190,4 @@ async def test_grade_answer_per_game_type():
     assert grade_answer(card, "listening", "i eat an apple") is True  # punctuation lenient
     assert grade_answer(card, "speaking", "the word is apple") is True  # includes match
     assert grade_answer(card, "word_search", "APPLE") is True
+    assert grade_answer(card, "crossword", "apple") is True
