@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 
 type HeroCopy = {
   eyebrow: string;
+  title: string;
   subtitle: string;
   heroImageAlt: string;
   exploreLevels: string;
@@ -39,20 +40,20 @@ export function VocoraForestHero({
   ];
 
   return (
-    <section className="relative mx-auto min-h-[640px] max-w-[1480px] overflow-hidden rounded-[22px] border border-white/10 bg-[#07150e] shadow-[0_28px_90px_rgba(4,25,14,0.34)] sm:min-h-[690px]">
+    <section className="relative mx-auto min-h-[660px] max-w-[1480px] overflow-hidden rounded-[22px] border border-white/10 bg-[#06140d] shadow-[0_30px_100px_rgba(4,25,14,0.38)] sm:min-h-[720px]">
       <Image
-        src="/images/vocora-forest-scene.jpg"
+        src="/images/vocora-forest-hero.webp"
         alt={copy.heroImageAlt}
         fill
         preload
         sizes="(max-width: 640px) calc(100vw - 24px), (max-width: 1024px) calc(100vw - 40px), 1480px"
-        className="scale-[1.04] object-cover object-[80%_center] brightness-[0.8] contrast-[1.08] saturate-[0.85]"
+        className="scale-[1.015] object-cover object-[72%_center] brightness-[0.82] contrast-[1.06] saturate-[0.9]"
       />
-      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgba(4,17,10,0.97)_0%,rgba(5,20,11,0.92)_35%,rgba(5,22,12,0.34)_66%,rgba(2,13,7,0.4)_100%)]" />
+      <div aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,15,9,0.98)_0%,rgba(3,18,10,0.91)_38%,rgba(3,18,10,0.46)_63%,rgba(2,13,7,0.22)_100%)]" />
       <div aria-hidden className="absolute inset-y-0 left-0 w-full bg-[linear-gradient(145deg,rgba(157,202,103,0.12),transparent_32%)]" />
       <div aria-hidden className="absolute inset-y-0 left-[48%] hidden w-px bg-white/16 lg:block" />
 
-      <div className="relative z-10 flex min-h-[640px] flex-col px-6 py-10 sm:min-h-[690px] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+      <div className="relative z-10 flex min-h-[660px] flex-col px-6 py-10 sm:min-h-[720px] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
         <Reveal>
           <p className="inline-flex items-center gap-2 border-b border-[#b5d88e]/65 pb-2 text-[11px] font-black uppercase text-[#d9edc0]">
             <span className="size-1.5 rounded-full bg-[#a9d277]" />
@@ -63,9 +64,8 @@ export function VocoraForestHero({
         <div className="mt-9 max-w-[760px]">
           <Reveal delay={0.06}>
             <p className="text-sm font-extrabold uppercase text-white/58">{copy.eyebrow}</p>
-            <h1 className="mt-3 max-w-[700px] text-5xl font-black leading-[0.91] text-white sm:text-7xl lg:text-[104px]">
-              <span className="block text-[#b6db82]">VOCABULARY</span>
-              <span className="block">THAT STAYS.</span>
+            <h1 className="mt-3 max-w-[740px] text-5xl font-black leading-[0.91] text-white sm:text-7xl lg:text-[92px]">
+              <span className="block text-[#d6ecb2]">{copy.title}</span>
             </h1>
           </Reveal>
 
