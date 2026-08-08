@@ -1,0 +1,22 @@
+name: Deploy production
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    branches: [main]
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production server
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: [self-hosted, Linux, X64, production]
+    timeout-minutes: 30
+    steps:
+      - name: Deploy latest main
+        run: /home/kitsune/Wordly/deploy.sh

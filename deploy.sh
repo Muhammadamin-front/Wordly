@@ -1,16 +1,25 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 cd /home/kitsune/Wordly
 
+echo "=== Check working tree ==="
+if [ -n "$(git status --porcelain)" ]; then
+  echo "Working tree is dirty. Commit/stash local changes before deploying."
+  git status --short
+  exit 1
+fi
+
 echo "=== Pull latest code ==="
-git pull --ff-only
+git fetch origin main
+git pull --ff-only origin main
 
 echo "=== Build images ==="
 docker compose build
 
-echo "=== Restart services ==="
-docker compose up -d --force-recreate
+echo "=== Apply containers ==="
+docker compose up -d --remove-orphans
 
 echo "=== Waiting for API ==="
 sleep 5
