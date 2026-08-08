@@ -1,10 +1,13 @@
 "use client";
 
+import { RefreshCw, Trophy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { gamificationApi, type Leaderboard } from "@/lib/gamification";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -19,6 +22,7 @@ export function LeaderboardView({
   const { user, ready } = useAuth();
   const router = useRouter();
   const [board, setBoard] = useState<Leaderboard | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -27,16 +31,46 @@ export function LeaderboardView({
   useEffect(() => {
     if (!ready || !user) return;
     let cancelled = false;
-    gamificationApi.leaderboard().then((b) => !cancelled && setBoard(b));
+    gamificationApi
+      .leaderboard()
+      .then((b) => {
+        if (cancelled) return;
+        setError(false);
+        setBoard(b);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      });
     return () => {
       cancelled = true;
     };
   }, [ready, user]);
 
-  if (!ready || !user || board === null) {
+  if (!ready || !user || (board === null && !error)) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+      <main className="app-container max-w-2xl flex-1 py-8">
+        <PageHeader centered title={t.title} subtitle={t.subtitle} />
+        <div className="mt-6 space-y-2">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} className="h-14 rounded-[18px]" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  if (error || board === null) {
+    return (
+      <main className="app-container max-w-2xl flex-1 py-8">
+        <PageHeader centered title={t.title} subtitle={t.subtitle} />
+        <EmptyState
+          className="mt-6"
+          icon={RefreshCw}
+          title={t.loadError}
+          body={t.emptyBody}
+          actionLabel={t.retry}
+          onAction={() => window.location.reload()}
+        />
       </main>
     );
   }
@@ -45,17 +79,18 @@ export function LeaderboardView({
   const relegationStart = board.members.length - board.relegate_bottom;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
-      <div className="text-center">
-        <p className="text-5xl" aria-hidden>
-          🏆
-        </p>
-        <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink">{tierName}</h1>
-        <p className="mt-1 text-sm text-ink-soft">{t.subtitle}</p>
-      </div>
+    <main className="app-container max-w-2xl flex-1 py-8">
+      <PageHeader centered eyebrow={t.thisWeek} title={tierName} subtitle={t.subtitle} />
 
       {board.members.length === 0 ? (
-        <Card className="mt-6 text-center text-ink-soft">{t.empty}</Card>
+        <EmptyState
+          className="mt-6"
+          icon={Trophy}
+          title={t.emptyTitle}
+          body={t.emptyBody}
+          actionLabel={t.emptyAction}
+          actionHref={`/${lang}/today`}
+        />
       ) : (
         <ol className="mt-6 space-y-1.5">
           {board.members.map((member, i) => {

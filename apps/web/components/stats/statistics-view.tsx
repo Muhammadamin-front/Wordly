@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { BarChart3, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { statisticsApi, type HeatmapDay, type Statistics } from "@/lib/statistics";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -67,6 +71,7 @@ export function StatisticsView({
   const router = useRouter();
   const [stats, setStats] = useState<Statistics | null>(null);
   const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -75,22 +80,48 @@ export function StatisticsView({
   useEffect(() => {
     if (!ready || !user) return;
     let cancelled = false;
-    Promise.all([statisticsApi.statistics(), statisticsApi.heatmap(HEATMAP_DAYS + 1)]).then(
-      ([s, h]) => {
+    Promise.all([statisticsApi.statistics(), statisticsApi.heatmap(HEATMAP_DAYS + 1)])
+      .then(([s, h]) => {
         if (cancelled) return;
+        setError(false);
         setStats(s);
         setHeatmap(h.days);
-      }
-    );
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      });
     return () => {
       cancelled = true;
     };
   }, [ready, user]);
 
-  if (!ready || !user || stats === null) {
+  if (!ready || !user || (stats === null && !error)) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+      <main className="app-container flex-1 py-8">
+        <PageHeader title={t.title} subtitle={t.subtitle} />
+        <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label={t.title}>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-24 rounded-[20px]" />
+          ))}
+        </section>
+        <Skeleton className="mt-6 h-44 rounded-[24px]" />
+        <Skeleton className="mt-4 h-36 rounded-[24px]" />
+      </main>
+    );
+  }
+
+  if (error || stats === null) {
+    return (
+      <main className="app-container flex-1 py-8">
+        <PageHeader title={t.title} subtitle={t.subtitle} />
+        <EmptyState
+          className="mt-6"
+          icon={RefreshCw}
+          title={t.loadError}
+          body={t.emptyBody}
+          actionLabel={t.retry}
+          onAction={() => window.location.reload()}
+        />
       </main>
     );
   }
@@ -103,9 +134,8 @@ export function StatisticsView({
     lang === "uz" ? c.name_uz : lang === "ru" ? c.name_ru : c.name_en;
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink">{t.title}</h1>
-      <p className="mt-1 text-sm text-ink-soft">{t.subtitle}</p>
+    <main className="app-container max-w-4xl flex-1 py-8">
+      <PageHeader title={t.title} subtitle={t.subtitle} />
 
       {/* Stat tiles */}
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -120,7 +150,14 @@ export function StatisticsView({
       </section>
 
       {stats.total_reviews === 0 ? (
-        <Card className="mt-6 text-center text-ink-soft">{t.empty}</Card>
+        <EmptyState
+          className="mt-6"
+          icon={BarChart3}
+          title={t.emptyTitle}
+          body={t.emptyBody}
+          actionLabel={t.emptyAction}
+          actionHref={`/${lang}/review`}
+        />
       ) : (
         <>
           {/* Card state distribution */}

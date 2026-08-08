@@ -51,7 +51,7 @@ afterEach(() => {
 });
 
 describe("OnboardingView", () => {
-  it("saves four-step preferences and opens the five-word lesson", async () => {
+  it("saves three-step preferences and opens the five-word lesson", async () => {
     const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
       if (url.includes("/auth/refresh")) return Promise.resolve(json(200, PAIR));
@@ -61,7 +61,7 @@ describe("OnboardingView", () => {
           cefr_level: "B1",
           learning_goal: "career",
           daily_minutes: 15,
-          learning_interests: ["daily-life"],
+          learning_interests: ["work"],
         });
         return Promise.resolve(
           json(200, {
@@ -89,23 +89,14 @@ describe("OnboardingView", () => {
       </AuthProvider>
     );
 
-    await screen.findByRole("heading", { name: en.onboarding.levelTitle });
-    await userEvent.click(
-      screen.getByRole("button", { name: en.onboarding.placementSkip })
-    );
-    await userEvent.click(screen.getByRole("button", { name: /B1/ }));
-    await userEvent.click(screen.getByRole("button", { name: en.onboarding.continue }));
-
     await screen.findByRole("heading", { name: en.onboarding.goalTitle });
     await userEvent.click(
       screen.getByRole("button", { name: new RegExp(en.onboarding.goalCareer) })
     );
     await userEvent.click(screen.getByRole("button", { name: en.onboarding.continue }));
 
-    await screen.findByRole("heading", { name: en.onboarding.interestsTitle });
-    await userEvent.click(
-      screen.getByRole("button", { name: en.onboarding.interestDailyLife })
-    );
+    await screen.findByRole("heading", { name: en.onboarding.levelTitle });
+    await userEvent.click(screen.getByRole("button", { name: /B1/ }));
     await userEvent.click(screen.getByRole("button", { name: en.onboarding.continue }));
 
     await screen.findByRole("heading", { name: en.onboarding.timeTitle });
@@ -134,7 +125,12 @@ describe("OnboardingView", () => {
       </AuthProvider>
     );
 
+    await screen.findByRole("heading", { name: en.onboarding.goalTitle });
+    await userEvent.click(screen.getByRole("button", { name: en.onboarding.continue }));
     await screen.findByRole("heading", { name: en.onboarding.levelTitle });
+    await userEvent.click(
+      screen.getByRole("button", { name: en.onboarding.placementBegin })
+    );
     await userEvent.click(
       screen.getByRole("button", { name: en.onboarding.placementBegin })
     );

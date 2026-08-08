@@ -1,9 +1,11 @@
+import { SearchX } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { VocabularyWordCard } from "@/components/library/vocabulary-word-card";
 import { SiteHeader } from "@/components/site/header";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
 import { fetchCategories, fetchWords, CEFR_LEVELS, type Category } from "@/lib/vocab";
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
@@ -61,9 +63,8 @@ export default async function VocabularyPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink">{vocab.title}</h1>
-        <p className="mt-1 text-sm text-ink-soft">{vocab.subtitle}</p>
+      <main className="app-container flex-1 py-8">
+        <PageHeader title={vocab.title} subtitle={vocab.subtitle} />
 
         {/* Search (plain GET form — works without JS, SEO-crawlable) */}
         <form action={`/${lang}/vocabulary`} method="GET" className="mt-6 flex gap-2">
@@ -145,7 +146,14 @@ export default async function VocabularyPage({
         </p>
 
         {words.items.length === 0 ? (
-          <Card className="mt-4 text-center text-ink-soft">{vocab.empty}</Card>
+          <EmptyState
+            className="mt-4"
+            icon={SearchX}
+            title={vocab.emptyTitle}
+            body={vocab.emptyBody}
+            actionLabel={vocab.emptyAction}
+            actionHref={`/${lang}/vocabulary`}
+          />
         ) : (
           <ul className="mt-4 grid grid-cols-2 gap-3 sm:gap-3 lg:grid-cols-3">
             {words.items.map((word) => (

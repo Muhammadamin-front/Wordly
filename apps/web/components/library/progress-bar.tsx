@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
+/** @deprecated Use components/ui/progress for new shared progress UI. */
 export function ProgressBar({ value, barClass }: { value: number; barClass: string }) {
   const pct = Math.max(0, Math.min(100, value));
   return (

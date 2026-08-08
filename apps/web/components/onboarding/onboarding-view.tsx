@@ -4,15 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   BriefcaseBusiness,
   CalendarDays,
   Check,
-  Coffee,
   Dumbbell,
   GraduationCap,
-  Landmark,
-  Laptop,
   Map,
   MessageCircleMore,
   Plane,
@@ -45,14 +41,6 @@ const GOALS: { value: Goal; icon: LucideIcon }[] = [
   { value: "career", icon: BriefcaseBusiness },
   { value: "ielts", icon: GraduationCap },
 ];
-const INTERESTS: { value: string; icon: LucideIcon }[] = [
-  { value: "daily-life", icon: Coffee },
-  { value: "travel", icon: Plane },
-  { value: "work", icon: BriefcaseBusiness },
-  { value: "education", icon: BookOpen },
-  { value: "technology", icon: Laptop },
-  { value: "culture", icon: Landmark },
-];
 const MINUTES: Minutes[] = [5, 10, 15, 20];
 
 export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
@@ -61,10 +49,9 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   const { user, ready, updateUser } = useAuth();
   const [step, setStep] = useState(1);
   const [level, setLevel] = useState<Level>("A1");
-  const [placementOpen, setPlacementOpen] = useState(true);
+  const [placementOpen, setPlacementOpen] = useState(false);
   const [placementLevel, setPlacementLevel] = useState<Level | null>(null);
   const [goal, setGoal] = useState<Goal>("general");
-  const [interests, setInterests] = useState<string[]>([]);
   const [minutes, setMinutes] = useState<Minutes>(10);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -76,14 +63,6 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
     }
   }, [ready, user, loading, router, lang]);
 
-  function toggleInterest(value: string) {
-    setInterests((current) => {
-      if (current.includes(value)) return current.filter((item) => item !== value);
-      if (current.length >= 3) return current;
-      return [...current, value];
-    });
-  }
-
   async function finish() {
     setLoading(true);
     setError(false);
@@ -92,7 +71,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
         cefr_level: level,
         learning_goal: goal,
         daily_minutes: minutes,
-        learning_interests: interests,
+        learning_interests: defaultInterests(goal),
       });
       updateUser(result.user);
       router.replace(`/${lang}/review?deck=${result.starter_deck_id}&onboarding=1`);
@@ -109,8 +88,6 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
       </div>
     );
   }
-
-  const canContinue = step !== 3 || interests.length > 0;
 
   function applyPlacementLevel(value: Level) {
     setLevel(value);
@@ -133,10 +110,10 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
               <p className="mt-3 text-sm leading-6 text-brand-100/80">{copy.subtitle}</p>
               <div className="mt-8 lg:mt-auto">
                 <p className="text-xs font-bold text-brand-100/70">
-                  {copy.step} {step} / 4
+                  {copy.step} {step} / 3
                 </p>
-                <div className="mt-3 grid grid-cols-4 gap-2">
-                  {[1, 2, 3, 4].map((item) => (
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {[1, 2, 3].map((item) => (
                     <span
                       key={item}
                       className={cn(
@@ -166,6 +143,23 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                 className="flex-1"
               >
                 {step === 1 && (
+                  <StepSection title={copy.goalTitle} body={copy.goalBody}>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {GOALS.map(({ value, icon: Icon }) => (
+                        <OptionButton
+                          key={value}
+                          selected={goal === value}
+                          onClick={() => setGoal(value)}
+                          title={copy[`goal${capitalize(value)}`]}
+                          body={copy[`goal${capitalize(value)}Body`]}
+                          icon={Icon}
+                        />
+                      ))}
+                    </div>
+                  </StepSection>
+                )}
+
+                {step === 2 && (
                   <StepSection title={copy.levelTitle} body={copy.levelBody}>
                     {placementOpen ? (
                       <PlacementTest
@@ -207,7 +201,6 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                             copy={copy}
                             level={level}
                             goal={goal}
-                            interests={interests}
                             minutes={minutes}
                             compact
                           />
@@ -220,51 +213,14 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                           onClick={() => setPlacementOpen(true)}
                         >
                           <ScanSearch className="size-4" />
-                          {copy.placementStartAgain}
+                          {placementLevel ? copy.placementStartAgain : copy.placementBegin}
                         </Button>
                       </>
                     )}
                   </StepSection>
                 )}
 
-                {step === 2 && (
-                  <StepSection title={copy.goalTitle} body={copy.goalBody}>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {GOALS.map(({ value, icon: Icon }) => (
-                        <OptionButton
-                          key={value}
-                          selected={goal === value}
-                          onClick={() => setGoal(value)}
-                          title={copy[`goal${capitalize(value)}`]}
-                          body={copy[`goal${capitalize(value)}Body`]}
-                          icon={Icon}
-                        />
-                      ))}
-                    </div>
-                  </StepSection>
-                )}
-
                 {step === 3 && (
-                  <StepSection title={copy.interestsTitle} body={copy.interestsBody}>
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {INTERESTS.map(({ value, icon: Icon }) => (
-                        <OptionButton
-                          key={value}
-                          selected={interests.includes(value)}
-                          onClick={() => toggleInterest(value)}
-                          title={copy[`interest${interestKey(value)}`]}
-                          icon={Icon}
-                          compact
-                        />
-                      ))}
-                    </div>
-                    <p className="mt-4 text-xs font-bold text-ink-soft">
-                      {interests.length}/3 {copy.selected}
-                    </p>
-                  </StepSection>
-                )}
-
-                {step === 4 && (
                   <StepSection title={copy.timeTitle} body={copy.timeBody}>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                       {MINUTES.map((value) => (
@@ -282,7 +238,6 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                       copy={copy}
                       level={level}
                       goal={goal}
-                      interests={interests}
                       minutes={minutes}
                     />
                   </StepSection>
@@ -290,7 +245,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
               </motion.div>
             </AnimatePresence>
 
-            {!(step === 1 && placementOpen) && (
+            {!(step === 2 && placementOpen) && (
               <div className="mt-8 flex items-center justify-between gap-3 border-t border-line pt-5">
                 <Button
                   type="button"
@@ -301,11 +256,10 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                   <ArrowLeft className="size-4" />
                   {copy.back}
                 </Button>
-                {step < 4 ? (
+                {step < 3 ? (
                   <Button
                     type="button"
-                    onClick={() => setStep((current) => Math.min(4, current + 1))}
-                    disabled={!canContinue}
+                    onClick={() => setStep((current) => Math.min(3, current + 1))}
                   >
                     {copy.continue}
                     <ArrowRight className="size-4" />
@@ -330,21 +284,19 @@ function RoadmapPreview({
   copy,
   level,
   goal,
-  interests,
   minutes,
   compact = false,
 }: {
   copy: Copy;
   level: Level;
   goal: Goal;
-  interests: string[];
   minutes: Minutes;
   compact?: boolean;
 }) {
   const goalLabel = copy[`goal${capitalize(goal)}`];
-  const selectedInterests = interests.length
-    ? interests.map((item) => copy[`interest${interestKey(item)}`]).join(" · ")
-    : copy.roadmapInterestsFallback;
+  const selectedInterests = defaultInterests(goal)
+    .map((item) => copy[`interest${interestKey(item)}`])
+    .join(" · ");
   const items = [
     {
       icon: Map,
@@ -510,4 +462,11 @@ function interestKey(
 ): "DailyLife" | "Travel" | "Work" | "Education" | "Technology" | "Culture" {
   if (value === "daily-life") return "DailyLife";
   return capitalize(value) as "Travel" | "Work" | "Education" | "Technology" | "Culture";
+}
+
+function defaultInterests(goal: Goal): string[] {
+  if (goal === "travel") return ["travel"];
+  if (goal === "career") return ["work"];
+  if (goal === "ielts") return ["education"];
+  return ["daily-life"];
 }
