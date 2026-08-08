@@ -100,7 +100,7 @@ export function WordDetailModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-brand-950/60 p-3 backdrop-blur-xl dark:bg-black/72 sm:p-6"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/60 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl dark:bg-black/72 sm:items-center sm:p-6"
     >
       <motion.div
         ref={dialogRef}
@@ -112,10 +112,9 @@ export function WordDetailModal({
         exit={{ y: 22, opacity: 0, scale: 0.98 }}
         onClick={(event) => event.stopPropagation()}
         onWheel={(event) => event.stopPropagation()}
-        onTouchMove={(event) => event.stopPropagation()}
-        className="surface-panel flex max-h-[calc(100dvh-24px)] w-full max-w-2xl flex-col overflow-hidden rounded-lg p-0 shadow-2xl sm:max-h-[calc(100dvh-48px)]"
+        className="surface-panel my-auto flex max-h-[calc(100svh-1.5rem)] w-full max-w-2xl touch-pan-y flex-col overflow-hidden rounded-lg p-0 shadow-2xl sm:max-h-[calc(100svh-3rem)]"
       >
-        <div className="shrink-0 border-b border-line/70 p-5 sm:p-6">
+        <div className="sticky top-0 z-10 shrink-0 border-b border-line/70 bg-raised/94 p-5 backdrop-blur-md sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
@@ -170,7 +169,7 @@ export function WordDetailModal({
           </button>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:py-6 sm:pr-5">
+        <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto px-5 py-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:py-6 sm:pr-5">
           {loading ? (
             <div className="space-y-5">
               <Skeleton className="h-20 rounded-lg" />

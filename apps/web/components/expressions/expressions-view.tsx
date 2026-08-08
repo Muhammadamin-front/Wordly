@@ -321,7 +321,7 @@ function DetailModal({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-brand-950/60 p-3 backdrop-blur-xl dark:bg-black/72 sm:p-6"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/60 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl dark:bg-black/72 sm:items-center sm:p-6"
     >
       <motion.div
         role="dialog"
@@ -332,10 +332,9 @@ function DetailModal({
         exit={{ y: 22, opacity: 0, scale: 0.98 }}
         onClick={(e) => e.stopPropagation()}
         onWheel={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-        className="surface-panel flex max-h-[calc(100dvh-24px)] w-full max-w-2xl flex-col overflow-hidden rounded-lg p-0 shadow-2xl sm:max-h-[calc(100dvh-48px)]"
+        className="surface-panel my-auto flex max-h-[calc(100svh-1.5rem)] w-full max-w-2xl touch-pan-y flex-col overflow-hidden rounded-lg p-0 shadow-2xl sm:max-h-[calc(100svh-3rem)]"
       >
-        <div className="shrink-0 p-5 pb-0 sm:p-6 sm:pb-0">
+        <div className="sticky top-0 z-10 shrink-0 border-b border-line/70 bg-raised/94 p-5 backdrop-blur-md sm:p-6">
           <div className="flex items-start justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -390,7 +389,7 @@ function DetailModal({
           )}
         </div>
 
-        <div className="mt-5 min-h-0 flex-1 overflow-y-auto px-5 pb-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:pb-6 sm:pr-5">
+        <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto px-5 py-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:py-6 sm:pr-5">
           <div className="space-y-5">
             <Section title={t.usage}>{expr.usage}</Section>
             <Section title={t.grammar}>
