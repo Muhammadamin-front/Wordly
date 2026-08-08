@@ -64,7 +64,7 @@ async def test_resend_emailer_masks_provider_error():
         await emailer.send("learner@example.uz", "Verify", "secret-token-123")
 
 
-def test_production_requires_real_email_provider():
+def test_production_allows_console_email_provider_temporarily():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
@@ -72,8 +72,7 @@ def test_production_requires_real_email_provider():
         EMAIL_PROVIDER="console",
     )
 
-    with pytest.raises(RuntimeError, match="EMAIL_PROVIDER"):
-        settings.validate_runtime()
+    settings.validate_runtime()
 
 
 def test_production_accepts_complete_resend_configuration():

@@ -245,13 +245,6 @@ class Settings(BaseSettings):
         if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
             raise RuntimeError("SECRET_KEY must be a high-entropy production secret")
 
-        if self.EMAIL_PROVIDER != "resend":
-            raise RuntimeError("EMAIL_PROVIDER must be 'resend' in production")
-        if not self.RESEND_API_KEY:
-            raise RuntimeError("RESEND_API_KEY must be set in production")
-        if not self.EMAIL_FROM:
-            raise RuntimeError("EMAIL_FROM must be set in production")
-
 
 @lru_cache
 def get_settings() -> Settings:
