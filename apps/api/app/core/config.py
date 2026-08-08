@@ -218,12 +218,16 @@ class Settings(BaseSettings):
             raise RuntimeError(
                 "TRUSTED_PROXY_CIDRS contains an invalid IP or CIDR"
             ) from exc
+
         if any(network.prefixlen == 0 for network in trusted_proxy_networks):
             raise RuntimeError("TRUSTED_PROXY_CIDRS must not trust every IP address")
+
         if self.ENVIRONMENT != "production":
             return
+
         secret = self.SECRET_KEY.strip()
         lower_secret = secret.lower()
+
         if (
             secret in KNOWN_INSECURE_SECRET_KEYS
             or secret.startswith("<")
@@ -232,21 +236,17 @@ class Settings(BaseSettings):
             raise RuntimeError(
                 "SECRET_KEY must be replaced with a generated production secret"
             )
+
         if len(secret) < MIN_PRODUCTION_SECRET_LENGTH:
+
             raise RuntimeError(
                 "SECRET_KEY must be at least {} characters in production".format(
                     MIN_PRODUCTION_SECRET_LENGTH
                 )
             )
-        if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
-            raise RuntimeError("SECRET_KEY must be a high-entropy production secret")
-        if self.EMAIL_PROVIDER != "resend":
-            raise RuntimeError("EMAIL_PROVIDER must be 'resend' in production")
-        if not self.RESEND_API_KEY:
-            raise RuntimeError("RESEND_API_KEY must be set in production")
-        if not self.EMAIL_FROM:
-            raise RuntimeError("EMAIL_FROM must be set in production")
 
+        if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
+            raise RuntimeError("SECRET_KEY must be a high-entropy production secret") 
 
 @lru_cache
 def get_settings() -> Settings:

@@ -56,3 +56,5 @@ apps/api/.env
 # corpus pipeline cache (raw dictionary API responses)
 apps/api/scripts/data/.enrich_cache/
 apps/api/scripts/data/phrasal_idioms_ru_cache.json
+
+*.bak
