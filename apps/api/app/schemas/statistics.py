@@ -60,6 +60,26 @@ class LearningPlanOut(BaseModel):
     daily_target: int
 
 
+class MasteryLevelOut(BaseModel):
+    level: str
+    total: int
+    new: int
+    learning: int
+    strong: int
+    mastered: int
+    started: int
+    progress_percent: int
+
+
+class MasteryMapOut(BaseModel):
+    levels: List[MasteryLevelOut]
+    current_level: str
+    total_words: int
+    started_words: int
+    mastered_words: int
+    overall_percent: int
+
+
 class MistakeWord(BaseModel):
     card_id: UUID
     headword: str

@@ -10,6 +10,7 @@ import {
   Gamepad2,
   GraduationCap,
   LibraryBig,
+  Map,
   Menu,
   Sparkles,
   Trophy,
@@ -41,6 +42,7 @@ type NavKey =
   | "leaderboard"
   | "friends"
   | "statistics"
+  | "mastery"
   | "classes"
   | "billing";
 
@@ -64,6 +66,7 @@ const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
     items: [
       { key: "skills", href: "skills", icon: BookOpen },
       { key: "grammar", href: "grammar", icon: Boxes },
+      { key: "mastery", href: "mastery", icon: Map },
     ],
   },
   {

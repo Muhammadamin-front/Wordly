@@ -1,7 +1,11 @@
-import { ArrowLeft, ArrowUpRight, BookMarked, Sparkles } from "lucide-react";
+"use client";
+
+import { ArrowLeft, ArrowUpRight, BookMarked, CheckCircle2, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import type { VocabularyResource } from "@/lib/ielts-resources";
+import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function VocabularyResourceView({
@@ -13,6 +17,15 @@ export function VocabularyResourceView({
   resource: VocabularyResource;
   t: Dictionary["ieltsHub"];
 }) {
+  useEffect(() => {
+    trackEvent("ielts_resource_opened", {
+      locale: lang,
+      slug: resource.slug,
+      group_count: resource.groups.length,
+      item_count: resource.groups.reduce((total, group) => total + group.items.length, 0),
+    });
+  }, [lang, resource]);
+
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
       <Link
@@ -34,6 +47,24 @@ export function VocabularyResourceView({
         <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
           {resource.description}
         </p>
+      </section>
+
+      <section className="mt-5 grid gap-3 md:grid-cols-3">
+        {[
+          t.resourceStepLearn,
+          t.resourceStepSave,
+          t.resourceStepReview,
+        ].map((step, index) => (
+          <div key={step} className="premium-card rounded-lg p-4">
+            <span className="inline-flex size-8 items-center justify-center rounded-lg bg-brand-600/10 text-sm font-black text-brand-500">
+              {index + 1}
+            </span>
+            <p className="mt-3 flex items-start gap-2 text-sm font-bold leading-6 text-ink">
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent-500" aria-hidden />
+              {step}
+            </p>
+          </div>
+        ))}
       </section>
 
       <div className="mt-6 space-y-5">
@@ -63,6 +94,15 @@ export function VocabularyResourceView({
                     <p className="mt-3 border-l-2 border-brand-400/35 pl-3 text-sm leading-6 text-ink-soft">
                       {item.example}
                     </p>
+                    <Link
+                      href={`/${lang}/vocabulary?category=ielts&q=${encodeURIComponent(
+                        item.advanced.split("·")[0].trim()
+                      )}`}
+                      className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-line bg-card px-3 py-2 text-xs font-bold text-ink transition-transform hover:-translate-y-0.5 hover:border-brand-400/45"
+                    >
+                      {t.findInCards}
+                      <ArrowUpRight className="size-3.5" aria-hidden />
+                    </Link>
                   </div>
                 </article>
               ))}

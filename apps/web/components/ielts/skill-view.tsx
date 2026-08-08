@@ -20,6 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
 
 import {
   ieltsSkillContent,
@@ -28,6 +29,7 @@ import {
   type IeltsResourceSection,
   type IeltsSkill,
 } from "@/lib/ielts-resources";
+import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const SKILL_META: Record<IeltsSkill, { icon: LucideIcon }> = {
@@ -50,6 +52,14 @@ export function SkillView({
   const vocabularyResources = ieltsVocabularyResources(lang);
   const meta = SKILL_META[skill];
   const Icon = meta.icon;
+
+  useEffect(() => {
+    trackEvent("ielts_skill_opened", {
+      locale: lang,
+      skill,
+      section_count: content.sections.length,
+    });
+  }, [content.sections.length, lang, skill]);
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">

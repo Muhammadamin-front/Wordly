@@ -1,11 +1,13 @@
 "use client";
 
+import { CheckCircle2, Crown, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/analytics";
 import { ApiError } from "@/lib/api";
 import {
   billingApi,
@@ -46,6 +48,10 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    trackEvent("pricing_viewed", { locale: lang });
+  }, [lang]);
+
+  useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
@@ -68,6 +74,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   async function pay(planCode: string, provider: "payme" | "click") {
     setBusy(true);
     setError(null);
+    trackEvent("checkout_started", { locale: lang, plan_code: planCode, provider });
     try {
       const result = await billingApi.checkout(
         planCode,
@@ -84,6 +91,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   async function demoActivate(planCode: string) {
     setBusy(true);
     setError(null);
+    trackEvent("sandbox_premium_started", { locale: lang, plan_code: planCode });
     try {
       await billingApi.sandboxActivate(planCode);
       setReloadKey((n) => n + 1);
@@ -104,9 +112,19 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-      <h1 className="text-center text-3xl font-extrabold tracking-tight text-ink">{t.title}</h1>
-      <p className="mt-1 text-center text-sm text-ink-soft">{t.subtitle}</p>
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+      <section className="surface-panel rounded-lg p-6 text-center sm:p-8">
+        <span className="mx-auto inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+          <Crown className="size-4" aria-hidden />
+          {t.title}
+        </span>
+        <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-black tracking-tight text-ink sm:text-5xl">
+          {t.honestTitle}
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
+          {t.honestBody}
+        </p>
+      </section>
 
       {sub?.is_premium && (
         <Alert tone="success" className="mx-auto mt-4 max-w-md">
@@ -124,13 +142,30 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         </Alert>
       )}
 
+      <section className="mt-6 grid gap-3 md:grid-cols-2">
+        {[
+          [t.freeIncludes, t.freeIncludesList],
+          [t.premiumAdds, t.premiumAddsList],
+        ].map(([title, body]) => (
+          <div key={title} className="premium-card rounded-lg p-5">
+            <p className="flex items-center gap-2 text-sm font-black text-ink">
+              <CheckCircle2 className="size-5 text-accent-500" aria-hidden />
+              {title}
+            </p>
+            <p className="mt-3 text-sm leading-7 text-ink-soft">{body}</p>
+          </div>
+        ))}
+      </section>
+
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {plans.map((plan) => {
           const isCurrent = sub?.plan_code === plan.code && sub?.is_premium;
           const popular = plan.code === "premium_yearly";
           const perUnit =
             plan.code === "premium_monthly" ? t.perMonth : plan.code === "free" ? "" : t.perYear;
-          const canPurchase = paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled;
+          const canPurchase =
+            (paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled) &&
+            (plan.code !== "family" || paymentStatus.family_plan_available);
           return (
             <div
               key={plan.code}
@@ -158,6 +193,11 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
               <p className="mt-3 flex-1 text-xs leading-relaxed text-ink-soft">
                 {t[FEATURE_KEY[plan.code]]}
               </p>
+              {plan.code === "family" && !paymentStatus.family_plan_available && (
+                <p className="mt-3 rounded-lg border border-line bg-line/25 px-3 py-2 text-xs font-bold text-ink-soft">
+                  {t.familyUnavailable}
+                </p>
+              )}
 
               {plan.tier === "premium" &&
                 (isCurrent ? (
@@ -214,7 +254,14 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                     className="mt-4"
                     fullWidth
                     disabled={!canPurchase}
-                    onClick={() => setSelected(plan.code)}
+                    onClick={() => {
+                      trackEvent("premium_plan_selected", {
+                        locale: lang,
+                        plan_code: plan.code,
+                        checkout_enabled: paymentStatus.checkout_enabled,
+                      });
+                      setSelected(plan.code);
+                    }}
                   >
                     {t.choosePlan}
                   </Button>
@@ -222,6 +269,11 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
             </div>
           );
         })}
+      </div>
+
+      <div className="mt-5 flex items-start gap-3 rounded-lg border border-line bg-card/70 p-4 text-sm leading-6 text-ink-soft">
+        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden />
+        <p>{t.paymentGate}</p>
       </div>
 
       {paymentStatus.sandbox_enabled && (

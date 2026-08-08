@@ -105,6 +105,65 @@ async def test_learning_plan_starts_guided_and_tracks_today(client):
     assert after["recent_accuracy"] == 100.0
 
 
+async def test_mastery_map_partitions_published_words_by_cefr(client):
+    from uuid import UUID
+
+    from sqlalchemy import select
+
+    import app.db.session as db_session
+    from app.models.flashcards import Card
+
+    headers, cards = await learner_with_cards(client, count=4)
+    async with db_session._session_factory() as db:
+        seeded = list(
+            (
+                await db.scalars(
+                    select(Card)
+                    .where(Card.id.in_([UUID(card_id) for card_id in cards]))
+                    .order_by(Card.created_at)
+                )
+            ).all()
+        )
+        seeded[0].srs_state = "learning"
+        seeded[1].srs_state = "review"
+        seeded[1].interval_days = 8
+        seeded[2].srs_state = "review"
+        seeded[2].interval_days = 25
+        await db.commit()
+
+    response = await client.get("/api/v1/me/mastery-map", headers=headers)
+    assert response.status_code == 200, response.text
+    mastery = response.json()
+    a1 = mastery["levels"][0]
+    assert a1 == {
+        "level": "A1",
+        "total": 12,
+        "new": 9,
+        "learning": 1,
+        "strong": 1,
+        "mastered": 1,
+        "started": 3,
+        "progress_percent": 16,
+    }
+    assert [level["level"] for level in mastery["levels"]] == [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1",
+        "C2",
+    ]
+    assert mastery["current_level"] == "A1"
+    assert mastery["total_words"] == 12
+    assert mastery["started_words"] == 3
+    assert mastery["mastered_words"] == 1
+    assert mastery["overall_percent"] == 16
+
+
+async def test_mastery_map_requires_auth(client):
+    assert (await client.get("/api/v1/me/mastery-map")).status_code == 401
+
+
 async def test_mistake_notebook_contains_learning_context(client):
     headers, cards = await learner_with_cards(client, count=6)
     await client.post(

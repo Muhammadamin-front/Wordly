@@ -38,8 +38,29 @@ export interface MistakeNotebook {
   total: number;
 }
 
+export interface MasteryLevel {
+  level: "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+  total: number;
+  new: number;
+  learning: number;
+  strong: number;
+  mastered: number;
+  started: number;
+  progress_percent: number;
+}
+
+export interface MasteryMap {
+  levels: MasteryLevel[];
+  current_level: MasteryLevel["level"];
+  total_words: number;
+  started_words: number;
+  mastered_words: number;
+  overall_percent: number;
+}
+
 export const learningApi = {
   plan: () => apiFetch<LearningPlan>("/me/learning-plan", { auth: true }),
+  masteryMap: () => apiFetch<MasteryMap>("/me/mastery-map", { auth: true }),
   mistakes: (limit = 24) =>
     apiFetch<MistakeNotebook>(`/me/mistakes?limit=${limit}`, { auth: true }),
 };

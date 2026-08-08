@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaRegister } from "@/components/site/pwa-register";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
@@ -72,7 +73,10 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-dvh flex-col">
         <ThemeProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <AnalyticsProvider />
+            {children}
+          </AuthProvider>
           <PwaRegister />
         </ThemeProvider>
       </body>

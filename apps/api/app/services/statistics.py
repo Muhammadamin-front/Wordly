@@ -7,11 +7,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.security import utcnow
 from app.models.flashcards import Card, ReviewLog
 from app.models.user import User
-from app.models.vocabulary import Category, Word
+from app.models.vocabulary import CEFR_LEVELS, Category, Word
 from app.services.leveling import MASTERED_INTERVAL_DAYS
 
 RECENT_REVIEW_LIMIT = 40
 DAILY_REVIEW_TARGET = 10
+
+MASTERY_WEIGHTS = {
+    "new": 0.0,
+    "learning": 0.25,
+    "strong": 0.65,
+    "mastered": 1.0,
+}
 
 
 async def recent_learning_profile(
@@ -67,6 +74,85 @@ async def card_state_counts(db: AsyncSession, user: User) -> Dict[str, int]:
         "learning": counts.get("learning", 0) + counts.get("relearning", 0),
         "review": counts.get("review", 0),
         "mastered": mastered,
+    }
+
+
+async def mastery_map(db: AsyncSession, user: User) -> Dict[str, object]:
+    """Build a CEFR-wide progress map from the published corpus and SRS state."""
+    corpus_rows = await db.execute(
+        select(Word.cefr_level, func.count(Word.id))
+        .where(Word.status == "published", Word.cefr_level.in_(CEFR_LEVELS))
+        .group_by(Word.cefr_level)
+    )
+    corpus_totals = {level: int(total) for level, total in corpus_rows}
+
+    card_rows = await db.execute(
+        select(Word.cefr_level, Card.srs_state, Card.interval_days)
+        .join(Word, Card.word_id == Word.id)
+        .where(
+            Card.user_id == user.id,
+            Word.status == "published",
+            Word.cefr_level.in_(CEFR_LEVELS),
+        )
+    )
+
+    level_counts = {
+        level: {"learning": 0, "strong": 0, "mastered": 0}
+        for level in CEFR_LEVELS
+    }
+    for level, state, interval_days in card_rows:
+        if float(interval_days or 0) >= MASTERED_INTERVAL_DAYS:
+            level_counts[level]["mastered"] += 1
+        elif state == "review":
+            level_counts[level]["strong"] += 1
+        elif state != "new":
+            level_counts[level]["learning"] += 1
+
+    levels = []
+    for level in CEFR_LEVELS:
+        total = corpus_totals.get(level, 0)
+        counts = level_counts[level]
+        started = sum(counts.values())
+        new = max(0, total - started)
+        weighted = (
+            counts["learning"] * MASTERY_WEIGHTS["learning"]
+            + counts["strong"] * MASTERY_WEIGHTS["strong"]
+            + counts["mastered"] * MASTERY_WEIGHTS["mastered"]
+        )
+        levels.append(
+            {
+                "level": level,
+                "total": total,
+                "new": new,
+                "learning": counts["learning"],
+                "strong": counts["strong"],
+                "mastered": counts["mastered"],
+                "started": started,
+                "progress_percent": round(weighted / total * 100) if total else 0,
+            }
+        )
+
+    total_words = sum(level["total"] for level in levels)
+    started_words = sum(level["started"] for level in levels)
+    mastered_words_count = sum(level["mastered"] for level in levels)
+    weighted_total = sum(
+        level["learning"] * MASTERY_WEIGHTS["learning"]
+        + level["strong"] * MASTERY_WEIGHTS["strong"]
+        + level["mastered"] * MASTERY_WEIGHTS["mastered"]
+        for level in levels
+    )
+    active_levels = [level["level"] for level in levels if level["started"] > 0]
+    current_level = user.profile.cefr_level
+    if active_levels and current_level not in active_levels:
+        current_level = active_levels[-1]
+
+    return {
+        "levels": levels,
+        "current_level": current_level,
+        "total_words": total_words,
+        "started_words": started_words,
+        "mastered_words": mastered_words_count,
+        "overall_percent": round(weighted_total / total_words * 100) if total_words else 0,
     }
 
 

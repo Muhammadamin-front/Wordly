@@ -4,7 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.statistics import LearningPlanOut, MistakeNotebookOut, StatisticsOut
+from app.schemas.statistics import (
+    LearningPlanOut,
+    MasteryMapOut,
+    MistakeNotebookOut,
+    StatisticsOut,
+)
 from app.services import statistics as stats_service
 
 router = APIRouter(tags=["statistics"], dependencies=[Depends(get_current_user)])
@@ -35,6 +40,13 @@ async def my_learning_plan(
     user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
     return LearningPlanOut(**(await stats_service.learning_plan(db, user)))
+
+
+@router.get("/me/mastery-map", response_model=MasteryMapOut)
+async def my_mastery_map(
+    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    return MasteryMapOut(**(await stats_service.mastery_map(db, user)))
 
 
 @router.get("/me/mistakes", response_model=MistakeNotebookOut)

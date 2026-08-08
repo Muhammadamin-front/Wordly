@@ -10,6 +10,7 @@ import {
   Gamepad2,
   LibraryBig,
   LogOut,
+  Map,
   Route,
   Sparkles,
   Target,
@@ -38,7 +39,7 @@ export function DashboardView({
   gam,
 }: {
   lang: string;
-  dict: Pick<Dictionary, "dashboard" | "nav" | "common" | "ai">;
+  dict: Pick<Dictionary, "dashboard" | "nav" | "common" | "ai" | "mastery">;
   gam: Dictionary["gam"];
 }) {
   const { user, ready, logout } = useAuth();
@@ -260,7 +261,12 @@ export function DashboardView({
         />
       </section>
 
-      <section className="mt-4 grid gap-4 sm:grid-cols-2">
+      <section className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <WideLink
+          href={`/${lang}/mastery`}
+          icon={Map}
+          title={dict.mastery.navTitle}
+        />
         <WideLink
           href={`/${lang}/statistics`}
           icon={ChartNoAxesColumnIncreasing}
