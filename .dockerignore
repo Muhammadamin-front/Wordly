@@ -6,5 +6,7 @@ apps/api
 docs
 .git
 .github
+.agents
+skills-lock.json
 *.md
 .env*
