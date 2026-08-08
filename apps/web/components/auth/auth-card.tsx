@@ -107,7 +107,7 @@ export function AuthCard({
                 <div className="absolute bottom-5 left-5 rounded-2xl border border-white/65 bg-white/82 p-4 shadow-[0_16px_38px_rgba(7,48,41,0.18)] backdrop-blur-xl">
                   <p className="text-[11px] font-bold uppercase text-brand-700/65">{copy.daily}</p>
                   <div className="mt-2 flex items-center gap-2 text-brand-950">
-                    <Clock3 className="size-5 text-[#583ee7]" aria-hidden />
+                    <Clock3 className="size-5 text-[#b8892f]" aria-hidden />
                     <span className="text-lg font-black">{copy.minutes}</span>
                   </div>
                 </div>
