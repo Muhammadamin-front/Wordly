@@ -145,16 +145,58 @@ async function playServerVoice(text: string): Promise<void> {
   await playing.play();
 }
 
-function speakBrowser(text: string) {
+let browserVoice: SpeechSynthesisVoice | null = null;
+let voicesReady: Promise<SpeechSynthesisVoice[]> | null = null;
+
+function rankVoice(voice: SpeechSynthesisVoice): number {
+  const name = voice.name.toLowerCase();
+  const lang = voice.lang.toLowerCase();
+  let score = 0;
+  if (lang === "en-us") score += 40;
+  else if (lang.startsWith("en-")) score += 28;
+  else if (lang.startsWith("en")) score += 18;
+  if (/natural|neural|premium|enhanced|online/i.test(voice.name)) score += 35;
+  if (/google|microsoft|apple/i.test(voice.name)) score += 18;
+  if (/aria|jenny|guy|samantha|daniel|karen|moira|alex|ava|emma|brian/i.test(name)) score += 16;
+  if (/compact|eloquence|robot|novelty/i.test(name)) score -= 30;
+  return score;
+}
+
+function pickBrowserVoice(voices: SpeechSynthesisVoice[]) {
+  const english = voices.filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+  browserVoice = [...english].sort((a, b) => rankVoice(b) - rankVoice(a))[0] ?? voices[0] ?? null;
+  return browserVoice;
+}
+
+function loadBrowserVoices(): Promise<SpeechSynthesisVoice[]> {
+  if (typeof window === "undefined" || !window.speechSynthesis) return Promise.resolve([]);
+  const current = window.speechSynthesis.getVoices();
+  if (current.length) return Promise.resolve(current);
+  if (voicesReady) return voicesReady;
+  voicesReady = new Promise((resolve) => {
+    const timeout = window.setTimeout(() => resolve(window.speechSynthesis.getVoices()), 600);
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.clearTimeout(timeout);
+      resolve(window.speechSynthesis.getVoices());
+    };
+  });
+  return voicesReady;
+}
+
+async function speakBrowser(text: string) {
   if (typeof window === "undefined" || !window.speechSynthesis) return;
+  const voices = await loadBrowserVoices();
+  const voice = browserVoice ?? pickBrowserVoice(voices);
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "en-US";
-  utterance.rate = 0.9;
+  if (voice) utterance.voice = voice;
+  utterance.lang = voice?.lang ?? "en-US";
+  utterance.rate = 0.86;
+  utterance.pitch = 1.02;
   window.speechSynthesis.speak(utterance);
 }
 
-/** Speak text — natural server voice when available, browser TTS otherwise. */
+/** Speak text — natural server voice when available, polished browser TTS otherwise. */
 export function speak(text: string) {
-  playServerVoice(text).catch(() => speakBrowser(text));
+  playServerVoice(text).catch(() => void speakBrowser(text));
 }

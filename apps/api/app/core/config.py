@@ -103,6 +103,11 @@ class Settings(BaseSettings):
     ELEVENLABS_API_KEY: Optional[str] = None
     ELEVENLABS_VOICE_ID: str = "pNInz6obpgDQGcFmaJgB"  # "Adam" — free-tier OK
     ELEVENLABS_MODEL: str = "eleven_flash_v2_5"
+    ELEVENLABS_OUTPUT_FORMAT: str = "mp3_44100_128"
+    ELEVENLABS_STABILITY: float = 0.42
+    ELEVENLABS_SIMILARITY_BOOST: float = 0.82
+    ELEVENLABS_STYLE: float = 0.16
+    ELEVENLABS_USE_SPEAKER_BOOST: bool = True
     TTS_CACHE_DIR: str = "./tts_cache"
     TTS_MAX_TEXT_LENGTH: int = 200
     # Word pronunciations are single words, disk-cached after first synthesis,

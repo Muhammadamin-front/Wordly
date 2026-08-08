@@ -65,6 +65,9 @@ async def test_synthesize_hits_network_once_then_disk(tmp_path, monkeypatch):
             return False
         async def post(self, *args, **kwargs):
             calls["n"] += 1
+            assert kwargs["headers"]["accept"] == "audio/mpeg"
+            assert kwargs["params"]["output_format"] == settings.ELEVENLABS_OUTPUT_FORMAT
+            assert kwargs["json"]["voice_settings"]["use_speaker_boost"] is True
             return FakeResponse()
 
     monkeypatch.setattr(tts.httpx, "AsyncClient", FakeClient)
@@ -81,6 +84,7 @@ async def test_synthesize_raises_on_upstream_error(tmp_path, monkeypatch):
     class FakeResponse:
         status_code = 402
         content = b"{}"
+        text = '{"detail":"quota exceeded"}'
 
     class FakeClient:
         def __init__(self, **kwargs): ...

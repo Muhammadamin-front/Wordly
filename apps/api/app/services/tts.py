@@ -44,11 +44,26 @@ async def synthesize(text: str) -> bytes:
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             ELEVENLABS_URL.format(voice_id=settings.ELEVENLABS_VOICE_ID),
-            headers={"xi-api-key": settings.ELEVENLABS_API_KEY},
-            json={"text": text, "model_id": settings.ELEVENLABS_MODEL},
+            params={"output_format": settings.ELEVENLABS_OUTPUT_FORMAT},
+            headers={
+                "xi-api-key": settings.ELEVENLABS_API_KEY,
+                "accept": "audio/mpeg",
+                "content-type": "application/json",
+            },
+            json={
+                "text": text,
+                "model_id": settings.ELEVENLABS_MODEL,
+                "voice_settings": {
+                    "stability": settings.ELEVENLABS_STABILITY,
+                    "similarity_boost": settings.ELEVENLABS_SIMILARITY_BOOST,
+                    "style": settings.ELEVENLABS_STYLE,
+                    "use_speaker_boost": settings.ELEVENLABS_USE_SPEAKER_BOOST,
+                },
+            },
         )
     if response.status_code != 200:
-        raise TtsError("elevenlabs returned {}".format(response.status_code))
+        detail = response.text[:240].replace("\n", " ")
+        raise TtsError("elevenlabs returned {}: {}".format(response.status_code, detail))
 
     audio = response.content
     path = _cache_path(text)
