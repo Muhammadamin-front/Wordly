@@ -2,8 +2,8 @@
 
 A thin `AiClient` protocol sits in front of the providers so endpoints stay
 provider-agnostic and tests can inject a deterministic fake. Providers are
-tried in priority order (Anthropic, then Gemini); when one fails — quota,
-auth, outage — the next takes over silently and the failed one is put on a
+tried in priority order (Bedrock, then Gemini); when one fails — quota, auth,
+outage — the next takes over silently and the failed one is put on a
 cooldown so users never see the switch. Extended thinking is intentionally
 *not* used — these are short generation tasks where latency and cost matter
 more than deep reasoning (see docs/milestones/M6.md).
@@ -38,70 +38,6 @@ class AiClient(Protocol):
     async def json(
         self, *, system: str, prompt: str, schema: Dict[str, Any], max_tokens: int
     ) -> Any: ...
-
-
-class AnthropicClient:
-    def __init__(self) -> None:
-        import anthropic  # imported lazily so the app runs without the dep configured
-
-        settings = get_settings()
-        self._client = anthropic.AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
-        self._model = settings.AI_MODEL
-
-    @staticmethod
-    def _join_text(content) -> str:
-        return "".join(block.text for block in content if block.type == "text").strip()
-
-    async def text(self, *, system: str, prompt: str, max_tokens: int) -> str:
-        try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=[{"role": "user", "content": prompt}],
-            )
-        except Exception as exc:  # network, auth, rate limit, refusal
-            raise _classify(exc) from exc
-        text = self._join_text(response.content)
-        if not text:
-            raise AiError("empty response")
-        return text
-
-    async def chat(
-        self, *, system: str, messages: List[Dict[str, str]], max_tokens: int
-    ) -> str:
-        try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=messages,
-            )
-        except Exception as exc:
-            raise _classify(exc) from exc
-        text = self._join_text(response.content)
-        if not text:
-            raise AiError("empty response")
-        return text
-
-    async def json(
-        self, *, system: str, prompt: str, schema: Dict[str, Any], max_tokens: int
-    ) -> Any:
-        try:
-            response = await self._client.messages.create(
-                model=self._model,
-                max_tokens=max_tokens,
-                system=system,
-                messages=[{"role": "user", "content": prompt}],
-                output_config={"format": {"type": "json_schema", "schema": schema}},
-            )
-        except Exception as exc:
-            raise _classify(exc) from exc
-        text = self._join_text(response.content)
-        try:
-            return json.loads(text)
-        except json.JSONDecodeError as exc:
-            raise AiError("model did not return valid JSON") from exc
 
 
 def _classify(exc: Exception) -> AiError:
@@ -351,14 +287,10 @@ def get_ai_client() -> Optional[AiClient]:
     if not settings.ai_enabled:
         return None
     if _client_singleton is None:
-        # Order = priority. Bedrock (Claude-class quality) leads when present;
-        # a direct Anthropic key, if set, takes precedence; Gemini backs them
-        # up. The user-facing Coach/Writing features stay on the providers
-        # they were tuned and verified against.
+        # Order = priority. Direct Anthropic API usage is intentionally removed;
+        # only explicitly configured Bedrock/Gemini providers are considered.
         providers: List[tuple] = []
-        if settings.ANTHROPIC_API_KEY:
-            providers.append(("anthropic", AnthropicClient()))
-        if settings.BEDROCK_API_KEY:
+        if settings.BEDROCK_API_KEY and settings.BEDROCK_MODEL:
             providers.append(("bedrock", BedrockClient()))
         if settings.GEMINI_API_KEY:
             providers.append(("gemini", GeminiClient()))

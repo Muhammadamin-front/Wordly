@@ -76,9 +76,7 @@ class Settings(BaseSettings):
     # OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
 
-    # AI (Claude). AI features are disabled gracefully when the key is unset.
-    ANTHROPIC_API_KEY: Optional[str] = None
-    AI_MODEL: str = "claude-opus-4-8"
+    # AI. Features are disabled gracefully when no provider key is configured.
     AI_MAX_TOKENS: int = 1024
     AI_FREE_DAILY_QUOTA: int = 5  # AI actions/day on the free tier
     AI_PREMIUM_DAILY_QUOTA: int = 200  # effectively unlimited for a human
@@ -92,11 +90,11 @@ class Settings(BaseSettings):
     # model are configurable; the model must be enabled on the AWS account.
     BEDROCK_API_KEY: Optional[str] = None
     BEDROCK_REGION: str = "us-east-1"
-    BEDROCK_MODEL: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
+    BEDROCK_MODEL: str = ""
 
     @property
     def ai_enabled(self) -> bool:
-        return bool(self.ANTHROPIC_API_KEY or self.BEDROCK_API_KEY or self.GEMINI_API_KEY)
+        return bool((self.BEDROCK_API_KEY and self.BEDROCK_MODEL) or self.GEMINI_API_KEY)
 
     # Text-to-speech (ElevenLabs). Pronunciation audio is proxied through the
     # API (the key never reaches the browser) and disk-cached, so each unique
@@ -238,7 +236,6 @@ class Settings(BaseSettings):
             )
 
         if len(secret) < MIN_PRODUCTION_SECRET_LENGTH:
-
             raise RuntimeError(
                 "SECRET_KEY must be at least {} characters in production".format(
                     MIN_PRODUCTION_SECRET_LENGTH
@@ -246,7 +243,15 @@ class Settings(BaseSettings):
             )
 
         if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
-            raise RuntimeError("SECRET_KEY must be a high-entropy production secret") 
+            raise RuntimeError("SECRET_KEY must be a high-entropy production secret")
+
+        if self.EMAIL_PROVIDER != "resend":
+            raise RuntimeError("EMAIL_PROVIDER must be 'resend' in production")
+        if not self.RESEND_API_KEY:
+            raise RuntimeError("RESEND_API_KEY must be set in production")
+        if not self.EMAIL_FROM:
+            raise RuntimeError("EMAIL_FROM must be set in production")
+
 
 @lru_cache
 def get_settings() -> Settings:

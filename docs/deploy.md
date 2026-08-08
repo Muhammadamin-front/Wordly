@@ -24,7 +24,10 @@ EMAIL_REPLY_TO=support@vocora.uz
 NEXT_PUBLIC_API_URL=https://api.vocora.uz  # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
-ANTHROPIC_API_KEY=...                       # optional: AI tutor (off without it)
+GEMINI_API_KEY=...                          # optional: AI tutor (off without an LLM key)
+# Optional alternative LLM provider. Charges can apply when configured.
+BEDROCK_API_KEY=...
+BEDROCK_MODEL=<provider-model-id>
 PAYME_MERCHANT_ID=...
 PAYME_MERCHANT_KEY=...
 # Or configure all three Click values:

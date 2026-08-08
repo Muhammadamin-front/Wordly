@@ -8,7 +8,7 @@ Rule: **one milestone at a time**, each shipped production-ready (code + schema 
 - **Backend:** Python FastAPI · SQLAlchemy 2 + Alembic · PostgreSQL · Redis (cache, queues, leaderboards via sorted sets, rate limiting).
 - **Auth:** JWT (short-lived access + rotating refresh), Google/Apple OAuth, email+password with verification.
 - **Media:** Cloudinary (images), S3-compatible storage (audio); CDN in front.
-- **AI:** Claude API (tutor, explanations, story/quiz generation); server-side proxy with per-plan quotas; all core corpus content human-reviewed.
+- **AI:** Server-side LLM provider for tutor, explanations, story/quiz generation; per-plan quotas; all core corpus content human-reviewed.
 - **SRS:** SM-2 to start (simple, proven), architected behind a `Scheduler` interface so FSRS can replace it without data migration.
 - **Payments:** Payme + Click merchant APIs (Uzbekistan), card fallback later.
 - **Ops:** Docker Compose (dev) → containerized deploy; staged rollouts; append-only review-history tables (the "never lose user data" lesson from WordUp/Knowt).
@@ -36,7 +36,7 @@ Six highest-value games first: Word Match, Speed Quiz, Fill Blank, Audio Guess, 
 **Done when:** games measurably generate review events and stats render from real data.
 
 ### M6 — AI Tutor
-Claude-powered: word explanations in Uzbek, example/mnemonic generation, mini-stories from your due words, quiz generation, conversation practice with level adaptation (the Memrise failure), writing correction. Quota system by plan; every AI output labeled + reportable.
+LLM-powered: word explanations in Uzbek, example/mnemonic generation, mini-stories from your due words, quiz generation, conversation practice with level adaptation (the Memrise failure), writing correction. Quota system by plan; every AI output labeled + reportable.
 **Done when:** free users get 5 useful AI actions/day with quotas enforced server-side.
 
 ### M7 — Monetization

@@ -11,7 +11,6 @@ os.environ.setdefault("RATE_LIMIT_FORGOT_PASSWORD", "100/60")
 # Env vars beat the .env file, so real local keys never leak into tests.
 os.environ["ELEVENLABS_API_KEY"] = ""
 os.environ["GEMINI_API_KEY"] = ""
-os.environ["ANTHROPIC_API_KEY"] = ""
 os.environ["SERPER_API_KEY"] = ""
 os.environ["BEDROCK_API_KEY"] = ""
 os.environ["EMAIL_PROVIDER"] = "console"

@@ -8,7 +8,7 @@ from tests.test_vocabulary import WORD_PAYLOAD, make_admin
 
 
 class FakeAiClient:
-    """Deterministic stand-in for the Anthropic client — no network, no key."""
+    """Deterministic stand-in for the AI provider client — no network, no key."""
 
     def __init__(self) -> None:
         self.calls: List[str] = []

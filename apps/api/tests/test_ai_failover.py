@@ -35,19 +35,19 @@ class FakeClock:
 
 
 async def test_quota_failure_switches_silently():
-    primary = FakeProvider("anthropic", fail_with=AiQuotaError("credit balance too low"))
+    primary = FakeProvider("bedrock", fail_with=AiQuotaError("credit balance too low"))
     fallback = FakeProvider("gemini")
-    client = FailoverClient([("anthropic", primary), ("gemini", fallback)])
+    client = FailoverClient([("bedrock", primary), ("gemini", fallback)])
     result = await client.text(system="s", prompt="p", max_tokens=10)
     assert result == "answer from gemini"  # user got an answer, no error
 
 
 async def test_cooldown_skips_dead_provider():
     clock = FakeClock()
-    primary = FakeProvider("anthropic", fail_with=AiQuotaError("quota"))
+    primary = FakeProvider("bedrock", fail_with=AiQuotaError("quota"))
     fallback = FakeProvider("gemini")
     client = FailoverClient(
-        [("anthropic", primary), ("gemini", fallback)], cooldown_seconds=600, clock=clock
+        [("bedrock", primary), ("gemini", fallback)], cooldown_seconds=600, clock=clock
     )
     await client.text(system="s", prompt="p", max_tokens=10)
     assert primary.calls == 1
