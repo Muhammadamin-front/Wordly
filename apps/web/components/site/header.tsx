@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import {
   BarChart3,
   BookOpen,
@@ -18,12 +17,12 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { StatsWidget } from "@/components/gamification/stats-widget";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
@@ -31,6 +30,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import type { Locale } from "@/lib/locales";
+
+const StatsWidget = dynamic(
+  () => import("@/components/gamification/stats-widget").then((mod) => mod.StatsWidget),
+  { loading: () => null, ssr: false }
+);
 
 type NavKey =
   | "dashboard"
@@ -230,131 +234,120 @@ function MobileSidebar({
 }) {
   const { logout } = useAuth();
 
+  if (!open) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-50 lg:hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+    <div className="fixed inset-0 z-50 animate-[fade-in_0.2s_ease-out_both] lg:hidden">
+      <button
+        type="button"
+        aria-label={nav.close}
+        onClick={onClose}
+        className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
+      />
+      <aside
+        className="surface-panel !absolute inset-y-0 left-0 flex w-80 max-w-[86%] animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
+      >
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
+          <Logo lang={lang} />
           <button
             type="button"
             aria-label={nav.close}
             onClick={onClose}
-            className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
-          />
-          <motion.aside
-            className="surface-panel !absolute inset-y-0 left-0 flex w-80 max-w-[86%] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "tween", duration: 0.25, ease: "easeOut" }}
+            className="flex size-10 items-center justify-center rounded-lg border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
           >
-            <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
-              <Logo lang={lang} />
-              <button
-                type="button"
-                aria-label={nav.close}
-                onClick={onClose}
-                className="flex size-10 items-center justify-center rounded-lg border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
-              >
-                <X className="size-5" aria-hidden />
-              </button>
-            </div>
+            <X className="size-5" aria-hidden />
+          </button>
+        </div>
 
-            <nav className="flex-1 space-y-4 overflow-y-auto p-4">
-              {authed ? (
-                <>
-                  <div className="space-y-1">
-                    {PRIMARY_NAV.map((item) => (
-                      <MobileNavLink
-                        key={item.key}
-                        item={item}
-                        lang={lang}
-                        nav={nav}
-                        pathname={pathname}
-                        onClose={onClose}
-                      />
-                    ))}
-                  </div>
-                  {NAV_GROUPS.map((group) => (
-                    <div key={group.key} className="space-y-1">
-                      <p className="px-3 text-[11px] font-extrabold uppercase text-ink-soft/70">
-                        {getNavGroupLabel(lang, group.key)}
-                      </p>
-                      {group.items.map((item) => (
-                        <MobileNavLink
-                          key={item.key}
-                          item={item}
-                          lang={lang}
-                          nav={nav}
-                          pathname={pathname}
-                          onClose={onClose}
-                        />
-                      ))}
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <>
-                  <Link
-                    href={`/${lang}#features`}
-                    onClick={onClose}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
-                  >
-                    <Sparkles className="size-4 text-accent-500" aria-hidden />
-                    {nav.features}
-                  </Link>
-                  <Link
-                    href={`/${lang}/pricing`}
-                    onClick={onClose}
-                    className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
-                  >
-                    <CreditCard className="size-4 text-brand-400" aria-hidden />
-                    {nav.pricing}
-                  </Link>
-                </>
-              )}
-            </nav>
-
-            <div className="shrink-0 space-y-3 border-t border-line p-3">
-              <div className="flex items-center justify-between gap-3">
-                <LocaleSwitcher current={lang} />
-                <ThemeToggle lang={lang} />
+        <nav className="flex-1 space-y-4 overflow-y-auto p-4">
+          {authed ? (
+            <>
+              <div className="space-y-1">
+                {PRIMARY_NAV.map((item) => (
+                  <MobileNavLink
+                    key={item.key}
+                    item={item}
+                    lang={lang}
+                    nav={nav}
+                    pathname={pathname}
+                    onClose={onClose}
+                  />
+                ))}
               </div>
-              {authed ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  fullWidth
-                  onClick={() => {
-                    onClose();
-                    void logout();
-                  }}
-                >
-                  {nav.logout}
-                </Button>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link href={`/${lang}/auth/login`} onClick={onClose}>
-                    <Button variant="ghost" size="sm" fullWidth>
-                      {nav.login}
-                    </Button>
-                  </Link>
-                  <Link href={`/${lang}/auth/register`} onClick={onClose}>
-                    <Button size="sm" fullWidth>
-                      {nav.register}
-                    </Button>
-                  </Link>
+              {NAV_GROUPS.map((group) => (
+                <div key={group.key} className="space-y-1">
+                  <p className="px-3 text-[11px] font-extrabold uppercase text-ink-soft/70">
+                    {getNavGroupLabel(lang, group.key)}
+                  </p>
+                  {group.items.map((item) => (
+                    <MobileNavLink
+                      key={item.key}
+                      item={item}
+                      lang={lang}
+                      nav={nav}
+                      pathname={pathname}
+                      onClose={onClose}
+                    />
+                  ))}
                 </div>
-              )}
+              ))}
+            </>
+          ) : (
+            <>
+              <Link
+                href={`/${lang}#features`}
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
+              >
+                <Sparkles className="size-4 text-accent-500" aria-hidden />
+                {nav.features}
+              </Link>
+              <Link
+                href={`/${lang}/pricing`}
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
+              >
+                <CreditCard className="size-4 text-brand-400" aria-hidden />
+                {nav.pricing}
+              </Link>
+            </>
+          )}
+        </nav>
+
+        <div className="shrink-0 space-y-3 border-t border-line p-3">
+          <div className="flex items-center justify-between gap-3">
+            <LocaleSwitcher current={lang} />
+            <ThemeToggle lang={lang} />
+          </div>
+          {authed ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              fullWidth
+              onClick={() => {
+                onClose();
+                void logout();
+              }}
+            >
+              {nav.logout}
+            </Button>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Link href={`/${lang}/auth/login`} onClick={onClose}>
+                <Button variant="ghost" size="sm" fullWidth>
+                  {nav.login}
+                </Button>
+              </Link>
+              <Link href={`/${lang}/auth/register`} onClick={onClose}>
+                <Button size="sm" fullWidth>
+                  {nav.register}
+                </Button>
+              </Link>
             </div>
-          </motion.aside>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          )}
+        </div>
+      </aside>
+    </div>
   );
 }
 

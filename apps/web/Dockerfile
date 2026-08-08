@@ -14,10 +14,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY apps/web ./apps/web
-# npm's workspace `ci` skips platform-specific optional deps when the lockfile
-# was written on another OS (npm/cli#4828) — reinstall the native bindings
-# Tailwind v4 needs so the correct musl binaries are present.
-RUN npm install --no-save lightningcss @tailwindcss/oxide
+# npm's workspace `ci` can skip platform-specific optional deps when the lockfile
+# was written on another OS (npm/cli#4828). Reinstall native Alpine bindings used
+# by Tailwind v4 and Next image optimization so production can resize/transcode.
+RUN npm install --no-save lightningcss @tailwindcss/oxide sharp
 ARG INTERNAL_API_URL=http://api:8000
 ARG NEXT_PUBLIC_API_URL=http://localhost:8000
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=

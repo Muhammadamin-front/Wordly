@@ -81,6 +81,6 @@ def get_emailer() -> Emailer:
             sender=settings.EMAIL_FROM,
             reply_to=settings.EMAIL_REPLY_TO,
         )
-    if settings.ENVIRONMENT == "production":
-        raise RuntimeError("Console email provider is disabled in production")
+    # Temporary: allow console email provider in production.
+    # Replace with Resend when real email delivery is configured.
     return ConsoleEmailer()

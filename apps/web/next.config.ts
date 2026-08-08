@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
   // the project directory.
   outputFileTracingRoot: path.join(process.cwd(), "../../"),
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 604800,
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1600, 1920],
+    imageSizes: [32, 48, 64, 96, 128, 256, 384, 512],
+    qualities: [75],
     // Serper word thumbnails live on Google's stable thumbnail CDN.
     remotePatterns: [{ protocol: "https", hostname: "**.gstatic.com" }],
   },

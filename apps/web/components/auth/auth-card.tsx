@@ -96,11 +96,11 @@ export function AuthCard({
 
               <div className="relative mt-7 min-h-[260px] flex-1 overflow-hidden rounded-[28px] border border-brand-900/10 bg-[#dfe9e3] shadow-[0_24px_60px_rgba(22,72,61,0.16)]">
                 <Image
-                  src="/images/vocora-uzbek-student-hero.png"
+                  src="/images/vocora-uzbek-student-hero.webp"
                   alt="A student learning English with Vocora"
                   fill
-                  priority
-                  sizes="(min-width: 1024px) 58vw, 0px"
+                  preload
+                  sizes="(min-width: 1280px) 750px, (min-width: 1024px) 58vw, 0px"
                   className="object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(246,249,244,0.18),transparent_44%),linear-gradient(0deg,rgba(4,36,31,0.18),transparent_45%)]" />

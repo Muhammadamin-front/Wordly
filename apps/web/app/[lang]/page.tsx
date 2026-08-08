@@ -70,11 +70,11 @@ export default async function LandingPage({
       <main className="flex-1 px-3 pb-8 sm:px-5">
         <section className="relative mx-auto min-h-[620px] max-w-[1480px] overflow-hidden rounded-[22px] border border-line bg-[#faf8f2] shadow-[0_28px_90px_rgba(39,67,59,0.1)] dark:bg-[#0b211b]">
           <Image
-            src="/images/vocora-uzbek-student-hero.png"
+            src="/images/vocora-uzbek-student-hero.webp"
             alt={copy.heroImageAlt}
             fill
-            priority
-            sizes="(max-width: 768px) 160vw, 1480px"
+            preload
+            sizes="(max-width: 640px) calc(100vw - 24px), (max-width: 1024px) calc(100vw - 40px), 1480px"
             className="object-cover object-[61%_center] dark:brightness-[0.58]"
           />
           <div
@@ -289,10 +289,10 @@ export default async function LandingPage({
           <Reveal delay={0.08}>
             <div className="relative min-h-[520px] overflow-hidden rounded-[22px] bg-brand-950 p-7 text-white shadow-[0_24px_70px_rgba(7,58,53,0.22)]">
               <Image
-                src="/images/vocora-uzbek-student-hero.png"
+                src="/images/vocora-uzbek-student-hero.webp"
                 alt=""
                 fill
-                sizes="480px"
+                sizes="(max-width: 1279px) calc(100vw - 40px), 480px"
                 className="object-cover object-[72%_center] opacity-24 mix-blend-luminosity"
               />
               <div className="absolute inset-0 bg-linear-to-r from-brand-950 via-brand-950/94 to-brand-900/42" />
