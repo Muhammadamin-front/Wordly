@@ -4,6 +4,7 @@ import {
   BarChart3,
   BookOpen,
   Boxes,
+  CalendarCheck,
   ChevronDown,
   CreditCard,
   Gamepad2,
@@ -38,6 +39,7 @@ const StatsWidget = dynamic(
 
 type NavKey =
   | "dashboard"
+  | "today"
   | "decks"
   | "games"
   | "skills"
@@ -57,37 +59,22 @@ interface NavItem {
 }
 
 const PRIMARY_NAV: NavItem[] = [
+  { key: "dashboard", href: "dashboard", icon: Sparkles },
+  { key: "today", href: "today", icon: CalendarCheck },
   { key: "decks", href: "decks", icon: LibraryBig },
-  { key: "games", href: "games", icon: Gamepad2 },
   { key: "ielts", href: "ielts", icon: GraduationCap },
+  { key: "mastery", href: "mastery", icon: Map },
 ];
 
-type NavGroupKey = "learn" | "community" | "more";
-
-const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
-  {
-    key: "learn",
-    items: [
-      { key: "skills", href: "skills", icon: BookOpen },
-      { key: "grammar", href: "grammar", icon: Boxes },
-      { key: "mastery", href: "mastery", icon: Map },
-    ],
-  },
-  {
-    key: "community",
-    items: [
-      { key: "leaderboard", href: "leaderboard", icon: Trophy },
-      { key: "friends", href: "friends", icon: Users },
-      { key: "classes", href: "classes", icon: Sparkles },
-    ],
-  },
-  {
-    key: "more",
-    items: [
-      { key: "statistics", href: "statistics", icon: BarChart3 },
-      { key: "billing", href: "billing", icon: CreditCard },
-    ],
-  },
+const SECONDARY_NAV: NavItem[] = [
+  { key: "games", href: "games", icon: Gamepad2 },
+  { key: "grammar", href: "grammar", icon: Boxes },
+  { key: "skills", href: "skills", icon: BookOpen },
+  { key: "statistics", href: "statistics", icon: BarChart3 },
+  { key: "leaderboard", href: "leaderboard", icon: Trophy },
+  { key: "friends", href: "friends", icon: Users },
+  { key: "classes", href: "classes", icon: Sparkles },
+  { key: "billing", href: "billing", icon: CreditCard },
 ];
 
 function isActive(pathname: string, lang: string, href: string): boolean {
@@ -136,24 +123,11 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         <nav className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
           {authed ? (
             <>
-              <Link
-                href={`/${lang}`}
-                className={cn(
-                  "relative flex h-10 shrink-0 items-center whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors",
-                  pathname === `/${lang}`
-                    ? "text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
-                    : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
-                )}
-              >
-                {getHomeLabel(lang)}
-              </Link>
               {PRIMARY_NAV.map((item) => (
                 <DesktopNavLink key={item.key} item={item} lang={lang} nav={nav} pathname={pathname} />
               ))}
-              <div className="hidden shrink-0 items-center gap-1.5 xl:flex">
-                {NAV_GROUPS.map((group) => (
-                  <DesktopNavGroup key={group.key} group={group} lang={lang} nav={nav} pathname={pathname} />
-                ))}
+              <div className="flex shrink-0 items-center gap-1.5">
+                <DesktopNavGroup items={SECONDARY_NAV} lang={lang} nav={nav} pathname={pathname} />
               </div>
             </>
           ) : (
@@ -186,11 +160,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <div className="hidden sm:block">
             <LocaleSwitcher current={lang} />
           </div>
-          {authed ? (
-            <Link href={`/${lang}/dashboard`} className="hidden lg:block">
-              <Button size="sm">{getCabinetLabel(lang)}</Button>
-            </Link>
-          ) : (
+          {authed ? null : (
             <>
               <Link href={`/${lang}/auth/login`} className="hidden sm:block">
                 <Button variant="ghost" size="sm">
@@ -213,6 +183,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         open={open}
         onClose={() => setOpen(false)}
       />
+      {authed && <MobileBottomNav lang={lang} nav={nav} pathname={pathname} />}
     </header>
   );
 }
@@ -274,23 +245,21 @@ function MobileSidebar({
                   />
                 ))}
               </div>
-              {NAV_GROUPS.map((group) => (
-                <div key={group.key} className="space-y-1">
-                  <p className="px-3 text-[11px] font-extrabold uppercase text-ink-soft/70">
-                    {getNavGroupLabel(lang, group.key)}
-                  </p>
-                  {group.items.map((item) => (
-                    <MobileNavLink
-                      key={item.key}
-                      item={item}
-                      lang={lang}
-                      nav={nav}
-                      pathname={pathname}
-                      onClose={onClose}
-                    />
-                  ))}
-                </div>
-              ))}
+              <div className="space-y-1">
+                <p className="px-3 text-[11px] font-extrabold uppercase text-ink-soft/70">
+                  {getMoreLabel(lang)}
+                </p>
+                {SECONDARY_NAV.map((item) => (
+                  <MobileNavLink
+                    key={item.key}
+                    item={item}
+                    lang={lang}
+                    nav={nav}
+                    pathname={pathname}
+                    onClose={onClose}
+                  />
+                ))}
+              </div>
             </>
           ) : (
             <>
@@ -379,19 +348,19 @@ function DesktopNavLink({
 }
 
 function DesktopNavGroup({
-  group,
+  items,
   lang,
   nav,
   pathname,
 }: {
-  group: { key: NavGroupKey; items: NavItem[] };
+  items: NavItem[];
   lang: Locale;
   nav: Dictionary["nav"];
   pathname: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
-  const active = group.items.some((item) => isActive(pathname, lang, item.href));
+  const active = items.some((item) => isActive(pathname, lang, item.href));
 
   const clearCloseTimer = () => {
     if (closeTimerRef.current) {
@@ -449,7 +418,7 @@ function DesktopNavGroup({
             : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
         )}
       >
-        {getNavGroupLabel(lang, group.key)}
+        {getMoreLabel(lang)}
         <ChevronDown
           className={cn("size-3.5 transition-transform", expanded && "rotate-180")}
           aria-hidden
@@ -469,7 +438,7 @@ function DesktopNavGroup({
           expanded && "visible pointer-events-auto translate-y-0 opacity-100"
         )}
       >
-        {group.items.map((item) => {
+        {items.map((item) => {
           const Icon = item.icon;
           const itemActive = isActive(pathname, lang, item.href);
           return (
@@ -486,7 +455,7 @@ function DesktopNavGroup({
               )}
             >
               <Icon className="size-4" aria-hidden />
-              {nav[item.key]}
+              {getPrimaryNavLabel(lang, item.key, nav)}
             </Link>
           );
         })}
@@ -495,25 +464,44 @@ function DesktopNavGroup({
   );
 }
 
-function getNavGroupLabel(lang: Locale, key: NavGroupKey): string {
-  const labels: Record<Locale, Record<NavGroupKey, string>> = {
-    uz: {
-      learn: "O'rganish",
-      community: "Hamjamiyat",
-      more: "Ko'proq",
-    },
-    ru: {
-      learn: "Учеба",
-      community: "Сообщество",
-      more: "Еще",
-    },
-    en: {
-      learn: "Learn",
-      community: "Community",
-      more: "More",
-    },
-  };
-  return labels[lang][key];
+function getMoreLabel(lang: Locale): string {
+  return {
+    uz: "Ko'proq",
+    ru: "Еще",
+    en: "More",
+  }[lang];
+}
+
+function getLearnLabel(lang: Locale): string {
+  return {
+    uz: "O'rganish",
+    ru: "Учиться",
+    en: "Learn",
+  }[lang];
+}
+
+function getLibraryLabel(lang: Locale): string {
+  return {
+    uz: "Kutubxona",
+    ru: "Библиотека",
+    en: "Library",
+  }[lang];
+}
+
+function getProgressLabel(lang: Locale): string {
+  return {
+    uz: "Progress",
+    ru: "Прогресс",
+    en: "Progress",
+  }[lang];
+}
+
+function getDashboardLabel(lang: Locale): string {
+  return {
+    uz: "Bosh",
+    ru: "Главная",
+    en: "Home",
+  }[lang];
 }
 
 function getHomeLabel(lang: Locale): string {
@@ -532,20 +520,15 @@ function getWordsLabel(lang: Locale): string {
   }[lang];
 }
 
-function getCabinetLabel(lang: Locale): string {
-  return {
-    uz: "Kabinet",
-    ru: "Кабинет",
-    en: "Cabinet",
-  }[lang];
-}
-
 function getPrimaryNavLabel(
   lang: Locale,
   key: NavKey,
   nav: Dictionary["nav"]
 ): string {
-  if (key === "decks") return getWordsLabel(lang);
+  if (key === "dashboard") return getDashboardLabel(lang);
+  if (key === "today") return getLearnLabel(lang);
+  if (key === "decks") return getLibraryLabel(lang);
+  if (key === "mastery") return getProgressLabel(lang);
   if (key === "games") {
     return {
       uz: "Mashqlar",
@@ -555,6 +538,43 @@ function getPrimaryNavLabel(
   }
   if (key === "ielts") return "IELTS";
   return nav[key];
+}
+
+function MobileBottomNav({
+  lang,
+  nav,
+  pathname,
+}: {
+  lang: Locale;
+  nav: Dictionary["nav"];
+  pathname: string;
+}) {
+  return (
+    <nav
+      className="mobile-bottom-nav fixed inset-x-2 bottom-2 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-raised/92 p-1 shadow-[0_20px_70px_rgba(7,58,53,0.18)] backdrop-blur-2xl lg:hidden"
+      aria-label={nav.menu}
+    >
+      {PRIMARY_NAV.map((item) => {
+        const Icon = item.icon;
+        const active = isActive(pathname, lang, item.href);
+        return (
+          <Link
+            key={item.key}
+            href={`/${lang}/${item.href}`}
+            className={cn(
+              "flex min-h-14 flex-col items-center justify-center gap-1 rounded-[18px] px-1 text-[10px] font-black transition-colors",
+              active
+                ? "bg-brand-600 text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)]"
+                : "text-ink-soft hover:bg-card hover:text-ink"
+            )}
+          >
+            <Icon className="size-4" aria-hidden />
+            <span className="max-w-full truncate">{getPrimaryNavLabel(lang, item.key, nav)}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
 }
 
 function MobileNavLink({
@@ -586,7 +606,7 @@ function MobileNavLink({
       <span className="icon-tile flex size-9 items-center justify-center rounded-lg">
         <Icon className="size-4" aria-hidden />
       </span>
-      {nav[item.key]}
+      {getPrimaryNavLabel(lang, item.key, nav)}
     </Link>
   );
 }
