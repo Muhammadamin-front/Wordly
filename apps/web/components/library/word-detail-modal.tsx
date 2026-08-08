@@ -10,7 +10,7 @@ import {
   Volume2,
   X,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -39,6 +39,8 @@ export function WordDetailModal({
   onAdd: () => void;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const copy = modalCopy[lang as keyof typeof modalCopy] ?? modalCopy.en;
   const firstSense = detail?.senses[0];
   const translation =
@@ -60,9 +62,28 @@ export function WordDetailModal({
 
     document.body.style.overflow = "hidden";
     if (scrollbarWidth > 0) document.body.style.paddingRight = `${scrollbarWidth}px`;
+    closeButtonRef.current?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
+      if (event.key !== "Tab") return;
+
+      const focusable = Array.from(
+        dialogRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -82,6 +103,7 @@ export function WordDetailModal({
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-brand-950/60 p-3 backdrop-blur-xl dark:bg-black/72 sm:p-6"
     >
       <motion.div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={summary.headword}
@@ -122,6 +144,7 @@ export function WordDetailModal({
               </div>
             </div>
             <button
+              ref={closeButtonRef}
               type="button"
               aria-label={copy.close}
               onClick={onClose}

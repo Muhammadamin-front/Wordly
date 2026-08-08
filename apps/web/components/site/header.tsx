@@ -360,6 +360,7 @@ function DesktopNavGroup({
 }) {
   const [expanded, setExpanded] = useState(false);
   const closeTimerRef = useRef<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const active = items.some((item) => isActive(pathname, lang, item.href));
 
   const clearCloseTimer = () => {
@@ -405,17 +406,23 @@ function DesktopNavGroup({
         type="button"
         aria-haspopup="menu"
         aria-expanded={expanded}
-        onClick={openMenu}
+        onClick={() => setExpanded((value) => !value)}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
             closeMenu();
+          } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            openMenu();
+            window.requestAnimationFrame(() => {
+              menuRef.current?.querySelector<HTMLAnchorElement>('[role="menuitem"]')?.focus();
+            });
           }
         }}
         className={cn(
-          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all",
+          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35",
           active
             ? "bg-brand-600/10 text-brand-700 dark:bg-white/10 dark:text-ink"
-            : "text-ink-soft hover:-translate-y-0.5 hover:bg-card/70 hover:text-ink"
+            : "text-ink-soft hover:bg-hover hover:text-ink"
         )}
       >
         {getMoreLabel(lang)}
@@ -432,9 +439,25 @@ function DesktopNavGroup({
         )}
       />
       <div
+        ref={menuRef}
         role="menu"
+        onKeyDown={(event) => {
+          const links = Array.from(
+            menuRef.current?.querySelectorAll<HTMLAnchorElement>('[role="menuitem"]') ?? []
+          );
+          const currentIndex = links.indexOf(document.activeElement as HTMLAnchorElement);
+          if (event.key === "Escape") {
+            closeMenu();
+          } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            links[(currentIndex + 1) % links.length]?.focus();
+          } else if (event.key === "ArrowUp") {
+            event.preventDefault();
+            links[(currentIndex - 1 + links.length) % links.length]?.focus();
+          }
+        }}
         className={cn(
-          "surface-panel invisible pointer-events-none !absolute left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-2xl shadow-brand-950/20 backdrop-blur-2xl transition-all duration-150",
+          "surface-panel invisible pointer-events-none !absolute left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-raised backdrop-blur-2xl transition-all duration-200",
           expanded && "visible pointer-events-auto translate-y-0 opacity-100"
         )}
       >
@@ -448,10 +471,10 @@ function DesktopNavGroup({
               role="menuitem"
               onClick={closeMenu}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35",
                 itemActive
                   ? "bg-brand-600/12 text-brand-600 dark:text-brand-200"
-                  : "text-ink-soft hover:bg-page/70 hover:text-ink"
+                  : "text-ink-soft hover:bg-hover hover:text-ink"
               )}
             >
               <Icon className="size-4" aria-hidden />

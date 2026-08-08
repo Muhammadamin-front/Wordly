@@ -4,18 +4,18 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg font-bold transition-all duration-300 disabled:pointer-events-none disabled:opacity-55 active:scale-[0.98] cursor-pointer select-none before:absolute before:inset-0 before:-z-10 before:translate-x-[-120%] before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent before:transition-transform before:duration-700 hover:before:translate-x-[120%]",
+  "relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-lg font-bold transition-all duration-200 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-focus/35 focus-visible:outline-none",
   {
     variants: {
       variant: {
         primary:
-          "bg-brand-900 text-white shadow-[0_14px_34px_rgba(7,58,53,0.22)] hover:-translate-y-0.5 hover:bg-brand-800 hover:shadow-[0_20px_46px_rgba(7,58,53,0.28)]",
+          "bg-primary text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[0_18px_38px_rgba(7,58,53,0.22)] dark:text-brand-950",
         secondary:
-          "border border-line bg-raised/76 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_26px_rgba(34,65,58,0.07)] backdrop-blur-xl hover:-translate-y-0.5 hover:border-brand-400/70 hover:bg-raised hover:text-brand-700 dark:hover:text-brand-200",
+          "border border-line bg-raised/78 text-ink shadow-[0_8px_20px_rgba(34,65,58,0.055)] backdrop-blur-xl hover:-translate-y-0.5 hover:border-brand-400/60 hover:bg-hover hover:text-primary",
         accent:
-          "bg-accent-500 text-white shadow-[0_14px_34px_rgba(184,137,47,0.2)] hover:-translate-y-0.5 hover:bg-accent-600 hover:shadow-[0_20px_46px_rgba(184,137,47,0.26)]",
-        ghost: "text-ink-soft hover:-translate-y-0.5 hover:bg-card/64 hover:text-ink",
-        danger: "bg-danger text-white shadow-lg shadow-danger/20 hover:-translate-y-0.5 hover:brightness-95",
+          "bg-accent-500 text-white shadow-[0_12px_28px_rgba(184,137,47,0.16)] hover:-translate-y-0.5 hover:bg-accent-600",
+        ghost: "text-ink-soft hover:bg-hover hover:text-ink",
+        danger: "bg-danger text-white shadow-[0_12px_28px_rgba(220,38,38,0.16)] hover:-translate-y-0.5 hover:brightness-95",
       },
       size: {
         sm: "min-h-11 px-4 text-sm sm:min-h-9 sm:px-3.5",

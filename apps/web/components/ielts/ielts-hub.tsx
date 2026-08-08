@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import {
+  ArrowRight,
   ArrowUpRight,
   BookOpen,
   ChartNoAxesCombined,
@@ -29,43 +30,57 @@ interface SkillCard {
 }
 
 const SKILLS: SkillCard[] = [
-  { key: "reading", icon: BookOpen, count: 8, countKey: "guides" },
-  { key: "listening", icon: Headphones, count: 8, countKey: "resources" },
   { key: "writing", icon: PenLine, count: 12, countKey: "essayTypes" },
+  { key: "reading", icon: BookOpen, count: 8, countKey: "guides" },
   { key: "speaking", icon: Mic2, count: 120, countKey: "topics" },
+  { key: "listening", icon: Headphones, count: 8, countKey: "resources" },
 ];
 
 export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }) {
   const vocabularyResources = ieltsVocabularyResources(lang);
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+    <main className="app-container page-stack flex-1">
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="surface-panel overflow-hidden rounded-lg"
+        className="surface-panel overflow-hidden rounded-[28px]"
       >
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
+        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+            <span className="type-label inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-accent-500">
               <Sparkles className="size-4" aria-hidden />
               {t.eyebrow}
             </span>
-            <h1 className="mt-5 max-w-3xl text-4xl font-black tracking-tight text-ink sm:text-6xl">
+            <h1 className="type-h1 mt-5 max-w-3xl text-ink">
               {t.title}
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
+            <p className="type-body mt-4 max-w-2xl text-ink-soft">
               {t.subtitle}
             </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <Link href={`/${lang}/vocabulary?category=ielts`}>
+                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-hover dark:text-brand-950">
+                  {t.ieltsWords}
+                  <ArrowRight className="size-4" aria-hidden />
+                </span>
+              </Link>
+              <Link href={`/${lang}/ielts/writing`}>
+                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-raised/78 px-5 text-sm font-bold text-ink transition-all duration-200 hover:bg-hover hover:text-primary">
+                  {t.writing}
+                  <ArrowUpRight className="size-4" aria-hidden />
+                </span>
+              </Link>
+            </div>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 rounded-[22px] border border-line bg-card/50 p-2">
             {[
               ["600+", t.ieltsWords],
               ["120", t.topics],
               [String(vocabularyResources.length), t.resources],
             ].map(([value, label]) => (
-              <div key={label} className="premium-card rounded-lg p-3 text-center">
+              <div key={label} className="rounded-[18px] bg-raised/70 p-3 text-center">
                 <p className="text-xl font-black text-ink sm:text-2xl">{value}</p>
-                <p className="mt-1 text-[10px] font-bold uppercase text-ink-soft">{label}</p>
+                <p className="type-caption mt-1 text-ink-soft">{label}</p>
               </div>
             ))}
           </div>
@@ -81,16 +96,9 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-extrabold uppercase text-accent-500">{t.skillsKicker}</p>
-            <h2 className="mt-1 text-2xl font-black text-ink">{t.skillsTitle}</h2>
+            <p className="type-label text-accent-500">{t.skillsKicker}</p>
+            <h2 className="type-h2 mt-1 text-ink">{t.skillsTitle}</h2>
           </div>
-          <Link
-            href={`/${lang}/vocabulary?category=ielts`}
-            className="hidden items-center gap-2 text-sm font-bold text-brand-500 sm:inline-flex"
-          >
-            {t.ieltsWords}
-            <ArrowUpRight className="size-4" aria-hidden />
-          </Link>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {SKILLS.map((skill, index) => {
@@ -105,7 +113,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
               >
                 <Link
                   href={`/${lang}/ielts/${skill.key}`}
-                  className="premium-card group flex min-h-64 flex-col rounded-lg p-5 transition-transform hover:-translate-y-1"
+                  className="group flex min-h-44 flex-col rounded-[22px] border border-line bg-card/58 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400/45 hover:bg-raised/72"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="icon-tile size-12 rounded-lg text-brand-500">
@@ -113,14 +121,14 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
                     </span>
                     <ArrowUpRight className="size-5 text-ink-soft transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
                   </div>
-                  <div className="mt-auto pt-8">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-2xl font-black text-ink">{t[skill.key]}</h3>
-                      <span className="rounded-md bg-accent-400/10 px-2 py-1 text-[10px] font-extrabold uppercase text-accent-500">
+                  <div className="mt-auto pt-7">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="type-h3 text-ink">{t[skill.key]}</h3>
+                      <span className="rounded-md bg-accent-400/10 px-2 py-1 text-[10px] font-bold uppercase text-accent-500">
                         {skill.count} {t[skill.countKey]}
                       </span>
                     </div>
-                    <p className="mt-2 max-w-lg text-sm leading-6 text-ink-soft">
+                    <p className="type-body-small mt-2 max-w-lg text-ink-soft">
                       {content.description}
                     </p>
                   </div>
@@ -137,22 +145,22 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
             <ChartNoAxesCombined className="size-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-extrabold uppercase text-accent-500">{t.vocabularyKicker}</p>
-            <h2 className="text-2xl font-black text-ink">{t.vocabularyTitle}</h2>
+            <p className="type-label text-accent-500">{t.vocabularyKicker}</p>
+            <h2 className="type-h3 text-ink">{t.vocabularyTitle}</h2>
           </div>
         </div>
-        <div className="grid gap-3 md:grid-cols-5">
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {vocabularyResources.map((resource) => (
             <Link
               key={resource.slug}
               href={`/${lang}/ielts/resources/${resource.slug}`}
-              className="premium-card group rounded-lg p-4 transition-transform hover:-translate-y-1"
+              className="group flex items-center justify-between gap-4 rounded-[18px] border border-line bg-card/48 p-4 transition-all duration-200 hover:border-brand-400/45 hover:bg-raised/72"
             >
-              <p className="text-[10px] font-extrabold uppercase text-accent-500">
-                {resource.eyebrow}
-              </p>
-              <h3 className="mt-2 text-base font-black leading-5 text-ink">{resource.title}</h3>
-              <ArrowUpRight className="mt-5 size-4 text-ink-soft transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
+              <span>
+                <p className="type-caption text-accent-500">{resource.eyebrow}</p>
+                <h3 className="mt-1 text-sm font-bold leading-5 text-ink">{resource.title}</h3>
+              </span>
+              <ArrowUpRight className="size-4 shrink-0 text-ink-soft transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />
             </Link>
           ))}
         </div>

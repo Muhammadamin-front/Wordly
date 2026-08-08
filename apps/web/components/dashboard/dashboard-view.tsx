@@ -128,14 +128,14 @@ export function DashboardView({
       <section className="surface-panel rounded-[28px] p-4 sm:p-6 lg:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
           <div className="min-w-0">
-            <p className="inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+            <p className="type-label inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-accent-600 dark:text-accent-300">
               <Sparkles className="size-4" aria-hidden />
               {copy.commandEyebrow}
             </p>
-            <h1 className="mt-5 max-w-3xl text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl lg:text-6xl">
+            <h1 className="type-h1 mt-5 max-w-3xl text-balance text-ink">
               {dict.dashboard.welcome}, {user.profile.display_name}
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
+            <p className="type-body mt-4 max-w-2xl text-ink-soft">
               {copy.commandBody}
             </p>
 
@@ -151,13 +151,13 @@ export function DashboardView({
                   <span className="icon-tile size-12 rounded-lg">
                     <Route className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
                   </span>
-                  <p className="mt-5 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+                  <p className="type-label mt-5 text-accent-600 dark:text-accent-300">
                     {copy.focusTitle}
                   </p>
-                  <h2 className="mt-2 max-w-xl text-2xl font-black tracking-tight text-ink sm:text-3xl">
+                  <h2 className="type-h2 mt-2 max-w-xl text-ink">
                     {copy.commandTitle}
                   </h2>
-                  <p className="mt-3 max-w-xl text-sm leading-6 text-ink-soft">
+                  <p className="type-body-small mt-3 max-w-xl text-ink-soft">
                     {nextBody}
                   </p>
                 </div>
@@ -185,7 +185,7 @@ export function DashboardView({
             <div className="premium-card rounded-[24px] p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-xs font-black uppercase text-ink-soft">{copy.goalTitle}</p>
+                  <p className="type-label text-ink-soft">{copy.goalTitle}</p>
                   <p className="mt-1 text-2xl font-black text-ink">
                     {stats ? `${stats.reviews_today}/${stats.daily_goal}` : "—"}
                   </p>
@@ -244,10 +244,10 @@ export function DashboardView({
 
       <section className="section-stack">
         <div>
-          <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+          <p className="type-label text-accent-600 dark:text-accent-300">
             {copy.recommendations}
           </p>
-          <h2 className="mt-1 text-2xl font-black text-ink">{copy.focusBody}</h2>
+          <h2 className="type-h3 mt-1 text-ink">{copy.focusBody}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
           <ContextCard

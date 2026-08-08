@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
+import { ArrowRight, BookOpenCheck, LibraryBig, Map as MapIcon, Route } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -183,47 +184,77 @@ export function ReviewSession({
 
   if (phase === "empty" || phase === "done") {
     const isDone = phase === "done";
+    const nextActions = isDone
+      ? [
+          { href: `/${lang}/today`, label: review.nextDailyPath, icon: Route },
+          { href: `/${lang}/mastery`, label: review.nextProgress, icon: MapIcon },
+        ]
+      : [
+          { href: `/${lang}/decks`, label: review.addWords, icon: LibraryBig },
+          { href: `/${lang}/today`, label: review.nextDailyPath, icon: Route },
+        ];
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <p className="text-5xl" aria-hidden>
-          {isDone ? "🎉" : "🐆"}
-        </p>
-        <h2 className="mt-4 text-2xl font-extrabold text-ink">
-          {isDone ? review.doneTitle : review.emptyTitle}
-        </h2>
-        <p className="mt-2 text-ink-soft">
-          {isDone ? review.doneBody : review.emptyBody}
-        </p>
+      <div className="app-container py-12">
+        <div className="surface-panel mx-auto max-w-2xl rounded-[28px] p-6 text-center sm:p-8">
+          <span className="icon-tile mx-auto flex size-14 items-center justify-center rounded-[20px]">
+            <BookOpenCheck className="size-7 text-brand-600 dark:text-brand-300" aria-hidden />
+          </span>
+          <h2 className="type-h2 mt-5 text-ink">
+            {isDone ? review.doneTitle : review.emptyTitle}
+          </h2>
+          <p className="type-body-small mx-auto mt-3 max-w-md text-ink-soft">
+            {isDone ? review.doneBody : review.emptyBody}
+          </p>
 
-        {isDone && reviewedCount > 0 && (
-          <div className="mx-auto mt-5 max-w-xs rounded-xl2 border border-line bg-card p-5">
-            <p className="text-3xl font-extrabold text-brand-600 dark:text-brand-300">
-              +{sessionXp} XP
-            </p>
-            <p className="mt-1 text-sm text-ink-soft">
-              {reviewedCount} {review.reviewedCount}
-            </p>
-            {sessionAchievements.length > 0 && (
-              <div className="mt-3 flex flex-wrap justify-center gap-2 border-t border-line pt-3">
-                {sessionAchievements.map((code) => {
-                  const meta = ach[code as keyof Dictionary["ach"]];
-                  return (
-                    <span
-                      key={code}
-                      className="rounded-full bg-accent-500/10 px-2.5 py-1 text-xs font-semibold text-accent-600 dark:text-accent-300"
-                    >
-                      {meta.i} {meta.t}
-                    </span>
-                  );
-                })}
+          {isDone && reviewedCount > 0 && (
+            <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3 rounded-[22px] border border-line bg-card/55 p-3">
+              <div className="rounded-[18px] bg-raised/72 p-4">
+                <p className="text-3xl font-black text-brand-600 dark:text-brand-300">
+                  +{sessionXp}
+                </p>
+                <p className="type-caption mt-1 text-ink-soft">XP</p>
               </div>
-            )}
-          </div>
-        )}
+              <div className="rounded-[18px] bg-raised/72 p-4">
+                <p className="text-3xl font-black text-ink">{reviewedCount}</p>
+                <p className="type-caption mt-1 text-ink-soft">{review.reviewedCount}</p>
+              </div>
+              {sessionAchievements.length > 0 && (
+                <div className="col-span-2 flex flex-wrap justify-center gap-2 border-t border-line pt-3">
+                  {sessionAchievements.map((code) => {
+                    const meta = ach[code as keyof Dictionary["ach"]];
+                    return (
+                      <span
+                        key={code}
+                        className="rounded-full bg-accent-500/10 px-2.5 py-1 text-xs font-semibold text-accent-600 dark:text-accent-300"
+                      >
+                        {meta.i} {meta.t}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
 
-        <Link href={isDone ? `/${lang}/dashboard` : `/${lang}/decks`} className="mt-8 inline-block">
-          <Button>{isDone ? review.title : review.addWords}</Button>
-        </Link>
+          <div className="mt-7 grid gap-3 sm:grid-cols-2">
+            <Link href={isDone ? `/${lang}/dashboard` : `/${lang}/decks`}>
+              <Button fullWidth>
+                {isDone ? review.backHome : review.addWords}
+                <ArrowRight className="size-4" aria-hidden />
+              </Button>
+            </Link>
+            {nextActions.map(({ href, label, icon: Icon }) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-raised/78 px-4 text-sm font-bold text-ink transition-all duration-200 hover:bg-hover hover:text-primary"
+              >
+                <Icon className="size-4" aria-hidden />
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
