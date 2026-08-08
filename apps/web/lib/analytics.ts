@@ -34,6 +34,6 @@ export function trackEvent(name: AnalyticsEventName, properties: AnalyticsProper
 
   if (process.env.NODE_ENV !== "production") {
     // Keeps local QA transparent while avoiding a vendor dependency before launch.
-    console.info("[wordly analytics]", payload);
+    console.info("[vocora analytics]", payload);
   }
 }

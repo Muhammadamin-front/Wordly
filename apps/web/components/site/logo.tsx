@@ -1,20 +1,39 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-export function Logo({ lang, className }: { lang: string; className?: string }) {
+export function Logo({
+  lang,
+  className,
+  tone = "default",
+}: {
+  lang: string;
+  className?: string;
+  tone?: "default" | "inverse";
+}) {
   return (
     <Link
       href={`/${lang}`}
+      aria-label="Vocora home"
       className={cn("inline-flex items-center gap-2.5 text-xl font-black tracking-tight", className)}
     >
-      <span
+      <Image
+        src="/brand/vocora-icon.png"
+        alt=""
         aria-hidden
-        className="relative flex size-9 items-center justify-center text-[28px] font-black leading-none text-brand-900 dark:text-brand-200"
+        width={40}
+        height={40}
+        className="size-9 rounded-[11px] object-cover shadow-[0_8px_20px_rgba(31,20,100,0.18)]"
+      />
+      <span
+        className={cn(
+          "text-[21px] font-extrabold text-brand-950 dark:text-ink",
+          tone === "inverse" && "!text-white"
+        )}
       >
-        <span className="-rotate-6">w</span>
+        Vocora
       </span>
-      <span className="text-[21px] lowercase text-brand-950 dark:text-ink">wordly</span>
     </Link>
   );
 }

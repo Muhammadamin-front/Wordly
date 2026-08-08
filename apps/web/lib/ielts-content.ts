@@ -1,7 +1,7 @@
 import type { Locale } from "@/lib/locales";
 
 /** Localized strategy cheatsheets shown before practice in each IELTS skill.
- *  Original coaching content written for Wordly (not from any prep book). */
+ *  Original coaching content written for Vocora (not from any prep book). */
 export interface Cheatsheet {
   intro: string;
   tips: { title: string; body: string }[];

@@ -64,10 +64,10 @@ export function GoogleButton({ lang, divider }: { lang: string; divider: string 
 
   return (
     <>
-      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase text-ink-soft">
-        <span className="h-px flex-1 bg-line" />
+      <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase text-white/36">
+        <span className="h-px flex-1 bg-white/12" />
         {divider}
-        <span className="h-px flex-1 bg-line" />
+        <span className="h-px flex-1 bg-white/12" />
       </div>
       <div ref={container} className="flex justify-center" />
       <Script

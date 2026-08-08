@@ -30,7 +30,7 @@ async function translate(text, target, cache) {
   for (let attempt = 0; attempt < 5; attempt += 1) {
     try {
       const response = await fetch(`https://translate.googleapis.com/translate_a/single?${query}`, {
-        headers: { "User-Agent": "Wordly/1.0" },
+        headers: { "User-Agent": "Vocora/1.0" },
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json();

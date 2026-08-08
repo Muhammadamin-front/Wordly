@@ -43,7 +43,7 @@ def estimated_secret_entropy_bits(secret: str) -> float:
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    APP_NAME: str = "Wordly API"
+    APP_NAME: str = "Vocora API"
     ENVIRONMENT: str = "development"  # development | test | production
     API_V1_PREFIX: str = "/api/v1"
 

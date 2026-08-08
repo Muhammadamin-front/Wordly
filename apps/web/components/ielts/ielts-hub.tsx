@@ -73,7 +73,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
         <div className="border-t border-line bg-brand-600/6 px-6 py-3 dark:bg-brand-950/45 sm:px-8">
           <p className="flex items-center gap-2 text-xs font-bold text-brand-800 dark:text-ink-soft">
             <LibraryBig className="size-4 text-accent-500" aria-hidden />
-            {t.wordlyNote}
+            {t.brandNote}
           </p>
         </div>
       </motion.section>

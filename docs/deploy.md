@@ -1,4 +1,4 @@
-# Deploying Words.uz
+# Deploying Vocora
 
 The stack is two containers plus managed state: **api** (FastAPI/uvicorn),
 **web** (Next.js standalone), **Postgres 16**, **Redis 7**. A single VM with
@@ -15,13 +15,13 @@ ENVIRONMENT=production
 SECRET_KEY=<paste-generated-output>
 # Use only the immediate reverse proxy/LB addresses or private CIDRs.
 TRUSTED_PROXY_CIDRS=10.0.0.10/32
-FRONTEND_ORIGIN=https://words.uz
+FRONTEND_ORIGIN=https://vocora.uz
 COOKIE_SECURE=true
 EMAIL_PROVIDER=resend
 RESEND_API_KEY=re_...
-EMAIL_FROM=Wordly <noreply@words.uz>       # domain must be verified in Resend
-EMAIL_REPLY_TO=support@words.uz
-NEXT_PUBLIC_API_URL=https://api.words.uz   # baked into the web bundle at build
+EMAIL_FROM=Vocora <noreply@vocora.uz>      # domain must be verified in Resend
+EMAIL_REPLY_TO=support@vocora.uz
+NEXT_PUBLIC_API_URL=https://api.vocora.uz  # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
 ANTHROPIC_API_KEY=...                       # optional: AI tutor (off without it)
@@ -63,9 +63,9 @@ a `git pull && docker compose build api && docker compose up -d api`.
 
 Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
 
-- `api.words.uz` → `:8000` — **must** proxy WebSockets (`/api/v1/ws/quiz`);
+- `api.vocora.uz` → `:8000` — **must** proxy WebSockets (`/api/v1/ws/quiz`);
   for nginx set `proxy_set_header Upgrade $http_upgrade; Connection "upgrade"`.
-- `words.uz` → `:3000`.
+- `vocora.uz` → `:3000`.
 - Enforce a request-body limit at the proxy (the API's 5 MB cap is a backstop,
   not a substitute).
 - Set `TRUSTED_PROXY_CIDRS` to the exact reverse-proxy/LB socket peers that can
@@ -85,7 +85,7 @@ Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
   compose healthcheck.
 - Every response carries `X-Request-ID` (honoured if the proxy sends one) and
   `X-Response-Time-ms`; slow requests (>1s) log at WARNING.
-- `python -m scripts.loadtest --base https://api.words.uz` for a read-path
+- `python -m scripts.loadtest --base https://api.vocora.uz` for a read-path
   smoke after deploy.
 
 ## 5. Backups & state

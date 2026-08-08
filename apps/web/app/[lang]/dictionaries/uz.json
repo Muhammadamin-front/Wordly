@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Wordly",
+    "appName": "Vocora",
     "tagline": "Ingliz tili so'z boyligi — o'zbek tilida",
     "loading": "Yuklanmoqda...",
     "error": "Xatolik yuz berdi. Qayta urinib ko'ring.",
@@ -60,9 +60,9 @@
     "heroCtaContinue": "O'rganishni davom ettirish"
   },
   "auth": {
-    "loginTitle": "Qaytganingizdan xursandmiz",
+    "loginTitle": "Xush kelibsiz!",
     "loginSubtitle": "Hisobingizga kiring va davom eting",
-    "registerTitle": "Hisob yarating",
+    "registerTitle": "Vocora'ga qo'shiling",
     "registerSubtitle": "Bir daqiqada boshlang — bepul",
     "email": "Elektron pochta",
     "password": "Parol",
@@ -97,7 +97,7 @@
   "onboarding": {
     "eyebrow": "Shaxsiy o'rganish yo'li",
     "title": "Birinchi darsingizni tuzamiz",
-    "subtitle": "To'rtta qisqa tanlov orqali Wordly sizga mos so'zlar va tempni belgilaydi.",
+    "subtitle": "To'rtta qisqa tanlov orqali Vocora sizga mos so'zlar va tempni belgilaydi.",
     "step": "Bosqich",
     "back": "Orqaga",
     "continue": "Davom etish",
@@ -107,7 +107,7 @@
     "levelTitle": "Ingliz tili darajangiz qanday?",
     "levelBody": "O'zingizga qulay darajani tanlang. Keyinroq o'zgartirishingiz mumkin.",
     "placementEyebrow": "2 daqiqalik daraja testi",
-    "placementIntroTitle": "Wordly sizga mos boshlang'ich darajani aniqlasin",
+    "placementIntroTitle": "Vocora sizga mos boshlang'ich darajani aniqlasin",
     "placementIntroBody": "Oddiydan murakkabgacha bo'lgan 12 ta qisqa savolga javob bering. Natija faqat boshlash nuqtasini belgilaydi va uni o'zgartirish mumkin.",
     "placementBegin": "Daraja testini boshlash",
     "placementSkip": "Darajani o'zim tanlayman",
@@ -157,7 +157,7 @@
     "eyebrow": "IELTS lug'at markazi",
     "title": "IELTS baholaydigan tilni o'rganing",
     "subtitle": "Yuqori qiymatli statik resurslar: model javoblar, aniq strategiyalar, akademik collocation va skillga mos lug'at.",
-    "wordlyNote": "Wordly avvalo vocabulary platformasi. IELTS esa lug'atni real imtihon kontekstida mustahkamlovchi qo'shimcha markaz.",
+    "brandNote": "Vocora avvalo vocabulary platformasi. IELTS esa lug'atni real imtihon kontekstida mustahkamlovchi qo'shimcha markaz.",
     "skillsKicker": "4 ko'nikma",
     "skillsTitle": "O'rganish yo'nalishlari",
     "vocabularyKicker": "Lug'at resursi",

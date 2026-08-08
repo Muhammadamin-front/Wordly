@@ -10,7 +10,7 @@ export default async function LoginPage({ params }: { params: Promise<{ lang: st
   const dict = await getDictionary(lang);
 
   return (
-    <AuthCard lang={lang} title={dict.auth.loginTitle} subtitle={dict.auth.loginSubtitle}>
+    <AuthCard lang={lang} title={dict.auth.loginTitle} subtitle={dict.auth.loginSubtitle} showcase>
       <LoginForm lang={lang} auth={dict.auth} />
     </AuthCard>
   );

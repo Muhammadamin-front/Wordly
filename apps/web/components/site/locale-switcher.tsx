@@ -9,7 +9,13 @@ function persistLocaleCookie(locale: Locale) {
   document.cookie = `${LOCALE_COOKIE}=${locale};path=/;max-age=${60 * 60 * 24 * 365}`;
 }
 
-export function LocaleSwitcher({ current }: { current: Locale }) {
+export function LocaleSwitcher({
+  current,
+  tone = "default",
+}: {
+  current: Locale;
+  tone?: "default" | "dark";
+}) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -21,7 +27,12 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
   };
 
   return (
-    <div className="flex items-center gap-0.5 rounded-lg border border-line p-0.5">
+    <div
+      className={cn(
+        "flex items-center gap-0.5 rounded-lg border p-0.5",
+        tone === "dark" ? "border-white/12 bg-white/5" : "border-line"
+      )}
+    >
       {LOCALES.map((locale) => (
         <button
           key={locale}
@@ -32,8 +43,12 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
           className={cn(
             "rounded-md px-2 py-1 text-xs font-bold uppercase transition-colors",
             locale === current
-              ? "bg-brand-600 text-white"
-              : "text-ink-soft hover:bg-line/60 hover:text-ink"
+              ? tone === "dark"
+                ? "bg-white text-[#0b2925]"
+                : "bg-brand-600 text-white"
+              : tone === "dark"
+                ? "text-white/62 hover:bg-white/10 hover:text-white"
+                : "text-ink-soft hover:bg-line/60 hover:text-ink"
           )}
         >
           {locale}

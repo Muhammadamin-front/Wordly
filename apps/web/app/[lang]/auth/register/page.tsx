@@ -11,7 +11,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ lang:
   const dict = await getDictionary(lang);
 
   return (
-    <AuthCard lang={lang} title={dict.auth.registerTitle} subtitle={dict.auth.registerSubtitle}>
+    <AuthCard lang={lang} title={dict.auth.registerTitle} subtitle={dict.auth.registerSubtitle} showcase>
       <Suspense>
         <RegisterForm lang={lang} auth={dict.auth} />
       </Suspense>

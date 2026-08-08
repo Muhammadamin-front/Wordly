@@ -74,8 +74,8 @@ def verification_email_body(
     link = localized_auth_link(settings, locale, "verify-email", token)
     return (
         "Assalomu alaykum, {}!\n\n"
-        "Wordly hisobingizni tasdiqlash uchun havola / "
-        "Confirm your Wordly account:\n{}\n".format(display_name, link)
+        "Vocora hisobingizni tasdiqlash uchun havola / "
+        "Confirm your Vocora account:\n{}\n".format(display_name, link)
     )
 
 
@@ -114,7 +114,7 @@ async def register(
     )
     await emailer.send(
         to=user.email,
-        subject="Wordly — hisobni tasdiqlash / Verify your account",
+        subject="Vocora — hisobni tasdiqlash / Verify your account",
         body=verification_email_body(
             user.profile.display_name, user.profile.ui_locale, verify_token, settings
         ),
@@ -257,7 +257,7 @@ async def forgot_password(
         )
         await emailer.send(
             to=user.email,
-            subject="Wordly — parolni tiklash / Reset your password",
+            subject="Vocora — parolni tiklash / Reset your password",
             body="Parolni tiklash havolasi / Reset link:\n{}\n".format(link),
         )
         await db.commit()

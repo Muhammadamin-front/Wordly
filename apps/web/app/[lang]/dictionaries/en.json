@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "Wordly",
+    "appName": "Vocora",
     "tagline": "English vocabulary — in your language",
     "loading": "Loading...",
     "error": "Something went wrong. Please try again.",
@@ -97,7 +97,7 @@
   "onboarding": {
     "eyebrow": "Personal learning path",
     "title": "Let's build your first lesson",
-    "subtitle": "Four quick choices help Wordly select the right words and pace for you.",
+    "subtitle": "Four quick choices help Vocora select the right words and pace for you.",
     "step": "Step",
     "back": "Back",
     "continue": "Continue",
@@ -107,7 +107,7 @@
     "levelTitle": "What's your English level?",
     "levelBody": "Choose the level that feels comfortable. You can change it later.",
     "placementEyebrow": "2-minute level check",
-    "placementIntroTitle": "Let Wordly find your best starting level",
+    "placementIntroTitle": "Let Vocora find your best starting level",
     "placementIntroBody": "Answer 12 short questions that move from basic to advanced English. Your result only sets a starting point and can be changed.",
     "placementBegin": "Start level test",
     "placementSkip": "Choose my level",
@@ -157,7 +157,7 @@
     "eyebrow": "IELTS vocabulary hub",
     "title": "Learn the language IELTS rewards",
     "subtitle": "High-value static resources: model answers, clear strategies, academic collocations, and skill-focused vocabulary.",
-    "wordlyNote": "Wordly is a vocabulary platform first. IELTS is an extra hub for strengthening vocabulary in real exam contexts.",
+    "brandNote": "Vocora is a vocabulary platform first. IELTS is an extra hub for strengthening vocabulary in real exam contexts.",
     "skillsKicker": "4 skills",
     "skillsTitle": "Learning paths",
     "vocabularyKicker": "Lexical resource",

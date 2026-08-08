@@ -1,4 +1,4 @@
-/* Words.uz service worker.
+/* Vocora service worker.
  *
  * Strategy (deliberately conservative — auth-sensitive API calls are never
  * cached):
@@ -8,7 +8,7 @@
  *  - Page navigations: network-first with cache fallback, so recently visited
  *    pages open offline.
  */
-const VERSION = "wordly-v2";
+const VERSION = "vocora-v3";
 const STATIC_CACHE = `${VERSION}-static`;
 const PAGE_CACHE = `${VERSION}-pages`;
 

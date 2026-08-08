@@ -1,4 +1,4 @@
-# Words.uz
+# Vocora
 
 **Duolingo's fun + Anki's science + Quizlet's simplicity — built for Uzbekistan.**
 

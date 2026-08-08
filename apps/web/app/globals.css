@@ -4,7 +4,7 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Wordly — Uzbek emerald, turquoise tile, ivory paper, and warm brass. */
+  /* Vocora — Uzbek emerald, turquoise tile, ivory paper, and warm brass. */
   --color-brand-50: #eef8f4;
   --color-brand-100: #d8eee6;
   --color-brand-200: #b4ddcf;
@@ -210,6 +210,35 @@ body::after {
 ::selection {
   background-color: var(--color-brand-500);
   color: #fff;
+}
+
+.auth-background {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(130deg, rgb(87 79 231 / 0.1), transparent 28%),
+    linear-gradient(310deg, rgb(39 205 164 / 0.11), transparent 34%),
+    #061a18;
+}
+
+.auth-showcase {
+  background:
+    linear-gradient(rgb(7 58 53 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(7 58 53 / 0.03) 1px, transparent 1px),
+    linear-gradient(145deg, #fffefa 0%, #f2f6f0 100%);
+  background-size: 54px 54px, 54px 54px, auto;
+}
+
+.auth-showcase::after {
+  position: absolute;
+  right: -14%;
+  bottom: -34%;
+  width: 52%;
+  height: 72%;
+  border-radius: 50%;
+  background: rgb(21 117 95 / 0.08);
+  content: "";
 }
 
 /* Focus visibility for keyboard users. */

@@ -70,7 +70,7 @@ export default async function LandingPage({
       <main className="flex-1 px-3 pb-8 sm:px-5">
         <section className="relative mx-auto min-h-[620px] max-w-[1480px] overflow-hidden rounded-[22px] border border-line bg-[#faf8f2] shadow-[0_28px_90px_rgba(39,67,59,0.1)] dark:bg-[#0b211b]">
           <Image
-            src="/images/wordly-uzbek-student-hero.png"
+            src="/images/vocora-uzbek-student-hero.png"
             alt={copy.heroImageAlt}
             fill
             priority
@@ -289,7 +289,7 @@ export default async function LandingPage({
           <Reveal delay={0.08}>
             <div className="relative min-h-[520px] overflow-hidden rounded-[22px] bg-brand-950 p-7 text-white shadow-[0_24px_70px_rgba(7,58,53,0.22)]">
               <Image
-                src="/images/wordly-uzbek-student-hero.png"
+                src="/images/vocora-uzbek-student-hero.png"
                 alt=""
                 fill
                 sizes="480px"
