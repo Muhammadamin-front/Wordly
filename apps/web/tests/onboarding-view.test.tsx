@@ -160,6 +160,14 @@ describe("OnboardingView", () => {
     expect(
       screen.getByText(en.onboarding.placementApplied.replace("{level}", "C2"))
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(en.onboarding.roadmapEyebrow)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        name: en.onboarding.roadmapTitle.replace("{level}", "C2"),
+      })
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /C2/ })).toHaveAttribute(
       "aria-pressed",
       "true"

@@ -6,13 +6,17 @@ import {
   ArrowRight,
   BookOpen,
   BriefcaseBusiness,
+  CalendarDays,
   Check,
   Coffee,
+  Dumbbell,
   GraduationCap,
   Landmark,
   Laptop,
+  Map,
   MessageCircleMore,
   Plane,
+  Rocket,
   ScanSearch,
   Sparkles,
   Target,
@@ -198,6 +202,16 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                             />
                           ))}
                         </div>
+                        {placementLevel && (
+                          <RoadmapPreview
+                            copy={copy}
+                            level={level}
+                            goal={goal}
+                            interests={interests}
+                            minutes={minutes}
+                            compact
+                          />
+                        )}
                         <Button
                           type="button"
                           variant="secondary"
@@ -264,17 +278,13 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                         />
                       ))}
                     </div>
-                    <div className="mt-7 flex items-start gap-3 border-t border-line pt-6">
-                      <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-white">
-                        <Check className="size-5" />
-                      </span>
-                      <div>
-                        <p className="font-extrabold text-ink">{copy.readyTitle}</p>
-                        <p className="mt-1 text-sm leading-6 text-ink-soft">
-                          {copy.readyBody.replace("{level}", level).replace("{count}", "5")}
-                        </p>
-                      </div>
-                    </div>
+                    <RoadmapPreview
+                      copy={copy}
+                      level={level}
+                      goal={goal}
+                      interests={interests}
+                      minutes={minutes}
+                    />
                   </StepSection>
                 )}
               </motion.div>
@@ -312,6 +322,118 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
         </div>
       </div>
     </section>
+  );
+}
+
+
+function RoadmapPreview({
+  copy,
+  level,
+  goal,
+  interests,
+  minutes,
+  compact = false,
+}: {
+  copy: Copy;
+  level: Level;
+  goal: Goal;
+  interests: string[];
+  minutes: Minutes;
+  compact?: boolean;
+}) {
+  const goalLabel = copy[`goal${capitalize(goal)}`];
+  const selectedInterests = interests.length
+    ? interests.map((item) => copy[`interest${interestKey(item)}`]).join(" · ")
+    : copy.roadmapInterestsFallback;
+  const items = [
+    {
+      icon: Map,
+      title: copy.roadmapStep1Title,
+      body: copy.roadmapStep1Body.replace("{level}", level),
+    },
+    {
+      icon: Rocket,
+      title: copy.roadmapStep2Title,
+      body: copy.roadmapStep2Body.replace("{goal}", goalLabel),
+    },
+    {
+      icon: Dumbbell,
+      title: copy.roadmapStep3Title,
+      body: copy.roadmapStep3Body.replace("{minutes}", String(minutes)),
+    },
+    {
+      icon: CalendarDays,
+      title: copy.roadmapStep4Title,
+      body: copy.roadmapStep4Body,
+    },
+  ];
+
+  return (
+    <div
+      className={cn(
+        "mt-7 overflow-hidden rounded-[24px] border border-brand-300/45 bg-[linear-gradient(145deg,rgba(23,107,92,0.12),rgba(210,168,79,0.08))] shadow-[0_20px_55px_rgba(7,58,53,0.10)]",
+        compact && "mt-5"
+      )}
+    >
+      <div className="border-b border-line/70 bg-card/58 p-4 backdrop-blur-xl sm:p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wide text-brand-700 dark:text-brand-200">
+              <Sparkles className="size-4" aria-hidden />
+              {copy.roadmapEyebrow}
+            </p>
+            <h3 className="mt-2 text-xl font-black tracking-tight text-ink sm:text-2xl">
+              {copy.roadmapTitle.replace("{level}", level)}
+            </h3>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-soft">
+              {copy.roadmapBody
+                .replace("{goal}", goalLabel)
+                .replace("{minutes}", String(minutes))}
+            </p>
+          </div>
+          <div className="grid min-w-[180px] grid-cols-3 gap-2 rounded-2xl border border-line/70 bg-raised/72 p-2 text-center shadow-inner shadow-brand-950/5">
+            <Metric label={copy.roadmapLevelLabel} value={level} />
+            <Metric label={copy.roadmapTimeLabel} value={`${minutes}`} />
+            <Metric label={copy.roadmapGoalLabel} value={goalLabel} small />
+          </div>
+        </div>
+        <p className="mt-4 rounded-2xl border border-line/70 bg-raised/58 px-3 py-2 text-xs font-bold leading-5 text-ink-soft">
+          {copy.roadmapInterestsLabel}: <span className="text-ink">{selectedInterests}</span>
+        </p>
+      </div>
+
+      <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5">
+        {items.map(({ icon: Icon, title, body }, index) => (
+          <div key={title} className="flex gap-3 rounded-2xl border border-line/70 bg-card/62 p-4 backdrop-blur-xl">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-900 text-sm font-black text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)]">
+              {index + 1}
+            </span>
+            <div>
+              <p className="flex items-center gap-2 text-sm font-black text-ink">
+                <Icon className="size-4 text-brand-600 dark:text-brand-300" aria-hidden />
+                {title}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-ink-soft">{body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {!compact && (
+        <div className="border-t border-line/70 bg-brand-950 px-4 py-3 text-sm font-bold text-brand-100 sm:px-5">
+          {copy.readyBody.replace("{level}", level).replace("{count}", "5")}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Metric({ label, value, small = false }: { label: string; value: string; small?: boolean }) {
+  return (
+    <span className="min-w-0 rounded-xl bg-white/58 px-2 py-2 dark:bg-white/8">
+      <span className="block text-[10px] font-black uppercase text-ink-soft">{label}</span>
+      <span className={cn("mt-0.5 block truncate font-black text-ink", small ? "text-xs" : "text-lg")}>{value}</span>
+    </span>
   );
 }
 
