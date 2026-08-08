@@ -10,6 +10,9 @@ import { ThemeProvider } from "@/components/site/theme-provider";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#f3f5ef",
 };
 

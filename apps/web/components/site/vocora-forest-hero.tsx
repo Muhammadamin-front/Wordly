@@ -40,7 +40,7 @@ export function VocoraForestHero({
   ];
 
   return (
-    <section className="relative mx-auto min-h-[660px] max-w-[1480px] overflow-hidden rounded-[22px] border border-white/10 bg-[#06140d] shadow-[0_30px_100px_rgba(4,25,14,0.38)] sm:min-h-[720px]">
+    <section className="relative mx-auto min-h-[calc(100svh-5rem)] max-w-[1480px] overflow-hidden rounded-[22px] border border-white/10 bg-[#06140d] shadow-[0_30px_100px_rgba(4,25,14,0.38)] sm:min-h-[720px]">
       <Image
         src="/images/vocora-forest-hero.webp"
         alt={copy.heroImageAlt}
@@ -53,7 +53,7 @@ export function VocoraForestHero({
       <div aria-hidden className="absolute inset-y-0 left-0 w-full bg-[linear-gradient(145deg,rgba(157,202,103,0.12),transparent_32%)]" />
       <div aria-hidden className="absolute inset-y-0 left-[48%] hidden w-px bg-white/16 lg:block" />
 
-      <div className="relative z-10 flex min-h-[660px] flex-col px-6 py-10 sm:min-h-[720px] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+      <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col px-4 py-8 sm:min-h-[720px] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
         <Reveal>
           <p className="inline-flex items-center gap-2 border-b border-[#b5d88e]/65 pb-2 text-[11px] font-black uppercase text-[#d9edc0]">
             <span className="size-1.5 rounded-full bg-[#a9d277]" />
@@ -61,22 +61,22 @@ export function VocoraForestHero({
           </p>
         </Reveal>
 
-        <div className="mt-9 max-w-[760px]">
+        <div className="mt-8 max-w-[760px] sm:mt-9">
           <Reveal delay={0.06}>
             <p className="text-sm font-extrabold uppercase text-white/58">{copy.eyebrow}</p>
-            <h1 className="mt-3 max-w-[740px] text-5xl font-black leading-[0.91] text-white sm:text-7xl lg:text-[92px]">
+            <h1 className="mt-3 max-w-[740px] text-4xl font-black leading-[0.94] text-white min-[390px]:text-5xl sm:text-7xl sm:leading-[0.91] lg:text-[92px]">
               <span className="block text-[#d6ecb2]">{copy.title}</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.12}>
-            <p className="mt-7 max-w-[440px] text-base font-medium leading-7 text-white/68 sm:text-lg">
+            <p className="mt-5 max-w-[440px] text-sm font-medium leading-6 text-white/72 sm:mt-7 sm:text-lg sm:leading-7">
               {copy.subtitle.replace("{count}", itemCount)}
             </p>
           </Reveal>
 
           <Reveal delay={0.18}>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-6 flex flex-col gap-3 min-[420px]:flex-row sm:mt-7">
               <HeroCta guestLabel={landing.heroCta} lang={lang} userLabel={landing.heroCtaContinue} />
               <Link href={`/${lang}/preview/a1`}>
                 <Button
@@ -93,11 +93,11 @@ export function VocoraForestHero({
         </div>
 
         <Reveal delay={0.24}>
-          <div className="mt-auto grid max-w-[640px] grid-cols-3 gap-2 pt-10 sm:gap-3">
+          <div className="mt-auto grid max-w-[640px] gap-2 pt-8 min-[420px]:grid-cols-3 sm:gap-3 sm:pt-10">
             {metrics.map(({ icon: Icon, value, label }) => (
               <div key={label} className="border-t border-white/22 pt-3 sm:pt-4">
                 <Icon className="mb-2 size-4 text-[#b6db82]" strokeWidth={1.5} aria-hidden />
-                <p className="text-xl font-black text-white sm:text-2xl">{value}</p>
+                <p className="text-lg font-black text-white sm:text-2xl">{value}</p>
                 <p className="mt-1 text-[10px] font-semibold leading-4 text-white/48 sm:text-xs">{label}</p>
               </div>
             ))}

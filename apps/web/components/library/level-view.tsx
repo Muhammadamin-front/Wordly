@@ -161,7 +161,7 @@ export function LevelView({
   ];
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-8">
       <Link
         href={`/${lang}/decks`}
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
@@ -173,12 +173,12 @@ export function LevelView({
       <motion.header
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className={cn("mt-4 rounded-2xl border border-line/60 bg-gradient-to-br p-6 sm:p-8", meta.gradient)}
+        className={cn("mt-4 rounded-2xl border border-line/60 bg-gradient-to-br p-4 sm:p-8", meta.gradient)}
       >
-        <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+        <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-4xl">
           {shelfStrings.name}
         </h1>
-        <p className="mt-1 text-ink-soft">{shelfStrings.desc}</p>
+        <p className="mt-2 text-sm leading-6 text-ink-soft sm:text-base">{shelfStrings.desc}</p>
 
         {shelf && (
           <div className="mt-5 max-w-md">
@@ -194,10 +194,10 @@ export function LevelView({
         )}
 
         {/* Actions */}
-        <div className="mt-6 flex flex-wrap gap-2">
+        <div className="mt-6 grid grid-cols-2 gap-2 min-[520px]:flex min-[520px]:flex-wrap">
           {actions.map(({ icon: Icon, label, onClick, href, primary }) =>
             href ? (
-              <Link key={label} href={href}>
+              <Link key={label} href={href} className="min-w-0">
                 <Button size="sm" variant="secondary">
                   <Icon className="mr-1.5 size-4" /> {label}
                 </Button>
@@ -218,8 +218,8 @@ export function LevelView({
       </motion.header>
 
       {/* Search + counter */}
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
-        <div className="relative w-full max-w-sm">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 sm:mt-8">
+        <div className="relative w-full sm:max-w-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
           <input
             value={query}
@@ -240,7 +240,7 @@ export function LevelView({
         </div>
       ) : (
         <>
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
+          <div className="mt-5 grid grid-cols-2 gap-2 min-[390px]:gap-3 sm:mt-6 sm:gap-4 lg:grid-cols-3">
             <AnimatePresence>
               {words.map((word) => (
                 <WordCard

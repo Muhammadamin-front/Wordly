@@ -168,7 +168,7 @@ export function LibraryView({
 
   if (!ready || !user || shelves === null || decks === null) {
     return (
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
         <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
         <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
         <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
@@ -201,27 +201,27 @@ export function LibraryView({
   };
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6">
+    <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
       {/* Hero with circular progress */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="surface-panel light-sweep rounded-lg p-6 sm:p-8 lg:p-10"
+        className="surface-panel light-sweep rounded-lg p-4 sm:p-8 lg:p-10"
       >
-        <div className="grid gap-8 sm:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 md:gap-8">
           {/* Left: title + description */}
           <div>
             <span className="icon-tile size-12 rounded-lg">
               <LibraryBig className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
-            <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">
+            <h1 className="mt-4 text-3xl font-black tracking-tight text-ink sm:mt-5 sm:text-5xl">
               {t.title}
             </h1>
-            <p className="mt-4 max-w-lg text-base text-ink-soft sm:text-lg">{t.subtitle}</p>
+            <p className="mt-3 max-w-lg text-sm leading-6 text-ink-soft sm:mt-4 sm:text-lg">{t.subtitle}</p>
 
             {/* Quick stats row */}
-            <div className="mt-6 grid grid-cols-3 gap-3">
+            <div className="mt-5 grid gap-2 min-[420px]:grid-cols-3 sm:mt-6 sm:gap-3">
               <StatTile
                 icon={BookOpenCheck}
                 label={t.words}
@@ -281,9 +281,9 @@ export function LibraryView({
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-        className="surface-panel mt-10 rounded-lg p-5 sm:p-6"
+        className="surface-panel mt-8 rounded-lg p-4 sm:mt-10 sm:p-6"
         >
-          <Link href={`/${lang}/library/my-cards`} className="flex items-center gap-4">
+          <Link href={`/${lang}/library/my-cards`} className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <span className="icon-tile flex size-14 shrink-0 items-center justify-center rounded-lg">
               <BookOpenCheck className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
             </span>
@@ -303,7 +303,7 @@ export function LibraryView({
               </p>
             </div>
           </Link>
-          <div className="mt-4 flex gap-2">
+          <div className="mt-4 flex flex-wrap gap-2">
             <Link href={`/${lang}/library/my-cards`}>
               <Button variant="secondary" size="sm">
                 {t.manage}
@@ -317,13 +317,13 @@ export function LibraryView({
       )}
 
       {/* Level shelves */}
-      <section className="mt-12">
-        <div className="mb-6 flex items-center gap-2">
+      <section className="mt-10 sm:mt-12">
+        <div className="mb-4 flex items-center gap-2 sm:mb-6">
           <Target className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
-          <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.title}</h2>
+          <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t.title}</h2>
         </div>
-        <p className="mb-6 text-sm text-ink-soft">{t.subtitle}</p>
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        <p className="mb-5 text-sm leading-6 text-ink-soft sm:mb-6">{t.subtitle}</p>
+        <div className="grid grid-cols-2 gap-2 min-[390px]:gap-3 sm:gap-5 lg:grid-cols-4">
           {SHELVES.map((meta, i) => {
             const data = meta.soon ? undefined : shelves[meta.key];
             return (
@@ -348,14 +348,14 @@ export function LibraryView({
       </section>
 
       {/* Your collections */}
-      <section className="mt-16">
+      <section className="mt-12 sm:mt-16">
         <div className="flex items-center gap-2">
           <Sparkles className="size-5 text-brand-600 dark:text-brand-300" />
-          <h2 className="text-2xl font-extrabold tracking-tight text-ink">{t.collections}</h2>
+          <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t.collections}</h2>
         </div>
         <p className="mt-1 text-sm text-ink-soft">{t.collectionsDesc}</p>
 
-        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {decks.map((deck) => (
             <CollectionCard
               key={deck.id}
@@ -386,7 +386,7 @@ export function LibraryView({
           <motion.div
             whileHover={{ y: -4 }}
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
-            className="premium-card flex h-full min-h-44 flex-col items-stretch justify-center rounded-lg border-2 border-dashed border-line bg-card/40 p-6 backdrop-blur-sm"
+            className="premium-card flex h-full min-h-40 flex-col items-stretch justify-center rounded-lg border-2 border-dashed border-line bg-card/40 p-6 backdrop-blur-sm"
           >
             {creating ? (
               <form onSubmit={onCreate} className="space-y-3">

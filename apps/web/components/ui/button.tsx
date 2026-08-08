@@ -18,7 +18,7 @@ const buttonVariants = cva(
         danger: "bg-danger text-white shadow-lg shadow-danger/20 hover:-translate-y-0.5 hover:brightness-95",
       },
       size: {
-        sm: "h-9 px-3.5 text-sm",
+        sm: "min-h-11 px-4 text-sm sm:min-h-9 sm:px-3.5",
         md: "h-11 px-5 text-sm",
         lg: "h-13 px-7 text-base shadow-2xl",
       },

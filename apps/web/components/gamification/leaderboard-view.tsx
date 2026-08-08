@@ -81,8 +81,8 @@ export function LeaderboardView({
                     member.is_me
                       ? "border-brand-400 bg-brand-600/10"
                       : "border-line bg-card",
-                    inPromotion && "border-l-4 border-l-success",
-                    inRelegation && "border-l-4 border-l-danger"
+                    inPromotion && "border-success/45 bg-success/8 ring-1 ring-success/20",
+                    inRelegation && "border-danger/45 bg-danger/8 ring-1 ring-danger/20"
                   )}
                 >
                   <span

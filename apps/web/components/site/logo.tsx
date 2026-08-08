@@ -24,11 +24,11 @@ export function Logo({
         aria-hidden
         width={40}
         height={40}
-        className="size-9 rounded-[11px] object-cover shadow-[0_8px_20px_rgba(31,20,100,0.18)]"
+        className="logo-mark size-9 rounded-[11px] object-cover shadow-[0_8px_20px_rgba(31,20,100,0.18)]"
       />
       <span
         className={cn(
-          "text-[21px] font-extrabold text-brand-950 dark:text-ink",
+          "logo-text text-[21px] font-extrabold text-brand-950 dark:text-ink",
           tone === "inverse" && "!text-white"
         )}
       >

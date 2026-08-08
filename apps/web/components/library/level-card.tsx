@@ -77,7 +77,7 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "premium-card depth-scene group relative flex aspect-[3/4] flex-col overflow-hidden rounded-lg p-2 text-ink sm:aspect-4/5 sm:p-5",
+        "premium-card depth-scene group relative flex min-h-[236px] flex-col overflow-hidden rounded-lg p-3 text-ink sm:aspect-4/5 sm:min-h-0 sm:p-5",
         locked ? "grayscale-[0.45] opacity-75" : ""
       )}
     >
@@ -112,20 +112,20 @@ export function LevelCard({
         )}
       </div>
 
-      <div className="relative z-10 mt-auto pt-4 sm:pt-24">
-        <h3 className="line-clamp-2 max-w-[13ch] text-xs font-black leading-tight tracking-tight text-ink sm:text-[1.55rem] sm:leading-[1.02]">
+      <div className="relative z-10 mt-auto pt-5 sm:pt-24">
+        <h3 className="line-clamp-2 max-w-[13ch] text-[0.98rem] font-black leading-[1.08] tracking-tight text-ink sm:text-[1.55rem] sm:leading-[1.02]">
           {strings.name}
         </h3>
-        <p className="mt-3 hidden max-w-[27ch] text-sm/6 text-ink-soft sm:block">{strings.desc}</p>
+        <p className="mt-2 line-clamp-2 max-w-[27ch] text-[11px] leading-4 text-ink-soft sm:mt-3 sm:block sm:text-sm/6">{strings.desc}</p>
 
         {custom ? (
           <div className="mt-2 flex items-center justify-between border-t border-line/70 pt-2 sm:mt-5 sm:pt-4">
-            <span className="text-[10px] font-bold text-ink-soft sm:text-sm">
+            <span className="text-xs font-bold text-ink-soft sm:text-sm">
               {total.toLocaleString(lang)} {strings.unit ?? labels.words}
             </span>
             <span className="flex items-center gap-1 text-[10px] font-bold text-brand-800 transition-transform group-hover:translate-x-1 sm:gap-1.5 sm:text-sm dark:text-brand-200">
               <span className="hidden sm:inline">{labels.start}</span>
-              <ArrowRight className="size-3 sm:size-4" />
+              <ArrowRight className="size-4" />
             </span>
           </div>
         ) : (
@@ -133,13 +133,13 @@ export function LevelCard({
             <div className="mt-2 space-y-1.5 border-t border-line/70 pt-2 sm:mt-5 sm:space-y-3 sm:pt-4">
               <div className="flex items-end justify-between gap-3">
                 <div>
-                  <p className="text-xs font-black tracking-tight text-ink sm:text-3xl">
+                  <p className="text-base font-black tracking-tight text-ink sm:text-3xl">
                     {learned}
                     <span className="text-ink-soft/50">/{total}</span>
                   </p>
                   <p className="hidden text-sm text-ink-soft sm:block">{labels.learned}</p>
                 </div>
-                <span className="rounded-full border border-line bg-raised/72 px-1.5 py-0.5 text-[9px] font-extrabold text-ink backdrop-blur-xl sm:px-3 sm:py-1.5 sm:text-sm">
+                <span className="rounded-full border border-line bg-raised/72 px-2 py-1 text-xs font-extrabold text-ink backdrop-blur-xl sm:px-3 sm:py-1.5 sm:text-sm">
                   {pct}%
                 </span>
               </div>

@@ -118,19 +118,19 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 px-3 py-3 sm:px-5 sm:py-4">
-      <div className="glass mx-auto flex h-16 max-w-[1480px] items-center gap-3 rounded-[20px] px-3 shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
+    <header className="site-header sticky top-0 z-40">
+      <div className="glass mx-auto flex h-14 max-w-[1480px] items-center gap-2 rounded-[18px] px-2 sm:h-16 sm:gap-3 sm:rounded-[20px] shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
         <button
           type="button"
           onClick={() => setOpen(true)}
           aria-label={nav.menu}
-          className="-ml-1 flex size-10 shrink-0 items-center justify-center rounded-lg border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
+          className="-ml-0.5 flex size-11 shrink-0 items-center justify-center rounded-lg border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
         >
           <Menu className="size-5" aria-hidden />
         </button>
 
         <div className="shrink-0">
-          <Logo lang={lang} />
+          <Logo lang={lang} className="site-header-logo [&_.logo-mark]:size-8 [&_.logo-text]:text-lg sm:[&_.logo-mark]:size-9 sm:[&_.logo-text]:text-[21px]" />
         </div>
 
         <nav className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
@@ -245,21 +245,21 @@ function MobileSidebar({
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
       />
       <aside
-        className="surface-panel !absolute inset-y-0 left-0 flex w-80 max-w-[86%] animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
+        className="surface-panel !absolute inset-y-0 left-0 flex w-[min(22rem,calc(100vw-1rem))] max-w-none animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-line px-4">
+        <div className="flex min-h-16 shrink-0 items-center justify-between border-b border-line px-4 pt-[env(safe-area-inset-top)]">
           <Logo lang={lang} />
           <button
             type="button"
             aria-label={nav.close}
             onClick={onClose}
-            className="flex size-10 items-center justify-center rounded-lg border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
+            className="flex size-11 items-center justify-center rounded-lg border border-line bg-card/70 text-ink-soft transition-all hover:bg-raised hover:text-ink"
           >
             <X className="size-5" aria-hidden />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-4 overflow-y-auto p-4">
+        <nav className="flex-1 space-y-4 overflow-y-auto overscroll-contain p-4">
           {authed ? (
             <>
               <div className="space-y-1">
@@ -314,7 +314,7 @@ function MobileSidebar({
           )}
         </nav>
 
-        <div className="shrink-0 space-y-3 border-t border-line p-3">
+        <div className="shrink-0 space-y-3 border-t border-line p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <div className="flex items-center justify-between gap-3">
             <LocaleSwitcher current={lang} />
             <ThemeToggle lang={lang} />
@@ -577,7 +577,7 @@ function MobileNavLink({
       href={`/${lang}/${item.href}`}
       onClick={onClose}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-all",
+        "flex min-h-11 items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold transition-all",
         active
           ? "bg-brand-600/12 text-brand-600 shadow-inner shadow-brand-600/5 dark:text-brand-200"
           : "text-ink hover:bg-card/70"
