@@ -283,7 +283,8 @@
     "definition": "Definition",
     "openWord": "Open word",
     "backToRoute": "Back to today's route",
-    "loadError": "Your learning data could not be loaded. Please try again."
+    "loadError": "Your learning data could not be loaded. Please try again.",
+    "retry": "Try again"
   },
   "mastery": {
     "navTitle": "Word mastery map",
@@ -534,6 +535,8 @@
     "title": "Games",
     "subtitle": "Reinforce your words through play — every answer is a review",
     "needWords": "Add at least 4 words to play.",
+    "needWordsTitle": "Add a few words first",
+    "needWordsBody": "Games use your saved words and level words as practice material. Add cards or choose another source to start.",
     "addWords": "Add words",
     "score": "Score",
     "correct": "Correct!",
@@ -555,7 +558,9 @@
     "check": "Check",
     "matchPairs": "Match the pairs",
     "loading": "Loading game...",
+    "loadingTitle": "Preparing your game",
     "loadError": "The game session could not be loaded. Check your connection or try again.",
+    "loadErrorTitle": "Game could not start",
     "tryAgain": "Try again",
     "word_match": {
       "name": "Word Match",

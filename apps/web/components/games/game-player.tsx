@@ -11,6 +11,7 @@ import {
   Link2,
   MessageCircle,
   Music2,
+  RefreshCw,
   RotateCcw,
   Sparkles,
   Target,
@@ -38,8 +39,9 @@ import { StoryGame } from "@/components/games/story-game";
 import { TypingGame } from "@/components/games/typing-game";
 import { useAmbientMusic } from "@/components/games/use-ambient-music";
 import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/games/word-search-game";
-import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api";
 import { buildOptions, gamesApi, shuffle, type GameQuestion, type GameSource, type GameType } from "@/lib/games";
 import { notifyQuestsChanged, notifyStatsChanged } from "@/lib/gamification";
@@ -308,41 +310,52 @@ export function GamePlayer({
 
   if (phase === "loading" || phase === "finishing") {
     return (
-      <div className="flex flex-1 items-center justify-center py-20">
-        <span
-          aria-label={games.loading}
-          className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent"
-        />
+      <div className="mx-auto w-full max-w-lg py-10" aria-label={games.loading}>
+        <div className="surface-panel rounded-[24px] p-5 sm:p-7">
+          <Skeleton className="mx-auto size-14 rounded-[20px]" />
+          <Skeleton className="mx-auto mt-5 h-7 w-56 rounded-full" />
+          <Skeleton className="mx-auto mt-3 h-4 w-72 max-w-full rounded-full" />
+          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <Skeleton key={index} className="h-16 rounded-[18px]" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
 
   if (phase === "empty") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <p className="text-5xl" aria-hidden>
-          🃏
-        </p>
-        <p className="mt-4 text-ink-soft">{games.needWords}</p>
-        <div className="mt-6 flex justify-center gap-3">
+      <EmptyState
+        className="mx-auto max-w-md"
+        icon={Layers3}
+        title={games.needWordsTitle}
+        body={games.needWordsBody}
+      >
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button onClick={changeSource}>{games.chooseSource}</Button>
           <Link href={`/${lang}/decks`}>
             <Button variant="secondary">{games.addWords}</Button>
           </Link>
         </div>
-      </div>
+      </EmptyState>
     );
   }
 
   if (phase === "error") {
     return (
-      <div className="mx-auto max-w-md py-12 text-center">
-        <Alert tone="error">{games.loadError}</Alert>
-        <div className="mt-5 flex justify-center gap-3">
+      <EmptyState
+        className="mx-auto max-w-md"
+        icon={RefreshCw}
+        title={games.loadErrorTitle}
+        body={games.loadError}
+      >
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button onClick={() => fetchSession(source)}>{games.tryAgain}</Button>
           <Button variant="secondary" onClick={changeSource}>{games.chooseSource}</Button>
         </div>
-      </div>
+      </EmptyState>
     );
   }
 

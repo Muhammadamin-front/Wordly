@@ -23,6 +23,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { gamificationApi, STATS_CHANGED_EVENT, type Stats } from "@/lib/gamification";
 import { learningApi, type LearningPlan } from "@/lib/learning";
 
@@ -194,12 +195,12 @@ export function DashboardView({
                   <Zap className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />
                 </span>
               </div>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-line">
-                <div
-                  className="h-full rounded-full bg-linear-to-r from-brand-600 via-brand-400 to-accent-400 transition-all"
-                  style={{ width: `${reviewProgress}%` }}
-                />
-              </div>
+              <Progress
+                className="mt-4"
+                value={reviewProgress}
+                label={copy.goalTitle}
+                barClassName="bg-linear-to-r from-brand-600 via-brand-400 to-accent-400"
+              />
               {stats && (
                 <div className="mt-4 flex flex-wrap items-center gap-1.5">
                   <span className="mr-1 text-xs font-bold text-ink-soft">{gam.setGoal}</span>

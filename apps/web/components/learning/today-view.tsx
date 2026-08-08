@@ -8,6 +8,7 @@ import {
   CircleAlert,
   Gauge,
   Map,
+  RefreshCw,
   Target,
   type LucideIcon,
 } from "lucide-react";
@@ -16,7 +17,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 import { learningApi, type LearningPlan } from "@/lib/learning";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -78,14 +81,25 @@ export function TodayView({
 
   if (!ready || !user || !plan) {
     return (
-      <main className="flex min-h-[60vh] flex-1 items-center justify-center">
+      <main className="app-container flex-1 py-8">
         {error ? (
-          <Alert tone="error">{t.loadError}</Alert>
-        ) : (
-          <span
-            aria-label={common.loading}
-            className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent"
+          <EmptyState
+            className="mx-auto max-w-lg"
+            icon={RefreshCw}
+            title={t.loadError}
+            body={common.error}
+            actionLabel={t.retry}
+            onAction={() => window.location.reload()}
           />
+        ) : (
+          <section aria-label={common.loading}>
+            <Skeleton className="h-64 rounded-[28px]" />
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} className="h-48 rounded-[24px]" />
+              ))}
+            </div>
+          </section>
         )}
       </main>
     );
@@ -193,12 +207,12 @@ export function TodayView({
             {completed}/4
           </span>
         </div>
-        <div className="mt-4 h-2 overflow-hidden rounded-full bg-line">
-          <motion.div
-            className="h-full rounded-full bg-linear-to-r from-brand-600 via-brand-400 to-accent-400"
-            animate={{ width: `${(completed / steps.length) * 100}%` }}
-          />
-        </div>
+        <Progress
+          className="mt-4"
+          value={(completed / steps.length) * 100}
+          label={t.todaysRoute}
+          barClassName="bg-linear-to-r from-brand-600 via-brand-400 to-accent-400"
+        />
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {steps.map((step, index) => {

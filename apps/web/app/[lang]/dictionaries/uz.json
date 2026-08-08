@@ -283,7 +283,8 @@
     "definition": "Ta'rif",
     "openWord": "So'zni ochish",
     "backToRoute": "Bugungi yo'lga qaytish",
-    "loadError": "O'rganish ma'lumotlarini yuklab bo'lmadi. Qayta urinib ko'ring."
+    "loadError": "O'rganish ma'lumotlarini yuklab bo'lmadi. Qayta urinib ko'ring.",
+    "retry": "Qayta urinish"
   },
   "mastery": {
     "navTitle": "So'zlarni o'zlashtirish xaritasi",
@@ -534,6 +535,8 @@
     "title": "O'yinlar",
     "subtitle": "So'zlaringizni o'ynab mustahkamlang — har bir javob takrorlash hisoblanadi",
     "needWords": "O'ynash uchun kamida 4 ta so'z qo'shing.",
+    "needWordsTitle": "Avval bir nechta so'z qo'shing",
+    "needWordsBody": "O'yinlar saqlangan so'zlaringiz va daraja so'zlaridan mashq materiali sifatida foydalanadi. Karta qo'shing yoki boshqa manbani tanlang.",
     "addWords": "So'z qo'shish",
     "score": "Ball",
     "correct": "To'g'ri!",
@@ -555,7 +558,9 @@
     "check": "Tekshirish",
     "matchPairs": "Juftlarni toping",
     "loading": "O'yin yuklanmoqda...",
+    "loadingTitle": "O'yin tayyorlanmoqda",
     "loadError": "O'yin sessiyasini yuklab bo'lmadi. Ulanishni tekshiring yoki qayta urinib ko'ring.",
+    "loadErrorTitle": "O'yin boshlanmadi",
     "tryAgain": "Qayta urinish",
     "word_match": {
       "name": "So'z jufti",

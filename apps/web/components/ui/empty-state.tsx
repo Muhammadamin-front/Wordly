@@ -1,3 +1,4 @@
+import { type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, type LucideIcon } from "lucide-react";
 
@@ -11,6 +12,7 @@ export function EmptyState({
   actionLabel,
   actionHref,
   onAction,
+  children,
   className,
 }: {
   icon?: LucideIcon;
@@ -19,6 +21,7 @@ export function EmptyState({
   actionLabel?: string;
   actionHref?: string;
   onAction?: () => void;
+  children?: ReactNode;
   className?: string;
 }) {
   const action =
@@ -51,6 +54,7 @@ export function EmptyState({
       <h2 className="type-h3 mt-4 text-ink">{title}</h2>
       <p className="type-body-small mx-auto mt-2 max-w-md text-ink-soft">{body}</p>
       {action && <div className="mt-5">{action}</div>}
+      {children}
     </section>
   );
 }
