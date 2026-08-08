@@ -58,3 +58,6 @@ apps/api/scripts/data/.enrich_cache/
 apps/api/scripts/data/phrasal_idioms_ru_cache.json
 
 *.bak
+
+# local AI harness settings
+.claude/settings.local.json
