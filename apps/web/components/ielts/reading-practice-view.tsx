@@ -171,9 +171,16 @@ export function ReadingPracticeView({ lang }: { lang: string }) {
   const [isPaused, setIsPaused] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [result, setResult] = useState<TestResult | null>(null);
-  const [history, setHistory] = useState<TestHistory>(() => readStore(`${STORAGE_PREFIX}:history`, {}));
+  const [history, setHistory] = useState<TestHistory>({});
 
   const test = getReadingTest(selectedTestId);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setHistory(readStore(`${STORAGE_PREFIX}:history`, {}));
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
   const openStart = (testId: string) => {
     setSelectedTestId(testId);
     setResult(null);
