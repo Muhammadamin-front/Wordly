@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { SkillView } from "@/components/ielts/skill-view";
+import { SpeakingPracticeView } from "@/components/ielts/speaking-practice-view";
 import { SiteHeader } from "@/components/site/header";
 import type { Locale } from "@/lib/locales";
 import { getDictionary, hasLocale } from "../../dictionaries";
@@ -12,7 +12,7 @@ export default async function IeltsSkillPage({ params }: { params: Promise<{ lan
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <SkillView lang={lang} skill="speaking" t={dict.ieltsHub} />
+      <SpeakingPracticeView />
     </>
   );
 }
