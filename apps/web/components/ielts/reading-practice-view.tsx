@@ -131,6 +131,35 @@ function writeStore<T>(key: string, value: T) {
   if (typeof window !== "undefined") window.localStorage.setItem(key, JSON.stringify(value));
 }
 
+export function restoreHighlights(test: ReadingPracticeTest): Highlight[] {
+  const key = `${STORAGE_PREFIX}:${test.id}:highlights`;
+  const saved = readStore<Highlight[]>(key, []);
+  let changed = false;
+  const repaired = saved.map((highlight) => {
+    const source = test.passages
+      .find((passage) => passage.id === highlight.passageId)
+      ?.paragraphs[highlight.paragraphIndex]?.text;
+    if (!source || source.slice(highlight.start, highlight.end) === highlight.text) return highlight;
+
+    // Earlier versions counted the visible A/B/C paragraph label as one character.
+    const legacyStart = highlight.start - 1;
+    if (
+      legacyStart >= 0 &&
+      source.slice(legacyStart, legacyStart + highlight.text.length) === highlight.text
+    ) {
+      changed = true;
+      return {
+        ...highlight,
+        start: legacyStart,
+        end: legacyStart + highlight.text.length,
+      };
+    }
+    return highlight;
+  });
+  if (changed) writeStore(key, repaired);
+  return repaired;
+}
+
 function formatTime(seconds: number) {
   const minutes = Math.floor(Math.max(seconds, 0) / 60);
   const remainder = Math.max(seconds, 0) % 60;
@@ -449,7 +478,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [drawer, setDrawer] = useState<Drawer>(null);
-  const [highlights, setHighlights] = useState<Highlight[]>(() => readStore(`${STORAGE_PREFIX}:${test.id}:highlights`, []));
+  const [highlights, setHighlights] = useState<Highlight[]>(() => restoreHighlights(test));
   const [notes, setNotes] = useState<PassageNote[]>(() => readStore(`${STORAGE_PREFIX}:${test.id}:notes`, []));
   const [vocabulary, setVocabulary] = useState<SavedVocabulary[]>(() => readStore(`${STORAGE_PREFIX}:${test.id}:vocabulary`, []));
   const [selectedRange, setSelectedRange] = useState<SelectedRange | null>(null);
@@ -590,7 +619,7 @@ function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights }: 
   let cursor = 0;
   matches.forEach((highlight) => { if (highlight.start > cursor) fragments.push({ text: paragraph.text.slice(cursor, highlight.start) }); fragments.push({ text: paragraph.text.slice(Math.max(cursor, highlight.start), highlight.end), color: highlight.color }); cursor = Math.max(cursor, highlight.end); });
   if (cursor < paragraph.text.length) fragments.push({ text: paragraph.text.slice(cursor) });
-  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.86] text-ink"><span className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span>{fragments.map((fragment, index) => fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{fragment.text}</mark> : <span key={`${fragment.text}-${index}`}>{fragment.text}</span>)}</p>;
+  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.86] text-ink"><span aria-hidden="true" className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span><span data-reading-paragraph-text>{fragments.map((fragment, index) => fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{fragment.text}</mark> : <span key={`${fragment.text}-${index}`}>{fragment.text}</span>)}</span></p>;
 }
 
 function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, setSelectedRange: (range: SelectedRange | null) => void) {
@@ -601,9 +630,10 @@ function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.Keybo
   const startElement = elementForNode(range.startContainer);
   const endElement = elementForNode(range.endContainer);
   const paragraph = startElement?.closest<HTMLElement>("[data-reading-paragraph]");
-  if (!paragraph || paragraph !== endElement?.closest("[data-reading-paragraph]") || !root.contains(paragraph)) return setSelectedRange(null);
+  const textRoot = paragraph?.querySelector<HTMLElement>("[data-reading-paragraph-text]");
+  if (!paragraph || paragraph !== endElement?.closest("[data-reading-paragraph]") || !textRoot || !root.contains(paragraph) || !textRoot.contains(startElement) || !textRoot.contains(endElement)) return setSelectedRange(null);
   const measure = document.createRange();
-  measure.selectNodeContents(paragraph);
+  measure.selectNodeContents(textRoot);
   try {
     measure.setEnd(range.startContainer, range.startOffset);
   } catch { return setSelectedRange(null); }
