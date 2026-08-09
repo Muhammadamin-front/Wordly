@@ -21,6 +21,11 @@ class GoogleLoginRequest(BaseModel):
     id_token: str = Field(min_length=10)
 
 
+class AppleLoginRequest(BaseModel):
+    id_token: str = Field(min_length=10)
+    display_name: Optional[str] = Field(default=None, max_length=80)
+
+
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 

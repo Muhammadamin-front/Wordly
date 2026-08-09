@@ -75,6 +75,7 @@ class Settings(BaseSettings):
 
     # OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
+    APPLE_CLIENT_ID: Optional[str] = None
 
     # AI. Features are disabled gracefully when no provider key is configured.
     AI_MAX_TOKENS: int = 1024

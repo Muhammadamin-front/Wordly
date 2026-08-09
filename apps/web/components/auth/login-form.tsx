@@ -6,7 +6,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
-import { GoogleButton } from "@/components/auth/google-button";
+import { SocialLoginButtons } from "@/components/auth/social-login-buttons";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,7 +117,7 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
         </Button>
       </div>
 
-      <GoogleButton lang={lang} divider={auth.googleButton} />
+      <SocialLoginButtons lang={lang} auth={auth} />
 
       <p className="mt-6 text-center text-sm text-white/48">
         {auth.noAccount}{" "}

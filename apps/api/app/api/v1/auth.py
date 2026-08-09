@@ -9,6 +9,7 @@ from app.core.security import create_access_token, hash_password, utcnow, verify
 from app.db.session import get_db
 from app.models.user import Profile, User
 from app.schemas.auth import (
+    AppleLoginRequest,
     ForgotPasswordRequest,
     GoogleLoginRequest,
     LoginRequest,
@@ -23,6 +24,7 @@ from app.services import auth as auth_service
 from app.services import referrals
 from app.services.emailer import Emailer, get_emailer
 from app.services.google_oauth import GoogleVerifier, get_google_verifier
+from app.services.apple_oauth import AppleVerifier, get_apple_verifier
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -175,6 +177,44 @@ async def google_login(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
     if user.email_verified_at is None:
         user.email_verified_at = utcnow()  # Google already verified this email
+    return await build_token_pair(db, user, request, response)
+
+
+@router.post("/apple", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+async def apple_login(
+    payload: AppleLoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    verifier: AppleVerifier = Depends(get_apple_verifier),
+):
+    identity = await verifier.verify(payload.id_token)
+    if identity is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Apple sign-in failed"
+        )
+
+    user = await db.scalar(select(User).where(User.apple_id == identity.sub))
+    if user is None:
+        if not identity.email or not identity.email_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Apple did not provide a verified email for this account",
+            )
+        email = identity.email.lower()
+        user = await db.scalar(select(User).where(User.email == email))
+        if user is not None:
+            user.apple_id = identity.sub  # Apple verified this email before linking it.
+        else:
+            display_name = (payload.display_name or email.split("@")[0]).strip()[:80]
+            user = User(email=email, apple_id=identity.sub, email_verified_at=utcnow())
+            user.profile = Profile(display_name=display_name or "Vocora learner")
+            db.add(user)
+        await db.flush()
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
+    if user.email_verified_at is None:
+        user.email_verified_at = utcnow()
     return await build_token_pair(db, user, request, response)
 
 

@@ -165,6 +165,12 @@ export const authApi = {
   google: (idToken: string) =>
     apiFetch<TokenPair>("/auth/google", { method: "POST", body: { id_token: idToken } }),
 
+  apple: (idToken: string, displayName?: string) =>
+    apiFetch<TokenPair>("/auth/apple", {
+      method: "POST",
+      body: { id_token: idToken, display_name: displayName },
+    }),
+
   refresh: () => apiFetch<TokenPair>("/auth/refresh", { method: "POST", body: {} }),
 
   logout: () => apiFetch<{ message: string }>("/auth/logout", { method: "POST", body: {} }),

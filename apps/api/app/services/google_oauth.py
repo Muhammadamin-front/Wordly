@@ -27,12 +27,15 @@ class GoogleVerifier:
         settings = get_settings()
         if not settings.GOOGLE_CLIENT_ID:
             return None
-        async with httpx.AsyncClient(timeout=10) as client:
-            response = await client.get(GOOGLE_TOKENINFO_URL, params={"id_token": id_token})
-        if response.status_code != 200:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                response = await client.get(GOOGLE_TOKENINFO_URL, params={"id_token": id_token})
+            if response.status_code != 200:
+                return None
+            data = response.json()
+        except (httpx.HTTPError, ValueError):
             return None
-        data = response.json()
-        if data.get("aud") != settings.GOOGLE_CLIENT_ID:
+        if data.get("aud") != settings.GOOGLE_CLIENT_ID or not data.get("sub") or not data.get("email"):
             return None
         return GoogleIdentity(
             sub=data["sub"],

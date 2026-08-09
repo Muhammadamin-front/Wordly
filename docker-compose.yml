@@ -43,6 +43,7 @@ services:
       EMAIL_FROM: ${EMAIL_FROM:-}
       EMAIL_REPLY_TO: ${EMAIL_REPLY_TO:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      APPLE_CLIENT_ID: ${APPLE_CLIENT_ID:-}
       ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY:-}
       ELEVENLABS_VOICE_ID: ${ELEVENLABS_VOICE_ID:-pNInz6obpgDQGcFmaJgB}
       ELEVENLABS_MODEL: ${ELEVENLABS_MODEL:-eleven_flash_v2_5}
@@ -87,6 +88,8 @@ services:
         # Baked into the client bundle at build time — the browser calls this.
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
+        NEXT_PUBLIC_APPLE_CLIENT_ID: ${NEXT_PUBLIC_APPLE_CLIENT_ID:-}
+        NEXT_PUBLIC_APPLE_REDIRECT_URI: ${NEXT_PUBLIC_APPLE_REDIRECT_URI:-}
     ports:
       # Override with WEB_PORT if 3000 is taken on the host.
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
