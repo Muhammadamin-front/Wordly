@@ -14,7 +14,7 @@ export default async function AdminWordsPage({ params }: { params: Promise<{ lan
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <AdminGuard lang={lang} deniedMessage={dict.admin.accessDenied}>
+      <AdminGuard lang={lang} deniedMessage={dict.admin.accessDenied} allowedRoles={["content_manager", "admin", "super_admin"]}>
         <WordsAdmin lang={lang} admin={dict.admin} />
       </AdminGuard>
     </>

@@ -6,6 +6,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import decode_access_token
+from app.core.config import get_settings
+from app.core.roles import ADMIN_ROLES, CONTENT_ROLES, SUPPORT_ROLES, SUPER_ADMIN
 from app.db.session import get_db
 from app.models.user import User
 
@@ -43,6 +45,36 @@ def refresh_token_from_cookie(request: Request) -> Optional[str]:
 
 
 async def require_admin(user: User = Depends(get_current_user)) -> User:
-    if user.role != "admin":
+    if user.role not in ADMIN_ROLES:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return user
+
+
+async def require_super_admin(user: User = Depends(get_current_user)) -> User:
+    if user.role != SUPER_ADMIN:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Super admin access required")
+    return user
+
+
+async def require_content_manager(user: User = Depends(get_current_user)) -> User:
+    if user.role not in CONTENT_ROLES:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Content manager access required")
+    return user
+
+
+async def require_support(user: User = Depends(get_current_user)) -> User:
+    if user.role not in SUPPORT_ROLES:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Support access required")
+    return user
+
+
+async def require_trusted_origin(request: Request) -> None:
+    """Protect cookie-authenticated mutations from cross-site browser requests.
+
+    Bearer-authenticated API calls remain available to mobile/server clients;
+    browsers always send Origin on cross-site POSTs, which is the CSRF boundary.
+    """
+
+    origin = request.headers.get("origin")
+    if origin and origin not in get_settings().cors_origins:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Untrusted origin")

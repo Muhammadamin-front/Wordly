@@ -21,7 +21,9 @@ class User(Base):
     referral_code: Mapped[Optional[str]] = mapped_column(String(12), unique=True, nullable=True)
     email_verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-    role: Mapped[str] = mapped_column(String(16), default="learner", nullable=False)  # learner|teacher|admin
+    role: Mapped[str] = mapped_column(
+        String(16), default="learner", nullable=False
+    )  # learner|teacher|support|content_manager|admin|super_admin
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=utcnow, onupdate=utcnow, nullable=False

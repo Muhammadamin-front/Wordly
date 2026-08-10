@@ -15,6 +15,8 @@ def production_settings(secret_key: str) -> Settings:
         EMAIL_PROVIDER="resend",
         RESEND_API_KEY="re_production",
         EMAIL_FROM="Wordly <noreply@words.uz>",
+        COOKIE_SECURE=True,
+        REDIS_URL="redis://redis:6379/0",
     )
 
 
@@ -46,6 +48,18 @@ def test_production_rejects_low_entropy_secret():
 def test_production_accepts_generated_secret():
     assert estimated_secret_entropy_bits(VALID_PRODUCTION_SECRET) >= 192
     production_settings(VALID_PRODUCTION_SECRET).validate_runtime()
+
+
+def test_production_requires_secure_cookie_and_redis():
+    settings = production_settings(VALID_PRODUCTION_SECRET)
+    settings.COOKIE_SECURE = False
+    with pytest.raises(RuntimeError, match="COOKIE_SECURE"):
+        settings.validate_runtime()
+
+    settings.COOKIE_SECURE = True
+    settings.REDIS_URL = None
+    with pytest.raises(RuntimeError, match="REDIS_URL"):
+        settings.validate_runtime()
 
 
 @pytest.mark.parametrize(

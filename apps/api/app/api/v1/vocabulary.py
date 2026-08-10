@@ -5,12 +5,13 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFil
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import require_admin
+from app.api.deps import require_content_manager
 from app.core.cache import cached_response
 from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.vocabulary import Category, Word
 from app.models.expression import Expression
+from app.models.user import User
 from app.schemas.auth import MessageOut
 from app.schemas.vocabulary import (
     CategoryOut,
@@ -23,10 +24,11 @@ from app.schemas.vocabulary import (
     WordUpdate,
 )
 from app.services import vocabulary as vocab_service
+from app.services.admin_audit import record_admin_action
 
 router = APIRouter(tags=["vocabulary"])
 admin_router = APIRouter(
-    prefix="/admin/words", tags=["admin"], dependencies=[Depends(require_admin)]
+    prefix="/admin/words", tags=["admin"], dependencies=[Depends(require_content_manager)]
 )
 
 CEFR_QUERY_PATTERN = "^(A1|A2|B1|B2|C1|C2)$"
@@ -148,36 +150,94 @@ async def admin_get_word(word_id: UUID, db: AsyncSession = Depends(get_db)):
 
 
 @admin_router.post("", response_model=WordOut, status_code=status.HTTP_201_CREATED)
-async def admin_create_word(payload: WordCreate, db: AsyncSession = Depends(get_db)):
+async def admin_create_word(
+    payload: WordCreate,
+    request: Request,
+    actor: User = Depends(require_content_manager),
+    db: AsyncSession = Depends(get_db),
+):
     word = await vocab_service.create_word(db, payload)
+    await record_admin_action(
+        db,
+        actor=actor,
+        request=request,
+        action="word.create",
+        target_type="word",
+        target_id=str(word.id),
+        new_value={"headword": word.headword, "status": word.status, "cefr_level": word.cefr_level},
+    )
     await db.commit()
     return WordOut.model_validate(word)
 
 
 @admin_router.patch("/{word_id}", response_model=WordOut)
 async def admin_update_word(
-    word_id: UUID, payload: WordUpdate, db: AsyncSession = Depends(get_db)
+    word_id: UUID,
+    payload: WordUpdate,
+    request: Request,
+    actor: User = Depends(require_content_manager),
+    db: AsyncSession = Depends(get_db),
 ):
     word = await db.get(Word, word_id)
     if word is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found")
+    previous_value = {
+        "headword": word.headword,
+        "status": word.status,
+        "cefr_level": word.cefr_level,
+    }
     word = await vocab_service.update_word(db, word, payload)
+    await record_admin_action(
+        db,
+        actor=actor,
+        request=request,
+        action="word.update",
+        target_type="word",
+        target_id=str(word.id),
+        previous_value=previous_value,
+        new_value={
+            "headword": word.headword,
+            "status": word.status,
+            "cefr_level": word.cefr_level,
+            "changed_fields": sorted(payload.model_fields_set),
+        },
+    )
     await db.commit()
     return WordOut.model_validate(word)
 
 
 @admin_router.delete("/{word_id}", response_model=MessageOut)
-async def admin_delete_word(word_id: UUID, db: AsyncSession = Depends(get_db)):
+async def admin_delete_word(
+    word_id: UUID,
+    request: Request,
+    actor: User = Depends(require_content_manager),
+    db: AsyncSession = Depends(get_db),
+):
     word = await db.get(Word, word_id)
     if word is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Word not found")
+    previous_value = {"headword": word.headword, "status": word.status, "cefr_level": word.cefr_level}
     await db.delete(word)
+    await record_admin_action(
+        db,
+        actor=actor,
+        request=request,
+        action="word.delete",
+        target_type="word",
+        target_id=str(word_id),
+        previous_value=previous_value,
+    )
     await db.commit()
     return MessageOut(message="Word deleted")
 
 
 @admin_router.post("/import", response_model=ImportReport)
-async def admin_import_csv(file: UploadFile, db: AsyncSession = Depends(get_db)):
+async def admin_import_csv(
+    file: UploadFile,
+    request: Request,
+    actor: User = Depends(require_content_manager),
+    db: AsyncSession = Depends(get_db),
+):
     if file.content_type not in ("text/csv", "application/vnd.ms-excel", "application/octet-stream"):
         raise HTTPException(
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, detail="Upload a CSV file"
@@ -186,5 +246,14 @@ async def admin_import_csv(file: UploadFile, db: AsyncSession = Depends(get_db))
     if len(raw) > 5 * 1024 * 1024:
         raise HTTPException(status_code=status.HTTP_413_CONTENT_TOO_LARGE, detail="CSV too large")
     report = await vocab_service.import_csv(db, raw.decode("utf-8-sig"))
+    await record_admin_action(
+        db,
+        actor=actor,
+        request=request,
+        action="word.import_csv",
+        target_type="word_catalog",
+        target_id="csv_import",
+        new_value={"created": report.created, "updated": report.updated, "errors": len(report.errors)},
+    )
     await db.commit()
     return report

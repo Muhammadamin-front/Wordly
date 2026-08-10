@@ -6,13 +6,17 @@ import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 
+type StaffRole = "support" | "content_manager" | "admin" | "super_admin";
+
 export function AdminGuard({
   lang,
   deniedMessage,
+  allowedRoles = ["admin", "super_admin"],
   children,
 }: {
   lang: string;
   deniedMessage: string;
+  allowedRoles?: StaffRole[];
   children: ReactNode;
 }) {
   const { user, ready } = useAuth();
@@ -30,7 +34,7 @@ export function AdminGuard({
     );
   }
 
-  if (user.role !== "admin") {
+  if (!allowedRoles.includes(user.role as StaffRole)) {
     return (
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
         <Alert tone="error">{deniedMessage}</Alert>

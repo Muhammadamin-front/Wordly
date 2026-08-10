@@ -29,15 +29,62 @@ export interface AdminUser {
   created_at: string;
 }
 
+export interface AdminAuditLog {
+  id: string;
+  actor_id: string | null;
+  actor_email: string | null;
+  action: string;
+  target_type: string;
+  target_id: string;
+  previous_value: Record<string, unknown> | null;
+  new_value: Record<string, unknown> | null;
+  reason: string | null;
+  created_at: string;
+}
+
+export interface AdminUserDetail extends AdminUser {
+  cefr_level: string;
+  learning_goal: string;
+  onboarding_completed: boolean;
+  cards_total: number;
+  cards_due: number;
+  reviews_total: number;
+  latest_review_at: string | null;
+  subscription: {
+    plan_code: string;
+    status: string;
+    provider: string;
+    auto_renew: boolean;
+    expires_at: string;
+  } | null;
+  payments: Array<{
+    id: string;
+    provider: string;
+    plan_code: string;
+    amount_tiyin: number;
+    state: number;
+    created_at: string;
+  }>;
+}
+
+export type StaffRole =
+  | "learner"
+  | "teacher"
+  | "support"
+  | "content_manager"
+  | "admin"
+  | "super_admin";
+
 export const adminApi = {
   analytics: () => apiFetch<AdminAnalytics>("/admin/analytics", { auth: true }),
 
   reports: (resolved = false) =>
     apiFetch<AiReport[]>(`/admin/ai-reports?resolved=${resolved}`, { auth: true }),
 
-  resolveReport: (id: string) =>
+  resolveReport: (id: string, reason?: string) =>
     apiFetch<{ message: string }>(`/admin/ai-reports/${id}/resolve`, {
       method: "POST",
+      body: reason ? { reason } : undefined,
       auth: true,
     }),
 
@@ -47,16 +94,28 @@ export const adminApi = {
       { auth: true }
     ),
 
-  ban: (id: string) =>
-    apiFetch<{ message: string }>(`/admin/users/${id}/ban`, { method: "POST", auth: true }),
+  userDetail: (id: string) => apiFetch<AdminUserDetail>(`/admin/users/${id}`, { auth: true }),
 
-  unban: (id: string) =>
-    apiFetch<{ message: string }>(`/admin/users/${id}/unban`, { method: "POST", auth: true }),
-
-  setRole: (id: string, role: string) =>
-    apiFetch<{ message: string }>(`/admin/users/${id}/role`, {
+  ban: (id: string, reason?: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}/ban`, {
       method: "POST",
-      body: { role },
+      body: reason ? { reason } : undefined,
       auth: true,
     }),
+
+  unban: (id: string, reason?: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}/unban`, {
+      method: "POST",
+      body: reason ? { reason } : undefined,
+      auth: true,
+    }),
+
+  setRole: (id: string, role: StaffRole, reason?: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}/role`, {
+      method: "POST",
+      body: { role, ...(reason ? { reason } : {}) },
+      auth: true,
+    }),
+
+  auditLogs: () => apiFetch<AdminAuditLog[]>("/admin/audit-logs", { auth: true }),
 };

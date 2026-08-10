@@ -1,5 +1,9 @@
+from sqlalchemy import update
+
+import app.db.session as db_session
+from app.models.user import User
 from tests.conftest import register_user
-from tests.test_vocabulary import make_admin
+from tests.test_vocabulary import make_admin, make_super_admin
 
 
 async def test_admin_endpoints_require_admin(client):
@@ -54,7 +58,7 @@ async def test_ai_report_moderation_queue(client):
 
 async def test_user_management_ban_and_role(client):
     target = await register_user(client, email="target@words.uz")
-    admin = await make_admin(client)
+    admin = await make_super_admin(client)
 
     users = (await client.get("/api/v1/admin/users?q=target", headers=admin)).json()
     assert users["total"] == 1
@@ -76,6 +80,40 @@ async def test_user_management_ban_and_role(client):
         "/api/v1/admin/users/{}/role".format(target_id), json={"role": "teacher"}, headers=admin
     )
     assert promote.status_code == 200
+
+    audit = await client.get("/api/v1/admin/audit-logs", headers=admin)
+    assert audit.status_code == 200
+    assert {item["action"] for item in audit.json()} >= {
+        "user.suspend",
+        "user.reactivate",
+        "user.role_change",
+    }
+
+
+async def test_admin_cannot_change_roles_and_support_has_read_only_user_access(client):
+    target = await register_user(client, email="target@words.uz")
+    admin = await make_admin(client)
+    target_id = target["user"]["id"]
+
+    role_change = await client.post(
+        "/api/v1/admin/users/{}/role".format(target_id),
+        json={"role": "teacher"},
+        headers=admin,
+    )
+    assert role_change.status_code == 403
+
+    support = await register_user(client, email="support@words.uz")
+    async with db_session.get_session_factory()() as session:
+        await session.execute(
+            update(User).where(User.email == "support@words.uz").values(role="support")
+        )
+        await session.commit()
+    support_headers = {"Authorization": "Bearer " + support["access_token"]}
+    assert (await client.get("/api/v1/admin/users", headers=support_headers)).status_code == 200
+    assert (await client.get("/api/v1/admin/analytics", headers=support_headers)).status_code == 403
+    assert (
+        await client.post("/api/v1/admin/users/{}/ban".format(target_id), headers=support_headers)
+    ).status_code == 403
 
 
 async def test_admin_cannot_ban_self(client):

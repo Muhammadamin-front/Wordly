@@ -64,3 +64,11 @@ async def test_logout_revokes_refresh_token(client):
     client.cookies.set("words_refresh", refresh)
     replay = await client.post("/api/v1/auth/refresh", json={})
     assert replay.status_code == 401
+
+
+async def test_refresh_rejects_untrusted_origin(client):
+    await register_user(client)
+    response = await client.post(
+        "/api/v1/auth/refresh", json={}, headers={"Origin": "https://attacker.example"}
+    )
+    assert response.status_code == 403

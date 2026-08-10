@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import REFRESH_COOKIE_NAME, get_current_user, refresh_token_from_cookie
+from app.api.deps import (
+    REFRESH_COOKIE_NAME,
+    get_current_user,
+    refresh_token_from_cookie,
+    require_trusted_origin,
+)
 from app.core.config import Settings, get_settings
 from app.core.rate_limit import client_ip, rate_limit
 from app.core.security import create_access_token, hash_password, utcnow, verify_password
@@ -223,6 +228,7 @@ async def refresh(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
     raw = refresh_token_from_cookie(request)
@@ -251,6 +257,7 @@ async def logout(
     request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
+    _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
     raw = refresh_token_from_cookie(request)

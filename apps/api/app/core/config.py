@@ -251,6 +251,12 @@ class Settings(BaseSettings):
         if estimated_secret_entropy_bits(secret) < MIN_PRODUCTION_SECRET_ENTROPY_BITS:
             raise RuntimeError("SECRET_KEY must be a high-entropy production secret")
 
+        if not self.COOKIE_SECURE:
+            raise RuntimeError("COOKIE_SECURE must be true in production")
+
+        if not self.REDIS_URL:
+            raise RuntimeError("REDIS_URL is required in production for shared rate limits and caching")
+
 
 @lru_cache
 def get_settings() -> Settings:

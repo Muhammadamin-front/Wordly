@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -43,8 +43,54 @@ class AdminUserPage(BaseModel):
     page_size: int
 
 
-class RoleUpdate(BaseModel):
-    role: str = Field(pattern="^(learner|teacher|admin)$")
+class AdminSubscriptionOut(BaseModel):
+    plan_code: str
+    status: str
+    provider: str
+    auto_renew: bool
+    expires_at: datetime
+
+
+class AdminPaymentOut(BaseModel):
+    id: UUID
+    provider: str
+    plan_code: str
+    amount_tiyin: int
+    state: int
+    created_at: datetime
+
+
+class AdminUserDetailOut(AdminUserOut):
+    cefr_level: str
+    learning_goal: str
+    onboarding_completed: bool
+    cards_total: int
+    cards_due: int
+    reviews_total: int
+    latest_review_at: Optional[datetime] = None
+    subscription: Optional[AdminSubscriptionOut] = None
+    payments: List[AdminPaymentOut] = Field(default_factory=list)
+
+
+class AdminActionRequest(BaseModel):
+    reason: Optional[str] = Field(default=None, max_length=500)
+
+
+class RoleUpdate(AdminActionRequest):
+    role: Literal["learner", "teacher", "support", "content_manager", "admin", "super_admin"]
+
+
+class AdminAuditLogOut(BaseModel):
+    id: UUID
+    actor_id: Optional[UUID] = None
+    actor_email: Optional[str] = None
+    action: str
+    target_type: str
+    target_id: str
+    previous_value: Optional[dict] = None
+    new_value: Optional[dict] = None
+    reason: Optional[str] = None
+    created_at: datetime
 
 
 class MessageOut(BaseModel):

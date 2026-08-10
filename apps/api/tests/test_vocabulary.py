@@ -44,12 +44,44 @@ async def make_admin(client) -> dict:
     return {"Authorization": "Bearer " + response.json()["access_token"]}
 
 
+async def make_super_admin(client) -> dict:
+    headers = await make_admin(client)
+    async with db_session.get_session_factory()() as session:
+        await session.execute(
+            update(User).where(User.email == "admin@words.uz").values(role="super_admin")
+        )
+        await session.commit()
+    return headers
+
+
+async def make_content_manager(client) -> dict:
+    from tests.conftest import REGISTER_PAYLOAD
+
+    response = await client.post(
+        "/api/v1/auth/register", json={**REGISTER_PAYLOAD, "email": "content@words.uz"}
+    )
+    assert response.status_code == 201, response.text
+    async with db_session.get_session_factory()() as session:
+        await session.execute(
+            update(User).where(User.email == "content@words.uz").values(role="content_manager")
+        )
+        await session.commit()
+    return {"Authorization": "Bearer " + response.json()["access_token"]}
+
+
 async def test_admin_endpoints_require_admin_role(client):
     data = await register_user(client)  # plain learner
     headers = {"Authorization": "Bearer " + data["access_token"]}
     response = await client.post("/api/v1/admin/words", json=WORD_PAYLOAD, headers=headers)
     assert response.status_code == 403
     assert (await client.post("/api/v1/admin/words", json=WORD_PAYLOAD)).status_code == 401
+
+
+async def test_content_manager_can_manage_words_without_user_admin_access(client):
+    headers = await make_content_manager(client)
+    created = await client.post("/api/v1/admin/words", json=WORD_PAYLOAD, headers=headers)
+    assert created.status_code == 201, created.text
+    assert (await client.get("/api/v1/admin/users", headers=headers)).status_code == 403
 
 
 async def test_create_and_fetch_word(client):

@@ -70,6 +70,8 @@ def test_production_allows_console_email_provider_temporarily():
         ENVIRONMENT="production",
         SECRET_KEY=PRODUCTION_SECRET,
         EMAIL_PROVIDER="console",
+        COOKIE_SECURE=True,
+        REDIS_URL="redis://redis:6379/0",
     )
 
     settings.validate_runtime()
@@ -83,6 +85,8 @@ def test_production_accepts_complete_resend_configuration():
         EMAIL_PROVIDER="resend",
         RESEND_API_KEY="re_production",
         EMAIL_FROM="Wordly <noreply@words.uz>",
+        COOKIE_SECURE=True,
+        REDIS_URL="redis://redis:6379/0",
     )
 
     settings.validate_runtime()
