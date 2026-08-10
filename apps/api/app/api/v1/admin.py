@@ -13,7 +13,7 @@ from app.models.ai import AiReport
 from app.models.audit import AdminAuditLog
 from app.models.billing import Payment, Subscription
 from app.models.flashcards import Card, ReviewLog
-from app.models.user import Profile, User
+from app.models.user import OneTimeToken, Profile, RefreshToken, User
 from app.schemas.admin import (
     AdminActionRequest,
     AdminAnalyticsOut,
@@ -25,9 +25,11 @@ from app.schemas.admin import (
     AdminUserPage,
     AiReportOut,
     MessageOut,
+    ManualSubscriptionGrant,
     RoleUpdate,
 )
 from app.services import auth as auth_service
+from app.services import subscriptions
 from app.services.admin_audit import record_admin_action
 from app.services.plans import get_plan
 
@@ -184,6 +186,29 @@ async def user_detail(
     latest_review_at = await db.scalar(
         select(func.max(ReviewLog.reviewed_at)).where(ReviewLog.user_id == user.id)
     )
+    active_sessions = int(
+        await db.scalar(
+            select(func.count(RefreshToken.id)).where(
+                RefreshToken.user_id == user.id,
+                RefreshToken.revoked_at.is_(None),
+                RefreshToken.expires_at > now,
+            )
+        )
+        or 0
+    )
+    latest_session_at = await db.scalar(
+        select(func.max(RefreshToken.created_at)).where(RefreshToken.user_id == user.id)
+    )
+    password_reset_pending = bool(
+        await db.scalar(
+            select(OneTimeToken.id).where(
+                OneTimeToken.user_id == user.id,
+                OneTimeToken.purpose == "reset_password",
+                OneTimeToken.used_at.is_(None),
+                OneTimeToken.expires_at > now,
+            )
+        )
+    )
     subscription = await db.scalar(
         select(Subscription)
         .where(Subscription.user_id == user.id)
@@ -207,6 +232,7 @@ async def user_detail(
         is_active=user.is_active,
         is_premium=bool(subscription and subscription.status == "active" and subscription.expires_at > now),
         created_at=user.created_at,
+        email_verified=user.email_verified,
         cefr_level=user.profile.cefr_level,
         learning_goal=user.profile.learning_goal,
         onboarding_completed=user.profile.onboarding_completed,
@@ -214,6 +240,9 @@ async def user_detail(
         cards_due=cards_due,
         reviews_total=reviews_total,
         latest_review_at=latest_review_at,
+        active_sessions=active_sessions,
+        latest_session_at=latest_session_at,
+        password_reset_pending=password_reset_pending,
         subscription=(
             AdminSubscriptionOut(
                 plan_code=subscription.plan_code,
@@ -336,6 +365,72 @@ async def set_role(
     )
     await db.commit()
     return MessageOut(message="Role updated")
+
+
+@router.post("/users/{user_id}/subscription/grant", response_model=MessageOut)
+async def manually_grant_subscription(
+    user_id: UUID,
+    payload: ManualSubscriptionGrant,
+    request: Request,
+    admin: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await _get_user(db, user_id, admin)
+    subscription = await subscriptions.grant(
+        db,
+        user.id,
+        payload.plan_code,
+        provider="manual",
+        extra_days=payload.extra_days,
+    )
+    await record_admin_action(
+        db,
+        actor=admin,
+        request=request,
+        action="subscription.manual_grant",
+        target_type="subscription",
+        target_id=str(subscription.id),
+        new_value={
+            "user_id": str(user.id),
+            "plan_code": subscription.plan_code,
+            "expires_at": subscription.expires_at.isoformat(),
+            "extra_days": payload.extra_days,
+        },
+        reason=payload.reason,
+    )
+    await db.commit()
+    return MessageOut(message="Subscription granted")
+
+
+@router.post("/users/{user_id}/subscription/revoke", response_model=MessageOut)
+async def manually_revoke_subscription(
+    user_id: UUID,
+    payload: AdminActionRequest,
+    request: Request,
+    admin: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    if not payload.reason or not payload.reason.strip():
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail="Reason is required")
+    user = await _get_user(db, user_id, admin)
+    subscription = await db.scalar(select(Subscription).where(Subscription.user_id == user.id))
+    if subscription is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subscription not found")
+    previous_value = {"status": subscription.status, "expires_at": subscription.expires_at.isoformat()}
+    await subscriptions.cancel(db, user.id, revoke_now=True)
+    await record_admin_action(
+        db,
+        actor=admin,
+        request=request,
+        action="subscription.manual_revoke",
+        target_type="subscription",
+        target_id=str(subscription.id),
+        previous_value=previous_value,
+        new_value={"status": subscription.status, "expires_at": subscription.expires_at.isoformat()},
+        reason=payload.reason,
+    )
+    await db.commit()
+    return MessageOut(message="Subscription revoked")
 
 
 @router.get("/audit-logs", response_model=list[AdminAuditLogOut], dependencies=[Depends(require_admin)])

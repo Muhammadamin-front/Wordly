@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authApi } from "@/lib/api";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["auth"] }) {
@@ -36,6 +37,7 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
     event.preventDefault();
     setError(null);
     setLoading(true);
+    trackEvent("signup_started", { locale: lang, provider: "password" });
     const form = new FormData(event.currentTarget);
     const ref = searchParams.get("ref") ?? undefined;
     try {
@@ -47,6 +49,7 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
         referral_code: ref,
       });
       applySession(pair);
+      trackEvent("signup_completed", { locale: lang, provider: "password", referral: Boolean(ref) });
       router.push(`/${lang}/onboarding`);
     } catch (err) {
       setError(authErrorMessage(err, auth));

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut, type Queue, type Rating } from "@/lib/flashcards";
 import { speak } from "@/lib/games";
 import { notifyStatsChanged, type Reward } from "@/lib/gamification";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -118,6 +119,7 @@ export function ReviewSession({
         );
         reviewKeys.current.delete(card.id);
         setReviewedCount((count) => count + 1);
+        trackEvent("flashcard_reviewed", { rating, deck: deckId ?? "main" });
         setSessionXp((xp) => xp + reward.xp_gained);
         if (reward.new_achievements.length > 0) {
           setSessionAchievements((prev) => [...prev, ...reward.new_achievements]);
@@ -131,6 +133,7 @@ export function ReviewSession({
           shownAt.current = Date.now();
         } else {
           setPhase("done");
+          trackEvent("lesson_completed", { deck: deckId ?? "main", reviewed: reviewedCount + 1 });
         }
       } catch {
         setError("review");
@@ -138,7 +141,7 @@ export function ReviewSession({
         submitting.current = false;
       }
     },
-    [card, queue, index, announce]
+    [card, queue, index, announce, deckId, reviewedCount]
   );
 
   // Keyboard: Space/Enter flips; 1-4 rate when the back is visible.

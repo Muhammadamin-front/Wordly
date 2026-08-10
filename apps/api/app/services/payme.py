@@ -7,6 +7,7 @@ identified by account[order_id]) and drive its state machine. Amounts are in
 tiyin. See docs/milestones/M7.md for the flow.
 """
 import base64
+import hmac
 import time
 from typing import Any, Dict, Optional
 from uuid import UUID
@@ -57,8 +58,8 @@ def check_auth(authorization: Optional[str]) -> None:
         decoded = base64.b64decode(authorization[6:]).decode("utf-8")
     except Exception:
         raise PaymeError(ERR_AUTH, "bad authorization")
-    _, _, key = decoded.partition(":")
-    if key != settings.PAYME_MERCHANT_KEY:
+    login, separator, key = decoded.partition(":")
+    if login != "Paycom" or not separator or not hmac.compare_digest(key, settings.PAYME_MERCHANT_KEY):
         raise PaymeError(ERR_AUTH, "invalid merchant key")
 
 
@@ -112,6 +113,7 @@ async def create_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[s
 
     order.provider_txn_id = txn_id
     order.state = CREATED
+    order.status = "processing"
     order.create_time_ms = _now_ms()
     await db.flush()
     return {"create_time": order.create_time_ms, "transaction": str(order.id), "state": CREATED}
@@ -125,6 +127,7 @@ async def perform_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[
         raise PaymeError(ERR_CANT_PERFORM, "cannot perform in current state")
 
     order.state = PERFORMED
+    order.status = "succeeded"
     order.perform_time_ms = _now_ms()
     await subscriptions.grant(db, order.user_id, order.plan_code, provider="payme")
     await referrals.reward_on_first_payment(db, order.user_id)
@@ -141,8 +144,9 @@ async def cancel_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[s
     new_state = CANCELLED_AFTER_PERFORM if order.state == PERFORMED else CANCELLED
     if order.state == PERFORMED:
         # Reverse the entitlement granted at perform time.
-        await subscriptions.cancel(db, order.user_id)
+        await subscriptions.cancel(db, order.user_id, revoke_now=True)
     order.state = new_state
+    order.status = "refunded" if new_state == CANCELLED_AFTER_PERFORM else "cancelled"
     order.cancel_time_ms = _now_ms()
     order.cancel_reason = reason
     await db.flush()

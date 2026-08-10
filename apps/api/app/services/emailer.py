@@ -21,7 +21,7 @@ class ConsoleEmailer:
     async def send(self, to: str, subject: str, body: str) -> None:
         message = {"to": to, "subject": subject, "body": body}
         ConsoleEmailer.outbox.append(message)
-        logger.info("email_queued provider=console to=%s subject=%r", to, subject)
+        logger.info("email_queued provider=console recipient_domain=%s", to.rpartition("@")[2])
 
 
 class EmailDeliveryError(RuntimeError):
@@ -62,13 +62,13 @@ class ResendEmailer:
         except httpx.HTTPError as exc:
             status_code = exc.response.status_code if isinstance(exc, httpx.HTTPStatusError) else None
             logger.error(
-                "email_delivery_failed provider=resend to=%s status=%s",
-                to,
+                "email_delivery_failed provider=resend recipient_domain=%s status=%s",
+                to.rpartition("@")[2],
                 status_code or "network_error",
             )
             raise EmailDeliveryError("Email delivery failed") from exc
 
-        logger.info("email_sent provider=resend to=%s", to)
+        logger.info("email_sent provider=resend recipient_domain=%s", to.rpartition("@")[2])
 
 
 def get_emailer() -> Emailer:

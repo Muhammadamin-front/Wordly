@@ -1,4 +1,9 @@
+import re
+from typing import Optional
+from urllib.parse import urljoin, urlparse
+
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -49,6 +54,22 @@ async def click_complete(request: Request, db: AsyncSession = Depends(get_db)):
 # --- Authenticated billing surface (the app itself) -------------------------
 router = APIRouter(prefix="/billing", tags=["billing"], dependencies=[Depends(get_current_user)])
 
+IDEMPOTENCY_KEY_PATTERN = re.compile(r"^[A-Za-z0-9._-]{16,64}$")
+
+
+def safe_return_url(requested_url: Optional[str]) -> str:
+    """Only return learners to Vocora-controlled origins after provider checkout."""
+    settings = get_settings()
+    if not requested_url:
+        return settings.FRONTEND_ORIGIN
+    if requested_url.startswith("/") and not requested_url.startswith("//"):
+        return urljoin(settings.FRONTEND_ORIGIN.rstrip("/") + "/", requested_url.lstrip("/"))
+    parsed = urlparse(requested_url)
+    origin = "{}://{}".format(parsed.scheme, parsed.netloc)
+    if parsed.scheme not in {"http", "https"} or origin not in settings.cors_origins:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid return URL")
+    return requested_url
+
 
 @router.get("/plans", response_model=PlansOut)
 async def plans():
@@ -92,6 +113,8 @@ async def subscription(
         provider=sub.provider,
         expires_at=sub.expires_at,
         seats=sub.seats,
+        auto_renew=sub.auto_renew,
+        cancelled_at=sub.cancelled_at,
     )
 
 
@@ -99,6 +122,7 @@ async def subscription(
 async def create_checkout(
     payload: CheckoutRequest,
     user: User = Depends(get_current_user),
+    idempotency_key: Optional[str] = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ):
     plan = get_plan(payload.plan_code)
@@ -115,17 +139,40 @@ async def create_checkout(
             detail="Payment provider is not configured",
         )
 
+    key = idempotency_key.strip() if idempotency_key else None
+    if key and not IDEMPOTENCY_KEY_PATTERN.fullmatch(key):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid idempotency key")
+
+    return_url = safe_return_url(payload.return_url)
+    if key:
+        existing = await db.scalar(
+            select(Payment).where(Payment.user_id == user.id, Payment.idempotency_key == key)
+        )
+        if existing is not None:
+            if existing.provider != payload.provider or existing.plan_code != plan.code:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Idempotency key already belongs to a different checkout",
+                )
+            url = (
+                checkout.payme_url(str(existing.id), plan, return_url)
+                if existing.provider == "payme"
+                else checkout.click_url(str(existing.id), plan, return_url)
+            )
+            return CheckoutOut(order_id=str(existing.id), checkout_url=url, amount_som=plan.price_som)
+
     order = Payment(
         user_id=user.id,
         provider=payload.provider,
         plan_code=plan.code,
         amount_tiyin=som_to_tiyin(plan.price_som),
         state=0,
+        status="pending",
+        idempotency_key=key,
     )
     db.add(order)
     await db.commit()
 
-    return_url = payload.return_url or settings.FRONTEND_ORIGIN
     if payload.provider == "payme":
         url = checkout.payme_url(str(order.id), plan, return_url)
     else:
@@ -152,6 +199,7 @@ async def sandbox_activate(
     return SubscriptionOut(
         is_premium=True, plan_code=sub.plan_code, status=sub.status,
         provider=sub.provider, expires_at=sub.expires_at, seats=sub.seats,
+        auto_renew=sub.auto_renew, cancelled_at=sub.cancelled_at,
     )
 
 

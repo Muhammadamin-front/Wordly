@@ -970,7 +970,10 @@
     "learning": "O'rganish",
     "subscription": "Obuna",
     "payments": "To'lovlar",
-    "noSubscription": "Obuna yo'q"
+    "noSubscription": "Obuna yo'q",
+    "verification": "Tasdiqlash",
+    "sessions": "Faol sessiyalar",
+    "resetPending": "Tiklash so'rovi"
   },
   "social": {
     "friends": "Do'stlar",

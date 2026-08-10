@@ -70,6 +70,50 @@ async def test_checkout_creates_order_and_url(client):
         settings.PAYME_MERCHANT_KEY = None
 
 
+async def test_checkout_idempotency_and_safe_return_urls(client):
+    headers = await learner(client, email="idempotent@words.uz")
+    settings = get_settings()
+    settings.PAYME_MERCHANT_ID = "test_merchant"
+    settings.PAYME_MERCHANT_KEY = "test_key"
+    key = "checkout-idempotency-key-0001"
+    try:
+        first = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "/uz/pricing"},
+            headers={**headers, "Idempotency-Key": key},
+        )
+        second = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "/uz/pricing"},
+            headers={**headers, "Idempotency-Key": key},
+        )
+        assert first.status_code == second.status_code == 201
+        assert first.json()["order_id"] == second.json()["order_id"]
+
+        unsafe = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "https://attacker.example"},
+            headers=headers,
+        )
+        assert unsafe.status_code == 400
+    finally:
+        settings.PAYME_MERCHANT_ID = None
+        settings.PAYME_MERCHANT_KEY = None
+
+
+async def test_user_cancellation_keeps_access_until_expiry(client):
+    headers = await learner(client, email="cancelled@words.uz")
+    await client.post(
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+    )
+    canceled = await client.post("/api/v1/billing/cancel", headers=headers)
+    assert canceled.status_code == 200
+    subscription = (await client.get("/api/v1/billing/subscription", headers=headers)).json()
+    assert subscription["is_premium"] is True
+    assert subscription["auto_renew"] is False
+    assert subscription["cancelled_at"] is not None
+
+
 async def test_billing_status_and_unconfigured_checkout(client):
     headers = await learner(client)
     status_response = await client.get("/api/v1/billing/status", headers=headers)

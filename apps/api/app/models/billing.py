@@ -10,6 +10,7 @@ from sqlalchemy import (
     Index,
     Integer,
     String,
+    UniqueConstraint,
     Uuid,
 )
 from sqlalchemy.orm import Mapped, mapped_column
@@ -23,7 +24,10 @@ class Subscription(Base):
     members are linked via FamilyMember, not their own subscription."""
 
     __tablename__ = "subscriptions"
-    __table_args__ = (Index("ix_subscriptions_user", "user_id"),)
+    __table_args__ = (
+        Index("ix_subscriptions_user", "user_id"),
+        Index("ix_subscriptions_provider_external", "provider", "external_subscription_id"),
+    )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(
@@ -34,6 +38,8 @@ class Subscription(Base):
     provider: Mapped[str] = mapped_column(String(12), nullable=False)  # payme|click|sandbox|referral
     seats: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     auto_renew: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    cancelled_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
+    external_subscription_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
@@ -64,7 +70,8 @@ class Payment(Base):
     __tablename__ = "payments"
     __table_args__ = (
         Index("ix_payments_user", "user_id"),
-        Index("ix_payments_provider_txn", "provider", "provider_txn_id"),
+        UniqueConstraint("provider", "provider_txn_id", name="uq_payments_provider_txn"),
+        UniqueConstraint("user_id", "idempotency_key", name="uq_payments_user_idempotency"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
@@ -74,6 +81,10 @@ class Payment(Base):
     provider: Mapped[str] = mapped_column(String(12), nullable=False)
     plan_code: Mapped[str] = mapped_column(String(24), nullable=False)
     amount_tiyin: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default="UZS", nullable=False)
+    # Provider-neutral lifecycle; `state` remains for exact Payme/Click protocol replies.
+    status: Mapped[str] = mapped_column(String(16), default="pending", nullable=False)
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     state: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     provider_txn_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     create_time_ms: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)

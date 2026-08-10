@@ -30,6 +30,8 @@ class SubscriptionOut(BaseModel):
     provider: Optional[str] = None
     expires_at: Optional[datetime] = None
     seats: int = 1
+    auto_renew: bool = False
+    cancelled_at: Optional[datetime] = None
 
 
 class CheckoutRequest(BaseModel):

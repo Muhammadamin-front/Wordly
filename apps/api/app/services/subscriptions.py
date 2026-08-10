@@ -18,9 +18,13 @@ async def active_subscription(db: AsyncSession, user_id: UUID) -> Optional[Subsc
         select(Subscription).where(
             Subscription.user_id == user_id,
             Subscription.status == "active",
-            Subscription.expires_at > now,
         )
     )
+    if own is not None and own.expires_at <= now:
+        own.status = "expired"
+        own.auto_renew = False
+        await db.flush()
+        own = None
     if own is not None:
         return own
 
@@ -71,6 +75,8 @@ async def grant(
         sub.provider = provider
         sub.seats = plan.seats
         sub.status = "active"
+        sub.cancelled_at = None
+        sub.auto_renew = False
         sub.expires_at = base + timedelta(days=days)
     await db.flush()
     return sub
@@ -96,9 +102,13 @@ async def add_days(db: AsyncSession, user_id: UUID, days: int) -> None:
     await db.flush()
 
 
-async def cancel(db: AsyncSession, user_id: UUID) -> None:
+async def cancel(db: AsyncSession, user_id: UUID, *, revoke_now: bool = False) -> None:
+    """Stop renewal while retaining paid access, unless an authoritative refund revokes it."""
     sub = await db.scalar(select(Subscription).where(Subscription.user_id == user_id))
     if sub is not None:
-        sub.status = "canceled"
         sub.auto_renew = False
+        sub.cancelled_at = utcnow()
+        if revoke_now:
+            sub.status = "canceled"
+            sub.expires_at = utcnow()
         await db.flush()

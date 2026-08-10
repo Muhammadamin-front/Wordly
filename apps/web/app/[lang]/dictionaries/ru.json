@@ -970,7 +970,10 @@
     "learning": "Обучение",
     "subscription": "Подписка",
     "payments": "Платежи",
-    "noSubscription": "Нет подписки"
+    "noSubscription": "Нет подписки",
+    "verification": "Подтверждение",
+    "sessions": "Активные сессии",
+    "resetPending": "Сброс ожидает"
   },
   "social": {
     "friends": "Друзья",

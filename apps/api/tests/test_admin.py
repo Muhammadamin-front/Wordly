@@ -121,3 +121,42 @@ async def test_admin_cannot_ban_self(client):
     me = (await client.get("/api/v1/auth/me", headers=admin)).json()
     response = await client.post("/api/v1/admin/users/{}/ban".format(me["id"]), headers=admin)
     assert response.status_code == 400
+
+
+async def test_super_admin_can_apply_audited_manual_subscription_correction(client):
+    target = await register_user(client, email="manual-subscription@words.uz")
+    admin = await make_super_admin(client)
+    target_id = target["user"]["id"]
+
+    granted = await client.post(
+        "/api/v1/admin/users/{}/subscription/grant".format(target_id),
+        json={"plan_code": "premium_monthly", "extra_days": 7, "reason": "Support ticket paid"},
+        headers=admin,
+    )
+    assert granted.status_code == 200, granted.text
+
+    audit = await client.get("/api/v1/admin/audit-logs", headers=admin)
+    assert any(row["action"] == "subscription.manual_grant" for row in audit.json())
+
+    revoke = await client.post(
+        "/api/v1/admin/users/{}/subscription/revoke".format(target_id),
+        json={"reason": "Confirmed refund"},
+        headers=admin,
+    )
+    assert revoke.status_code == 200, revoke.text
+
+
+async def test_support_user_detail_exposes_diagnostics_not_credentials(client):
+    target = await register_user(client, email="diagnostics@words.uz")
+    support = await register_user(client, email="diagnostic-support@words.uz")
+    async with db_session.get_session_factory()() as session:
+        await session.execute(
+            update(User).where(User.email == "diagnostic-support@words.uz").values(role="support")
+        )
+        await session.commit()
+    headers = {"Authorization": "Bearer " + support["access_token"]}
+    response = await client.get("/api/v1/admin/users/{}".format(target["user"]["id"]), headers=headers)
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert {"email_verified", "active_sessions", "password_reset_pending"} <= body.keys()
+    assert "password_hash" not in body and "token_hash" not in body

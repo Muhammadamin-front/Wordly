@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authApi } from "@/lib/api";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth"] }) {
@@ -42,6 +43,7 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
         password: String(form.get("password")),
       });
       applySession(pair);
+      trackEvent("login_completed", { locale: lang, provider: "password" });
       router.push(
         `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
       );

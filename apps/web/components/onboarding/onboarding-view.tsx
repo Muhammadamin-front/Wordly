@@ -26,6 +26,7 @@ import { PlacementTest } from "@/components/onboarding/placement-test";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { onboardingApi, type OnboardingInput } from "@/lib/api";
+import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -74,6 +75,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
         learning_interests: defaultInterests(goal),
       });
       updateUser(result.user);
+      trackEvent("onboarding_completed", { locale: lang, level, goal, daily_minutes: minutes });
       router.replace(`/${lang}/review?deck=${result.starter_deck_id}&onboarding=1`);
     } catch {
       setError(true);

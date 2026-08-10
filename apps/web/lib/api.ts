@@ -1,3 +1,5 @@
+import { trackApiFailure } from "@/lib/analytics";
+
 const serverApiUrl =
   process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://api:8000";
 export const API_URL = typeof window === "undefined" ? serverApiUrl : "";
@@ -135,9 +137,15 @@ export async function apiFetch<T>(
     networkError = error;
   }
 
-  if (!response) throw networkError;
+  if (!response) {
+    trackApiFailure(path);
+    throw networkError;
+  }
 
   if (!response.ok) {
+    // Expected validation/auth responses are handled by the product UI; only
+    // availability failures should become operational error signals.
+    if (response.status >= 500) trackApiFailure(path, response.status);
     let detail = response.statusText;
     try {
       const data = await response.json();

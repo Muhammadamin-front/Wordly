@@ -43,6 +43,7 @@ export interface AdminAuditLog {
 }
 
 export interface AdminUserDetail extends AdminUser {
+  email_verified: boolean;
   cefr_level: string;
   learning_goal: string;
   onboarding_completed: boolean;
@@ -50,6 +51,9 @@ export interface AdminUserDetail extends AdminUser {
   cards_due: number;
   reviews_total: number;
   latest_review_at: string | null;
+  active_sessions: number;
+  latest_session_at: string | null;
+  password_reset_pending: boolean;
   subscription: {
     plan_code: string;
     status: string;

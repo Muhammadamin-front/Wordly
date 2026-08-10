@@ -11,6 +11,7 @@ from sqlalchemy import text
 from app.api.v1.router import api_router
 from app.core.cache import MemoryCache, RedisCache
 from app.core.config import get_settings
+from app.core.observability import capture_exception
 from app.core.rate_limit import MemoryStorage, RedisStorage, client_ip
 from app.db.session import get_session_factory, init_engine
 
@@ -88,11 +89,16 @@ def create_app() -> FastAPI:
         start = time.perf_counter()
         try:
             response = await call_next(request)
-        except Exception:  # noqa: BLE001 — last-resort handler, logged with context
+        except Exception as exc:  # noqa: BLE001 — last-resort handler, logged with context
             elapsed_ms = (time.perf_counter() - start) * 1000
-            logger.exception(
-                "request_failed id=%s ip=%s %s %s in %.1fms",
-                request_id, client_ip(request), request.method, request.url.path, elapsed_ms,
+            capture_exception(
+                logger,
+                "request_failed",
+                exc,
+                request_id=request_id,
+                method=request.method,
+                path=request.url.path,
+                elapsed_ms=round(elapsed_ms, 1),
             )
             return JSONResponse(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

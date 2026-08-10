@@ -5,6 +5,7 @@ signature, drive the payment order state, and grant the subscription on a
 successful Complete. Error codes follow Click's spec.
 """
 import hashlib
+import hmac
 from uuid import UUID
 from typing import Dict
 
@@ -86,19 +87,31 @@ async def prepare(db: AsyncSession, params: Dict[str, str]) -> Dict:
     settings = get_settings()
     if not settings.CLICK_SECRET_KEY:
         return _error(ERR_SIGN, "not configured")
-    if params.get("sign_string") != _prepare_sign(params, settings.CLICK_SECRET_KEY):
+    if not hmac.compare_digest(params.get("sign_string", ""), _prepare_sign(params, settings.CLICK_SECRET_KEY)):
         return _error(ERR_SIGN, "signature check failed")
 
     order = await _order(db, params.get("merchant_trans_id", ""))
     if order is None:
         return _error(ERR_USER_NOT_FOUND, "order not found")
-    if order.state == -1:
+    if order.state in (-1, -2):
         return _error(ERR_CANCELLED, "cancelled")
     if int(float(params.get("amount", 0)) * 100) != order.amount_tiyin:
         return _error(ERR_AMOUNT, "incorrect amount")
 
-    order.provider_txn_id = params.get("click_trans_id")
+    transaction_id = params.get("click_trans_id")
+    if order.provider_txn_id and order.provider_txn_id != transaction_id:
+        return _error(ERR_TXN_NOT_FOUND, "transaction mismatch")
+    if order.state == 1 and order.provider_txn_id == transaction_id:
+        return {
+            "error": SUCCESS,
+            "error_note": "Success",
+            "click_trans_id": transaction_id,
+            "merchant_trans_id": params.get("merchant_trans_id"),
+            "merchant_prepare_id": str(order.id),
+        }
+    order.provider_txn_id = transaction_id
     order.state = 1  # created/prepared
+    order.status = "processing"
     order.create_time_ms = int(utcnow().timestamp() * 1000)
     await db.flush()
     await db.commit()
@@ -115,7 +128,7 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
     settings = get_settings()
     if not settings.CLICK_SECRET_KEY:
         return _error(ERR_SIGN, "not configured")
-    if params.get("sign_string") != _complete_sign(params, settings.CLICK_SECRET_KEY):
+    if not hmac.compare_digest(params.get("sign_string", ""), _complete_sign(params, settings.CLICK_SECRET_KEY)):
         return _error(ERR_SIGN, "signature check failed")
 
     order = await _order(db, params.get("merchant_trans_id", ""))
@@ -124,9 +137,13 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
     if order.state == 2:
         return _error(ERR_ALREADY_PAID, "already paid")
 
+    if params.get("click_trans_id") != order.provider_txn_id:
+        return _error(ERR_TXN_NOT_FOUND, "transaction mismatch")
+
     # A negative Click error in the request means the user cancelled.
     if int(params.get("error", 0)) < 0:
         order.state = -1
+        order.status = "cancelled"
         await db.flush()
         await db.commit()
         return _error(ERR_CANCELLED, "cancelled")
@@ -135,6 +152,7 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
         return _error(ERR_TXN_NOT_FOUND, "not prepared")
 
     order.state = 2
+    order.status = "succeeded"
     order.perform_time_ms = int(utcnow().timestamp() * 1000)
     await subscriptions.grant(db, order.user_id, order.plan_code, provider="click")
     await referrals.reward_on_first_payment(db, order.user_id)
@@ -147,5 +165,3 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
         "merchant_trans_id": params.get("merchant_trans_id"),
         "merchant_confirm_id": str(order.id),
     }
-
-

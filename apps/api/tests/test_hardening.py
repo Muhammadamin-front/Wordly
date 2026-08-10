@@ -3,6 +3,7 @@ import pytest
 
 from app.core.cache import MemoryCache
 from app.core.config import get_settings
+from app.core.observability import safe_context
 from app.core.rate_limit import MemoryStorage
 from app.main import app
 from tests.conftest import register_user
@@ -16,6 +17,13 @@ async def test_request_id_and_timing_headers(client):
     assert resp.status_code == 200
     assert resp.headers.get("X-Request-ID")
     assert float(resp.headers["X-Response-Time-ms"]) >= 0
+
+
+def test_observability_context_redacts_sensitive_values():
+    context = safe_context(
+        {"request_id": "trace-123", "path": "/api/v1/auth/login", "email": "learner@example.uz", "token": "secret"}
+    )
+    assert context == {"request_id": "trace-123", "path": "/api/v1/auth/login"}
 
 
 async def test_incoming_request_id_is_preserved(client):

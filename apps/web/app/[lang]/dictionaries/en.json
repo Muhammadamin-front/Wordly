@@ -970,7 +970,10 @@
     "learning": "Learning",
     "subscription": "Subscription",
     "payments": "Payments",
-    "noSubscription": "No subscription"
+    "noSubscription": "No subscription",
+    "verification": "Verification",
+    "sessions": "Active sessions",
+    "resetPending": "Reset pending"
   },
   "social": {
     "friends": "Friends",

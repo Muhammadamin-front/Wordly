@@ -61,6 +61,7 @@ class AdminPaymentOut(BaseModel):
 
 
 class AdminUserDetailOut(AdminUserOut):
+    email_verified: bool
     cefr_level: str
     learning_goal: str
     onboarding_completed: bool
@@ -68,12 +69,21 @@ class AdminUserDetailOut(AdminUserOut):
     cards_due: int
     reviews_total: int
     latest_review_at: Optional[datetime] = None
+    active_sessions: int
+    latest_session_at: Optional[datetime] = None
+    password_reset_pending: bool
     subscription: Optional[AdminSubscriptionOut] = None
     payments: List[AdminPaymentOut] = Field(default_factory=list)
 
 
 class AdminActionRequest(BaseModel):
     reason: Optional[str] = Field(default=None, max_length=500)
+
+
+class ManualSubscriptionGrant(BaseModel):
+    plan_code: Literal["premium_monthly", "premium_yearly"]
+    extra_days: int = Field(default=0, ge=0, le=3650)
+    reason: str = Field(min_length=3, max_length=500)
 
 
 class RoleUpdate(AdminActionRequest):
