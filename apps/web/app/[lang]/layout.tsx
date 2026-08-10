@@ -42,12 +42,28 @@ export async function generateMetadata({
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vocora.uz";
   return {
+    metadataBase: new URL(siteUrl),
     title: {
       default: `${dict.common.appName} — ${dict.common.tagline}`,
       template: `%s · ${dict.common.appName}`,
     },
     description: dict.landing.heroSubtitle,
+    alternates: {
+      canonical: `/${lang}`,
+      languages: Object.fromEntries(locales.map((locale) => [locale, `/${locale}`])),
+    },
+    openGraph: {
+      type: "website",
+      locale: lang,
+      url: `/${lang}`,
+      siteName: dict.common.appName,
+      title: `${dict.common.appName} - ${dict.common.tagline}`,
+      description: dict.landing.heroSubtitle,
+      images: [{ url: "/images/vocora-uzbek-student-hero.webp", width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image" },
     appleWebApp: {
       capable: true,
       title: dict.common.appName,

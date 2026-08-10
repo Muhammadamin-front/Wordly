@@ -20,6 +20,7 @@ jobs:
           cache: pip
           cache-dependency-path: apps/api/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
+      - run: python -m pip check
       - run: python -m pytest -q
 
   api-postgres:
@@ -50,6 +51,7 @@ jobs:
           cache: pip
           cache-dependency-path: apps/api/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
+      - run: python -m pip check
       # Migrations + seed must hold on Postgres. A separate database from the
       # pytest one — the test fixture's create_all would collide with alembic.
       - run: PGPASSWORD=words psql -h localhost -U words -d words_test -c "CREATE DATABASE words_migrate;"
@@ -81,3 +83,4 @@ jobs:
       - run: npm run lint --workspace web
       - run: npm run test --workspace web
       - run: npm run build --workspace web
+      - run: npm audit --omit=dev --workspace=web --audit-level=high

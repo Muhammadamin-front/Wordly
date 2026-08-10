@@ -218,7 +218,11 @@ export default async function LandingPage({
           <span>
             © {new Date().getFullYear()} {common.appName}. {landing.footerRights}
           </span>
-          <span>{common.tagline}</span>
+          <nav className="flex items-center gap-4 text-xs font-semibold" aria-label="Legal">
+            <Link href={`/${lang}/legal/privacy`}>Privacy</Link>
+            <Link href={`/${lang}/legal/terms`}>Terms</Link>
+            <Link href={`/${lang}/support`}>Support</Link>
+          </nav>
         </div>
       </footer>
     </>

@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from typing import List, Optional, Protocol
 
 import httpx
@@ -7,6 +8,38 @@ from app.core.config import get_settings
 
 logger = logging.getLogger("words.emailer")
 RESEND_EMAILS_URL = "https://api.resend.com/emails"
+
+
+@dataclass(frozen=True)
+class EmailMessage:
+    subject: str
+    body: str
+
+
+def account_email(kind: str, *, link: Optional[str] = None) -> EmailMessage:
+    """Small reusable, text-first templates for security-critical messages."""
+    templates = {
+        "verify": (
+            "Vocora - hisobni tasdiqlash / Verify your account",
+            "Agar bu so'rov sizdan bo'lmasa, xabarni e'tiborsiz qoldiring. "
+            "Vocora hisobingizni tasdiqlash uchun quyidagi havolani oching:\n{}",
+        ),
+        "reset": (
+            "Vocora - parolni tiklash / Reset your password",
+            "Vocora hech qachon emailingiz orqali parolingizni so'ramaydi. "
+            "Parolni yangilash uchun quyidagi bir martalik havolani oching:\n{}",
+        ),
+        "welcome": (
+            "Vocora - xush kelibsiz / Welcome",
+            "Hisobingiz tasdiqlandi. Bugungi birinchi darsingizni boshlashga tayyorsiz.",
+        ),
+        "password_changed": (
+            "Vocora - parol yangilandi / Password changed",
+            "Vocora parolingiz hozirgina yangilandi. Agar buni siz qilmagan bo'lsangiz, darhol support@vocora.uz ga murojaat qiling.",
+        ),
+    }
+    subject, body = templates[kind]
+    return EmailMessage(subject=subject, body=body.format(link) if "{}" in body else body)
 
 
 class Emailer(Protocol):
@@ -81,6 +114,5 @@ def get_emailer() -> Emailer:
             sender=settings.EMAIL_FROM,
             reply_to=settings.EMAIL_REPLY_TO,
         )
-    # Temporary: allow console email provider in production.
-    # Replace with Resend when real email delivery is configured.
+    # Production runtime validation rejects this development/test backend.
     return ConsoleEmailer()

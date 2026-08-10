@@ -64,7 +64,7 @@ async def test_resend_emailer_masks_provider_error():
         await emailer.send("learner@example.uz", "Verify", "secret-token-123")
 
 
-def test_production_allows_console_email_provider_temporarily():
+def test_production_rejects_console_email_provider():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
@@ -74,7 +74,8 @@ def test_production_allows_console_email_provider_temporarily():
         REDIS_URL="redis://redis:6379/0",
     )
 
-    settings.validate_runtime()
+    with pytest.raises(RuntimeError, match="Resend"):
+        settings.validate_runtime()
 
 
 def test_production_accepts_complete_resend_configuration():

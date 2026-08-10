@@ -109,6 +109,7 @@ def create_app() -> FastAPI:
         elapsed_ms = (time.perf_counter() - start) * 1000
         response.headers["X-Request-ID"] = request_id
         response.headers["X-Response-Time-ms"] = "{:.1f}".format(elapsed_ms)
+        response.headers["Server-Timing"] = "app;dur={:.1f}".format(elapsed_ms)
         for header, value in SECURITY_HEADERS.items():
             response.headers.setdefault(header, value)
         if is_prod:

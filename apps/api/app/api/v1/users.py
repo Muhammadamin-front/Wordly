@@ -7,7 +7,15 @@ from app.db.session import get_db
 from app.models.flashcards import Card, Deck
 from app.models.user import User
 from app.models.vocabulary import Word
-from app.schemas.auth import OnboardingOut, OnboardingRequest, ProfileUpdate, UserOut
+from app.schemas.auth import (
+    AccountDeletionRequest,
+    MessageOut,
+    OnboardingOut,
+    OnboardingRequest,
+    ProfileUpdate,
+    UserOut,
+)
+from app.services import auth as auth_service
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -32,6 +40,37 @@ async def update_profile(
     await db.commit()
     await db.refresh(user)
     return UserOut.model_validate(user)
+
+
+@router.post("/me/delete", response_model=MessageOut, status_code=status.HTTP_202_ACCEPTED)
+async def request_account_deletion(
+    payload: AccountDeletionRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Deactivate and anonymize a user while retaining required payment records.
+
+    Financial/payment rows keep their foreign key for fraud, accounting, and
+    chargeback handling. Authentication identifiers and public profile data are
+    removed, and every active refresh session is revoked immediately.
+    """
+    if payload.confirmation != "DELETE":  # Pydantic protects this too; explicit for clarity.
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    deleted_email = "deleted-{}@deleted.vocora.invalid".format(user.id)
+    user.is_active = False
+    user.email = deleted_email
+    user.google_id = None
+    user.apple_id = None
+    user.referral_code = None
+    user.email_verified_at = None
+    user.password_hash = None
+    user.profile.display_name = "Deleted Vocora account"
+    user.profile.avatar_url = None
+    user.profile.bio = None
+    await auth_service.revoke_all_user_sessions(db, user.id)
+    await db.commit()
+    return MessageOut(message="Account deleted")
 
 
 @router.put("/me/onboarding", response_model=OnboardingOut)

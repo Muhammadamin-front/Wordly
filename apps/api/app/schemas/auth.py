@@ -84,6 +84,12 @@ class ProfileUpdate(BaseModel):
     bio: Optional[str] = Field(default=None, max_length=500)
 
 
+class AccountDeletionRequest(BaseModel):
+    """Deliberate confirmation for irreversible account deactivation."""
+
+    confirmation: Literal["DELETE"]
+
+
 class OnboardingRequest(BaseModel):
     cefr_level: Literal["A1", "A2", "B1", "B2", "C1", "C2"]
     learning_goal: Literal["general", "travel", "career", "ielts"]

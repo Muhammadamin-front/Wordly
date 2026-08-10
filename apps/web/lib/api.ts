@@ -196,6 +196,13 @@ export const authApi = {
     }),
 
   me: () => apiFetch<User>("/auth/me", { auth: true }),
+
+  deleteAccount: () =>
+    apiFetch<{ message: string }>("/users/me/delete", {
+      method: "POST",
+      body: { confirmation: "DELETE" },
+      auth: true,
+    }),
 };
 
 export interface OnboardingInput {

@@ -90,6 +90,8 @@ Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
   `X-Response-Time-ms`; slow requests (>1s) log at WARNING.
 - `python -m scripts.loadtest --base https://api.vocora.uz` for a read-path
   smoke after deploy.
+- [`performance-monitoring.md`](./performance-monitoring.md) defines the
+  baseline, safe response telemetry, and measurement-first investigation flow.
 
 ## 5. Backups & state
 
@@ -98,9 +100,11 @@ payments. `review_logs` is append-only — size it accordingly. Redis holds only
 rate-limit counters and response cache — safe to lose. Multiplayer rooms are
 in-process memory — a deploy drops live quiz rooms (players just rejoin).
 
-```bash
-docker compose exec postgres pg_dump -U words words | gzip > backup-$(date +%F).sql.gz
-```
+Use the encrypted, off-site Restic automation in
+[`backup-disaster-recovery.md`](./backup-disaster-recovery.md). A dump stored
+only beside `pgdata` on this VM does not satisfy production recovery needs.
+The timer retains 14 daily, 8 weekly, and 12 monthly snapshots and has a
+read-only verification command plus a tested restore procedure.
 
 ## 6. CI
 

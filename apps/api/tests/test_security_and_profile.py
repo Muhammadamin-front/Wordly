@@ -58,3 +58,13 @@ async def test_update_profile(client):
 
     bad = await client.patch("/api/v1/users/me", json={"ui_locale": "fr"}, headers=headers)
     assert bad.status_code == 422
+
+
+async def test_account_deletion_revokes_access_and_anonymizes_identity(client):
+    data = await register_user(client)
+    headers = {"Authorization": "Bearer " + data["access_token"]}
+
+    deleted = await client.post("/api/v1/users/me/delete", json={"confirmation": "DELETE"}, headers=headers)
+    assert deleted.status_code == 202
+    assert (await client.get("/api/v1/auth/me", headers=headers)).status_code == 401
+    assert (await client.post("/api/v1/auth/login", json={"email": "dilnoza@example.uz", "password": "kuchli-parol-123"})).status_code == 401

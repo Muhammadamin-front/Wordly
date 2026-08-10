@@ -3,6 +3,7 @@ set -e
 set -o pipefail
 
 cd /home/kitsune/Wordly
+expected_sha="${1:-}"
 
 echo "=== Check working tree ==="
 if [ -n "$(git status --porcelain)" ]; then
@@ -11,9 +12,17 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-echo "=== Pull latest code ==="
+echo "=== Fetch code ==="
 git fetch origin main
-git pull --ff-only origin main
+if [ -n "$expected_sha" ]; then
+  git cat-file -e "${expected_sha}^{commit}"
+  git merge-base --is-ancestor "$expected_sha" origin/main
+  echo "=== Deploy verified commit $expected_sha ==="
+  git reset --hard "$expected_sha"
+else
+  echo "=== Deploy latest main (manual run) ==="
+  git pull --ff-only origin main
+fi
 
 echo "=== Build images ==="
 docker compose build

@@ -27,7 +27,7 @@ from app.schemas.auth import (
 )
 from app.services import auth as auth_service
 from app.services import referrals
-from app.services.emailer import Emailer, get_emailer
+from app.services.emailer import EmailDeliveryError, Emailer, account_email, get_emailer
 from app.services.google_oauth import GoogleVerifier, get_google_verifier
 from app.services.apple_oauth import AppleVerifier, get_apple_verifier
 
@@ -79,11 +79,8 @@ def verification_email_body(
     display_name: str, locale: str, token: str, settings: Settings
 ) -> str:
     link = localized_auth_link(settings, locale, "verify-email", token)
-    return (
-        "Assalomu alaykum, {}!\n\n"
-        "Vocora hisobingizni tasdiqlash uchun havola / "
-        "Confirm your Vocora account:\n{}\n".format(display_name, link)
-    )
+    del display_name, locale
+    return account_email("verify", link=link).body
 
 
 @router.post(
@@ -278,6 +275,15 @@ async def verify_email(payload: VerifyEmailRequest, db: AsyncSession = Depends(g
     if user.email_verified_at is None:
         user.email_verified_at = utcnow()
     await db.commit()
+    # A welcome message is useful but must never make a verified account fail.
+    try:
+        await get_emailer().send(
+            to=user.email,
+            subject=account_email("welcome").subject,
+            body=account_email("welcome").body,
+        )
+    except EmailDeliveryError:
+        pass
     return MessageOut(message="Email verified")
 
 
@@ -302,18 +308,19 @@ async def forgot_password(
         link = localized_auth_link(
             settings, user.profile.ui_locale, "reset-password", token
         )
-        await emailer.send(
-            to=user.email,
-            subject="Vocora — parolni tiklash / Reset your password",
-            body="Parolni tiklash havolasi / Reset link:\n{}\n".format(link),
-        )
+        message = account_email("reset", link=link)
+        await emailer.send(to=user.email, subject=message.subject, body=message.body)
         await db.commit()
     # Identical response either way: no account enumeration.
     return MessageOut(message="If that email exists, a reset link has been sent")
 
 
 @router.post("/reset-password", response_model=MessageOut)
-async def reset_password(payload: ResetPasswordRequest, db: AsyncSession = Depends(get_db)):
+async def reset_password(
+    payload: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+    emailer: Emailer = Depends(get_emailer),
+):
     user = await auth_service.consume_one_time_token(db, payload.token, "reset_password")
     if user is None:
         raise HTTPException(
@@ -322,6 +329,11 @@ async def reset_password(payload: ResetPasswordRequest, db: AsyncSession = Depen
     user.password_hash = hash_password(payload.new_password)
     await auth_service.revoke_all_user_sessions(db, user.id)
     await db.commit()
+    try:
+        message = account_email("password_changed")
+        await emailer.send(to=user.email, subject=message.subject, body=message.body)
+    except EmailDeliveryError:
+        pass
     return MessageOut(message="Password updated. Please log in again.")
 
 

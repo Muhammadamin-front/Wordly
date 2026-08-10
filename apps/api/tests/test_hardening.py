@@ -17,6 +17,7 @@ async def test_request_id_and_timing_headers(client):
     assert resp.status_code == 200
     assert resp.headers.get("X-Request-ID")
     assert float(resp.headers["X-Response-Time-ms"]) >= 0
+    assert resp.headers["Server-Timing"].startswith("app;dur=")
 
 
 def test_observability_context_redacts_sensitive_values():

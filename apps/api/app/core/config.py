@@ -257,6 +257,11 @@ class Settings(BaseSettings):
         if not self.REDIS_URL:
             raise RuntimeError("REDIS_URL is required in production for shared rate limits and caching")
 
+        if self.EMAIL_PROVIDER != "resend" or not self.RESEND_API_KEY or not self.EMAIL_FROM:
+            raise RuntimeError(
+                "A configured Resend sender is required in production for account emails"
+            )
+
 
 @lru_cache
 def get_settings() -> Settings:
