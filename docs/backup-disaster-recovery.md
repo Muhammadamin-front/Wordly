@@ -53,10 +53,21 @@ It samples repository data, restores the latest backup only to a temporary
 directory, and validates the PostgreSQL archive with `pg_restore --list`. It
 does not connect to, stop, or mutate production Postgres.
 
-Perform a full restore drill at least quarterly on an isolated VM or disposable
-Docker network: restore to an empty database, run `alembic upgrade head`, then
-run `/health/detail` and a login/read-only smoke test. Record the date, backup
-snapshot ID, operator, duration, and result in the operations log.
+Perform a full restore drill at least quarterly. The repository includes a
+disposable Docker-network drill which restores to an empty PostgreSQL container,
+runs `alembic upgrade head`, starts a development-configured copy of the API,
+then checks `/health/detail` and an isolated register/login flow. It never
+connects to or changes the production database:
+
+```bash
+sudo /home/kitsune/Wordly/ops/backup/restore-drill.sh
+```
+
+The script reads the root-only backup configuration from
+`/etc/vocora/backup.env`, writes a timestamped result to
+`/var/log/vocora/operations.log`, verifies the archive checksum, and destroys
+its temporary containers/network after completion. Review the operations-log
+entry and record the operator and any follow-up work in the team runbook.
 
 ## Catastrophic recovery
 
