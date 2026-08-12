@@ -4,9 +4,9 @@ import { ALL_LESSONS, GRAMMAR_LEVELS, LESSONS_BY_LEVEL } from "@/lib/grammar";
 
 describe("grammar course content", () => {
   it("has a full course across the five levels", () => {
-    expect(ALL_LESSONS.length).toBeGreaterThanOrEqual(57);
+    expect(ALL_LESSONS.length).toBeGreaterThanOrEqual(65);
     expect(GRAMMAR_LEVELS.every((lv) => LESSONS_BY_LEVEL[lv].length >= 8)).toBe(true);
-    expect(LESSONS_BY_LEVEL.IELTS.length).toBeGreaterThanOrEqual(20);
+    expect(LESSONS_BY_LEVEL.IELTS.length).toBeGreaterThanOrEqual(28);
   });
 
   it("has unique slugs", () => {

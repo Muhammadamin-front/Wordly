@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { BookOpen, Check, Plus, Volume2 } from "lucide-react";
+import { BookOpen, Check, Image as ImageIcon, Plus, Volume2 } from "lucide-react";
 
 import { WordFlipCard } from "@/components/ui/word-flip-card";
 import { speak } from "@/lib/games";
@@ -83,8 +83,8 @@ export function WordCard({
       front={
         <div className="flex h-full flex-col p-3 sm:p-5">
           <div className="flex min-w-0 items-start gap-3 pr-7 sm:pr-12">
-            {word.image_url && (
-              <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-white/30 shadow-[0_12px_30px_rgba(8,12,20,0.08)] sm:block">
+            <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-white/30 shadow-[0_12px_30px_rgba(8,12,20,0.08)] sm:block">
+              {word.image_url ? (
                 <Image
                   src={word.image_url}
                   alt={word.headword}
@@ -93,9 +93,18 @@ export function WordCard({
                   unoptimized
                   className="size-full object-cover"
                 />
+              ) : (
+                <div
+                  aria-hidden
+                  className="flex size-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,rgba(255,255,255,0.68),transparent_24%),linear-gradient(145deg,rgba(113,184,151,0.42),rgba(243,213,162,0.32))] text-brand-800/75"
+                >
+                  <ImageIcon className="size-6" strokeWidth={1.7} />
+                </div>
+              )}
+              {word.image_url && (
                 <div className="absolute inset-0 bg-linear-to-t from-black/14 via-transparent to-white/10" />
-              </div>
-            )}
+              )}
+            </div>
             <div className="min-w-0 flex-1">
               <h3 className="truncate text-base font-black tracking-tight text-ink sm:text-xl">
                 {word.headword}

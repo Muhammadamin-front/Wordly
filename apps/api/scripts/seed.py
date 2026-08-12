@@ -52,6 +52,7 @@ EXAMPLE_FILES = [
     "examples_a2_batch2.csv",
     "examples_b1_batch1.csv",
     "examples_all_words.csv",
+    "examples_all_words_translated.csv",
     "examples_phrasal_idioms_6.csv",
     "examples_phrasal_idioms_7.csv",
 ]
@@ -130,10 +131,12 @@ async def main() -> None:
                 raise SystemExit(1)
         print("total words created: {}, updated: {}".format(total_created, total_updated))
 
-        # Extra examples — append when the sentence isn't there yet.
+        # Extra examples — append when the sentence isn't there yet.  Re-running
+        # the seed also upgrades an older example when its learner translation
+        # was missing; vocabulary details must not silently lose Uzbek context.
         import csv as _csv
         from app.models.vocabulary import Word, WordExample  # noqa: E402
-        ex_added = ex_skipped = 0
+        ex_added = ex_updated = ex_skipped = 0
         for filename in EXAMPLE_FILES:
             path = DATA_DIR / filename
             if not path.exists():
@@ -148,21 +151,43 @@ async def main() -> None:
                     ex_skipped += 1
                     continue
                 sense = word.senses[0]
-                texts = {e.text_en.strip().lower() for e in sense.examples}
-                if row["example_en"].strip().lower() in texts:
+                example_en = row["example_en"].strip()
+                existing_example = next(
+                    (e for e in sense.examples if e.text_en.strip().lower() == example_en.lower()),
+                    None,
+                )
+                if existing_example is not None:
+                    changed = False
+                    for field, value in (
+                        ("text_uz", (row.get("example_uz") or "").strip()),
+                        ("text_ru", (row.get("example_ru") or "").strip()),
+                    ):
+                        if value and not getattr(existing_example, field):
+                            setattr(existing_example, field, value)
+                            changed = True
+                    if changed:
+                        ex_updated += 1
+                    else:
+                        ex_skipped += 1
+                    continue
+                if not example_en:
                     ex_skipped += 1
                     continue
                 sense.examples.append(
                     WordExample(
                         example_order=len(sense.examples) + 1,
-                        text_en=row["example_en"].strip(),
+                        text_en=example_en,
                         text_uz=(row.get("example_uz") or "").strip() or None,
                         text_ru=(row.get("example_ru") or "").strip() or None,
                     )
                 )
                 ex_added += 1
             await db.commit()
-        print("extra examples: added {}, skipped {}".format(ex_added, ex_skipped))
+        print(
+            "extra examples: added {}, translated {}, skipped {}".format(
+                ex_added, ex_updated, ex_skipped
+            )
+        )
 
         # Word images (headword,pos,image_url) — set when the word has none yet,
         # so pictures survive a DB reset without re-spending Serper credits.
