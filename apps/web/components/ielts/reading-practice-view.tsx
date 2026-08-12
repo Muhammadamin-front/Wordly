@@ -24,6 +24,7 @@ import {
   SearchCheck,
   Send,
   Sun,
+  Target,
   Trash2,
   X,
 } from "lucide-react";
@@ -33,16 +34,20 @@ import { Button } from "@/components/ui/button";
 import {
   READING_LIBRARY_GROUPS,
   READING_PRACTICE_TESTS,
+  READING_QUESTION_TYPE_GUIDES,
   allReadingQuestions,
   getReadingTest,
+  getQuestionsForReadingQuestionType,
   type ReadingParagraph,
   type ReadingPracticeTest,
   type ReadingQuestion,
+  type ReadingQuestionTypeGuideId,
 } from "@/lib/reading-practice";
 import { cn } from "@/lib/utils";
+import { ReadingQuestionTypePractice } from "./reading-question-type-practice";
 
 type StudyMode = "practice" | "exam";
-type Screen = "library" | "start" | "test" | "result";
+type Screen = "library" | "question-types" | "start" | "test" | "result";
 type AnswerValue = string | string[];
 type ReadingTheme = "light" | "dark";
 type HighlightColor = "yellow" | "green" | "blue" | "pink";
@@ -192,6 +197,7 @@ export function ReadingPracticeView({ lang }: { lang: string }) {
   void lang;
   const [screen, setScreen] = useState<Screen>("library");
   const [selectedTestId, setSelectedTestId] = useState(READING_PRACTICE_TESTS[0].id);
+  const [selectedQuestionType, setSelectedQuestionType] = useState<ReadingQuestionTypeGuideId>("matching-headings");
   const [studyMode, setStudyMode] = useState<StudyMode>("exam");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [flagged, setFlagged] = useState<string[]>([]);
@@ -284,6 +290,10 @@ export function ReadingPracticeView({ lang }: { lang: string }) {
     return <ReadingStartScreen test={test} mode={studyMode} onBack={() => setScreen("library")} onStart={launchTest} />;
   }
 
+  if (screen === "question-types") {
+    return <ReadingQuestionTypePractice key={selectedQuestionType} typeId={selectedQuestionType} onBack={() => setScreen("library")} />;
+  }
+
   if (screen === "test") {
     return (
       <ReadingWorkspace
@@ -330,10 +340,10 @@ export function ReadingPracticeView({ lang }: { lang: string }) {
     );
   }
 
-  return <ReadingLibrary history={history} onOpen={openStart} />;
+  return <ReadingLibrary history={history} onOpen={openStart} onQuestionType={(typeId) => { setSelectedQuestionType(typeId); setScreen("question-types"); }} />;
 }
 
-function ReadingLibrary({ history, onOpen }: { history: TestHistory; onOpen: (id: string) => void }) {
+function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHistory; onOpen: (id: string) => void; onQuestionType: (typeId: ReadingQuestionTypeGuideId) => void }) {
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <section className="surface-panel relative overflow-hidden rounded-lg p-6 sm:p-8 lg:p-10">
@@ -371,6 +381,28 @@ function ReadingLibrary({ history, onOpen }: { history: TestHistory; onOpen: (id
           <span className="hidden text-sm font-semibold text-ink-soft sm:block">3 passages · 40 questions · 60 minutes</span>
         </div>
         <TestCard test={READING_PRACTICE_TESTS[0]} history={history[READING_PRACTICE_TESTS[0].id]} featured onOpen={onOpen} />
+      </section>
+
+      <section className="mt-10">
+        <div className="mb-4 max-w-2xl">
+          <p className="type-label text-accent-500">Targeted practice</p>
+          <h2 className="mt-1 text-2xl font-black text-ink">Master one question type at a time</h2>
+          <p className="mt-2 text-sm leading-6 text-ink-soft">Choose a format, follow its strategy, then get instant evidence-based feedback after every answer.</p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {READING_QUESTION_TYPE_GUIDES.map((guide) => {
+            const questionCount = getQuestionsForReadingQuestionType(guide.id).length;
+            return (
+              <article key={guide.id} className="rounded-lg border border-line bg-card/80 p-5 shadow-[0_10px_28px_rgba(27,64,55,0.055)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[0_18px_46px_rgba(27,64,55,0.09)]">
+                <div className="flex items-start justify-between gap-3"><span className="icon-tile size-10 text-brand-600 dark:text-brand-300"><Target className="size-4" /></span><span className="rounded-full bg-brand-600/8 px-2.5 py-1 text-[11px] font-black text-brand-700 dark:text-brand-200">{questionCount} questions</span></div>
+                <h3 className="mt-5 text-xl font-black leading-tight text-ink">{guide.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-ink-soft">{guide.description}</p>
+                <p className="mt-4 border-l-2 border-accent-400 pl-3 text-xs font-bold leading-5 text-ink-soft">{guide.strategy[0]}</p>
+                <button type="button" onClick={() => onQuestionType(guide.id)} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-primary-hover dark:text-brand-950">Practice this type <ChevronRight className="size-4" /></button>
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       <div className="mt-10 space-y-10">
@@ -582,7 +614,10 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
           {test.passages.map((passage, index) => <button key={passage.id} type="button" onClick={() => onPassageChange(index)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-xs font-black transition-colors", passageIndex === index ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : "border-line text-ink-soft hover:bg-hover")}>Passage {index + 1}: {passage.title}</button>)}
         </div>
 
-        <div className="grid min-h-[calc(100vh-15rem)] sm:min-h-[calc(100vh-12.5rem)]" style={{ gridTemplateColumns: `minmax(0, ${panelRatio}fr) 12px minmax(0, ${100 - panelRatio}fr)` }}>
+        <div
+          className="grid min-h-[calc(100svh-15rem)] grid-cols-1 sm:min-h-[calc(100svh-12.5rem)] sm:grid-cols-[minmax(0,var(--reading-passage-width))_12px_minmax(0,1fr)]"
+          style={{ "--reading-passage-width": `${panelRatio}fr` } as React.CSSProperties}
+        >
           <article className={cn("min-w-0 overflow-y-auto bg-page p-5 sm:max-h-[calc(100vh-12.5rem)] sm:p-7", mobilePane !== "passage" && "hidden sm:block")} onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
             <p className="type-label text-brand-600 dark:text-brand-300">Reading passage</p>
             <h1 className="mt-2 text-2xl font-black tracking-tight text-ink sm:text-3xl">{currentPassage.title}</h1>
@@ -665,7 +700,72 @@ function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, on
 
 function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, setNoteDraft, onClose, onSaveNote, onDeleteNote, onUpdateVocabulary, onDeleteVocabulary }: { drawer: Drawer; notes: PassageNote[]; vocabulary: SavedVocabulary[]; selectedRange: SelectedRange | null; noteDraft: string; setNoteDraft: (text: string) => void; onClose: () => void; onSaveNote: () => void; onDeleteNote: (id: string) => void; onUpdateVocabulary: (id: string, patch: Partial<SavedVocabulary>) => void; onDeleteVocabulary: (id: string) => void }) {
   const isNotes = drawer === "notes";
-  return <div className="fixed inset-0 z-40 bg-ink/25 backdrop-blur-[1px]" onMouseDown={onClose}><aside className="absolute bottom-0 right-0 top-0 flex w-full max-w-md flex-col border-l border-line bg-raised shadow-[-20px_0_60px_rgba(15,35,31,0.18)]" onMouseDown={(event) => event.stopPropagation()}><header className="flex items-center justify-between border-b border-line px-5 py-4"><div><p className="type-label text-brand-600 dark:text-brand-300">{isNotes ? "My notes" : "My vocabulary"}</p><h2 className="mt-1 text-xl font-black text-ink">{isNotes ? `${notes.length} notes` : `${vocabulary.length} saved words`}</h2></div><button type="button" onClick={onClose} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover"><X className="size-4" /></button></header><div className="min-h-0 flex-1 overflow-y-auto p-5">{isNotes ? <><>{selectedRange && <div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-4"><p className="text-sm font-bold italic leading-6 text-ink">“{selectedRange.text}”</p><textarea value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Bu joy nima uchun muhim? O'zbekcha yoki English izoh yozing..." className="mt-3 min-h-28 w-full rounded-lg border border-line bg-card p-3 text-sm text-ink outline-none focus:border-brand-400" /><Button size="sm" onClick={onSaveNote} className="mt-3"><Save className="size-4" /> Save note</Button></div>}</>{notes.length ? <div className="mt-4 space-y-3">{notes.map((note) => <article key={note.id} className="rounded-lg border border-line bg-card/70 p-4"><p className="text-sm font-bold italic text-ink">“{note.quote}”</p><p className="mt-2 text-sm leading-6 text-ink-soft">{note.body}</p><button type="button" onClick={() => onDeleteNote(note.id)} className="mt-3 inline-flex min-h-9 items-center gap-1.5 text-xs font-black text-danger"><Trash2 className="size-3.5" /> Delete</button></article>)}</div> : <EmptyDrawer icon={NotebookPen} title="Your notes will live here" text="Select a sentence in the passage, then choose Add note." />}</> : vocabulary.length ? <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-500" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 border-l-2 border-brand-400/35 pl-3 text-xs leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder="Personal note" className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? "Learned" : "Mark learned"}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger"><Trash2 className="size-3.5" /></button></div></article>)}</div> : <EmptyDrawer icon={Bookmark} title="Save useful vocabulary" text="Select one word or a phrase in the passage, then choose Save word." />}</div></aside></div>;
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] bg-ink/45 backdrop-blur-sm"
+      role="presentation"
+      onClick={onClose}
+    >
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reading-drawer-title"
+        className="absolute inset-x-0 bottom-0 top-0 flex w-full flex-col border-line bg-raised shadow-[-20px_0_60px_rgba(15,35,31,0.24)] sm:left-auto sm:max-w-md sm:border-l"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <header className="flex shrink-0 items-center justify-between border-b border-line px-5 pb-4 pt-[max(1rem,env(safe-area-inset-top))] sm:py-4">
+          <div>
+            <p className="type-label text-brand-600 dark:text-brand-300">{isNotes ? "My notes" : "My vocabulary"}</p>
+            <h2 id="reading-drawer-title" className="mt-1 text-xl font-black text-ink">
+              {isNotes ? `${notes.length} notes` : `${vocabulary.length} saved words`}
+            </h2>
+          </div>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            aria-label="Close notes"
+            onClick={onClose}
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-line text-ink-soft transition-colors hover:bg-hover hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          >
+            <X className="size-5" aria-hidden />
+          </button>
+        </header>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+          {isNotes ? (
+            <>
+              {selectedRange && (
+                <div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-4">
+                  <p className="text-sm font-bold italic leading-6 text-ink">“{selectedRange.text}”</p>
+                  <textarea value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder="Bu joy nima uchun muhim? O'zbekcha yoki English izoh yozing..." className="mt-3 min-h-28 w-full rounded-lg border border-line bg-card p-3 text-sm text-ink outline-none focus:border-brand-400" />
+                  <Button size="sm" onClick={onSaveNote} className="mt-3"><Save className="size-4" /> Save note</Button>
+                </div>
+              )}
+              {notes.length ? <div className="mt-4 space-y-3">{notes.map((note) => <article key={note.id} className="rounded-lg border border-line bg-card/70 p-4"><p className="text-sm font-bold italic text-ink">“{note.quote}”</p><p className="mt-2 text-sm leading-6 text-ink-soft">{note.body}</p><button type="button" onClick={() => onDeleteNote(note.id)} className="mt-3 inline-flex min-h-9 items-center gap-1.5 text-xs font-black text-danger"><Trash2 className="size-3.5" /> Delete</button></article>)}</div> : <EmptyDrawer icon={NotebookPen} title="Your notes will live here" text="Select a sentence in the passage, then choose Add note." />}
+            </>
+          ) : vocabulary.length ? (
+            <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-500" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 border-l-2 border-brand-400/35 pl-3 text-xs leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder="Personal note" className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? "Learned" : "Mark learned"}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger"><Trash2 className="size-3.5" /></button></div></article>)}</div>
+          ) : <EmptyDrawer icon={Bookmark} title="Save useful vocabulary" text="Select one word or a phrase in the passage, then choose Save word." />}
+        </div>
+      </aside>
+    </div>
+  );
 }
 
 function EmptyDrawer({ icon: Icon, title, text }: { icon: typeof Bookmark; title: string; text: string }) { return <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="icon-tile size-12 text-brand-600 dark:text-brand-300"><Icon className="size-5" /></span><h3 className="mt-4 font-black text-ink">{title}</h3><p className="mt-2 max-w-xs text-sm leading-6 text-ink-soft">{text}</p></div>; }

@@ -49,6 +49,28 @@ export type ReadingPracticeTest = {
   passages: ReadingPassage[];
 };
 
+export type ReadingQuestionTypeGuideId =
+  | "matching-headings"
+  | "multiple-choice"
+  | "true-false-not-given"
+  | "sentence-completion"
+  | "matching-information"
+  | "summary-completion";
+
+export type ReadingQuestionTypeGuide = {
+  id: ReadingQuestionTypeGuideId;
+  title: string;
+  description: string;
+  strategy: readonly string[];
+  kinds: readonly ReadingQuestionKind[];
+};
+
+export type ReadingQuestionPracticeItem = {
+  test: ReadingPracticeTest;
+  passage: ReadingPassage;
+  question: ReadingQuestion;
+};
+
 const tfng: ReadingOption[] = [
   { value: "TRUE", label: "TRUE" },
   { value: "FALSE", label: "FALSE" },
@@ -791,10 +813,102 @@ export const READING_LIBRARY_GROUPS = [
   },
 ] as const;
 
+export const READING_QUESTION_TYPE_GUIDES: readonly ReadingQuestionTypeGuide[] = [
+  {
+    id: "matching-headings",
+    title: "Matching Headings",
+    description: "Find each paragraph's main idea, not an interesting detail.",
+    strategy: [
+      "Read the first and final sentence of every paragraph first.",
+      "Underline the paragraph's repeated idea before reading the headings.",
+      "Reject headings that match one example but not the whole paragraph.",
+    ],
+    kinds: ["matching-headings"],
+  },
+  {
+    id: "multiple-choice",
+    title: "Multiple Choice",
+    description: "Compare every option with the evidence in the passage.",
+    strategy: [
+      "Read the question before searching the passage.",
+      "Locate the evidence, then compare all options, not only the first familiar one.",
+      "Watch for options that are partly true but do not answer the question.",
+    ],
+    kinds: ["multiple-choice", "multiple-answer"],
+  },
+  {
+    id: "true-false-not-given",
+    title: "True / False / Not Given",
+    description: "Separate contradiction from information the passage never states.",
+    strategy: [
+      "TRUE means the statement agrees with the text.",
+      "FALSE means the text says the opposite; NOT GIVEN means there is no clear evidence.",
+      "Do not use outside knowledge or make logical guesses beyond the passage.",
+    ],
+    kinds: ["true-false-not-given", "yes-no-not-given"],
+  },
+  {
+    id: "sentence-completion",
+    title: "Sentence Completion",
+    description: "Complete a sentence using the exact word limit and passage meaning.",
+    strategy: [
+      "Read the instruction first and circle the word limit.",
+      "Predict the grammar of the missing answer before you scan the text.",
+      "Copy only the necessary word or words, and check spelling carefully.",
+    ],
+    kinds: ["sentence-completion", "table-completion", "form-completion", "short-answer"],
+  },
+  {
+    id: "matching-information",
+    title: "Matching Information",
+    description: "Locate one precise detail in the paragraph that contains it.",
+    strategy: [
+      "Identify the unique keyword or idea in the question.",
+      "Scan for synonyms rather than expecting the same words.",
+      "A paragraph may be used more than once unless the instruction says otherwise.",
+    ],
+    kinds: ["matching-information", "matching-features"],
+  },
+  {
+    id: "summary-completion",
+    title: "Summary Completion",
+    description: "Follow the summary's order and choose language that fits its grammar.",
+    strategy: [
+      "Use the summary headings to find the right part of the passage.",
+      "Check the words immediately before and after each gap.",
+      "Keep the original meaning; a familiar word can still be the wrong fit.",
+    ],
+    kinds: ["summary-completion", "diagram-labelling"],
+  },
+] as const;
+
 export function getReadingTest(testId: string): ReadingPracticeTest {
   return READING_PRACTICE_TESTS.find((test) => test.id === testId) ?? READING_PRACTICE_TESTS[0];
 }
 
 export function allReadingQuestions(test: ReadingPracticeTest): ReadingQuestion[] {
   return test.passages.flatMap((passage) => passage.questions);
+}
+
+export function getReadingQuestionTypeGuide(id: ReadingQuestionTypeGuideId): ReadingQuestionTypeGuide {
+  return READING_QUESTION_TYPE_GUIDES.find((guide) => guide.id === id) ?? READING_QUESTION_TYPE_GUIDES[0];
+}
+
+export function getQuestionsForReadingQuestionType(
+  id: ReadingQuestionTypeGuideId
+): ReadingQuestionPracticeItem[] {
+  const guide = getReadingQuestionTypeGuide(id);
+  const seen = new Set<string>();
+
+  return READING_PRACTICE_TESTS.flatMap((test) =>
+    test.passages.flatMap((passage) =>
+      passage.questions
+        .filter((question) => guide.kinds.includes(question.kind))
+        .map((question) => ({ test, passage, question }))
+    )
+  ).filter((item) => {
+    if (seen.has(item.question.id)) return false;
+    seen.add(item.question.id);
+    return true;
+  });
 }

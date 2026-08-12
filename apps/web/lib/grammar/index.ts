@@ -4,6 +4,7 @@ import { B1_LESSONS } from "./b1";
 import { B2_LESSONS } from "./b2";
 import { IELTS_LESSONS } from "./ielts";
 import { IELTS_ADVANCED_LESSONS } from "./ielts-advanced";
+import { IELTS_EXPERT_LESSONS } from "./ielts-expert";
 import type { GrammarLesson, GrammarLevel } from "./types";
 
 export type { GrammarLesson, GrammarLevel } from "./types";
@@ -15,7 +16,7 @@ export const LESSONS_BY_LEVEL: Record<GrammarLevel, GrammarLesson[]> = {
   A2: A2_LESSONS,
   B1: B1_LESSONS,
   B2: B2_LESSONS,
-  IELTS: [...IELTS_LESSONS, ...IELTS_ADVANCED_LESSONS],
+  IELTS: [...IELTS_LESSONS, ...IELTS_ADVANCED_LESSONS, ...IELTS_EXPERT_LESSONS],
 };
 
 export const ALL_LESSONS: GrammarLesson[] = GRAMMAR_LEVELS.flatMap(

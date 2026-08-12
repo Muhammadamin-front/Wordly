@@ -15,7 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-const LEVELS = ["A1", "A2", "B1"] as const;
+const LEVELS = ["A1", "A2", "B1", "B2"] as const;
 
 export function ReadingView({ lang, skills }: { lang: string; skills: Dictionary["skills"] }) {
   const { user, ready } = useAuth();

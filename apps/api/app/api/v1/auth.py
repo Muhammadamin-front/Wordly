@@ -116,13 +116,21 @@ async def register(
     verify_token = await auth_service.create_one_time_token(
         db, user, "verify_email", settings.EMAIL_TOKEN_TTL_SECONDS
     )
-    await emailer.send(
-        to=user.email,
-        subject="Vocora — hisobni tasdiqlash / Verify your account",
-        body=verification_email_body(
-            user.profile.display_name, user.profile.ui_locale, verify_token, settings
-        ),
-    )
+    try:
+        await emailer.send(
+            to=user.email,
+            subject="Vocora — hisobni tasdiqlash / Verify your account",
+            body=verification_email_body(
+                user.profile.display_name, user.profile.ui_locale, verify_token, settings
+            ),
+        )
+    except EmailDeliveryError as exc:
+        # Registration is not complete unless its verification email was accepted.
+        # The database session rolls this temporary user and token back with the request.
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Account email is temporarily unavailable. Please try again shortly.",
+        ) from exc
     return await build_token_pair(db, user, request, response)
 
 
@@ -309,7 +317,15 @@ async def forgot_password(
             settings, user.profile.ui_locale, "reset-password", token
         )
         message = account_email("reset", link=link)
-        await emailer.send(to=user.email, subject=message.subject, body=message.body)
+        try:
+            await emailer.send(to=user.email, subject=message.subject, body=message.body)
+        except EmailDeliveryError as exc:
+            # Do not claim a reset link was sent when the provider rejected it.
+            # The email adapter keeps provider details, reset tokens, and keys out of logs.
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Password reset email is temporarily unavailable. Please try again shortly.",
+            ) from exc
         await db.commit()
     # Identical response either way: no account enumeration.
     return MessageOut(message="If that email exists, a reset link has been sent")

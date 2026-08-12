@@ -1,4 +1,16 @@
+from app.services.emailer import EmailDeliveryError
 from tests.conftest import REGISTER_PAYLOAD, extract_token_from_outbox, register_user
+
+
+async def test_registration_returns_safe_error_when_verification_email_fails(client, monkeypatch):
+    async def failed_send(*args, **kwargs):
+        raise EmailDeliveryError("provider failure")
+
+    monkeypatch.setattr("app.services.emailer.ConsoleEmailer.send", failed_send)
+    response = await client.post("/api/v1/auth/register", json=REGISTER_PAYLOAD)
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Account email is temporarily unavailable. Please try again shortly."
 
 
 async def test_forgot_password_no_account_enumeration(client):
@@ -11,6 +23,21 @@ async def test_forgot_password_no_account_enumeration(client):
     )
     assert known.status_code == unknown.status_code == 200
     assert known.json() == unknown.json()
+
+
+async def test_forgot_password_reports_a_safe_retry_message_when_delivery_fails(client, monkeypatch):
+    await register_user(client)
+
+    async def failed_send(*args, **kwargs):
+        raise EmailDeliveryError("provider failure")
+
+    monkeypatch.setattr("app.services.emailer.ConsoleEmailer.send", failed_send)
+    response = await client.post(
+        "/api/v1/auth/forgot-password", json={"email": REGISTER_PAYLOAD["email"]}
+    )
+
+    assert response.status_code == 503
+    assert response.json()["detail"] == "Password reset email is temporarily unavailable. Please try again shortly."
 
 
 async def test_full_reset_flow_revokes_sessions(client):

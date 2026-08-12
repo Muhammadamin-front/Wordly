@@ -81,6 +81,7 @@
     "forgotSubtitle": "Enter your email and we'll send a reset link",
     "forgotButton": "Send reset link",
     "forgotSent": "If that email exists, a reset link has been sent.",
+    "errorEmailUnavailable": "We could not send the account email. Please try again shortly.",
     "resetTitle": "New password",
     "resetSubtitle": "Enter your new password",
     "newPassword": "New password",

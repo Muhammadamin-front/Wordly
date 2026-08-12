@@ -1,0 +1,152 @@
+IELTS READING PRACTICE TEST                                                                        Time Allowed: 20 Minutes
+
+
+
+
+                                               READING PASSAGE 2
+
+                                                    The aerofoil
+                        The shape of an aeroplane's wing plays a key role in the achievement of flight
+
+   A The magic of flight lies in the interaction between the wings of a plane and the air. If the shape of the wing
+   - the aerofoil - is right and the plane is moving fast enough, the wing is pushed into the air as it slices through
+   it. It seems like magic because our all-too-literal brains tell us that because air is invisible it must be
+   insubstantial too. But air is not nothing; air is a substance completely comprised of gases. If you think of a
+   wing slicing through water rather than air, you can begin to imagine how air might provide the upward push
+   that aeronautical scientists call lift the key to the aerofoils lift is the flow of air around it. Air flows around an
+   aerofoil because the aerofoil is moving, just as the bow of a boat creates a flow in still water. What matters is
+   the way the curved shape of the aerofoil diverts the flow around it.
+
+   B To really see why, it is worth carrying out an experiment with knives and spoons under a running tap. Hold
+   the blade of a knife vertically in a stream of water and the water flows straight and undisturbed past the blade.
+   Twist the blade slightly at an angle to the stream and you can see how it begins to block and split the flow,
+   breaking it into turbulent eddies - and you may see the turbulence increase as you increase the angle of the
+   knife. Hold the convex side of a spoon under the stream instead, however, and something different happens.
+   The spoon diverts the water but does not disrupt it. You have to twist the spoon at a much steeper angle
+   before it disrupts the flow. Like the curvature of the spoon, the curvature of the aerofoil ensures the flow of the
+   air around it is diverted but not broken up.
+
+   C The curvature of the spoon, like that of the aerofoil is crucial. Far above or below the aerofoil, the airflow is
+   undisturbed, but the closer the air is to the aerofoil the more the flow is bent to follow the aerofoils shape. As
+   the airflow changes direction, it begins to push in a different direction too, and the more it bends, the greater
+   the change. Right on top and underneath the aerofoil, the airflow is turned effectively at right angles, pushing
+   the aerofoil upwards and creating lift. Since it is the way that the airflow is distorted that creates lift, it is
+   evident that the pattern of the airflow distortion is critical. This depends on the angle that the aerofoil moves
+   through the air - its angle of attack the steeper the angle, the greater the lift.
+
+   D The overall shape of the aerofoil is also crucial. A gentle, thin, curve provides the best lift, and this is the
+   shape of the wings of birds as well as the shape that the flexible wings of hang-gliders and microlights bend
+   into. But it is hard to make a large wing strong enough in this shape. So, the wings of most large aircraft are,
+   in profile, the shape of a narrow teardrop. This shape does not give us much lift, which is why the wings have
+   to be huge. They are hollow inside, which provides room for fuel storage. There are also flaps on the rear of
+   the wings that can be swung up or down to alter the aerofoil curvature and its effective angle of attack and so
+   allow the pilot to climb or descend.
+
+   E Of course the wings of birds were the original inspiration for the aerofoil. Countless thinkers in the distant
+   past must have marvelled at birds gliding through the sky and guessed that it was the shape of the wings that
+   mattered, such as the 5th-century Greek philosopher Archytas who is said to have built a mechanical bird that
+   flew. Brave pioneers like the 9th-century Cordoban inventor, Abbas Ibn-firnas, were even bold enough to strap
+   artificial wings to their arms and leap from high places. Ibn-firnas was lucky enough to glide through the air for
+   ten minutes before crash-landing and almost breaking his neck.
+
+
+
+
+IELTS Reading Practice Test                                                                                       Page 1 of 3
+   F Yet the first person who really began to explore the shape of wings methodically was the British engineer
+   Sir George Cayley (1773-1857) and it is to Cayley that we owe the idea of the curved aerofoil Cayley was an
+   extraordinary and inventive man, and he is credited with developing self-righting lifeboats, wire-spoked
+   wheels, seatbelts and even an internal combustion engine. But it is mostly as the father of aviation that he is
+   remembered, and it is he who pioneered much of the theory of fight He carried out and what shapes and
+   angles produced the greatest lift. In his analyses, he developed the names of the key forces involved in fight,
+   lift, drag and thrust - which still play an important role today. Flight involves a balance between these four
+   forces, but for a successful aeroplane you need both power and control, which is why it took another half-
+   century before Orville and Wilbur Wright made their historic flight at Kittyhawk in the USA on 17th December
+   1903.
+
+
+
+
+   Questions 14–19
+
+
+  Reading Passage 2 has six paragraphs, A–F.
+  Choose the correct heading for each paragraph from the list of headings below.
+  Write the correct number, i–vii, in boxes 14–19 on your answer sheet.
+
+
+
+   List of Headings
+   i. The earliest attempts to achieve human flight
+   ii. Public reaction to the pioneers of flight
+   iii. A practical demonstration of an aeronautical principle
+   iv. The importance of angles in achieving lift
+   v. A misunderstanding about the nature of air
+   vi. The discovery of several key factors affecting wing design
+   vii. Additional wing features that help control flight
+
+
+
+  14 Paragraph A
+
+
+  15 Paragraph B
+
+
+  16 Paragraph C
+
+
+  17 Paragraph D
+
+
+  18 Paragraph E
+
+
+  19 Paragraph F
+
+
+   Questions 20–24
+
+
+
+
+IELTS Reading Practice Test                                                                                Page 2 of 3
+  Complete the summary below.
+  Choose ONE WORD ONLY from the passage for each answer.
+  Write your answers in boxes 20–24 on your answer sheet.
+
+
+
+   Designing aeroplane wings
+
+   Hang-gliders, microlights, small planes and birds share the same wing shape - a curve which provides the
+   maximum amount of 20                              But while these wings can support an individual person, they
+   cannot support the weight of a huge aircraft. In fact, the enormous wings of a modern plane look like a thin 21
+                              when viewed from the side. Space is not wasted because the 22
+   needed to power a flight is kept inside each wing. The pilot can adjust the 23                          which are
+   located at the 24                          of the wings. This changes the aerofoil's curvature as well as the angle of
+   attack and causes the plane to rise or descend.
+
+
+
+   Questions 25–26
+
+
+  Choose TWO letters, A–E.
+  Write the correct letters in boxes 25 and 26 on your answer sheet.
+
+  Which TWO things does the writer state about George Cayley?
+
+
+  Questions 25 & 26
+       A. He made a lot of money from his inventions
+       B. He understood how to design aeroplane engines 50 years before Orville and Wilbur Wright
+       C. His studies included how to achieve the maximum lift
+       D. He worked closely with other scientists
+       E. He reached his conclusions by conducting a series of tests
+
+
+
+
+IELTS Reading Practice Test                                                                                         Page 3 of 3
+

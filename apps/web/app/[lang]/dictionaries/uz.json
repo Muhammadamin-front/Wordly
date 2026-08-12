@@ -81,6 +81,7 @@
     "forgotSubtitle": "Pochtangizni kiriting — tiklash havolasini yuboramiz",
     "forgotButton": "Havola yuborish",
     "forgotSent": "Agar bunday pochta mavjud bo'lsa, tiklash havolasi yuborildi.",
+    "errorEmailUnavailable": "Hisob xatini yuborib bo'lmadi. Birozdan keyin qayta urinib ko'ring.",
     "resetTitle": "Yangi parol",
     "resetSubtitle": "Yangi parolingizni kiriting",
     "newPassword": "Yangi parol",

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Button, type ButtonProps } from "@/components/ui/button";
@@ -12,18 +13,25 @@ export function HeroCta({
   guestLabel,
   userLabel,
   variant,
+  className,
+  linkClassName,
+  icon,
 }: {
   lang: string;
   guestLabel: string;
   userLabel: string;
   variant?: ButtonProps["variant"];
+  className?: string;
+  linkClassName?: string;
+  icon?: ReactNode;
 }) {
   const { user, ready } = useAuth();
   const signedIn = ready && !!user;
 
   return (
-    <Link href={signedIn ? `/${lang}/decks` : `/${lang}/auth/register`}>
-      <Button size="lg" variant={variant}>
+    <Link href={signedIn ? `/${lang}/decks` : `/${lang}/auth/register`} className={linkClassName}>
+      <Button size="lg" variant={variant} className={className}>
+        {icon}
         {signedIn ? userLabel : guestLabel}
       </Button>
     </Link>

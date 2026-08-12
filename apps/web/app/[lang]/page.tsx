@@ -22,7 +22,7 @@ import { VocoraForestHero } from "@/components/site/vocora-forest-hero";
 import { Reveal } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
-import { fetchCatalogMeta, type CatalogMeta } from "@/lib/vocab";
+import { fetchCatalogMeta } from "@/lib/vocab";
 import { getDictionary, hasLocale } from "./dictionaries";
 
 const LEVELS = [
@@ -31,13 +31,6 @@ const LEVELS = [
   { slug: "b1", level: "B1", tone: "bg-[#327f8d]" },
   { slug: "b2", level: "B2", tone: "bg-[#3d6264]" },
 ] as const;
-
-const FALLBACK_CATALOG: CatalogMeta = {
-  word_total: 9003,
-  expression_total: 852,
-  learning_item_total: 9855,
-  levels: { A1: 816, A2: 1425, B1: 1856, B2: 3056, C1: 1617, C2: 233 },
-};
 
 export default async function LandingPage({
   params,
@@ -48,10 +41,9 @@ export default async function LandingPage({
   if (!hasLocale(lang)) notFound();
 
   const dict = await getDictionary(lang);
-  const catalog = await fetchCatalogMeta().catch(() => FALLBACK_CATALOG);
+  const catalog = await fetchCatalogMeta().catch(() => null);
   const { common, landing, library, nav } = dict;
   const copy = homeCopy[lang as Locale];
-  const itemCount = new Intl.NumberFormat(lang).format(catalog.learning_item_total);
   const shelfLabels = library.shelves as Record<string, { name: string; desc: string }>;
 
   const features: { icon: LucideIcon; title: string; body: string }[] = [
@@ -66,7 +58,7 @@ export default async function LandingPage({
       <SiteHeader lang={lang as Locale} nav={nav} />
 
       <main className="flex-1 px-3 pb-8 sm:px-5">
-        <VocoraForestHero lang={lang} copy={copy} landing={landing} itemCount={itemCount} />
+        <VocoraForestHero lang={lang} copy={copy} landing={landing} />
 
         <section className="mx-auto mt-5 grid max-w-[1480px] gap-5 xl:grid-cols-[2.1fr_1fr]">
           <Reveal>
@@ -112,10 +104,12 @@ export default async function LandingPage({
                           {shelfLabels[item.slug].desc}
                         </p>
                         <div className="mt-auto pt-5">
-                          <p className="text-[11px] font-bold text-ink-soft">
-                            {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)} {library.words}
-                          </p>
-                          <p className="mt-5 flex items-center justify-end gap-1.5 text-xs font-black text-brand-900 dark:text-brand-200">
+                          {catalog && (
+                            <p className="mb-5 text-[11px] font-bold text-ink-soft">
+                              {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)} {library.words}
+                            </p>
+                          )}
+                          <p className="flex items-center justify-end gap-1.5 text-xs font-black text-brand-900 dark:text-brand-200">
                             {copy.previewLevel}
                             <ArrowRight className="size-3.5" aria-hidden />
                           </p>
@@ -252,7 +246,6 @@ const homeCopy: Record<
     subtitle: string;
     heroImageAlt: string;
     exploreLevels: string;
-    wordsMetric: string;
     levelsMetric: string;
     skillsMetric: string;
     todayWord: string;
@@ -277,13 +270,11 @@ const homeCopy: Record<
   }
 > = {
   uz: {
-    eyebrow: "O'zbeklar uchun yaratilgan ingliz tili platformasi",
+    eyebrow: "Har kuni aniq reja bilan ravonlik sari",
     title: "Ingliz tilini ishonch bilan o'rganing",
-    subtitle:
-      "O'zbek tilida tushuntirilgan {count} ta so'z va ibora, aqlli takrorlash, talaffuz hamda IELTS uchun statik o'quv resurslari.",
-    heroImageAlt: "Ingliz tilini o'rganayotgan o'zbek studenti",
+    subtitle: "O'zbek tilidagi aniq izohlar, aqlli takrorlash, talaffuz va IELTS uchun amaliy resurslar.",
+    heroImageAlt: "Vocora uchun kitoblar va lampali sokin o'qish muhiti",
     exploreLevels: "Darajalarni ko'rish",
-    wordsMetric: "so'z va ibora",
     levelsMetric: "CEFR darajasi",
     skillsMetric: "asosiy ko'nikma",
     todayWord: "Bugungi so'z",
@@ -314,13 +305,11 @@ const homeCopy: Record<
     previewLevel: "5 ta so'zni sinash",
   },
   ru: {
-    eyebrow: "Платформа английского для Узбекистана",
+    eyebrow: "Каждый день — уверенный шаг к свободной речи",
     title: "Учите английский уверенно",
-    subtitle:
-      "{count} слов и выражений с понятными объяснениями, умное повторение, произношение и статические ресурсы IELTS.",
-    heroImageAlt: "Узбекский студент изучает английский язык",
+    subtitle: "Понятные объяснения на узбекском, умное повторение, произношение и практические ресурсы для IELTS.",
+    heroImageAlt: "Спокойная учебная атмосфера с книгами и лампой для Vocora",
     exploreLevels: "Смотреть уровни",
-    wordsMetric: "слов и фраз",
     levelsMetric: "уровней CEFR",
     skillsMetric: "основных навыка",
     todayWord: "Слово дня",
@@ -351,13 +340,11 @@ const homeCopy: Record<
     previewLevel: "Попробовать 5 слов",
   },
   en: {
-    eyebrow: "English learning built for Uzbekistan",
+    eyebrow: "A focused path to fluent English, every day",
     title: "Learn English with confidence",
-    subtitle:
-      "{count} clearly explained words and expressions, smart review, pronunciation, and static IELTS resources.",
-    heroImageAlt: "Uzbek student learning English",
+    subtitle: "Clear Uzbek explanations, smart review, pronunciation, and practical IELTS resources.",
+    heroImageAlt: "Calm premium study desk with books and a reading lamp for Vocora",
     exploreLevels: "Explore levels",
-    wordsMetric: "words and phrases",
     levelsMetric: "CEFR levels",
     skillsMetric: "core skills",
     todayWord: "Word of the day",
