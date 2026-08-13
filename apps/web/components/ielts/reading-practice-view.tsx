@@ -32,7 +32,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-  READING_LIBRARY_GROUPS,
   READING_PRACTICE_TESTS,
   READING_QUESTION_TYPE_GUIDES,
   allReadingQuestions,
@@ -52,6 +51,7 @@ type AnswerValue = string | string[];
 type ReadingTheme = "light" | "dark";
 type HighlightColor = "yellow" | "green" | "blue" | "pink";
 type Drawer = "notes" | "vocabulary" | null;
+type ReadingPartId = "part1" | "part2" | "part3";
 
 type Highlight = {
   id: string;
@@ -102,6 +102,35 @@ type TestResult = {
 };
 
 const STORAGE_PREFIX = "vocora-reading-practice";
+const READING_PARTS: Array<{
+  key: ReadingPartId;
+  label: string;
+  helper: string;
+  title: string;
+  testId: string;
+}> = [
+  {
+    key: "part1",
+    label: "Part 1",
+    helper: "Urban resilience",
+    title: "Build confidence with a clear academic passage",
+    testId: "academic-roof-gardens",
+  },
+  {
+    key: "part2",
+    label: "Part 2",
+    helper: "Science + design",
+    title: "Follow denser ideas and precise evidence",
+    testId: "academic-aerofoil",
+  },
+  {
+    key: "part3",
+    label: "Part 3",
+    helper: "Society + culture",
+    title: "Handle the most demanding academic questions",
+    testId: "academic-libraries",
+  },
+];
 const HIGHLIGHT_STYLE: Record<HighlightColor, string> = {
   yellow: "bg-[#f4d35e]/55 text-ink",
   green: "bg-brand-300/55 text-ink",
@@ -344,6 +373,12 @@ export function ReadingPracticeView({ lang }: { lang: string }) {
 }
 
 function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHistory; onOpen: (id: string) => void; onQuestionType: (typeId: ReadingQuestionTypeGuideId) => void }) {
+  const [activePart, setActivePart] = useState<ReadingPartId>("part1");
+  const selectedPart = READING_PARTS.find((part) => part.key === activePart) ?? READING_PARTS[0];
+  const selectedTest = getReadingTest(selectedPart.testId);
+  const fullTest = getReadingTest("academic-city-systems");
+  const generalTraining = getReadingTest("general-training-community");
+
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <section className="surface-panel relative overflow-hidden rounded-lg p-6 sm:p-8 lg:p-10">
@@ -372,15 +407,53 @@ function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHist
         </div>
       </section>
 
+      <nav
+        className="sticky top-[4.5rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        aria-label="Academic Reading parts"
+      >
+        <div className="grid grid-cols-3 gap-1">
+          {READING_PARTS.map((part) => (
+            <button
+              key={part.key}
+              type="button"
+              onClick={() => setActivePart(part.key)}
+              aria-pressed={activePart === part.key}
+              className={cn(
+                "rounded-full px-3 py-2 text-center transition-all",
+                activePart === part.key
+                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(7,58,53,0.18)]"
+                  : "text-ink-soft hover:bg-hover hover:text-ink"
+              )}
+            >
+              <span className="block text-sm font-black">{part.label}</span>
+              <span className="hidden text-[10px] font-bold opacity-80 sm:block">{part.helper}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
       <section className="mt-7">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="type-label text-accent-500">Recommended next</p>
-            <h2 className="mt-1 text-2xl font-black text-ink">Take a complete Reading test</h2>
+            <p className="type-label text-accent-500">Academic Reading · {selectedPart.label}</p>
+            <h2 className="mt-1 text-2xl font-black text-ink">{selectedPart.title}</h2>
+          </div>
+          <span className="hidden text-sm font-semibold text-ink-soft sm:block">
+            Passage {READING_PARTS.findIndex((part) => part.key === activePart) + 1} of 3
+          </span>
+        </div>
+        <TestCard test={selectedTest} history={history[selectedTest.id]} featured onOpen={onOpen} />
+      </section>
+
+      <section className="mt-10">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <p className="type-label text-brand-600 dark:text-brand-300">Full mock test</p>
+            <h2 className="mt-1 text-2xl font-black text-ink">Put all three parts together</h2>
           </div>
           <span className="hidden text-sm font-semibold text-ink-soft sm:block">3 passages · 40 questions · 60 minutes</span>
         </div>
-        <TestCard test={READING_PRACTICE_TESTS[0]} history={history[READING_PRACTICE_TESTS[0].id]} featured onOpen={onOpen} />
+        <TestCard test={fullTest} history={history[fullTest.id]} onOpen={onOpen} />
       </section>
 
       <section className="mt-10">
@@ -405,23 +478,14 @@ function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHist
         </div>
       </section>
 
-      <div className="mt-10 space-y-10">
-        {READING_LIBRARY_GROUPS.map((group) => {
-          const uniqueItems = [...new Set(group.items)].map((id) => getReadingTest(id));
-          return (
-            <section key={group.title}>
-              <div className="mb-4 max-w-2xl">
-                <p className="type-label text-brand-600 dark:text-brand-300">Reading library</p>
-                <h2 className="mt-1 text-2xl font-black text-ink">{group.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-ink-soft">{group.description}</p>
-              </div>
-              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {uniqueItems.map((test) => <TestCard key={`${group.title}-${test.id}`} test={test} history={history[test.id]} onOpen={onOpen} />)}
-              </div>
-            </section>
-          );
-        })}
-      </div>
+      <section className="mt-10">
+        <div className="mb-4 max-w-2xl">
+          <p className="type-label text-brand-600 dark:text-brand-300">General Training</p>
+          <h2 className="mt-1 text-2xl font-black text-ink">Practical Reading for everyday English</h2>
+          <p className="mt-2 text-sm leading-6 text-ink-soft">Not taking Academic IELTS? Start with notices, services and practical information here.</p>
+        </div>
+        <TestCard test={generalTraining} history={history[generalTraining.id]} onOpen={onOpen} />
+      </section>
     </main>
   );
 }

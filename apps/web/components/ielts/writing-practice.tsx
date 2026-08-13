@@ -12,6 +12,11 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Ielts = Dictionary["ielts"];
 
+const WRITING_TASKS = [
+  { key: "task1", helper: "Report / letter · 150 words" },
+  { key: "task2", helper: "Essay · 250 words" },
+] as const;
+
 /** Writing practice panel: rotating Task 1/2 prompts + a professional AI
  *  review — per-criterion bands, a full error list with corrections, and a
  *  band-8 model rewrite. Feedback arrives in the UI language. */
@@ -68,22 +73,37 @@ export function WritingPractice({
 
   return (
     <div>
-      {/* Task type toggle */}
-      <div className="flex gap-1 rounded-xl border border-line p-1">
-        {(["task1", "task2"] as const).map((tt) => (
-          <button
-            key={tt}
-            type="button"
-            onClick={() => reset(tt, 0)}
-            className={cn(
-              "flex-1 rounded-lg px-3 py-2 text-sm font-semibold transition-colors",
-              taskType === tt ? "bg-brand-600 text-white" : "text-ink-soft hover:text-ink"
-            )}
-          >
-            {tt === "task1" ? t.task1 : t.task2}
-          </button>
-        ))}
-      </div>
+      <nav
+        className="sticky top-[4.5rem] z-20 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        aria-label="IELTS Writing tasks"
+      >
+        <div className="grid grid-cols-2 gap-1">
+          {WRITING_TASKS.map((task) => (
+            <button
+              key={task.key}
+              type="button"
+              onClick={() => reset(task.key, 0)}
+              aria-pressed={taskType === task.key}
+              className={cn(
+                "rounded-full px-3 py-2 text-center transition-all",
+                taskType === task.key
+                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(7,58,53,0.18)]"
+                  : "text-ink-soft hover:bg-hover hover:text-ink"
+              )}
+            >
+              <span className="block text-sm font-black">{task.key === "task1" ? t.task1 : t.task2}</span>
+              <span className="hidden text-[10px] font-bold opacity-80 sm:block">{task.helper}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {!tasks && (
+        <div className="mt-5 rounded-lg border border-line bg-card/70 p-5" role="status">
+          <p className="text-sm font-black text-ink">Preparing your writing prompt…</p>
+          <p className="mt-1 text-sm leading-6 text-ink-soft">Choose a task above while the next IELTS-style prompt is loading.</p>
+        </div>
+      )}
 
       {/* Prompt */}
       {currentTask && (
