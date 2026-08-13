@@ -737,6 +737,210 @@ const communityCentre: ReadingPassage = {
   ],
 };
 
+type FullTestPassageSeed = {
+  id: string;
+  title: string;
+  subtitle: string;
+  context: string;
+  oldMethod: string;
+  focus: string;
+  mechanism: string;
+  outcome: string;
+  limitation: string;
+  variation: string;
+  planning: string;
+  future: string;
+};
+
+type FullTestSeed = {
+  id: string;
+  title: string;
+  description: string;
+  level: ReadingPracticeTest["level"];
+  passages: readonly [FullTestPassageSeed, FullTestPassageSeed, FullTestPassageSeed];
+};
+
+const FULL_TEST_SEEDS: readonly FullTestSeed[] = [
+  {
+    id: "academic-materials-adaptation",
+    title: "Full Test 2: Materials and adaptation",
+    description: "Original Academic Reading on climate design, bio-materials and healthier urban water.",
+    level: "Intermediate",
+    passages: [
+      { id: "clay-cooling", title: "The return of clay cooling", subtitle: "Passive design for hotter courtyards", context: "dense neighbourhoods with hotter summers", oldMethod: "air conditioning", focus: "clay panels", mechanism: "evaporation", outcome: "cooler courtyards", limitation: "regular wetting", variation: "humidity", planning: "surveying walls", future: "passive cooling" },
+      { id: "fungal-packaging", title: "Fungi-grown packaging", subtitle: "Turning agricultural waste into a protective material", context: "manufacturing regions with large crop residues", oldMethod: "plastic foam", focus: "fungal fibres", mechanism: "mycelium growth", outcome: "compostable packaging", limitation: "slow drying", variation: "temperature", planning: "selecting waste", future: "local production" },
+      { id: "urban-streams", title: "Restoring urban streams", subtitle: "Making hidden waterways useful again", context: "cities where streams were enclosed decades ago", oldMethod: "concrete channels", focus: "planted banks", mechanism: "slower flow", outcome: "cleaner water", limitation: "flood safety", variation: "rainfall", planning: "mapping drains", future: "connected habitats" },
+    ],
+  },
+  {
+    id: "academic-observation-discovery",
+    title: "Full Test 3: Observation and discovery",
+    description: "Original Academic Reading on public research, conservation and environmental records.",
+    level: "Advanced",
+    passages: [
+      { id: "citizen-science-night", title: "Citizen science after dark", subtitle: "How volunteers record urban wildlife", context: "urban areas with limited professional surveys", oldMethod: "expert surveys", focus: "phone observations", mechanism: "image recognition", outcome: "larger records", limitation: "uneven coverage", variation: "participant skills", planning: "training volunteers", future: "shared databases" },
+      { id: "seed-vaults", title: "The logic of seed vaults", subtitle: "Protecting crop diversity for uncertain futures", context: "agricultural systems exposed to changing climates", oldMethod: "field collections", focus: "cold storage", mechanism: "low metabolism", outcome: "longer survival", limitation: "power security", variation: "seed species", planning: "testing samples", future: "regional backups" },
+      { id: "ice-language", title: "Reading the language of ice", subtitle: "What long ice records reveal about the atmosphere", context: "remote polar research stations", oldMethod: "surface maps", focus: "ice cores", mechanism: "trapped bubbles", outcome: "past climates", limitation: "deep drilling", variation: "ice age", planning: "choosing sites", future: "combined records" },
+    ],
+  },
+  {
+    id: "academic-cities-transition",
+    title: "Full Test 4: Cities in transition",
+    description: "Original Academic Reading on low-carbon logistics, quieter streets and public markets.",
+    level: "Intermediate",
+    passages: [
+      { id: "freight-bicycles", title: "Freight bicycles in historic centres", subtitle: "Short-distance deliveries without large vehicles", context: "historic centres with narrow streets", oldMethod: "delivery vans", focus: "cargo bicycles", mechanism: "short routes", outcome: "fewer emissions", limitation: "weather exposure", variation: "street layout", planning: "locating hubs", future: "electric support" },
+      { id: "quieter-streets", title: "Designing quieter streets", subtitle: "Reducing noise through the way traffic moves", context: "residential districts near busy roads", oldMethod: "noise barriers", focus: "traffic calming", mechanism: "lower speeds", outcome: "quieter corners", limitation: "driver compliance", variation: "road design", planning: "measuring noise", future: "night delivery rules" },
+      { id: "civic-markets", title: "Markets as civic infrastructure", subtitle: "Why covered markets can support urban life", context: "town centres affected by changing shopping habits", oldMethod: "retail centres", focus: "covered markets", mechanism: "shared facilities", outcome: "longer visits", limitation: "rising rents", variation: "neighbourhood income", planning: "consulting traders", future: "mixed ownership" },
+    ],
+  },
+  {
+    id: "academic-living-systems",
+    title: "Full Test 5: Living systems",
+    description: "Original Academic Reading on coastal ecology, soil health and animal migration.",
+    level: "Advanced",
+    passages: [
+      { id: "mussel-farms", title: "Mussel farms and clean water", subtitle: "Filtering coastal water with living systems", context: "sheltered bays with declining water clarity", oldMethod: "chemical filters", focus: "mussel beds", mechanism: "water filtration", outcome: "clearer bays", limitation: "disease monitoring", variation: "water temperature", planning: "testing sites", future: "coastal networks" },
+      { id: "soil-fungi", title: "The hidden work of soil fungi", subtitle: "Underground partnerships that support plant growth", context: "farmland under pressure to reduce inputs", oldMethod: "synthetic fertiliser", focus: "fungal networks", mechanism: "nutrient exchange", outcome: "stronger roots", limitation: "disturbed soil", variation: "crop rotation", planning: "reducing tillage", future: "field partnerships" },
+      { id: "migratory-birds", title: "Tracking migratory birds", subtitle: "Lightweight technology and long-distance journeys", context: "bird populations that cross several countries", oldMethod: "ring surveys", focus: "lightweight tags", mechanism: "satellite signals", outcome: "longer routes", limitation: "short battery life", variation: "body size", planning: "fitting tags", future: "migration forecasts" },
+    ],
+  },
+  {
+    id: "academic-knowledge-culture",
+    title: "Full Test 6: Knowledge and culture",
+    description: "Original Academic Reading on archives, film restoration and libraries as shared spaces.",
+    level: "Advanced",
+    passages: [
+      { id: "endangered-scripts", title: "Reviving endangered scripts", subtitle: "Recovering damaged written records", context: "archives holding fragile historical documents", oldMethod: "paper copies", focus: "digital archives", mechanism: "multispectral imaging", outcome: "clearer symbols", limitation: "fragment damage", variation: "ink quality", planning: "scanning collections", future: "public access" },
+      { id: "silent-films", title: "The second life of silent films", subtitle: "Making early cinema viewable again", context: "film collections stored in unstable conditions", oldMethod: "single copies", focus: "film scans", mechanism: "frame repair", outcome: "stable images", limitation: "missing scenes", variation: "film condition", planning: "cataloguing reels", future: "restored screenings" },
+      { id: "libraries-beyond-books", title: "Libraries beyond books", subtitle: "Why shared tools can bring new visitors", context: "public libraries seeking wider local use", oldMethod: "book lending", focus: "maker spaces", mechanism: "shared equipment", outcome: "new visitors", limitation: "staff training", variation: "opening hours", planning: "asking residents", future: "mobile workshops" },
+    ],
+  },
+  {
+    id: "academic-energy-networks",
+    title: "Full Test 7: Energy and networks",
+    description: "Original Academic Reading on thermal storage, local generation and flexible demand.",
+    level: "Advanced",
+    passages: [
+      { id: "heat-storage", title: "Storing electricity as heat", subtitle: "A different way to hold renewable energy", context: "power systems with fluctuating renewable generation", oldMethod: "lithium batteries", focus: "heated bricks", mechanism: "thermal storage", outcome: "cheaper reserves", limitation: "heat loss", variation: "insulation", planning: "matching demand", future: "district systems" },
+      { id: "solar-cooperatives", title: "Community solar cooperatives", subtitle: "Generating energy through collective ownership", context: "neighbourhoods where many homes cannot install panels", oldMethod: "individual panels", focus: "shared arrays", mechanism: "collective ownership", outcome: "lower bills", limitation: "legal rules", variation: "roof access", planning: "forming groups", future: "community finance" },
+      { id: "flexible-grids", title: "The future of flexible grids", subtitle: "Balancing electricity demand minute by minute", context: "electricity networks with rising peak demand", oldMethod: "fixed schedules", focus: "smart meters", mechanism: "real-time signals", outcome: "balanced demand", limitation: "data privacy", variation: "user habits", planning: "setting tariffs", future: "automated devices" },
+    ],
+  },
+  {
+    id: "academic-human-performance",
+    title: "Full Test 8: Human performance",
+    description: "Original Academic Reading on schedules, recovery and learning skilled work.",
+    level: "Intermediate",
+    passages: [
+      { id: "school-schedules", title: "Why school schedules matter", subtitle: "Aligning lessons with adolescent sleep", context: "secondary schools with very early morning lessons", oldMethod: "early starts", focus: "later lessons", mechanism: "sleep timing", outcome: "better attention", limitation: "bus timetables", variation: "student age", planning: "consulting families", future: "staggered starts" },
+      { id: "deliberate-breaks", title: "The science of deliberate breaks", subtitle: "Short pauses and more reliable attention", context: "workplaces built around long uninterrupted sessions", oldMethod: "long sessions", focus: "short pauses", mechanism: "mental recovery", outcome: "fewer errors", limitation: "work pressure", variation: "task complexity", planning: "tracking fatigue", future: "adaptive breaks" },
+      { id: "expert-craft", title: "Learning from expert craft", subtitle: "Why observation and feedback support mastery", context: "training programmes for complex manual skills", oldMethod: "written instructions", focus: "guided observation", mechanism: "repeated feedback", outcome: "faster learning", limitation: "limited mentors", variation: "practice time", planning: "recording steps", future: "peer coaching" },
+    ],
+  },
+  {
+    id: "academic-land-water",
+    title: "Full Test 9: Land and water",
+    description: "Original Academic Reading on wetlands, precise irrigation and everyday insect life.",
+    level: "Intermediate",
+    passages: [
+      { id: "urban-wetlands", title: "Wetlands at the edge of cities", subtitle: "Making room for water during heavy rain", context: "fast-growing cities with repeated surface flooding", oldMethod: "storm drains", focus: "restored wetlands", mechanism: "water retention", outcome: "reduced flooding", limitation: "land competition", variation: "seasonal rainfall", planning: "protecting sites", future: "green corridors" },
+      { id: "water-farming", title: "Farming with less water", subtitle: "Delivering moisture only where roots need it", context: "dry farming regions facing unreliable rainfall", oldMethod: "flood irrigation", focus: "drip lines", mechanism: "targeted delivery", outcome: "lower use", limitation: "blocked pipes", variation: "soil type", planning: "checking filters", future: "sensor control" },
+      { id: "ordinary-insects", title: "The value of ordinary insects", subtitle: "Supporting pollinators beyond protected reserves", context: "farms with simplified field boundaries", oldMethod: "pesticide programmes", focus: "flower strips", mechanism: "habitat diversity", outcome: "more pollinators", limitation: "seasonal mowing", variation: "plant variety", planning: "leaving margins", future: "farm networks" },
+    ],
+  },
+  {
+    id: "academic-design-evidence",
+    title: "Full Test 10: Design and evidence",
+    description: "Original Academic Reading on sound, workplace data and observing distant objects.",
+    level: "Advanced",
+    passages: [
+      { id: "public-acoustics", title: "Acoustics in public spaces", subtitle: "Designing rooms where speech remains clear", context: "busy public buildings with hard internal surfaces", oldMethod: "hard surfaces", focus: "sound panels", mechanism: "sound absorption", outcome: "clearer speech", limitation: "cleaning costs", variation: "room shape", planning: "testing echoes", future: "adjustable ceilings" },
+      { id: "wearable-sensors", title: "Wearable sensors at work", subtitle: "Using movement data without losing trust", context: "physical workplaces with changing safety risks", oldMethod: "self reports", focus: "wrist sensors", mechanism: "movement data", outcome: "safer shifts", limitation: "consent rules", variation: "job type", planning: "agreeing safeguards", future: "worker dashboards" },
+      { id: "night-sky", title: "Mapping the night sky", subtitle: "Combining images to find fainter objects", context: "small observatories affected by city light", oldMethod: "paper charts", focus: "digital maps", mechanism: "image stacking", outcome: "fainter objects", limitation: "cloud cover", variation: "telescope size", planning: "calibrating cameras", future: "public observatories" },
+    ],
+  },
+];
+
+function originalAcademicPassage(
+  seed: FullTestPassageSeed,
+  questionStart: number,
+  questionCount: number
+): ReadingPassage {
+  const headings: ReadingOption[] = [
+    { value: "i", label: "i. Reconsidering the old response" },
+    { value: "ii", label: "ii. The process behind the change" },
+    { value: "iii", label: "iii. Results with an important limit" },
+    { value: "iv", label: "iv. Moving from research to wider use" },
+  ];
+  const question = (offset: number, input: Omit<ReadingQuestion, "id" | "number">): ReadingQuestion => ({
+    ...input,
+    id: `${seed.id}-q${questionStart + offset}`,
+    number: questionStart + offset,
+  });
+  const completionAnswers = [
+    ["Earlier work relied on ______.", seed.oldMethod, `Earlier responses commonly relied on ${seed.oldMethod}.`],
+    ["The newer approach focuses on ______.", seed.focus, `The newer approach centres on ${seed.focus}.`],
+    ["Its key process is ______.", seed.mechanism, `Its main mechanism is ${seed.mechanism}.`],
+    ["Outcomes vary with ______.", seed.variation, `outcomes vary with ${seed.variation}.`],
+    ["Teams begin by ______.", seed.planning, `wider use begins when teams start by ${seed.planning}.`],
+    ["A future direction is ______.", seed.future, `a future direction is ${seed.future}.`],
+  ] as const;
+
+  return {
+    id: seed.id,
+    title: seed.title,
+    subtitle: seed.subtitle,
+    paragraphs: [
+      {
+        label: "A",
+        text: `In ${seed.context}, ${seed.title.toLowerCase()} is attracting growing attention. Earlier responses commonly relied on ${seed.oldMethod}, because it offered a familiar and easy-to-explain solution. Yet that response can overlook local conditions and the way different systems interact. Researchers are therefore reconsidering the problem, asking whether a more carefully designed approach could improve performance without simply increasing consumption or complexity.`,
+      },
+      {
+        label: "B",
+        text: `The newer approach centres on ${seed.focus}. Its main mechanism is ${seed.mechanism}: instead of treating the challenge as an isolated technical fault, the method uses a process that responds to conditions already present in the setting. Early pilots have reported ${seed.outcome}. Supporters stress that the change is not a single product or rule, but a way of connecting design decisions with the behaviour of people, materials or living systems.`,
+      },
+      {
+        label: "C",
+        text: `The evidence also has to be interpreted cautiously. One practical limitation is ${seed.limitation}, which can affect whether a trial is realistic beyond a well-supported research site. In addition, outcomes vary with ${seed.variation}. This does not make the approach ineffective; rather, it explains why comparisons between projects need to describe their setting carefully. Researchers are now looking for patterns that separate a reliable result from one produced only by unusually favourable conditions.`,
+      },
+      {
+        label: "D",
+        text: `For wider use, preparation is essential. The passage does not suggest that the approach works without planning: implementation begins when teams start by ${seed.planning}. They can then adapt the method to local constraints, monitor results and explain trade-offs to users. If these steps are followed, a future direction is ${seed.future}. The value of the work may therefore lie not only in one successful pilot, but in a repeatable process for making better decisions.`,
+      },
+    ],
+    questions: [
+      question(0, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph A.", options: headings, answer: "i", explanation: "Paragraph A introduces the familiar earlier response and explains why it is being reconsidered.", evidence: `Earlier responses commonly relied on ${seed.oldMethod}` }),
+      question(1, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph B.", options: headings, answer: "ii", explanation: "Paragraph B explains the focus and mechanism of the newer approach.", evidence: `Its main mechanism is ${seed.mechanism}` }),
+      question(2, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph C.", options: headings, answer: "iii", explanation: "Paragraph C gives a limitation and explains why outcomes differ between settings.", evidence: `outcomes vary with ${seed.variation}` }),
+      question(3, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph D.", options: headings, answer: "iv", explanation: "Paragraph D is about preparation and the route from a pilot to wider use.", evidence: `teams start by ${seed.planning}` }),
+      question(4, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: `Before the newer approach, the usual response relied on ${seed.oldMethod}.`, options: tfng, answer: "TRUE", explanation: "This is stated directly in paragraph A.", evidence: `Earlier responses commonly relied on ${seed.oldMethod}` }),
+      question(5, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The passage says that outcomes are identical in every location.", options: tfng, answer: "FALSE", explanation: "Paragraph C explicitly says that outcomes vary with local conditions.", evidence: `outcomes vary with ${seed.variation}` }),
+      question(6, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The passage gives the exact total cost of the programme.", options: tfng, answer: "NOT GIVEN", explanation: "No total budget or exact cost is provided.", evidence: "No cost is stated in the passage." }),
+      question(7, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The newer approach can be used successfully without preparation.", options: tfng, answer: "FALSE", explanation: "Paragraph D says that planning and preparation are essential.", evidence: "The passage does not suggest that the approach works without planning" }),
+      ...completionAnswers.slice(0, questionCount - 8).map(([prompt, answer, evidence], index) => question(index + 8, { group: `Questions ${questionStart + 8}-${questionStart + questionCount - 1}: Sentence completion`, kind: "sentence-completion", prompt: `Complete the sentence. ${prompt}`, instruction: "Write NO MORE THAN THREE WORDS.", answer, acceptedAnswers: [answer], explanation: "The answer is stated directly in the passage.", evidence })),
+    ],
+  };
+}
+
+function originalFullTest(seed: FullTestSeed): ReadingPracticeTest {
+  return {
+    id: seed.id,
+    title: seed.title,
+    description: seed.description,
+    track: "Cambridge-style",
+    level: seed.level,
+    minutes: 60,
+    passages: [
+      originalAcademicPassage(seed.passages[0], 1, 13),
+      originalAcademicPassage(seed.passages[1], 14, 13),
+      originalAcademicPassage(seed.passages[2], 27, 14),
+    ],
+  };
+}
+
+const ORIGINAL_FULL_TESTS = FULL_TEST_SEEDS.map(originalFullTest);
+
 export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
   {
     id: "academic-city-systems",
@@ -747,6 +951,7 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
     minutes: 60,
     passages: [roofGardens, aerofoil, cityLibraries],
   },
+  ...ORIGINAL_FULL_TESTS,
   {
     id: "general-training-community",
     title: "General Training: Community Centre",
@@ -784,6 +989,10 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
     passages: [cityLibraries],
   },
 ];
+
+export const READING_FULL_TESTS = READING_PRACTICE_TESTS.filter(
+  (test) => test.track === "Cambridge-style"
+);
 
 export const READING_LIBRARY_GROUPS = [
   {
