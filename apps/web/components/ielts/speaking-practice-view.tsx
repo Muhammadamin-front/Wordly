@@ -363,7 +363,10 @@ function QuestionPractice({
       </div>
       {showSample && (
         <div className="mt-5 rounded-lg border border-accent-400/25 bg-accent-400/8 p-4">
-          <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Sample answer</p>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Band 8+ sample answer</p>
+            <span className="rounded-full bg-card/75 px-2.5 py-1 text-[10px] font-bold text-ink-soft">Study the structure — do not memorise</span>
+          </div>
           <p className="mt-2 text-sm leading-7 text-ink">{sampleAnswer(topic, question)}</p>
         </div>
       )}
@@ -400,7 +403,10 @@ function CueCard({ topic }: { topic: SpeakingTopic }) {
         </ul>
       </div>
       <div className="mt-5 rounded-lg border border-accent-400/25 bg-accent-400/8 p-4">
-        <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Sample answer structure</p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Band 8+ sample answer</p>
+          <span className="rounded-full bg-card/75 px-2.5 py-1 text-[10px] font-bold text-ink-soft">2-minute model</span>
+        </div>
         <p className="mt-2 text-sm leading-7 text-ink">{sampleAnswer(topic, cue.instruction)}</p>
       </div>
     </div>

@@ -1,3 +1,9 @@
+import {
+  buildCueQuestionSamples,
+  buildPart1Samples,
+  buildPart3Samples,
+} from "./speaking-sample-content";
+
 export type SpeakingPart = "part1" | "part2" | "part3";
 
 export interface SpeakingVocabularyItem {
@@ -21,11 +27,13 @@ export interface SpeakingTopic {
   };
   tips: string[];
   mistakes: string[];
+  sampleAnswers: string[];
   cueCard?: {
     instruction: string;
     prompts: string[];
     followUps: string[];
   };
+  cueSample?: string;
   advanced?: boolean;
 }
 
@@ -220,59 +228,66 @@ function discussionQuestions(topic: string): string[] {
 }
 
 export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
-  ...EVERYDAY_TOPICS.map(([slug, title, description]) => ({
+  ...EVERYDAY_TOPICS.map(([slug, title, description], topicIndex) => ({
     slug,
     part: "part1" as const,
     title,
     description,
     questions: everydayQuestions(title),
+    sampleAnswers: buildPart1Samples(slug, topicIndex),
     vocabulary: BASE_VOCABULARY,
     phrases: PHRASES,
     tips: TIPS,
     mistakes: MISTAKES,
   })),
-  ...CUE_TOPICS.map(([slug, title, theme, firstPrompt]) => ({
-    slug,
-    part: "part2" as const,
-    title,
-    description: `Cue-card practice about ${theme}, with a one-minute plan and a two-minute answer.`,
-    questions: [
+  ...CUE_TOPICS.map(([slug, title, theme, firstPrompt], topicIndex) => {
+    const sampleAnswers = buildCueQuestionSamples(slug, topicIndex);
+    return {
+      slug,
+      part: "part2" as const,
       title,
-      `What details would make this ${theme} story more personal?`,
-      `Which vocabulary can help you describe this ${theme} clearly?`,
-    ],
-    cueCard: {
-      instruction: title,
-      prompts: [
-        firstPrompt,
-        "when it happened or when you experienced it",
-        "who was with you or who was involved",
-        "and explain why this memory or idea is important to you",
+      description: `Cue-card practice about ${theme}, with a one-minute plan and a two-minute answer.`,
+      questions: [
+        title,
+        `What details would make this ${theme} story more personal?`,
+        `Which vocabulary can help you describe this ${theme} clearly?`,
       ],
-      followUps: [
-        `Do people in your country often talk about ${theme}?`,
-        `Has the way people experience ${theme} changed recently?`,
+      sampleAnswers,
+      cueSample: sampleAnswers[0],
+      cueCard: {
+        instruction: title,
+        prompts: [
+          firstPrompt,
+          "when it happened or when you experienced it",
+          "who was with you or who was involved",
+          "and explain why this memory or idea is important to you",
+        ],
+        followUps: [
+          `Do people in your country often talk about ${theme}?`,
+          `Has the way people experience ${theme} changed recently?`,
+        ],
+      },
+      vocabulary: BASE_VOCABULARY,
+      phrases: PHRASES,
+      tips: [
+        "Use the first minute to write keywords only, not full sentences.",
+        "Organise your answer as past → details → feelings → final reflection.",
+        ...TIPS.slice(1, 3),
       ],
-    },
-    vocabulary: BASE_VOCABULARY,
-    phrases: PHRASES,
-    tips: [
-      "Use the first minute to write keywords only, not full sentences.",
-      "Organise your answer as past → details → feelings → final reflection.",
-      ...TIPS.slice(1, 3),
-    ],
-    mistakes: [
-      "Reading your notes like a script instead of speaking naturally.",
-      "Finishing after 40 seconds because you give only basic facts.",
-      ...MISTAKES.slice(1, 3),
-    ],
-  })),
-  ...DISCUSSION_TOPICS.map(([slug, title, description]) => ({
+      mistakes: [
+        "Reading your notes like a script instead of speaking naturally.",
+        "Finishing after 40 seconds because you give only basic facts.",
+        ...MISTAKES.slice(1, 3),
+      ],
+    };
+  }),
+  ...DISCUSSION_TOPICS.map(([slug, title, description], topicIndex) => ({
     slug,
     part: "part3" as const,
     title,
     description,
     questions: discussionQuestions(title),
+    sampleAnswers: buildPart3Samples(slug, topicIndex),
     vocabulary: ADVANCED_VOCABULARY,
     phrases: {
       starting: [
@@ -312,13 +327,9 @@ export function speakingTopicsByPart(part: SpeakingPart) {
 }
 
 export function sampleAnswer(topic: SpeakingTopic, question: string) {
-  if (topic.part === "part3") {
-    return `Broadly speaking, I think ${topic.title.toLowerCase()} has become more significant because it affects both individual choices and society as a whole. For example, in many cities, people's habits are shaped by technology, education, and the cost of living. At the same time, I would not say there is one perfect solution, because different age groups may need different support. So overall, a balanced approach is probably the most realistic answer.`;
+  if (topic.part === "part2" && question === topic.cueCard?.instruction) {
+    return topic.cueSample ?? topic.sampleAnswers[0];
   }
-
-  if (topic.part === "part2") {
-    return `I would like to talk about ${topic.title.toLowerCase().replace("describe ", "")}. It happened quite recently, and what made it memorable was the feeling behind it rather than just the event itself. At first, I did not think it would be important, but later I realised that it taught me something useful. The main reason I remember it is that it was connected with my personal growth, and it gave me more confidence.`;
-  }
-
-  return `Yes, I do. ${question.replace(/\?$/, "").toLowerCase()} is something I can relate to because it appears in my daily life quite often. For instance, it affects the way I spend my time and communicate with other people. I would say it is meaningful rather than just ordinary, because small habits in this area can make a real difference.`;
+  const questionIndex = topic.questions.indexOf(question);
+  return topic.sampleAnswers[questionIndex >= 0 ? questionIndex : 0];
 }
