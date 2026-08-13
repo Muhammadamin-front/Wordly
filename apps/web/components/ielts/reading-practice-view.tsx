@@ -32,6 +32,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
+  READING_FULL_TESTS,
   READING_PRACTICE_TESTS,
   READING_QUESTION_TYPE_GUIDES,
   allReadingQuestions,
@@ -376,8 +377,8 @@ function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHist
   const [activePart, setActivePart] = useState<ReadingPartId>("part1");
   const selectedPart = READING_PARTS.find((part) => part.key === activePart) ?? READING_PARTS[0];
   const selectedTest = getReadingTest(selectedPart.testId);
-  const fullTest = getReadingTest("academic-city-systems");
   const generalTraining = getReadingTest("general-training-community");
+  const completedFullTests = READING_FULL_TESTS.filter((fullTest) => history[fullTest.id]?.completed).length;
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
@@ -398,11 +399,11 @@ function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHist
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="type-label text-ink-soft">Your Reading journey</p>
-                <p className="mt-1 text-3xl font-black text-ink">{Object.values(history).filter((entry) => entry.completed).length}<span className="text-ink-soft">/{READING_PRACTICE_TESTS.length}</span></p>
+                <p className="mt-1 text-3xl font-black text-ink">{completedFullTests}<span className="text-ink-soft">/{READING_FULL_TESTS.length}</span></p>
               </div>
               <span className="icon-tile size-12 text-accent-500"><LibraryBig className="size-5" /></span>
             </div>
-            <p className="mt-4 text-sm leading-6 text-ink-soft">Start one passage in practice mode, or take all three under exam conditions.</p>
+            <p className="mt-4 text-sm leading-6 text-ink-soft">Choose a single passage to build skill, then complete one of ten full tests under exam conditions.</p>
           </div>
         </div>
       </section>
@@ -449,11 +450,21 @@ function ReadingLibrary({ history, onOpen, onQuestionType }: { history: TestHist
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
             <p className="type-label text-brand-600 dark:text-brand-300">Full mock test</p>
-            <h2 className="mt-1 text-2xl font-black text-ink">Put all three parts together</h2>
+            <h2 className="mt-1 text-2xl font-black text-ink">Choose from 10 complete Academic tests</h2>
           </div>
-          <span className="hidden text-sm font-semibold text-ink-soft sm:block">3 passages · 40 questions · 60 minutes</span>
+          <span className="hidden text-sm font-semibold text-ink-soft sm:block">Each: 3 passages · 40 questions · 60 minutes</span>
         </div>
-        <TestCard test={fullTest} history={history[fullTest.id]} onOpen={onOpen} />
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          {READING_FULL_TESTS.map((fullTest, index) => (
+            <TestCard
+              key={fullTest.id}
+              test={fullTest}
+              history={history[fullTest.id]}
+              featured={index === 0}
+              onOpen={onOpen}
+            />
+          ))}
+        </div>
       </section>
 
       <section className="mt-10">
