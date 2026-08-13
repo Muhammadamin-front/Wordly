@@ -15,7 +15,6 @@ import {
   LibraryBig,
   Maximize2,
   Minimize2,
-  Moon,
   NotebookPen,
   Pause,
   Play,
@@ -23,7 +22,6 @@ import {
   Save,
   SearchCheck,
   Send,
-  Sun,
   Target,
   Trash2,
   X,
@@ -49,7 +47,6 @@ import { ReadingQuestionTypePractice } from "./reading-question-type-practice";
 type StudyMode = "practice" | "exam";
 type Screen = "library" | "question-types" | "start" | "test" | "result";
 type AnswerValue = string | string[];
-type ReadingTheme = "light" | "dark";
 type HighlightColor = "yellow" | "green" | "blue" | "pink";
 type Drawer = "notes" | "vocabulary" | null;
 type ReadingPartId = "part1" | "part2" | "part3";
@@ -581,7 +578,6 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
 }) {
   const [panelRatio, setPanelRatio] = useState(52);
   const [fontSize, setFontSize] = useState(16);
-  const [theme, setTheme] = useState<ReadingTheme>("light");
   const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [drawer, setDrawer] = useState<Drawer>(null);
@@ -660,7 +656,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   };
 
   return (
-    <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5" data-theme={theme}>
+    <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
       <section className="overflow-hidden rounded-lg border border-line bg-page shadow-[0_20px_65px_rgba(27,64,55,0.12)]">
         <header className="sticky top-[calc(3.5rem+env(safe-area-inset-top))] z-30 flex flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur sm:top-[calc(4rem+env(safe-area-inset-top))] sm:px-5">
           <div className="flex min-w-0 items-center gap-3">
@@ -670,7 +666,6 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
           <div className="flex items-center gap-1.5 sm:gap-2">
             {studyMode === "exam" ? <span className={cn("inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 font-black tabular-nums", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">Practice mode</span>}
             {studyMode === "exam" && <button type="button" onClick={onPause} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink" title={paused ? "Resume" : "Pause"}>{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
-            <button type="button" onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink" title="Toggle Reading theme">{theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}</button>
             <Button size="sm" variant="secondary" onClick={() => setConfirmEnd(true)} className="hidden sm:inline-flex"><Send className="size-4" /> Submit</Button>
           </div>
         </header>
