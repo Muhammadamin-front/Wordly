@@ -31,6 +31,7 @@ import {
 } from "@/lib/ielts-resources";
 import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { ListeningAudioLibrary } from "./listening-audio-library";
 import { WritingPractice } from "./writing-practice";
 
 const SKILL_META: Record<IeltsSkill, { icon: LucideIcon }> = {
@@ -118,6 +119,8 @@ export function SkillView({
         </section>
       )}
 
+      {skill === "listening" && <ListeningAudioLibrary />}
+
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label={t.pageSections}>
         {content.sections.map((section) => (
           <a
@@ -134,6 +137,14 @@ export function SkillView({
             className="shrink-0 rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400/50 hover:text-ink"
           >
             120 {t.topics}
+          </a>
+        )}
+        {skill === "listening" && (
+          <a
+            href="#audio-library"
+            className="shrink-0 rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400/50 hover:text-ink"
+          >
+            Audio library
           </a>
         )}
       </nav>
