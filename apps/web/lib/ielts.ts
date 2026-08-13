@@ -34,13 +34,42 @@ export interface WritingPieSlice {
   value: number;
 }
 
+export interface WritingPieChart {
+  title: string;
+  slices: WritingPieSlice[];
+}
+
+export interface WritingMapFeature {
+  name: string;
+  kind: "water" | "road" | "building" | "green";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface WritingMap {
+  title: string;
+  features: WritingMapFeature[];
+}
+
+export interface WritingSecondaryChart {
+  title: string;
+  y_label?: string;
+  categories: string[];
+  series: WritingChartSeries[];
+}
+
 export interface WritingTaskVisual {
-  kind: "line" | "bar" | "table" | "bar-pie";
+  kind: "line" | "bar" | "table" | "bar-pie" | "pie-pair" | "process" | "map-pair" | "bar-line";
   title: string;
   y_label?: string;
   categories: string[];
   series: WritingChartSeries[];
   pie?: WritingPieSlice[];
+  pies?: WritingPieChart[];
+  maps?: WritingMap[];
+  secondary?: WritingSecondaryChart;
 }
 
 export interface WritingTask {

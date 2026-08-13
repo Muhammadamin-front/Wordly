@@ -811,6 +811,18 @@ export function ieltsSkillContent(lang: string, skill: IeltsSkill): IeltsSkillCo
   return IELTS_SKILL_CONTENT[skill];
 }
 
+const WRITING_SECTION_IDS = {
+  task1: new Set(["task-1-visuals", "task-1-process", "score-analysis"]),
+  task2: new Set(["task-2-opinion", "task-2-discussion", "task-2-problems", "score-analysis"]),
+};
+
+export function writingSectionsForTask(
+  sections: IeltsResourceSection[],
+  task: "task1" | "task2"
+) {
+  return sections.filter((section) => WRITING_SECTION_IDS[task].has(section.id));
+}
+
 export function ieltsVocabularyResources(lang: string): VocabularyResource[] {
   if (lang === "uz" || lang === "ru") return LOCALIZED_IELTS[lang].resources;
   return IELTS_VOCABULARY_RESOURCES;
