@@ -686,7 +686,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
 
         <div
           className="grid min-h-[calc(100svh-15rem)] grid-cols-1 sm:min-h-[calc(100svh-12.5rem)] sm:grid-cols-[minmax(0,var(--reading-passage-width))_12px_minmax(0,1fr)]"
-          style={{ "--reading-passage-width": `${panelRatio}fr` } as React.CSSProperties}
+          style={{ "--reading-passage-width": `${panelRatio}%` } as React.CSSProperties}
         >
           <article className={cn("min-w-0 overflow-y-auto bg-page p-5 sm:max-h-[calc(100vh-12.5rem)] sm:p-7", mobilePane !== "passage" && "hidden sm:block")} onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
             <p className="type-label text-brand-600 dark:text-brand-300">Reading passage</p>
