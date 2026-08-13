@@ -410,7 +410,18 @@ body::after {
 
 @media (max-width: 1023px) {
   body:has(.mobile-bottom-nav) {
-    padding-bottom: calc(4.75rem + env(safe-area-inset-bottom));
+    /* Keep page actions clear of the persistent five-item navigation on iPhone. */
+    padding-bottom: calc(5.75rem + env(safe-area-inset-bottom));
+  }
+
+  /* Reading is also public. Reserve space for the app navigation only when it is visible. */
+  body:has(.mobile-bottom-nav) .reading-workspace {
+    padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+  }
+
+  body:has(.mobile-bottom-nav) .reading-question-nav,
+  body:has(.mobile-bottom-nav) .reading-selection-toolbar {
+    bottom: calc(5rem + env(safe-area-inset-bottom));
   }
 }
 

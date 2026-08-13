@@ -574,7 +574,7 @@ function MobileBottomNav({
 }) {
   return (
     <nav
-      className="mobile-bottom-nav fixed inset-x-2 bottom-2 z-40 grid grid-cols-5 rounded-[22px] border border-line bg-raised/94 p-1 shadow-[0_14px_42px_rgba(7,58,53,0.14)] backdrop-blur-md lg:hidden"
+      className="mobile-bottom-nav fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-5 rounded-[22px] border border-line bg-raised/94 p-1 shadow-[0_14px_42px_rgba(7,58,53,0.14)] backdrop-blur-md lg:hidden"
       aria-label={nav.menu}
     >
       {PRIMARY_NAV.map((item) => {
