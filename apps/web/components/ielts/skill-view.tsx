@@ -31,6 +31,7 @@ import {
 } from "@/lib/ielts-resources";
 import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { WritingPractice } from "./writing-practice";
 
 const SKILL_META: Record<IeltsSkill, { icon: LucideIcon }> = {
   reading: { icon: BookOpen },
@@ -43,10 +44,12 @@ export function SkillView({
   lang,
   skill,
   t,
+  writingT,
 }: {
   lang: string;
   skill: IeltsSkill;
   t: Dictionary["ieltsHub"];
+  writingT?: Dictionary["ielts"];
 }) {
   const content = ieltsSkillContent(lang, skill);
   const vocabularyResources = ieltsVocabularyResources(lang);
@@ -99,6 +102,21 @@ export function SkillView({
           </div>
         </div>
       </motion.section>
+
+      {skill === "writing" && writingT && (
+        <section id="practice" className="mt-5 scroll-mt-24">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-extrabold uppercase text-accent-500">Writing practice desk</p>
+              <h2 className="mt-1 text-2xl font-black text-ink">Choose a task, then write with a clear plan</h2>
+            </div>
+            <span className="hidden rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft sm:block">
+              Task 1 · 150 words &nbsp; Task 2 · 250 words
+            </span>
+          </div>
+          <WritingPractice lang={lang} t={writingT} />
+        </section>
+      )}
 
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label={t.pageSections}>
         {content.sections.map((section) => (
