@@ -24,9 +24,29 @@ export interface IeltsOverview {
   enabled: boolean;
 }
 
+export interface WritingChartSeries {
+  name: string;
+  values: number[];
+}
+
+export interface WritingPieSlice {
+  name: string;
+  value: number;
+}
+
+export interface WritingTaskVisual {
+  kind: "line" | "bar" | "table" | "bar-pie";
+  title: string;
+  y_label?: string;
+  categories: string[];
+  series: WritingChartSeries[];
+  pie?: WritingPieSlice[];
+}
+
 export interface WritingTask {
   title: string;
   prompt: string;
+  visual?: WritingTaskVisual | null;
 }
 
 export interface IeltsQuestion {

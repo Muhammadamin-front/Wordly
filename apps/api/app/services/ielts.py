@@ -29,7 +29,7 @@ XP_LISTENING = 30
 
 # Static Writing prompts (Academic), rotated client-side. Original prompts in
 # the exact register of real Task 1 / Task 2 questions.
-WRITING_TASKS: Dict[str, List[Dict[str, str]]] = {
+WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
     "task1": [
         {
             "title": "Task 1 — Bar chart",
@@ -99,6 +99,128 @@ WRITING_TASKS: Dict[str, List[Dict[str, str]]] = {
                 "years. Summarise the information by selecting and reporting the main features, "
                 "and make comparisons where relevant. Write at least 150 words."
             ),
+        },
+        {
+            "title": "Task 1 — Bakery earnings",
+            "prompt": (
+                "The line graph shows the annual earnings of three bakeries in London from "
+                "2000 to 2010. Summarise the information by selecting and reporting the main "
+                "features, and make comparisons where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "line",
+                "title": "Annual earnings of three London bakeries, 2000–2010",
+                "y_label": "Yearly income (£ thousands)",
+                "categories": ["2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010"],
+                "series": [
+                    {"name": "Bernie's Buns", "values": [20, 26, 22, 38, 38, 38, 36, 42, 61, 64, 66]},
+                    {"name": "Lovely Loaves", "values": [82, 94, 90, 80, 89, 62, 57, 54, 42, 40, 40]},
+                    {"name": "Robbie's Bakery", "values": [55, 55, 55, 55, 55, 54, 60, 68, 97, 102, 104]},
+                ],
+            },
+        },
+        {
+            "title": "Task 1 — Future language study",
+            "prompt": (
+                "The line graph shows predictions for the number of people who will study "
+                "three major world languages between 2020 and 2030. Summarise the information "
+                "by selecting and reporting the main features, and make comparisons where "
+                "relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "line",
+                "title": "Students of three world languages, 2020–2030",
+                "y_label": "Estimated students (millions)",
+                "categories": ["2020", "2022", "2024", "2026", "2028", "2030"],
+                "series": [
+                    {"name": "English", "values": [550, 610, 690, 630, 700, 750]},
+                    {"name": "Spanish", "values": [220, 280, 290, 350, 400, 490]},
+                    {"name": "Mandarin", "values": [100, 180, 280, 350, 500, 570]},
+                ],
+            },
+        },
+        {
+            "title": "Task 1 — Airport visitors",
+            "prompt": (
+                "The table below highlights the number of travellers using three major British "
+                "airports between 1998 and 2003. Summarise the information by selecting and "
+                "reporting the main features, and make comparisons where relevant. Write at "
+                "least 150 words."
+            ),
+            "visual": {
+                "kind": "table",
+                "title": "Airport visitors, 1998–2003",
+                "y_label": "Millions of travellers per year",
+                "categories": ["1998", "1999", "2000", "2001", "2002", "2003"],
+                "series": [
+                    {"name": "Heathrow", "values": [27.2, 36.4, 48.2, 37.1, 33.2, 45.6]},
+                    {"name": "Gatwick", "values": [36.5, 41.9, 44.4, 47.3, 51.1, 69.3]},
+                    {"name": "Stansted", "values": [17.3, 26.6, 39.9, 43.3, 43.3, 43.3]},
+                ],
+            },
+        },
+        {
+            "title": "Task 1 — Museum visitors",
+            "prompt": (
+                "The bar chart below shows the number of visitors to three museums between "
+                "2000 and 2005. Summarise the information by selecting and reporting the main "
+                "features, and make comparisons where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "bar",
+                "title": "Museum visitor numbers, 2000–2005",
+                "y_label": "Annual visitors (millions)",
+                "categories": ["2000", "2001", "2002", "2003", "2004", "2005"],
+                "series": [
+                    {"name": "MET, New York", "values": [12, 6, 6, 7.5, 12, 14.2]},
+                    {"name": "Edo-Tokyo", "values": [13.3, 13.3, 9.5, 6.3, 8, 10]},
+                    {"name": "National, China", "values": [6.2, 7.4, 9, 11, 11, 15.8]},
+                ],
+            },
+        },
+        {
+            "title": "Task 1 — Saturday bakery sales",
+            "prompt": (
+                "The bar chart compares average Saturday sales of eight items at two bakeries "
+                "in London in 2010. Summarise the information by selecting and reporting the "
+                "main features, and make comparisons where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "bar",
+                "title": "Average Saturday sales at two London bakeries, 2010",
+                "y_label": "Average items sold",
+                "categories": ["Cakes", "Cookies", "Rolls", "Fresh loaves", "Toasted sandwiches", "Salads", "Crisps", "Doughnuts"],
+                "series": [
+                    {"name": "Bernie's Buns", "values": [100, 115, 75, 40, 25, 20, 75, 135]},
+                    {"name": "Lovely Loaves", "values": [75, 65, 50, 45, 25, 62, 45, 122]},
+                ],
+            },
+        },
+        {
+            "title": "Task 1 — Film preferences and ticket sales",
+            "prompt": (
+                "The bar chart compares film genres preferred by men and women, while the pie "
+                "chart shows box-office takings by genre in the USA in 2010. Summarise the "
+                "information by selecting and reporting the main features, and make comparisons "
+                "where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "bar-pie",
+                "title": "Film preferences and USA box-office takings, 2010",
+                "y_label": "Number of respondents",
+                "categories": ["Action", "Comedy", "Thriller", "Science fiction", "Western", "Romantic comedy"],
+                "series": [
+                    {"name": "Men", "values": [40, 20, 15, 10, 10, 5]},
+                    {"name": "Women", "values": [25, 20, 10, 5, 10, 30]},
+                ],
+                "pie": [
+                    {"name": "Action", "value": 49},
+                    {"name": "Comedy", "value": 24},
+                    {"name": "Romantic comedy", "value": 12},
+                    {"name": "Thriller", "value": 10},
+                    {"name": "Other", "value": 5},
+                ],
+            },
         },
     ],
     "task2": [

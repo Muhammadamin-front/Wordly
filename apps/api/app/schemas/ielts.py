@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -15,6 +15,10 @@ class RewardOut(BaseModel):
 class WritingTask(BaseModel):
     title: str
     prompt: str
+    # Task 1 prompts may include a compact chart description for the web client.
+    # Keeping the data alongside the prompt lets learners see the visual before
+    # they start writing, without fetching a separate image asset.
+    visual: Optional[Dict[str, Any]] = None
 
 
 class HistoryItemOut(BaseModel):
