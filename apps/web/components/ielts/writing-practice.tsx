@@ -9,6 +9,7 @@ import { ApiError } from "@/lib/api";
 import { BAND_COLOR, ieltsApi, type WritingScore, type WritingTask } from "@/lib/ielts";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { WritingTaskVisual } from "./writing-task-visual";
 
 type Ielts = Dictionary["ielts"];
 
@@ -121,6 +122,7 @@ export function WritingPractice({
             )}
           </div>
           <p className="mt-2 text-sm leading-relaxed text-ink-soft">{currentTask.prompt}</p>
+          {currentTask.visual && <WritingTaskVisual visual={currentTask.visual} />}
         </div>
       )}
 
