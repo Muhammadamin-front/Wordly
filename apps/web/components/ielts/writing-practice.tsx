@@ -14,7 +14,7 @@ import { WritingTaskVisual } from "./writing-task-visual";
 type Ielts = Dictionary["ielts"];
 
 const WRITING_TASKS = [
-  { key: "task1", helper: "Report / letter · 150 words" },
+  { key: "task1", helper: "Academic report · 150 words" },
   { key: "task2", helper: "Essay · 250 words" },
 ] as const;
 
@@ -24,21 +24,24 @@ const WRITING_TASKS = [
 export function WritingPractice({
   lang,
   t,
+  onTaskChange,
 }: {
   lang: string;
   t: Ielts;
   embedded?: boolean;
+  onTaskChange?: (task: "task1" | "task2") => void;
 }) {
   const [tasks, setTasks] = useState<Record<string, WritingTask[]> | null>(null);
-  const [taskType, setTaskType] = useState<"task1" | "task2">("task2");
+  const [taskType, setTaskType] = useState<"task1" | "task2">("task1");
   const [taskIndex, setTaskIndex] = useState(0);
   const [essay, setEssay] = useState("");
   const [score, setScore] = useState<WritingScore | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    ieltsApi.writingTasks().then(setTasks).catch(() => {});
+    ieltsApi.writingTasks().then(setTasks).catch(() => setLoadError(true));
   }, []);
 
   const currentTask = tasks?.[taskType]?.[taskIndex];
@@ -66,6 +69,7 @@ export function WritingPractice({
 
   function reset(nextType: "task1" | "task2", nextIndex: number) {
     setTaskType(nextType);
+    onTaskChange?.(nextType);
     setTaskIndex(nextIndex);
     setEssay("");
     setScore(null);
@@ -101,15 +105,19 @@ export function WritingPractice({
 
       {!tasks && (
         <div className="mt-5 rounded-lg border border-line bg-card/70 p-5" role="status">
-          <p className="text-sm font-black text-ink">Preparing your writing prompt…</p>
-          <p className="mt-1 text-sm leading-6 text-ink-soft">Choose a task above while the next IELTS-style prompt is loading.</p>
+          <p className="text-sm font-black text-ink">
+            {loadError ? "Writing prompts could not be loaded" : "Preparing your writing prompt…"}
+          </p>
+          <p className="mt-1 text-sm leading-6 text-ink-soft">
+            {loadError ? "Refresh the page and try again." : "Your Task 1 visual and question are loading together."}
+          </p>
         </div>
       )}
 
       {/* Prompt */}
       {currentTask && (
         <div className="mt-4 rounded-2xl border border-line bg-card p-5">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-sm font-bold text-ink">{currentTask.title}</p>
             {(tasks?.[taskType]?.length ?? 0) > 1 && (
               <button
@@ -121,7 +129,7 @@ export function WritingPractice({
               </button>
             )}
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-ink-soft">{currentTask.prompt}</p>
+          <p className="mt-2 max-w-4xl text-sm leading-relaxed text-ink-soft">{currentTask.prompt}</p>
           {currentTask.visual && <WritingTaskVisual visual={currentTask.visual} />}
         </div>
       )}

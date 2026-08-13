@@ -85,7 +85,7 @@ function LineChart({ visual }: Props) {
 
 function BarChart({ visual, compact = false }: Props & { compact?: boolean }) {
   const left = 46;
-  const top = 20;
+  const top = compact ? 20 : 34;
   const width = compact ? 302 : 570;
   const height = compact ? 150 : 194;
   const maximum = chartMaximum(maxValue(visual.series));
@@ -104,7 +104,17 @@ function BarChart({ visual, compact = false }: Props & { compact?: boolean }) {
             const value = series.values[categoryIndex] ?? 0;
             const barHeight = (value / maximum) * height;
             const x = left + categoryIndex * groupWidth + (groupWidth - innerWidth) / 2 + seriesIndex * barWidth;
-            return <rect key={series.name} x={x} y={top + height - barHeight} width={Math.max(barWidth - 2, 2)} height={barHeight} rx="1.5" fill={COLORS[seriesIndex % COLORS.length]} />;
+            const renderedWidth = Math.max(barWidth - 2, 2);
+            return (
+              <g key={series.name}>
+                <rect x={x} y={top + height - barHeight} width={renderedWidth} height={barHeight} rx="2" fill={COLORS[seriesIndex % COLORS.length]} />
+                {!compact && (
+                  <text x={x + renderedWidth / 2} y={Math.max(top + height - barHeight - 6, 12)} textAnchor="middle" className="fill-ink text-[9px] font-bold">
+                    {formatNumber(value)}
+                  </text>
+                )}
+              </g>
+            );
           })}
           <text x={left + categoryIndex * groupWidth + groupWidth / 2} y={top + height + 18} textAnchor="middle" className="fill-ink-soft text-[9px] font-medium">
             {compact && label.length > 10 ? `${label.slice(0, 9)}…` : label}
@@ -171,6 +181,126 @@ function PieChart({ visual }: Props) {
   );
 }
 
+function PiePair({ visual }: Props) {
+  return (
+    <div className="mt-4 grid gap-4 sm:grid-cols-2">
+      {visual.pies?.map((pie) => {
+        const total = pie.slices.reduce((sum, slice) => sum + slice.value, 0) || 1;
+        let angle = -90;
+        return (
+          <div key={pie.title} className="rounded-xl border border-line/70 bg-card/65 p-3">
+            <h4 className="text-center text-xs font-black text-ink">{pie.title}</h4>
+            <svg viewBox="0 0 200 200" className="mx-auto mt-2 w-full max-w-[190px]" role="img" aria-label={`${visual.title}: ${pie.title}`}>
+              {pie.slices.map((slice, index) => {
+                const next = angle + (slice.value / total) * 360;
+                const path = piePath(angle, next, 78);
+                angle = next;
+                return <path key={slice.name} d={path} fill={COLORS[index % COLORS.length]} stroke="white" strokeWidth="2" />;
+              })}
+              <circle cx="100" cy="100" r="39" fill="var(--card, white)" />
+              <text x="100" y="106" textAnchor="middle" className="fill-ink text-[16px] font-black">{pie.title}</text>
+            </svg>
+            <div className="mt-2 grid grid-cols-2 gap-x-2 gap-y-1.5">
+              {pie.slices.map((slice, index) => (
+                <span key={slice.name} className="inline-flex items-center gap-1 text-[10px] font-bold text-ink-soft">
+                  <span className="size-2 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }} />
+                  {slice.name} {slice.value}%
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProcessDiagram({ visual }: Props) {
+  return (
+    <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label={visual.title}>
+      {visual.categories.map((stage, index) => (
+        <li key={stage} className="relative flex min-h-24 items-start gap-3 rounded-xl border border-brand-200/70 bg-card/75 p-3 pr-8 shadow-sm">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-black text-white">
+            {index + 1}
+          </span>
+          <span className="pt-0.5 text-xs font-bold leading-5 text-ink">{stage}</span>
+          {index < visual.categories.length - 1 && (
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-lg font-black text-brand-500" aria-hidden>→</span>
+          )}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+const MAP_COLORS = {
+  water: { fill: "#bae6fd", stroke: "#0284c7" },
+  road: { fill: "#d1d5db", stroke: "#6b7280" },
+  building: { fill: "#fed7aa", stroke: "#c2410c" },
+  green: { fill: "#bbf7d0", stroke: "#15803d" },
+};
+
+function MapPair({ visual }: Props) {
+  return (
+    <div className="mt-4 grid gap-4 md:grid-cols-2">
+      {visual.maps?.map((map) => (
+        <figure key={map.title} className="overflow-hidden rounded-xl border border-line bg-card/75 p-3">
+          <figcaption className="mb-2 text-center text-xs font-black text-ink">{map.title}</figcaption>
+          <svg viewBox="0 0 100 100" className="w-full rounded-lg bg-amber-50" role="img" aria-label={`${visual.title}: ${map.title}`}>
+            {map.features.map((feature) => {
+              const colors = MAP_COLORS[feature.kind];
+              return (
+                <g key={feature.name}>
+                  <rect
+                    x={feature.x}
+                    y={feature.y}
+                    width={feature.width}
+                    height={feature.height}
+                    rx={feature.kind === "road" ? 0 : 2}
+                    fill={colors.fill}
+                    stroke={colors.stroke}
+                    strokeWidth="0.7"
+                  />
+                  <text
+                    x={feature.x + feature.width / 2}
+                    y={feature.y + feature.height / 2 + 1.5}
+                    textAnchor="middle"
+                    className="fill-slate-800 text-[3.5px] font-bold"
+                  >
+                    {feature.name}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </figure>
+      ))}
+    </div>
+  );
+}
+
+function BarLineCharts({ visual }: Props) {
+  if (!visual.secondary) return null;
+  const secondary = {
+    kind: "line" as const,
+    ...visual.secondary,
+  };
+  return (
+    <div className="mt-4 grid gap-4 xl:grid-cols-2">
+      <div className="rounded-xl border border-line/70 bg-card/65 p-3">
+        <h4 className="mb-2 text-center text-xs font-black text-ink">Public transport use</h4>
+        <BarChart visual={visual} />
+        <Legend series={visual.series} />
+      </div>
+      <div className="rounded-xl border border-line/70 bg-card/65 p-3">
+        <h4 className="text-center text-xs font-black text-ink">{secondary.title}</h4>
+        <LineChart visual={secondary} />
+        <Legend series={secondary.series} />
+      </div>
+    </div>
+  );
+}
+
 export function WritingTaskVisual({ visual }: Props) {
   return (
     <section className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/80 to-sky-50/70 p-4 dark:border-brand-900/40 dark:from-brand-950/25 dark:to-sky-950/15">
@@ -179,7 +309,7 @@ export function WritingTaskVisual({ visual }: Props) {
           <p className="text-[10px] font-black uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">Task visual</p>
           <h3 className="mt-1 text-sm font-black text-ink">{visual.title}</h3>
         </div>
-        <span className="rounded-full bg-card/80 px-2.5 py-1 text-[10px] font-black text-ink-soft shadow-sm">Study the data</span>
+        <span className="rounded-full bg-card/80 px-2.5 py-1 text-[10px] font-black text-ink-soft shadow-sm">Study the visual</span>
       </div>
       {visual.kind === "line" && <><LineChart visual={visual} /><Legend series={visual.series} /></>}
       {visual.kind === "bar" && <><div className="mt-4"><BarChart visual={visual} /></div><Legend series={visual.series} /></>}
@@ -190,6 +320,10 @@ export function WritingTaskVisual({ visual }: Props) {
           <PieChart visual={visual} />
         </div>
       )}
+      {visual.kind === "pie-pair" && <PiePair visual={visual} />}
+      {visual.kind === "process" && <ProcessDiagram visual={visual} />}
+      {visual.kind === "map-pair" && <MapPair visual={visual} />}
+      {visual.kind === "bar-line" && <BarLineCharts visual={visual} />}
     </section>
   );
 }

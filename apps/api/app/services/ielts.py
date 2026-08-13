@@ -39,6 +39,16 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by selecting and reporting the main features, and make comparisons "
                 "where relevant. Write at least 150 words."
             ),
+            "visual": {
+                "kind": "bar",
+                "title": "Weekly hours spent studying English online",
+                "y_label": "Hours per student",
+                "categories": ["Brazil", "Japan", "Spain"],
+                "series": [
+                    {"name": "2015", "values": [4.5, 6.0, 5.2]},
+                    {"name": "2023", "values": [9.0, 8.5, 11.0]},
+                ],
+            },
         },
         {
             "title": "Task 1 — Process",
@@ -47,6 +57,19 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "a small town. Summarise the information by describing the main stages of the "
                 "process. Write at least 150 words."
             ),
+            "visual": {
+                "kind": "process",
+                "title": "Rainwater collection and purification system",
+                "categories": [
+                    "Rain falls on house roofs",
+                    "Gutters collect the water",
+                    "Underground pipes carry it to a tank",
+                    "A filter removes solid material",
+                    "Water is treated with disinfectant",
+                    "Clean water returns to homes",
+                ],
+                "series": [],
+            },
         },
         {
             "title": "Task 1 — Line graph",
@@ -56,6 +79,16 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by selecting and reporting the main features, and make comparisons "
                 "where relevant. Write at least 150 words."
             ),
+            "visual": {
+                "kind": "line",
+                "title": "Average house prices and salaries, 2000–2020",
+                "y_label": "£ thousands",
+                "categories": ["2000", "2005", "2010", "2015", "2020"],
+                "series": [
+                    {"name": "Average house price", "values": [145, 168, 214, 252, 305]},
+                    {"name": "Average annual salary", "values": [24, 27, 31, 35, 39]},
+                ],
+            },
         },
         {
             "title": "Task 1 — Pie charts",
@@ -64,6 +97,28 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "in 1990 and in 2020. Summarise the information by selecting and reporting the "
                 "main features, and make comparisons where relevant. Write at least 150 words."
             ),
+            "visual": {
+                "kind": "pie-pair",
+                "title": "Household spending by category, 1990 and 2020",
+                "categories": [],
+                "series": [],
+                "pies": [
+                    {"title": "1990", "slices": [
+                        {"name": "Housing", "value": 30},
+                        {"name": "Food", "value": 25},
+                        {"name": "Transport", "value": 12},
+                        {"name": "Leisure", "value": 10},
+                        {"name": "Other", "value": 23},
+                    ]},
+                    {"title": "2020", "slices": [
+                        {"name": "Housing", "value": 35},
+                        {"name": "Food", "value": 15},
+                        {"name": "Transport", "value": 18},
+                        {"name": "Leisure", "value": 17},
+                        {"name": "Other", "value": 15},
+                    ]},
+                ],
+            },
         },
         {
             "title": "Task 1 — Table",
@@ -73,6 +128,19 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "reporting the main features, and make comparisons where relevant. Write at least "
                 "150 words."
             ),
+            "visual": {
+                "kind": "table",
+                "title": "International students at five universities",
+                "y_label": "Number of students",
+                "categories": ["2010", "2015", "2020"],
+                "series": [
+                    {"name": "Ashford", "values": [3200, 4100, 5600]},
+                    {"name": "Barton", "values": [2800, 3500, 3900]},
+                    {"name": "Crestview", "values": [4500, 5200, 7100]},
+                    {"name": "Denton", "values": [1900, 2900, 4800]},
+                    {"name": "Elmbridge", "values": [3600, 3400, 4200]},
+                ],
+            },
         },
         {
             "title": "Task 1 — Map",
@@ -81,6 +149,29 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main changes that have taken place. Write at "
                 "least 150 words."
             ),
+            "visual": {
+                "kind": "map-pair",
+                "title": "Seabrook coastal town: 1980 and today",
+                "categories": [],
+                "series": [],
+                "maps": [
+                    {"title": "1980", "features": [
+                        {"name": "Sea", "kind": "water", "x": 0, "y": 74, "width": 100, "height": 26},
+                        {"name": "Main road", "kind": "road", "x": 0, "y": 43, "width": 100, "height": 10},
+                        {"name": "Fishing huts", "kind": "building", "x": 8, "y": 57, "width": 28, "height": 13},
+                        {"name": "Houses", "kind": "building", "x": 13, "y": 12, "width": 31, "height": 20},
+                        {"name": "Farmland", "kind": "green", "x": 60, "y": 8, "width": 32, "height": 28},
+                    ]},
+                    {"title": "Today", "features": [
+                        {"name": "Sea", "kind": "water", "x": 0, "y": 74, "width": 100, "height": 26},
+                        {"name": "Main road", "kind": "road", "x": 0, "y": 43, "width": 100, "height": 10},
+                        {"name": "Marina", "kind": "water", "x": 7, "y": 56, "width": 31, "height": 14},
+                        {"name": "Apartments", "kind": "building", "x": 12, "y": 9, "width": 34, "height": 25},
+                        {"name": "Hotel", "kind": "building", "x": 60, "y": 10, "width": 19, "height": 23},
+                        {"name": "Public park", "kind": "green", "x": 81, "y": 8, "width": 15, "height": 29},
+                    ]},
+                ],
+            },
         },
         {
             "title": "Task 1 — Process (manufacturing)",
@@ -90,6 +181,21 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 "
                 "words."
             ),
+            "visual": {
+                "kind": "process",
+                "title": "From cocoa pod to packaged chocolate bar",
+                "categories": [
+                    "Ripe cocoa pods are harvested",
+                    "Pods are split and beans removed",
+                    "Beans ferment under banana leaves",
+                    "Beans are dried in the sun",
+                    "Dried beans are roasted",
+                    "Shells are removed and nibs ground",
+                    "Cocoa is mixed, refined and moulded",
+                    "Finished bars are cooled and packaged",
+                ],
+                "series": [],
+            },
         },
         {
             "title": "Task 1 — Two charts",
@@ -99,6 +205,24 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "years. Summarise the information by selecting and reporting the main features, "
                 "and make comparisons where relevant. Write at least 150 words."
             ),
+            "visual": {
+                "kind": "bar-line",
+                "title": "Public transport use and petrol prices",
+                "y_label": "Adults using public transport (%)",
+                "categories": ["Alderton", "Bromley", "Carston", "Dunwich"],
+                "series": [{"name": "Public transport", "values": [62, 48, 35, 71]}],
+                "secondary": {
+                    "title": "Average petrol prices, 2014–2023",
+                    "y_label": "Price index (2014 = 100)",
+                    "categories": ["2014", "2016", "2018", "2020", "2022", "2023"],
+                    "series": [
+                        {"name": "Alderton", "values": [100, 104, 111, 97, 126, 132]},
+                        {"name": "Bromley", "values": [100, 106, 114, 99, 129, 135]},
+                        {"name": "Carston", "values": [100, 103, 109, 95, 122, 128]},
+                        {"name": "Dunwich", "values": [100, 105, 112, 98, 127, 133]},
+                    ],
+                },
+            },
         },
         {
             "title": "Task 1 — Bakery earnings",

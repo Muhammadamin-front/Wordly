@@ -5,6 +5,7 @@ import {
   ieltsSkillContent,
   ieltsVocabularyResources,
   speakingTopicGroups,
+  writingSectionsForTask,
 } from "@/lib/ielts-resources";
 
 describe("IELTS localized learning content", () => {
@@ -34,5 +35,23 @@ describe("IELTS localized learning content", () => {
 
     expect(uzbek.group).not.toBe(english.group);
     expect(uzbek.topics).toEqual(english.topics);
+  });
+
+  it.each(["en", "uz", "ru"])("keeps Task 1 and Task 2 guides separate for %s", (lang) => {
+    const sections = ieltsSkillContent(lang, "writing").sections;
+    const task1 = writingSectionsForTask(sections, "task1");
+    const task2 = writingSectionsForTask(sections, "task2");
+
+    expect(task1.map((section) => section.id)).toEqual([
+      "task-1-visuals",
+      "task-1-process",
+      "score-analysis",
+    ]);
+    expect(task2.map((section) => section.id)).toEqual([
+      "task-2-opinion",
+      "task-2-discussion",
+      "task-2-problems",
+      "score-analysis",
+    ]);
   });
 });

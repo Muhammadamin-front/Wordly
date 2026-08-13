@@ -63,9 +63,11 @@ async def test_writing_tasks_lists_both(client):
     body = (await client.get("/api/v1/ielts/writing/tasks", headers=headers)).json()
     assert "task1" in body and "task2" in body
     assert body["task1"][0]["prompt"]
-    chart_tasks = [task for task in body["task1"] if task.get("visual")]
-    assert len(chart_tasks) >= 6
-    assert all(task["visual"]["categories"] and task["visual"]["series"] for task in chart_tasks)
+    assert all(task.get("visual") for task in body["task1"])
+    visual_kinds = {task["visual"]["kind"] for task in body["task1"]}
+    assert {"bar", "line", "table", "process", "map-pair", "pie-pair", "bar-line"} <= visual_kinds
+    assert all(task["visual"]["title"] for task in body["task1"])
+    assert all(task["visual"].get("categories") for task in body["task1"] if task["visual"]["kind"] == "process")
 
 
 async def test_generate_requires_ai_configured(client):

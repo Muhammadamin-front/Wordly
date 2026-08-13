@@ -20,12 +20,13 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import {
   ieltsSkillContent,
   ieltsVocabularyResources,
   speakingTopicGroups,
+  writingSectionsForTask,
   type IeltsResourceSection,
   type IeltsSkill,
 } from "@/lib/ielts-resources";
@@ -56,6 +57,10 @@ export function SkillView({
   const vocabularyResources = ieltsVocabularyResources(lang);
   const meta = SKILL_META[skill];
   const Icon = meta.icon;
+  const [activeWritingTask, setActiveWritingTask] = useState<"task1" | "task2">("task1");
+  const visibleSections = skill === "writing"
+    ? writingSectionsForTask(content.sections, activeWritingTask)
+    : content.sections;
 
   useEffect(() => {
     trackEvent("ielts_skill_opened", {
@@ -115,14 +120,14 @@ export function SkillView({
               Task 1 · 150 words &nbsp; Task 2 · 250 words
             </span>
           </div>
-          <WritingPractice lang={lang} t={writingT} />
+          <WritingPractice lang={lang} t={writingT} onTaskChange={setActiveWritingTask} />
         </section>
       )}
 
       {skill === "listening" && <ListeningAudioLibrary />}
 
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-2" aria-label={t.pageSections}>
-        {content.sections.map((section) => (
+        {visibleSections.map((section) => (
           <a
             key={section.id}
             href={`#${section.id}`}
@@ -150,7 +155,7 @@ export function SkillView({
       </nav>
 
       <div className="mt-5 space-y-5">
-        {content.sections.map((section, index) => (
+        {visibleSections.map((section, index) => (
           <GuideSection key={section.id} section={section} index={index} t={t} />
         ))}
       </div>
