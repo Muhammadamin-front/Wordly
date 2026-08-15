@@ -61,10 +61,10 @@
   },
   "auth": {
     "loginTitle": "Xush kelibsiz!",
-    "loginSubtitle": "Hisobingizga kiring va davom eting",
+    "loginSubtitle": "Ingliz tili safaringizni davom ettirish uchun kiring",
     "registerTitle": "Vocora'ga qo'shiling",
     "registerSubtitle": "Bir daqiqada boshlang — bepul",
-    "email": "Elektron pochta",
+    "email": "Email yoki foydalanuvchi nomi",
     "password": "Parol",
     "passwordHint": "Kamida 8 ta belgi",
     "displayName": "Ismingiz",

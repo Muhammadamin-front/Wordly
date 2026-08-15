@@ -55,6 +55,8 @@ export function SocialLoginButtons({
 }) {
   const googleContainer = useRef<HTMLDivElement>(null);
   const [googleReady, setGoogleReady] = useState(false);
+  const [googleScriptFailed, setGoogleScriptFailed] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [appleReady, setAppleReady] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,10 +77,12 @@ export function SocialLoginButtons({
   const handleGoogleCredential = useCallback(
     async (response: { credential: string }) => {
       setError(null);
+      setGoogleLoading(true);
       try {
         continueWith(await authApi.google(response.credential));
       } catch (cause) {
         setError(authErrorMessage(cause, auth));
+        setGoogleLoading(false);
       }
     },
     [auth, continueWith]
@@ -86,20 +90,32 @@ export function SocialLoginButtons({
 
   useEffect(() => {
     if (!googleReady || !GOOGLE_CLIENT_ID || !googleContainer.current || !window.google) return;
+    const container = googleContainer.current;
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: handleGoogleCredential,
       auto_select: false,
       cancel_on_tap_outside: true,
     });
-    window.google.accounts.id.renderButton(googleContainer.current, {
-      theme: "outline",
-      size: "large",
-      shape: "rectangular",
-      text: "continue_with",
-      width: Math.max(260, Math.floor(googleContainer.current.getBoundingClientRect().width)),
-      locale: lang,
-    });
+
+    // Icon-only, to sit inside the square tile. Google requires that the button
+    // is rendered by their script rather than reimplemented.
+    if (container.childElementCount === 0) {
+      window.google.accounts.id.renderButton(container, {
+        type: "icon",
+        theme: "outline",
+        size: "large",
+        shape: "square",
+        locale: lang,
+      });
+    }
+
+    // If the script loaded but rendered nothing — blocked iframe, offline, an
+    // extension — fall back to our own mark rather than leaving an empty tile.
+    const check = window.setTimeout(() => {
+      if (container.childElementCount === 0) setGoogleScriptFailed(true);
+    }, 1500);
+    return () => window.clearTimeout(check);
   }, [googleReady, handleGoogleCredential, lang]);
 
   function initializeApple() {
@@ -135,26 +151,61 @@ export function SocialLoginButtons({
   if (!socialEnabled) return null;
 
   return (
-    <div className="mt-5">
-      <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.08em] text-white/36">
-        <span className="h-px flex-1 bg-white/12" />
+    <div className="mt-7">
+      <div className="mb-5 flex items-center gap-4 text-[0.78rem] font-medium text-auth-muted">
+        <span className="h-px flex-1 bg-auth-line" />
         {auth.socialDivider}
-        <span className="h-px flex-1 bg-white/12" />
+        <span className="h-px flex-1 bg-auth-line" />
       </div>
-      <div className="space-y-3">
-        {GOOGLE_CLIENT_ID && <div ref={googleContainer} aria-label={auth.googleButton} className="flex min-h-11 w-full justify-center" />}
+
+      {/* Square provider tiles, centred. Google renders its own button for
+          policy reasons, so it is scaled into a tile-sized box and clipped. */}
+      <div className="flex items-center justify-center gap-4">
+        {GOOGLE_CLIENT_ID && (
+          <div
+            className="relative size-[3.4rem] overflow-hidden rounded-2xl border border-auth-line bg-auth-field transition-colors hover:border-auth-ink/34"
+            aria-busy={googleLoading}
+          >
+            <div
+              ref={googleContainer}
+              aria-label={auth.googleButton}
+              className={
+                googleReady && !googleScriptFailed
+                  ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 [&_iframe]:!m-0 [&>div]:!border-0 [&>div]:!bg-transparent [&>div]:!shadow-none"
+                  : "hidden"
+              }
+            />
+            {(!googleReady || googleScriptFailed || googleLoading) && (
+              <span
+                className="absolute inset-0 grid place-items-center"
+                title={googleScriptFailed ? auth.googleButton : auth.socialLoading}
+              >
+                <GoogleMark />
+              </span>
+            )}
+          </div>
+        )}
         {APPLE_CLIENT_ID && APPLE_REDIRECT_URI && (
           <button
             type="button"
             onClick={handleAppleSignIn}
             disabled={!appleReady || appleLoading}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-white text-sm font-bold text-[#102923] transition-colors hover:bg-[#e9f7f1] disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#63dcc2]/60"
+            aria-label={auth.appleButton}
+            title={auth.appleButton}
+            className="grid size-[3.4rem] place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
           >
-            <AppleMark />
-            {appleLoading ? auth.socialLoading : auth.appleButton}
+            {appleLoading ? (
+              <span
+                aria-hidden
+                className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+            ) : (
+              <AppleMark />
+            )}
           </button>
         )}
       </div>
+
       {error && <Alert tone="error" className="mt-4">{error}</Alert>}
       {APPLE_CLIENT_ID && APPLE_REDIRECT_URI && (
         <Script
@@ -167,9 +218,28 @@ export function SocialLoginButtons({
         <Script
           src="https://accounts.google.com/gsi/client"
           strategy="afterInteractive"
-          onLoad={() => setGoogleReady(true)}
+          onReady={() => {
+            setGoogleScriptFailed(false);
+            setGoogleReady(true);
+          }}
+          onError={() => {
+            setGoogleReady(false);
+            setGoogleScriptFailed(true);
+            setError(auth.errorGeneric);
+          }}
         />
       )}
     </div>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 18 18" aria-hidden className="size-[18px] shrink-0">
+      <path fill="#4285F4" d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.482h4.844a4.14 4.14 0 0 1-1.797 2.715v2.258h2.909c1.702-1.567 2.684-3.874 2.684-6.614Z" />
+      <path fill="#34A853" d="M9 18c2.43 0 4.468-.806 5.956-2.181l-2.91-2.258c-.805.54-1.835.86-3.046.86-2.344 0-4.328-1.585-5.037-3.714H.956v2.332A9 9 0 0 0 9 18Z" />
+      <path fill="#FBBC05" d="M3.963 10.707A5.41 5.41 0 0 1 3.682 9c0-.592.102-1.168.281-1.707V4.961H.956A9 9 0 0 0 0 9c0 1.45.347 2.824.956 4.039l3.007-2.332Z" />
+      <path fill="#EA4335" d="M9 3.58c1.322 0 2.508.454 3.442 1.346l2.581-2.58C13.463.892 11.425 0 9 0A9 9 0 0 0 .956 4.961l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58Z" />
+    </svg>
   );
 }

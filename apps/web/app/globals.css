@@ -32,6 +32,11 @@
   --color-info: #0f766e;
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  /* Display serif for the auth headings. System stack: the artifact CSP and
+     our own build both block remote font files, and a silent fallback to the
+     body sans would flatten the whole treatment. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    ui-serif, Georgia, serif;
 
   --radius-xl2: 1.5rem;
 
@@ -141,6 +146,18 @@
     0 1px 2px rgb(19 60 51 / 0.04),
     0 22px 56px rgb(30 72 63 / 0.1),
     inset 0 1px 0 rgb(255 255 255 / 0.92);
+
+  /* Auth screens. The split card is its own small palette: pale paper against
+     the paper-cut foliage, so it does not inherit the app's tinted surfaces. */
+  --auth-page: #dfe4dc;
+  --auth-sheet: #f6f6f3;
+  --auth-ink: #16231c;
+  --auth-muted: #63736a;
+  --auth-field: #ffffff;
+  --auth-field-line: rgb(22 35 28 / 0.22);
+  --auth-primary: #33513f;
+  --auth-primary-hover: #294232;
+  --shadow-auth-card: 0 40px 110px rgb(15 32 24 / 0.26), 0 4px 14px rgb(15 32 24 / 0.08);
 }
 
 [data-theme="dark"] {
@@ -157,6 +174,15 @@
   --semantic-selected: rgb(98 214 188 / 0.16);
   --semantic-disabled: rgb(174 189 183 / 0.4);
   --semantic-focus: #e4c47a;
+  --auth-page: #050f0b;
+  --auth-sheet: #0e1a15;
+  --auth-ink: #eef3ee;
+  --auth-muted: #9aaba1;
+  --auth-field: rgb(255 255 255 / 0.045);
+  --auth-field-line: rgb(255 255 255 / 0.16);
+  --auth-primary: #4f7d63;
+  --auth-primary-hover: #5e9273;
+  --shadow-auth-card: 0 40px 120px rgb(0 0 0 / 0.6);
   --shadow-card: 0 22px 70px rgb(0 0 0 / 0.38), inset 0 1px 0 rgb(255 255 255 / 0.09);
   --shadow-raised: 0 34px 90px rgb(0 0 0 / 0.42), inset 0 1px 0 rgb(255 255 255 / 0.11);
 }
@@ -189,6 +215,15 @@ html[data-theme="dark"] {
   --color-selected: var(--semantic-selected);
   --color-disabled: var(--semantic-disabled);
   --color-focus: var(--semantic-focus);
+  --color-auth-page: var(--auth-page);
+  --color-auth-sheet: var(--auth-sheet);
+  --color-auth-ink: var(--auth-ink);
+  --color-auth-muted: var(--auth-muted);
+  --color-auth-field: var(--auth-field);
+  --color-auth-line: var(--auth-field-line);
+  --color-auth-primary: var(--auth-primary);
+  --color-auth-primary-hover: var(--auth-primary-hover);
+  --shadow-auth-card: var(--shadow-auth-card);
 }
 
 *,
@@ -446,32 +481,19 @@ body::after {
   }
 }
 
-.auth-background {
+.auth-page-glow {
   pointer-events: none;
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(130deg, rgb(87 79 231 / 0.1), transparent 28%),
-    linear-gradient(310deg, rgb(39 205 164 / 0.11), transparent 34%),
-    #061a18;
+    radial-gradient(circle at 22% 18%, rgb(103 140 116 / 0.34), transparent 42%),
+    radial-gradient(circle at 82% 84%, rgb(58 92 71 / 0.32), transparent 46%);
 }
 
-.auth-showcase {
+[data-theme="dark"] .auth-page-glow {
   background:
-    radial-gradient(circle at 18% 24%, rgb(21 117 95 / 0.08), transparent 28%),
-    radial-gradient(circle at 84% 72%, rgb(184 137 47 / 0.08), transparent 30%),
-    linear-gradient(145deg, #fffefa 0%, #f2f6f0 100%);
-}
-
-.auth-showcase::after {
-  position: absolute;
-  right: -14%;
-  bottom: -34%;
-  width: 52%;
-  height: 72%;
-  border-radius: 50%;
-  background: rgb(21 117 95 / 0.08);
-  content: "";
+    radial-gradient(circle at 22% 18%, rgb(48 92 70 / 0.3), transparent 44%),
+    radial-gradient(circle at 82% 84%, rgb(20 48 36 / 0.5), transparent 48%);
 }
 
 /* Focus visibility for keyboard users. */

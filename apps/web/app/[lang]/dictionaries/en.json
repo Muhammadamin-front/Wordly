@@ -61,10 +61,10 @@
   },
   "auth": {
     "loginTitle": "Welcome back",
-    "loginSubtitle": "Log in to your account and continue",
+    "loginSubtitle": "Log in to continue your English journey",
     "registerTitle": "Create your account",
     "registerSubtitle": "Start in a minute — it's free",
-    "email": "Email",
+    "email": "Email or username",
     "password": "Password",
     "passwordHint": "At least 8 characters",
     "displayName": "Your name",
