@@ -97,6 +97,9 @@ export interface GradeResult {
   /** Short practice sets cannot resolve a single band — show a range instead. */
   approximate: boolean;
   answers: number[];
+  /** Why each answer is right, in question order. Empty for bank items, which
+   *  have hand-written passages but no explanations yet. */
+  explanations: string[];
   reward: IeltsReward;
 }
 

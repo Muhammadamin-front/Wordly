@@ -330,6 +330,11 @@ export function ComprehensionTest({
                         );
                       })}
                     </div>
+                    {result?.explanations?.[qi] && (
+                      <p className="mt-3 rounded-lg border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm leading-6 text-ink-soft">
+                        {result.explanations[qi]}
+                      </p>
+                    )}
                   </div>
                 ))}
                 {!result ? (

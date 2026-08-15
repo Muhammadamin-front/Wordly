@@ -481,8 +481,9 @@ _COMPREHENSION_SCHEMA = {
                     "prompt": {"type": "string"},
                     "options": {"type": "array", "items": {"type": "string"}},
                     "answer_index": {"type": "integer"},
+                    "explanation": {"type": "string"},
                 },
-                "required": ["prompt", "options", "answer_index"],
+                "required": ["prompt", "options", "answer_index", "explanation"],
                 "additionalProperties": False,
             },
         },
@@ -499,7 +500,9 @@ _READING_PROMPT = (
     "the first half TRUE/FALSE/NOT GIVEN statements (options exactly "
     "['TRUE', 'FALSE', 'NOT GIVEN'] — statement in the prompt, answer_index 0-based; include "
     "at least one NOT GIVEN), the rest multiple-choice with exactly 4 plausible options "
-    "testing main ideas, detail, inference and vocabulary."
+    "testing main ideas, detail, inference and vocabulary. For every question give a "
+    "one-sentence explanation that quotes or paraphrases the exact part of the passage "
+    "which settles it, so a learner can see why the answer is right."
 )
 
 _LISTENING_PROMPT = (
@@ -507,7 +510,9 @@ _LISTENING_PROMPT = (
     "MONOLOGUE or DIALOGUE script of 200-300 words (e.g. a lecture excerpt, a tour guide, or two "
     "people arranging plans) that will be read aloud to the learner. Then write {n} multiple-"
     "choice questions testing comprehension of specific details and gist. Each question has "
-    "exactly 4 options with one correct answer (answer_index is 0-based)."
+    "exactly 4 options with one correct answer (answer_index is 0-based). For every "
+    "question give a one-sentence explanation pointing at the line of the script that "
+    "settles it, so a learner can see why the answer is right."
 )
 
 
@@ -543,7 +548,8 @@ async def generate_test(
     db.add(test)
     await db.flush()
 
-    # Client view: same, but each question strips answer_index.
+    # Client view: same, but each question strips answer_index and explanation —
+    # both are revealed only after grading.
     client_payload = {
         "title": payload["title"],
         "body": payload["body"],
@@ -613,6 +619,9 @@ class GradeResult:
     # True when the test is too short for a single band to mean much; the client
     # shows a range and a caveat rather than a precise figure.
     approximate: bool
+    # Why each answer is right, revealed with the answers after grading. The
+    # results screen used to show only which option was correct.
+    explanations: List[str]
     answers: List[int]  # correct answer_index per question, revealed after submit
     reward: RewardSummary
 
@@ -629,6 +638,7 @@ async def grade_test(
     payload = json.loads(test.payload_json)
     questions = payload["questions"]
     answers = [int(q["answer_index"]) for q in questions]
+    explanations = [str(q.get("explanation", "")).strip() for q in questions]
 
     correct = sum(
         1 for i, ans in enumerate(answers) if i < len(submitted) and submitted[i] == ans
@@ -653,6 +663,7 @@ async def grade_test(
         band=band,
         approximate=approximate,
         answers=answers,
+        explanations=explanations,
         reward=reward,
     )
 
