@@ -29,12 +29,27 @@ export function lessonBySlug(slug: string): GrammarLesson | undefined {
 
 /** Completed lessons live in localStorage — the course works offline and
  *  needs no account state. */
-const STORAGE_KEY = "wordly:grammar-done";
+const STORAGE_KEY = "vocora:grammar-done";
+const LEGACY_STORAGE_KEY = "wordly:grammar-done";
+
+/** Reads the current key, falling back to the pre-rename one and moving the
+ *  value across. Vocora was called Wordly; the old keys are still in browsers. */
+function readMigrated(key: string, legacyKey: string): string | null {
+  if (typeof window === "undefined") return null;
+  const current = window.localStorage.getItem(key);
+  if (current !== null) return current;
+  const legacy = window.localStorage.getItem(legacyKey);
+  if (legacy === null) return null;
+  window.localStorage.setItem(key, legacy);
+  window.localStorage.removeItem(legacyKey);
+  return legacy;
+}
+
 
 export function loadCompleted(): Set<string> {
   if (typeof window === "undefined") return new Set();
   try {
-    return new Set(JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "[]") as string[]);
+    return new Set(JSON.parse(readMigrated(STORAGE_KEY, LEGACY_STORAGE_KEY) ?? "[]") as string[]);
   } catch {
     return new Set();
   }

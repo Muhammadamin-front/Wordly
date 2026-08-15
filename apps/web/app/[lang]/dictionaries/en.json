@@ -171,7 +171,8 @@
     "roadmapStep4Title": "End of week: progress map",
     "roadmapStep4Body": "Vocora separates mastered, strong, and needs-review words so your next step is obvious.",
     "readyTitle": "Your starter lesson is ready",
-    "readyBody": "We'll add {count} high-frequency {level} words and start the first review now."
+    "readyBody": "We'll add {count} high-frequency {level} words and start the first review now.",
+    "placementPracticeCap": "Reading, Writing and Grammar drills currently go up to {level}; the vocabulary library covers your level."
   },
   "ieltsHub": {
     "eyebrow": "IELTS vocabulary hub",

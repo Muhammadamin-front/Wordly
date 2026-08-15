@@ -19,7 +19,8 @@ const LEVEL_ACCENT: Record<GrammarLevel, string> = {
   IELTS: "border-warning/50 bg-warning/10 text-warning",
 };
 
-const DONE_KEY = "wordly:grammar-done";
+const DONE_KEY = "vocora:grammar-done";
+const LEGACY_DONE_KEY = "wordly:grammar-done";
 
 function subscribeToDone(callback: () => void): () => void {
   window.addEventListener("storage", callback);
@@ -33,7 +34,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
   // client re-renders with real progress right after hydration.
   const doneJson = useSyncExternalStore(
     subscribeToDone,
-    () => window.localStorage.getItem(DONE_KEY) ?? "[]",
+    () => (window.localStorage.getItem(DONE_KEY) ?? window.localStorage.getItem(LEGACY_DONE_KEY)) ?? "[]",
     () => "[]"
   );
   const done = useMemo(() => {

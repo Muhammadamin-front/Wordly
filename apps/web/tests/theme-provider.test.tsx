@@ -21,7 +21,7 @@ describe("ThemeProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "Switch to dark mode" }));
 
     expect(document.documentElement.dataset.theme).toBe("dark");
-    expect(window.localStorage.getItem("wordly-theme")).toBe("dark");
+    expect(window.localStorage.getItem("vocora-theme")).toBe("dark");
     expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
   });
 

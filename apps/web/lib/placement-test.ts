@@ -98,9 +98,13 @@ export const PLACEMENT_QUESTIONS: readonly PlacementQuestion[] = [
 ];
 
 export type PlacementResult = {
+  /** What the answers indicate. */
   level: PlacementLevel;
   score: number;
   total: number;
+  /** The level whose drills the learner will actually be given — the skills
+   *  content stops at B2, so a C1/C2 placement practises at B2. */
+  practiceLevel: PlacementLevel;
 };
 
 export function recommendPlacementLevel(answers: readonly number[]): PlacementResult {
@@ -141,7 +145,27 @@ export function recommendPlacementLevel(answers: readonly number[]): PlacementRe
     }
   }
 
-  if (level === "C2" && correctByLevel.C2 < 2) level = "C1";
+  // A C2 result requires a full score, which already means both C2 items were
+  // right, so the old `correctByLevel.C2 < 2` guard here could never fire.
 
-  return { level, score, total: PLACEMENT_QUESTIONS.length };
+  return {
+    level,
+    score,
+    total: PLACEMENT_QUESTIONS.length,
+    practiceLevel: practiceLevelFor(level),
+  };
+}
+
+/** The highest level with structured Reading, Writing and Grammar practice.
+ *
+ *  The placement test places up to C2 and the vocabulary library has C1 and C2
+ *  shelves, but the skills drills stop at B2. Reporting that plainly is better
+ *  than placing someone at C1 and quietly handing them B2 material.
+ */
+export const HIGHEST_PRACTICE_LEVEL: PlacementLevel = "B2";
+
+export function practiceLevelFor(level: PlacementLevel): PlacementLevel {
+  const order = PLACEMENT_LEVELS.indexOf(level);
+  const cap = PLACEMENT_LEVELS.indexOf(HIGHEST_PRACTICE_LEVEL);
+  return order > cap ? HIGHEST_PRACTICE_LEVEL : level;
 }

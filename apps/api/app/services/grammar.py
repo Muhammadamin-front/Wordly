@@ -85,9 +85,29 @@ QUESTIONS: Dict[str, List[dict]] = {
 }
 
 
+
+CEFR_ORDER = ("A1", "A2", "B1", "B2", "C1", "C2")
+
+
+def nearest_available_level(level: str, available) -> str:
+    """The requested level, or the closest one below it that exists.
+
+    Content currently stops at B2. Falling back to A1 meant a learner placed at
+    C1 was handed A1 questions — the largest possible mismatch — and, because
+    score_grammar used the same fallback, graded against them too.
+    """
+    if level in available:
+        return level
+    index = CEFR_ORDER.index(level) if level in CEFR_ORDER else 0
+    for candidate in reversed(CEFR_ORDER[:index]):
+        if candidate in available:
+            return candidate
+    return next(iter(available))
+
+
 def grammar_questions(level: str, count: int) -> List[dict]:
     """A sampled, option-shuffled copy of the bank for one quiz round."""
-    bank = QUESTIONS.get(level) or QUESTIONS["A1"]
+    bank = QUESTIONS[nearest_available_level(level, QUESTIONS)]
     picked = random.sample(bank, min(count, len(bank)))
     rounds = []
     for q in picked:

@@ -52,7 +52,7 @@ export function TodayView({
   const storageKey = useMemo(
     () =>
       user
-        ? `wordly:daily-path:${user.id}:${new Date().toISOString().slice(0, 10)}`
+        ? `vocora:daily-path:${user.id}:${new Date().toISOString().slice(0, 10)}`
         : "",
     [user]
   );

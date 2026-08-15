@@ -18,6 +18,7 @@ from app.schemas.skills import (
     WritingPromptsOut,
 )
 from app.services import skills
+from app.services.grammar import nearest_available_level
 
 router = APIRouter(
     prefix="/skills",
@@ -79,8 +80,10 @@ async def reading_submit(
 
 @router.get("/writing/prompts", response_model=WritingPromptsOut)
 async def writing_prompts(level: str = Query("A1", pattern=CEFR_PATTERN)):
-    prompts = skills.WRITING_PROMPTS.get(level) or skills.WRITING_PROMPTS["A1"]
-    return WritingPromptsOut(level=level, prompts=prompts)
+    # Prompts stop at B2; a C1 request gets B2 rather than A1, and the response
+    # reports the level actually served so the UI can say so.
+    served = nearest_available_level(level, skills.WRITING_PROMPTS)
+    return WritingPromptsOut(level=served, prompts=skills.WRITING_PROMPTS[served])
 
 
 @router.get("/grammar", response_model=List[GrammarQuestionOut])

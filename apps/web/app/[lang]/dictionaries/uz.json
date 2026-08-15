@@ -171,7 +171,8 @@
     "roadmapStep4Title": "Hafta oxiri: progress xaritasi",
     "roadmapStep4Body": "Vocora o'zlashtirilgan, mustahkam va qayta ko'rish kerak bo'lgan so'zlarni ajratib beradi.",
     "readyTitle": "Boshlang'ich darsingiz tayyor",
-    "readyBody": "{count} ta eng foydali {level} so'zni qo'shamiz va birinchi takrorlashni hozir boshlaymiz."
+    "readyBody": "{count} ta eng foydali {level} so'zni qo'shamiz va birinchi takrorlashni hozir boshlaymiz.",
+    "placementPracticeCap": "Reading, Writing va Grammar mashqlari hozircha {level} gacha; lug'at kutubxonasi sizning darajangizni qamrab oladi."
   },
   "ieltsHub": {
     "eyebrow": "IELTS lug'at markazi",
@@ -437,7 +438,7 @@
     "questPhrasal5Desc": "Phrasal verb manbasidan beshta to'g'ri javob toping.",
     "questMemory1": "Memory raundi",
     "questMemory1Desc": "Barcha juftliklarni topib Memory o'yinini tugating.",
-    "questPerfect1": "Perfect round",
+    "questPerfect1": "Mukammal raund",
     "questPerfect1Desc": "Bitta o'yinni birorta ham xatosiz yakunlang."
   },
   "achievementsPage": {
@@ -621,7 +622,7 @@
     "across": "Eniga",
     "down": "Bo'yiga",
     "crosswordInstruction": "Ishorani tanlang, javobni yozing va so'zni tekshiring. Barcha javoblar boshida yashirin bo'ladi.",
-    "crosswordDefinition": "Definition",
+    "crosswordDefinition": "Ta'rif",
     "crosswordCheck": "So'zni tekshirish",
     "crosswordHint": "Bitta harfni ochish",
     "crosswordNoHints": "Hint qolmadi",
@@ -825,7 +826,7 @@
     "aiUnlimited": "AI cheksiz amaliyot",
     "aiUnlimitedDesc": "Har safar faqat siz uchun yangi test yaratiladi.",
     "questionsShort": "savol",
-    "bandLabel": "Band",
+    "bandLabel": "Ball",
     "recentTitle": "So'nggi natijalar",
     "speakingCtaTitle": "Haqiqiy suhbatga tayyormisiz?",
     "speakingCtaDesc": "AI imtihonchi to'liq IELTS Speaking testini o'tkazadi — Part 1-3, jonli ovoz va band hisoboti.",
@@ -929,7 +930,7 @@
     "becomeTeacher": "O'qituvchi paneli"
   },
   "adminPanel": {
-    "title": "Admin panel",
+    "title": "Boshqaruv paneli",
     "analytics": "Statistika",
     "reports": "Shikoyatlar",
     "audit": "Audit jurnali",

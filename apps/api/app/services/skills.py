@@ -16,6 +16,7 @@ from app.models.reading import ReadingPassage
 from app.models.user import User
 from app.services.gamification import RewardSummary, apply_skill_xp
 from app.services.grammar import QUESTIONS as GRAMMAR_BANK
+from app.services.grammar import nearest_available_level
 from app.services.grammar import grammar_questions
 
 XP_PER_CORRECT_ANSWER = 5
@@ -85,7 +86,9 @@ async def score_grammar(
 ) -> tuple[List[bool], RewardSummary]:
     """Grade {prompt, answer} pairs against the static bank by option text.
     Unknown prompts and repeats are wrong — the client can't invent questions."""
-    bank = GRAMMAR_BANK.get(level) or GRAMMAR_BANK["A1"]
+    # Must match what grammar_questions served, or answers grade against a
+    # different bank than the learner saw.
+    bank = GRAMMAR_BANK[nearest_available_level(level, GRAMMAR_BANK)]
     correct_by_prompt = {q["prompt"]: q["options"][q["answer_index"]] for q in bank}
     results: List[bool] = []
     seen = set()

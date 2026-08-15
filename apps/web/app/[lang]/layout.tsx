@@ -19,7 +19,17 @@ export const viewport: Viewport = {
 const themeScript = `
   (() => {
     try {
-      const saved = localStorage.getItem("wordly-theme");
+      // Vocora was called Wordly; move an existing choice over once, so the
+      // rename does not silently reset everyone to light.
+      let saved = localStorage.getItem("vocora-theme");
+      if (saved === null) {
+        const legacy = localStorage.getItem("wordly-theme");
+        if (legacy !== null) {
+          localStorage.setItem("vocora-theme", legacy);
+          localStorage.removeItem("wordly-theme");
+          saved = legacy;
+        }
+      }
       const theme = saved === "dark" || saved === "light" ? saved : "light";
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
