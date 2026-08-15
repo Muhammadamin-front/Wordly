@@ -21,6 +21,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
+import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -39,12 +40,32 @@ const PARTS: Array<{ key: SpeakingPart; label: string; helper: string }> = [
 ];
 
 export function SpeakingPracticeView() {
+  const { user, ready } = useAuth();
+  // Progress is namespaced per account, so the practice UI only mounts once we
+  // know whose progress to read. Remounting on `key` also clears in-memory
+  // state when the signed-in user changes.
+  if (!ready) return <SpeakingPracticeSkeleton />;
+  const scope = user?.id ?? "guest";
+  return <SpeakingPractice key={scope} scope={scope} />;
+}
+
+function SpeakingPracticeSkeleton() {
+  return (
+    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+      <div className="h-64 animate-pulse rounded-lg border border-line bg-card/60" />
+    </main>
+  );
+}
+
+function SpeakingPractice({ scope }: { scope: string }) {
   const [activePart, setActivePart] = useState<SpeakingPart>("part1");
   const [selected, setSelected] = useState<SpeakingTopic | null>(null);
   const [completed, setCompleted] = useState<string[]>(() =>
-    readStoredList("vocora-speaking-completed")
+    readStoredList("vocora-speaking-completed", scope)
   );
-  const [saved, setSaved] = useState<string[]>(() => readStoredList("vocora-speaking-saved"));
+  const [saved, setSaved] = useState<string[]>(() =>
+    readStoredList("vocora-speaking-saved", scope)
+  );
 
   const topics = useMemo(() => speakingTopicsByPart(activePart), [activePart]);
   const completedCount = SPEAKING_PRACTICE_TOPICS.filter((topic) =>
@@ -57,20 +78,21 @@ export function SpeakingPracticeView() {
       ? saved.filter((item) => item !== slug)
       : [...saved, slug];
     setSaved(next);
-    storeList("vocora-speaking-saved", next);
+    storeList("vocora-speaking-saved", next, scope);
   }
 
   function completeTopic(slug: string) {
     if (completed.includes(slug)) return;
     const next = [...completed, slug];
     setCompleted(next);
-    storeList("vocora-speaking-completed", next);
+    storeList("vocora-speaking-completed", next, scope);
   }
 
   if (selected) {
     return (
       <SpeakingTopicDetail
         topic={selected}
+        scope={scope}
         isSaved={saved.includes(selected.slug)}
         isCompleted={completed.includes(selected.slug)}
         onBack={() => setSelected(null)}
@@ -198,6 +220,7 @@ function TopicCard({
 
 function SpeakingTopicDetail({
   topic,
+  scope,
   isSaved,
   isCompleted,
   onBack,
@@ -205,6 +228,7 @@ function SpeakingTopicDetail({
   onComplete,
 }: {
   topic: SpeakingTopic;
+  scope: string;
   isSaved: boolean;
   isCompleted: boolean;
   onBack: () => void;
@@ -213,8 +237,31 @@ function SpeakingTopicDetail({
 }) {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [showSample, setShowSample] = useState(false);
+  const [furthestIndex, setFurthestIndex] = useState(0);
+  const [rating, setRating] = useState<RatingValue | null>(() =>
+    readStoredRating(topic.slug, scope)
+  );
   const question = topic.questions[questionIndex];
   const progress = ((questionIndex + 1) / topic.questions.length) * 100;
+
+  // A topic counts as practised once the learner has actually worked through
+  // it: every question seen for Part 1/3, or a rated attempt for a cue card.
+  // "Complete" could previously be pressed on arrival, so the progress figure
+  // on the hub measured button presses rather than practice.
+  const canComplete = topic.cueCard
+    ? rating !== null
+    : furthestIndex >= topic.questions.length - 1;
+
+  function rate(value: RatingValue) {
+    setRating(value);
+    storeRating(topic.slug, value, scope);
+  }
+
+  function goToQuestion(next: number) {
+    setShowSample(false);
+    setQuestionIndex(next);
+    setFurthestIndex((value) => Math.max(value, next));
+  }
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
@@ -241,7 +288,18 @@ function SpeakingTopicDetail({
               {isSaved ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
               {isSaved ? "Saved" : "Save"}
             </Button>
-            <Button type="button" onClick={onComplete} disabled={isCompleted}>
+            <Button
+              type="button"
+              onClick={onComplete}
+              disabled={isCompleted || !canComplete}
+              title={
+                canComplete || isCompleted
+                  ? undefined
+                  : topic.cueCard
+                    ? "Record an attempt and rate it first"
+                    : "Work through all the questions first"
+              }
+            >
               <CheckCircle2 className="size-4" />
               {isCompleted ? "Completed" : "Complete"}
             </Button>
@@ -261,20 +319,16 @@ function SpeakingTopicDetail({
               progress={progress}
               showSample={showSample}
               onShowSample={() => setShowSample((value) => !value)}
-              onPrevious={() => {
-                setShowSample(false);
-                setQuestionIndex((value) => Math.max(0, value - 1));
-              }}
-              onNext={() => {
-                setShowSample(false);
-                setQuestionIndex((value) => Math.min(topic.questions.length - 1, value + 1));
-              }}
+              onPrevious={() => goToQuestion(Math.max(0, questionIndex - 1))}
+              onNext={() =>
+                goToQuestion(Math.min(topic.questions.length - 1, questionIndex + 1))
+              }
             />
           )}
         </section>
 
         <aside className="space-y-5">
-          {topic.part === "part2" && <Part2Timer />}
+          {topic.part === "part2" && <Part2Timer rating={rating} onRate={rate} />}
           <VocabularyPanel topic={topic} />
         </aside>
       </div>
@@ -376,6 +430,7 @@ function QuestionPractice({
 
 function CueCard({ topic }: { topic: SpeakingTopic }) {
   const cue = topic.cueCard;
+  const [showSample, setShowSample] = useState(false);
   if (!cue) return null;
   return (
     <div>
@@ -402,18 +457,58 @@ function CueCard({ topic }: { topic: SpeakingTopic }) {
           ))}
         </ul>
       </div>
-      <div className="mt-5 rounded-lg border border-accent-400/25 bg-accent-400/8 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Band 8+ sample answer</p>
-          <span className="rounded-full bg-card/75 px-2.5 py-1 text-[10px] font-bold text-ink-soft">2-minute model</span>
-        </div>
-        <p className="mt-2 text-sm leading-7 text-ink">{sampleAnswer(topic, cue.instruction)}</p>
+      <div className="mt-5">
+        <Button type="button" variant="ghost" onClick={() => setShowSample((value) => !value)}>
+          {showSample ? "Hide model answer" : "Show model answer"}
+        </Button>
+        {showSample && (
+          <div className="mt-3 rounded-lg border border-accent-400/25 bg-accent-400/8 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs font-black uppercase text-accent-600 dark:text-accent-300">Band 8+ sample answer</p>
+              <span className="rounded-full bg-card/75 px-2.5 py-1 text-[10px] font-bold text-ink-soft">2-minute model</span>
+            </div>
+            <p className="mt-2 text-sm leading-7 text-ink">{sampleAnswer(topic, cue.instruction)}</p>
+            <p className="mt-3 border-t border-accent-400/20 pt-3 text-xs leading-5 text-ink-soft">
+              Notice how the answer works through all four bullet points in order. Try your own
+              version first — the timer is on the right.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-function Part2Timer() {
+type RatingValue = "needs-work" | "good" | "strong";
+
+const RATINGS: Array<{ value: RatingValue; label: string; advice: string }> = [
+  {
+    value: "needs-work",
+    label: "Needs work",
+    advice:
+      "Run it again and focus on one bullet you rushed. Speaking the same card twice is the fastest way to improve fluency.",
+  },
+  {
+    value: "good",
+    label: "Good",
+    advice:
+      "Solid. Next time, add one specific detail — a name, a number, a place — to each bullet. Detail is what moves an answer past band 6.",
+  },
+  {
+    value: "strong",
+    label: "Band 8 energy",
+    advice:
+      "Now compare with the model answer and note any phrase you could reuse. Then move on to a new cue card.",
+  },
+];
+
+function Part2Timer({
+  rating,
+  onRate,
+}: {
+  rating: RatingValue | null;
+  onRate: (value: RatingValue) => void;
+}) {
   const [phase, setPhase] = useState<"idle" | "prep" | "speak" | "finished">("idle");
   const [running, setRunning] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(60);
@@ -520,16 +615,33 @@ function Part2Timer() {
       </div>
 
       {phase === "finished" && (
-        <div className="mt-4 flex justify-center gap-2">
-          {["Needs work", "Good", "Band 8 energy"].map((rating) => (
-            <button
-              key={rating}
-              type="button"
-              className="rounded-full border border-line bg-card px-3 py-1.5 text-xs font-bold text-ink-soft transition-colors hover:border-brand-400 hover:text-ink"
-            >
-              {rating}
-            </button>
-          ))}
+        <div className="mt-4">
+          <p className="text-center text-xs font-black uppercase text-ink-soft">
+            How did that attempt feel?
+          </p>
+          <div className="mt-2 flex justify-center gap-2">
+            {RATINGS.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                aria-pressed={rating === option.value}
+                onClick={() => onRate(option.value)}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs font-bold transition-colors",
+                  rating === option.value
+                    ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200"
+                    : "border-line bg-card text-ink-soft hover:border-brand-400 hover:text-ink"
+                )}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+          {rating && (
+            <p className="mt-3 rounded-lg bg-brand-600/8 p-3 text-center text-xs leading-5 text-ink-soft">
+              {RATINGS.find((option) => option.value === rating)?.advice}
+            </p>
+          )}
         </div>
       )}
     </section>
@@ -596,16 +708,33 @@ function PhraseGroup({ title, items }: { title: string; items: string[] }) {
   );
 }
 
-function readStoredList(key: string) {
+/** Progress is namespaced per account. Without the scope, two people sharing a
+ *  browser inherited each other's completed topics and saved cards. */
+function scopedKey(key: string, scope: string) {
+  return `${key}:${scope}`;
+}
+
+function readStoredList(key: string, scope: string) {
   if (typeof window === "undefined") return [];
   try {
-    return JSON.parse(window.localStorage.getItem(key) ?? "[]") as string[];
+    return JSON.parse(window.localStorage.getItem(scopedKey(key, scope)) ?? "[]") as string[];
   } catch {
     return [];
   }
 }
 
-function storeList(key: string, value: string[]) {
+function storeList(key: string, value: string[], scope: string) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  window.localStorage.setItem(scopedKey(key, scope), JSON.stringify(value));
+}
+
+function readStoredRating(slug: string, scope: string): RatingValue | null {
+  if (typeof window === "undefined") return null;
+  const stored = window.localStorage.getItem(scopedKey(`vocora-speaking-rating:${slug}`, scope));
+  return RATINGS.some((option) => option.value === stored) ? (stored as RatingValue) : null;
+}
+
+function storeRating(slug: string, value: RatingValue, scope: string) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(scopedKey(`vocora-speaking-rating:${slug}`, scope), value);
 }

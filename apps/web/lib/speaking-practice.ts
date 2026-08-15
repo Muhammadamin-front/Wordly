@@ -1,3 +1,4 @@
+import { CUE_CARD_DETAILS } from "./speaking-cue-cards";
 import {
   buildCueQuestionSamples,
   buildPart1Samples,
@@ -240,7 +241,7 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
     tips: TIPS,
     mistakes: MISTAKES,
   })),
-  ...CUE_TOPICS.map(([slug, title, theme, firstPrompt], topicIndex) => {
+  ...CUE_TOPICS.map(([slug, title, theme], topicIndex) => {
     const sampleAnswers = buildCueQuestionSamples(slug, topicIndex);
     return {
       slug,
@@ -256,16 +257,10 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
       cueSample: sampleAnswers[0],
       cueCard: {
         instruction: title,
-        prompts: [
-          firstPrompt,
-          "when it happened or when you experienced it",
-          "who was with you or who was involved",
-          "and explain why this memory or idea is important to you",
-        ],
-        followUps: [
-          `Do people in your country often talk about ${theme}?`,
-          `Has the way people experience ${theme} changed recently?`,
-        ],
+        // Bullets and follow-ups are written per card; see speaking-cue-cards.ts
+        // for why they are no longer derived from the theme slug.
+        prompts: [...CUE_CARD_DETAILS[slug].prompts],
+        followUps: [...CUE_CARD_DETAILS[slug].followUps],
       },
       vocabulary: BASE_VOCABULARY,
       phrases: PHRASES,
