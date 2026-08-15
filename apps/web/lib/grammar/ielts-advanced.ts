@@ -34,14 +34,14 @@ export const IELTS_ADVANCED_LESSONS: GrammarLesson[] = [
     mistakes: [
       { wrong: "If I would have studied, I would know it now.", right: "If I had studied, I would know it now.", note: "If clause ichida had + V3 kerak." },
       { wrong: "If she was confident, she would have applied.", right: "If she were confident, she would have applied.", note: "Hypothetical hozirgi holatda 'were' tabiiyroq." },
-      { wrong: "If they had planned, they would have less traffic now.", right: "If they had planned, they would have less traffic now.", note: "Hozirgi natija uchun would + base verb ishlatiladi." },
+      { wrong: "If they had planned, they would have had less traffic now.", right: "If they had planned, they would have less traffic now.", note: "Natija hozirgi paytga tegishli bo'lsa, would + base verb ishlatiladi ('would have had' o'tmish natijasini bildiradi)." },
     ],
     quiz: [
       { q: "If I had accepted the offer, I ___ abroad now.", options: ["lived", "would live", "would have lived", "will live"], answer: 1 },
-      { q: "If she ___ more patient, she would have finished the course.", options: ["is", "were", "had been", "will be"], answer: 1 },
+      { q: "If she ___ more patient by nature, she would have finished the course.", options: ["is", "were", "would be", "will be"], answer: 1 },
       { q: "If cities had invested earlier, air quality ___ better today.", options: ["would be", "would have been", "is", "was"], answer: 0 },
       { q: "Qaysi shakl mixed conditional?", options: ["If it rains, we will stay.", "If I had known, I would have called.", "If I had trained, I would be fitter now.", "If I were rich, I would travel."], answer: 2 },
-      { q: "If he ___ more careful, he would not have made that mistake.", options: ["is", "were", "had been", "will be"], answer: 1 },
+      { q: "If he ___ a more careful person, he would not have made that mistake.", options: ["is", "were", "would be", "will be"], answer: 1 },
     ],
   },
   {

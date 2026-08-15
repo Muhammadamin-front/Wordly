@@ -4,7 +4,13 @@ export interface ExpressionListItem {
   slug: string;
   expression: string;
   uzbek: string;
-  translation: string;
+  /** Translation for the active locale, or null when none exists — always null
+   *  for English, and for Russian rows with no translation yet. Show `usage`
+   *  instead when it is null. */
+  translation: string | null;
+  /** Always a genuine translation, safe to save on a flashcard. */
+  flashcard_back: string;
+  usage: string;
   cefr: string;
   ielts_band: string;
   category: string;
@@ -12,7 +18,6 @@ export interface ExpressionListItem {
 }
 
 export interface ExpressionDetail extends ExpressionListItem {
-  usage: string;
   grammar_pattern: string;
   native_notes: string;
   common_mistakes: string[];

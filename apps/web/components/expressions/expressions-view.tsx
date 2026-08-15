@@ -50,7 +50,9 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
       if (added.has(e.slug)) return;
       setAdded((prev) => new Set(prev).add(e.slug));
       try {
-        await flashcardsApi.createCustomCard(e.expression, e.translation);
+        // Never the usage note or the English expression itself — the card back
+        // has to be a real translation, since it is what SRS drills the learner on.
+        await flashcardsApi.createCustomCard(e.expression, e.flashcard_back);
       } catch {
         setAdded((prev) => {
           const next = new Set(prev);
@@ -202,7 +204,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
                     {e.cefr}
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-ink-soft">{e.translation}</p>
+                <p className="mt-2 text-sm leading-6 text-ink-soft">{e.translation ?? e.usage}</p>
                 <div className="mt-auto flex flex-wrap gap-1.5 pt-4 text-[11px]">
                   <Tag>{e.category}</Tag>
                   <Tag>IELTS {e.ielts_band}</Tag>
@@ -349,7 +351,9 @@ function DetailModal({
                   <Volume2 className="size-4" aria-hidden />
                 </button>
               </div>
-              <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">{expr.translation}</p>
+              <p className="mt-1 font-bold text-brand-600 dark:text-brand-200">
+                {expr.translation ?? expr.usage}
+              </p>
             </div>
             <button
               type="button"
