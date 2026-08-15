@@ -86,8 +86,16 @@ function Frond({
  *  fenestration — wedges cut inward from the margin toward the midrib, plus a
  *  couple of holes beside it. Cut with a mask so the leaf reads correctly over
  *  whichever paper layer sits behind it. */
-function Monstera({ id, size = 200, fill }: { id: string; size?: number; fill: string }) {
-  const maskId = `monstera-${id}`;
+function Monstera({
+  id,
+  size = 200,
+  fill,
+}: {
+  id: string;
+  size?: number;
+  fill: string;
+}) {
+  const maskId = id;
   const s = size;
   // Wedge positions along the midrib, as a fraction of leaf length.
   const notches = [0.26, 0.45, 0.63, 0.79];
@@ -136,23 +144,42 @@ function Monstera({ id, size = 200, fill }: { id: string; size?: number; fill: s
   );
 }
 
-export function PaperCutLeaves({ className }: { className?: string }) {
+export function PaperCutLeaves({
+  className,
+  /** The artwork is drawn for a portrait panel roughly 3:5. A phone screen is
+   *  narrower still, so `slice` would crop away either the pale cut paper on
+   *  the left or the foliage on the right. "portrait" trims a little from each
+   *  side instead, keeping both in frame. */
+  crop = "panel",
+}: {
+  className?: string;
+  crop?: "panel" | "portrait";
+}) {
+  // Both layouts keep an instance in the DOM — the unused one is only hidden by
+  // a breakpoint — so filter, gradient and mask ids have to be unique per
+  // instance. Sharing them made the second SVG resolve its references into the
+  // display:none first one, and its layers and leaves rendered as flat colour.
+  const ns = `leaves-${crop}`;
+  const lift = `${ns}-paper-lift`;
+  const leafLift = `${ns}-leaf-lift`;
+  const depth = `${ns}-depth`;
+
   return (
     <svg
-      viewBox="0 0 600 1000"
+      viewBox={crop === "portrait" ? "40 0 560 1000" : "0 0 600 1000"}
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"
       focusable="false"
       className={className}
     >
       <defs>
-        <filter id="paper-lift" x="-30%" y="-10%" width="160%" height="130%">
+        <filter id={lift} x="-30%" y="-10%" width="160%" height="130%">
           <feDropShadow dx="-10" dy="0" stdDeviation="14" floodColor="#0d1b14" floodOpacity="0.28" />
         </filter>
-        <filter id="leaf-lift" x="-40%" y="-40%" width="190%" height="190%">
+        <filter id={leafLift} x="-40%" y="-40%" width="190%" height="190%">
           <feDropShadow dx="-6" dy="10" stdDeviation="12" floodColor="#08130d" floodOpacity="0.38" />
         </filter>
-        <linearGradient id="depth" x1="0" y1="0" x2="1" y2="0.4">
+        <linearGradient id={depth} x1="0" y1="0" x2="1" y2="0.4">
           <stop offset="0%" stopColor="#0b1710" stopOpacity="0" />
           <stop offset="100%" stopColor="#0b1710" stopOpacity="0.38" />
         </linearGradient>
@@ -163,7 +190,7 @@ export function PaperCutLeaves({ className }: { className?: string }) {
           key={layer.fill}
           d={layer.edge}
           fill={layer.fill}
-          filter={index === 0 ? undefined : "url(#paper-lift)"}
+          filter={index === 0 ? undefined : `url(#${lift})`}
         />
       ))}
 
@@ -171,15 +198,15 @@ export function PaperCutLeaves({ className }: { className?: string }) {
           across the wave edges the way cut paper overlaps. Each leaf is a shade
           lighter than the sheet behind it, which is what gives a paper stack
           its depth; the drop shadow does the rest. */}
-      <g filter="url(#leaf-lift)">
+      <g filter={`url(#${leafLift})`}>
         <g transform="translate(612 300) rotate(163)">
-          <Monstera id="1" size={196} fill="#2B4736" />
+          <Monstera id={`${ns}-monstera-1`} size={196} fill="#2B4736" />
         </g>
         <g transform="translate(648 560) rotate(199)">
-          <Monstera id="2" size={232} fill="#223B2C" />
+          <Monstera id={`${ns}-monstera-2`} size={232} fill="#223B2C" />
         </g>
         <g transform="translate(566 690) rotate(168)">
-          <Monstera id="3" size={168} fill="#375A44" />
+          <Monstera id={`${ns}-monstera-3`} size={168} fill="#375A44" />
         </g>
         <g transform="translate(676 800) rotate(177)">
           <Frond fill="#2E4C39" length={392} reach={66} blades={17} />
@@ -192,7 +219,7 @@ export function PaperCutLeaves({ className }: { className?: string }) {
         </g>
       </g>
 
-      <rect x="0" y="0" width="600" height="1000" fill="url(#depth)" />
+      <rect x="0" y="0" width="600" height="1000" fill={`url(#${depth})`} />
     </svg>
   );
 }

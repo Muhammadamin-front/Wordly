@@ -43,30 +43,36 @@ export function AuthCard({
   }
 
   return (
-    <main className="relative flex min-h-dvh flex-1 items-center justify-center overflow-x-hidden bg-auth-page p-0 sm:p-6 lg:p-10">
-      <div aria-hidden className="auth-page-glow" />
+    <main className="relative flex min-h-dvh flex-1 items-center justify-center overflow-hidden bg-auth-page p-0 lg:p-10">
+      {/* Full-bleed foliage behind the floating card. Hidden once the split
+          card takes over, where the artwork lives inside the card instead. */}
+      <div aria-hidden className="absolute inset-0 lg:hidden">
+        <PaperCutLeaves className="size-full" crop="portrait" />
+      </div>
 
-      <div className="relative grid w-full max-w-[1180px] overflow-hidden bg-auth-sheet shadow-auth-card sm:rounded-[32px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        {/* Foliage. On narrow screens it becomes a band the form card overlaps,
-            which is how the phone layout in the design reads. */}
-        <div className="relative order-first h-40 overflow-hidden sm:h-52 lg:order-last lg:h-auto">
-          <PaperCutLeaves className="absolute inset-0 size-full" />
+      <div className="relative z-10 flex w-full max-w-[1180px] justify-center px-6 py-12 sm:px-8 lg:block lg:px-0 lg:py-0">
+        <div className="grid w-full max-w-[25.5rem] overflow-hidden rounded-[30px] border border-auth-glass-line bg-auth-glass shadow-auth-glass backdrop-blur-2xl lg:max-w-none lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:rounded-[32px] lg:border-0 lg:bg-auth-sheet lg:shadow-auth-card lg:backdrop-blur-none">
+          <div className="relative hidden lg:order-last lg:block">
+            <PaperCutLeaves className="absolute inset-0 size-full" />
+          </div>
+
+          <section className="flex min-w-0 flex-col px-6 py-8 sm:px-8 lg:px-14 lg:py-12 xl:px-20">
+            <div className="flex min-w-0 items-center justify-between gap-3">
+              <Logo lang={lang} className="shrink-0 text-lg lg:text-xl" />
+              <LocaleSwitcher current={lang as Locale} />
+            </div>
+
+            <div className="mx-auto flex w-full min-w-0 max-w-[27rem] flex-1 flex-col justify-center py-7 lg:py-10">
+              <h1 className="text-center font-display text-[2rem] font-semibold leading-[1.08] tracking-[-0.02em] text-balance text-auth-ink sm:text-[2.3rem] lg:text-left lg:text-[3.1rem] lg:leading-[1.05]">
+                {title}
+              </h1>
+              <p className="mt-3 text-center text-[0.9rem] leading-6 text-auth-muted lg:text-left lg:text-[0.95rem]">
+                {subtitle}
+              </p>
+              <div className="mt-8 lg:mt-9">{children}</div>
+            </div>
+          </section>
         </div>
-
-        <section className="relative -mt-7 flex min-w-0 flex-col rounded-t-[28px] bg-auth-sheet px-5 pb-10 pt-7 sm:px-10 lg:mt-0 lg:rounded-none lg:px-14 lg:py-12 xl:px-20">
-          <div className="flex min-w-0 items-center justify-between gap-3">
-            <Logo lang={lang} className="shrink-0 text-xl" />
-            <LocaleSwitcher current={lang as Locale} />
-          </div>
-
-          <div className="mx-auto flex w-full min-w-0 max-w-[27rem] flex-1 flex-col justify-center py-8 lg:py-10">
-            <h1 className="font-display text-[2.2rem] font-semibold leading-[1.05] tracking-[-0.02em] text-balance text-auth-ink sm:text-[2.7rem] lg:text-[3.1rem]">
-              {title}
-            </h1>
-            <p className="mt-3 text-[0.95rem] leading-6 text-auth-muted">{subtitle}</p>
-            <div className="mt-9">{children}</div>
-          </div>
-        </section>
       </div>
     </main>
   );
