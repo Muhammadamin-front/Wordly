@@ -59,13 +59,29 @@ class GameQuestion:
         self.audio_text = audio_text
 
 
-def _blank_sentence(example: str, headword: str) -> str:
-    """Replace the headword (case-insensitive, whole-ish) with a blank."""
-    lowered = example.lower()
-    index = lowered.find(headword.lower())
-    if index == -1:
+def _word_pattern(term: str) -> "re.Pattern[str]":
+    """Case-insensitive match on whole words only.
+
+    A plain substring search cut blanks out of the middle of unrelated words:
+    the headword "art" turned "We started the project" into "We st____ed the
+    project", and "run" turned "He is running" into "He is ____ning". Multi-word
+    headwords are matched with flexible whitespace.
+    """
+    parts = [re.escape(part) for part in term.split()]
+    return re.compile(r"\b" + r"\s+".join(parts) + r"\b", re.IGNORECASE)
+
+
+def _blank_sentence(example: str, headword: str) -> Optional[str]:
+    """Replace a whole-word occurrence of the headword with a blank.
+
+    Returns None when the example does not contain the headword as its own word,
+    which is common for inflected forms ("ran" for "run"); callers fall back to
+    the definition prompt.
+    """
+    match = _word_pattern(headword).search(example or "")
+    if match is None:
         return None
-    return example[:index] + "____" + example[index + len(headword) :]
+    return example[: match.start()] + "____" + example[match.end() :]
 
 
 def _crossword_clue(card: Card) -> str:
@@ -81,9 +97,8 @@ def _crossword_clue(card: Card) -> str:
             definition,
             flags=re.IGNORECASE,
         )
-        definition = re.sub(
-            re.escape(headword), "___", definition, flags=re.IGNORECASE
-        )
+        # Whole words only, so "art" does not mask the "art" inside "part".
+        definition = _word_pattern(headword).sub("___", definition)
     return definition or "A word meaning: {}".format(_card_translation(card))
 
 
@@ -108,14 +123,19 @@ async def _pick_cards(db: AsyncSession, user: User, count: int) -> List[Card]:
     """Due and weak cards first, then fill with the rest — only word-linked
     cards (games need structured translations)."""
     now = utcnow()
+    # Weakest first, but sampled from a wider slice: ordering strictly by ease
+    # meant back-to-back sessions replayed the same handful of cards and the
+    # rest never came up.
     due = (
         await db.scalars(
             select(Card)
             .where(Card.user_id == user.id, Card.word_id.isnot(None), Card.due_at <= now)
             .order_by(Card.ease_factor.asc(), Card.due_at.asc())
-            .limit(count)
+            .limit(count * 3)
         )
     ).unique().all()
+    if len(due) > count:
+        due = random.sample(list(due), count)
     if len(due) >= count:
         return list(due)
 
@@ -243,9 +263,11 @@ def grade_answer(card: Card, game_type: str, submitted: str) -> bool:
     if game_type in ("sentence_builder", "listening"):
         return _norm_sentence(submitted) == _norm_sentence(expected)
     if game_type == "speaking":
-        # SpeechRecognition transcripts may carry extra words around the target.
+        # SpeechRecognition transcripts may carry extra words around the target,
+        # so the target only has to appear — but as a whole word. Plain
+        # containment accepted "concatenate" for the target "cat".
         said, target = _norm(submitted), _norm(expected)
-        return bool(said) and (said == target or target in said)
+        return bool(said) and (said == target or _word_pattern(target).search(said) is not None)
     return _norm(submitted) == _norm(expected)
 
 
@@ -317,8 +339,16 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
 
     # Distractors drawn from other rows' answers of the same relation type.
     answers_by_type = {"synonym": set(), "antonym": set()}
-    for relation_type, _, related_text in rows:
+    # Every relation a headword has, so a second correct answer never becomes a
+    # distractor. With "big ≈ large" and "big ≈ huge" both in the corpus, the
+    # question "≈ big" used to be able to offer "huge" as a wrong option, and
+    # two players answering correctly could disagree.
+    related_by_word = {}
+    for relation_type, headword, related_text in rows:
         answers_by_type[relation_type].add(related_text.lower())
+        related_by_word.setdefault((relation_type, headword.lower()), set()).add(
+            related_text.lower()
+        )
 
     questions = []
     seen_prompts = set()
@@ -329,17 +359,21 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
         prompt = "{} {}".format(symbol, headword)
         if prompt in seen_prompts:
             continue
-        pool = [
-            a for a in answers_by_type[relation_type]
-            if a != related_text.lower() and a != headword.lower()
-        ]
+        excluded = related_by_word[(relation_type, headword.lower())] | {headword.lower()}
+        pool = [a for a in answers_by_type[relation_type] if a not in excluded]
         if len(pool) < 3:
             continue
         seen_prompts.add(prompt)
-        options = [related_text] + random.sample(pool, 3)
+        # Distractors are lower-cased in the pool; matching the correct answer's
+        # casing keeps the odd one out from being obvious.
+        options = [related_text.lower()] + random.sample(pool, 3)
         random.shuffle(options)
         questions.append(
-            {"prompt": prompt, "options": options, "answer_index": options.index(related_text)}
+            {
+                "prompt": prompt,
+                "options": options,
+                "answer_index": options.index(related_text.lower()),
+            }
         )
     return questions if len(questions) >= MIN_CARDS else []
 
