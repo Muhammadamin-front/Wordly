@@ -45,6 +45,12 @@ Notes that will bite you if skipped:
   production. The API refuses to boot with the console email backend.
 - `NEXT_PUBLIC_*` are **build-time** args: changing them means rebuilding the
   web image, not just restarting it.
+- Google sign-in uses the popup/callback flow. In Google Cloud, set Authorized
+  JavaScript origins to `https://vocora.uz` and `https://www.vocora.uz` (if the
+  `www` host is served), with no trailing slash or path. Leave Authorized
+  redirect URIs empty for this implementation. Use the same Web application
+  client ID for `NEXT_PUBLIC_GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_ID`; no Google
+  client secret is used or stored by Vocora.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
   cookies (`COOKIE_SECURE=true`).
 - Checkout is exposed only for fully configured providers. Sandbox activation
