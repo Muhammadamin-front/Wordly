@@ -69,6 +69,8 @@ class GradeOut(BaseModel):
     correct: int
     total: int
     band: float
+    # Short practice sets cannot resolve a single band; the client shows a range.
+    approximate: bool = False
     answers: List[int]  # correct indices, revealed after grading
     reward: RewardOut
 

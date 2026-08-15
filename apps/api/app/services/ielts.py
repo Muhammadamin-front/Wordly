@@ -416,17 +416,47 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
 }
 
 
-def band_from_ratio(ratio: float) -> float:
-    """Map a correct-answer ratio to an approximate IELTS band (0.5 steps)."""
-    table = [
-        (0.95, 9.0), (0.9, 8.5), (0.83, 8.0), (0.75, 7.5), (0.67, 7.0),
-        (0.58, 6.5), (0.5, 6.0), (0.42, 5.5), (0.33, 5.0), (0.25, 4.5),
-        (0.17, 4.0), (0.08, 3.5),
-    ]
-    for threshold, band in table:
+# Published raw-score conversions for the 40-question papers, expressed as the
+# ratio at the bottom of each band. The previous single table was materially
+# more generous than either — it returned band 6.0 for half marks, where the
+# Academic Reading paper needs 23/40 (0.575) and awards 20/40 a 5.5 — so
+# practice scores flattered the learner and the stored "best band" was wrong.
+_ACADEMIC_READING_BANDS = [
+    (0.975, 9.0), (0.925, 8.5), (0.875, 8.0), (0.825, 7.5), (0.750, 7.0),
+    (0.675, 6.5), (0.575, 6.0), (0.475, 5.5), (0.375, 5.0), (0.325, 4.5),
+    (0.250, 4.0), (0.200, 3.5), (0.150, 3.0),
+]
+
+# General Training Reading is marked more strictly than Academic.
+_GENERAL_READING_BANDS = [
+    (1.000, 9.0), (0.975, 8.5), (0.900, 8.0), (0.850, 7.5), (0.775, 7.0),
+    (0.700, 6.5), (0.600, 6.0), (0.375, 5.5), (0.375, 5.0), (0.300, 4.5),
+    (0.225, 4.0), (0.150, 3.5), (0.100, 3.0),
+]
+
+_LISTENING_BANDS = [
+    (0.975, 9.0), (0.925, 8.5), (0.875, 8.0), (0.800, 7.5), (0.750, 7.0),
+    (0.650, 6.5), (0.575, 6.0), (0.450, 5.5), (0.400, 5.0), (0.325, 4.5),
+    (0.250, 4.0), (0.200, 3.5), (0.150, 3.0),
+]
+
+_BAND_TABLES = {
+    "reading": _ACADEMIC_READING_BANDS,
+    "general_reading": _GENERAL_READING_BANDS,
+    "listening": _LISTENING_BANDS,
+}
+
+# Below this many questions one answer moves the band by a whole step or more,
+# so the figure is reported as approximate and the UI shows a range.
+RELIABLE_QUESTION_COUNT = 20
+
+
+def band_from_ratio(ratio: float, kind: str = "reading") -> float:
+    """Map a correct-answer ratio to an IELTS band using the published tables."""
+    for threshold, band in _BAND_TABLES.get(kind, _ACADEMIC_READING_BANDS):
         if ratio >= threshold:
             return band
-    return 3.0
+    return 2.5
 
 
 def _half_band(value: Any) -> float:
@@ -580,6 +610,9 @@ class GradeResult:
     correct: int
     total: int
     band: float
+    # True when the test is too short for a single band to mean much; the client
+    # shows a range and a caveat rather than a precise figure.
+    approximate: bool
     answers: List[int]  # correct answer_index per question, revealed after submit
     reward: RewardSummary
 
@@ -601,9 +634,9 @@ async def grade_test(
         1 for i, ans in enumerate(answers) if i < len(submitted) and submitted[i] == ans
     )
     total = len(answers)
-    band = band_from_ratio(correct / total) if total else 0.0
-
     skill = "reading" if test.kind == "reading" else "listening"
+    band = band_from_ratio(correct / total, skill) if total else 0.0
+    approximate = total < RELIABLE_QUESTION_COUNT
     xp = XP_READING if test.kind == "reading" else XP_LISTENING
     reward = await apply_skill_xp(db, user, xp)
     detail: Dict[str, Any] = {"correct": correct, "total": total}
@@ -614,7 +647,14 @@ async def grade_test(
     )
     # One-shot content: drop the stored test after grading.
     await db.delete(test)
-    return GradeResult(correct=correct, total=total, band=band, answers=answers, reward=reward)
+    return GradeResult(
+        correct=correct,
+        total=total,
+        band=band,
+        approximate=approximate,
+        answers=answers,
+        reward=reward,
+    )
 
 
 # --- Writing scoring ---------------------------------------------------------

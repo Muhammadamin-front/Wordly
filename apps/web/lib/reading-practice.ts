@@ -1274,3 +1274,35 @@ export function getQuestionsForReadingQuestionType(
     return true;
   });
 }
+
+
+/** Published raw-score conversions for the 40-question Reading papers, as the
+ *  ratio at the bottom of each band. General Training is marked more strictly
+ *  than Academic at the same raw score, so the two tracks cannot share a curve.
+ */
+const ACADEMIC_BAND_TABLE: ReadonlyArray<readonly [number, number]> = [
+  [0.975, 9], [0.925, 8.5], [0.875, 8], [0.825, 7.5], [0.75, 7],
+  [0.675, 6.5], [0.575, 6], [0.475, 5.5], [0.375, 5], [0.325, 4.5],
+  [0.25, 4], [0.2, 3.5], [0.15, 3],
+];
+
+const GENERAL_BAND_TABLE: ReadonlyArray<readonly [number, number]> = [
+  [1, 9], [0.975, 8.5], [0.9, 8], [0.85, 7.5], [0.775, 7],
+  [0.7, 6.5], [0.6, 6], [0.475, 5.5], [0.375, 5], [0.3, 4.5],
+  [0.225, 4], [0.15, 3.5], [0.1, 3],
+];
+
+/** Below this many questions, one answer moves the result by a whole band or
+ *  more, so a single figure would be misleading. */
+export const RELIABLE_QUESTION_COUNT = 20;
+
+export function readingBand(
+  score: number,
+  total: number,
+  track: ReadingPracticeTest["track"]
+): { band: number; approximate: boolean } {
+  const ratio = total ? score / total : 0;
+  const table = track === "General Training" ? GENERAL_BAND_TABLE : ACADEMIC_BAND_TABLE;
+  const match = table.find(([threshold]) => ratio >= threshold);
+  return { band: match ? match[1] : 2.5, approximate: total < RELIABLE_QUESTION_COUNT };
+}

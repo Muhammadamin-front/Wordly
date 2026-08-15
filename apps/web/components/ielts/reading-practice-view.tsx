@@ -35,6 +35,7 @@ import {
   READING_QUESTION_TYPE_GUIDES,
   allReadingQuestions,
   getReadingTest,
+  readingBand,
   getQuestionsForReadingQuestionType,
   type ReadingParagraph,
   type ReadingPracticeTest,
@@ -208,12 +209,33 @@ function isCorrect(question: ReadingQuestion, value: AnswerValue | undefined) {
   return value ? accepted.includes(normalise(value)) : false;
 }
 
-function bandGuidance(score: number, total: number) {
-  const ratio = total ? score / total : 0;
-  if (ratio >= 0.9) return { band: "8.0-9.0", label: "Excellent control", tone: "text-success" };
-  if (ratio >= 0.75) return { band: "7.0-7.5", label: "Strong, exam-ready reading", tone: "text-brand-600 dark:text-brand-300" };
-  if (ratio >= 0.58) return { band: "6.0-6.5", label: "Good base, refine accuracy", tone: "text-accent-500" };
-  return { band: "5.0-5.5", label: "Build strategy before speed", tone: "text-warning" };
+/** The old version applied one hand-made curve to every test: it read band
+ *  "6.0-6.5" at 58% for a 40-question Academic paper and for a 10-question
+ *  General Training set alike. Academic needs 23/40 for a 6.0 and General
+ *  Training is stricter again, so both were flattered. */
+function bandGuidance(score: number, total: number, track: ReadingPracticeTest["track"]) {
+  const { band, approximate } = readingBand(score, total, track);
+  const label =
+    band >= 8
+      ? "Excellent control"
+      : band >= 7
+        ? "Strong, exam-ready reading"
+        : band >= 6
+          ? "Good base, refine accuracy"
+          : "Build strategy before speed";
+  const tone =
+    band >= 8
+      ? "text-success"
+      : band >= 7
+        ? "text-brand-600 dark:text-brand-300"
+        : band >= 6
+          ? "text-accent-500"
+          : "text-warning";
+  // A short set cannot resolve a single band, so show the half-band either side.
+  const display = approximate
+    ? `${(band - 0.5).toFixed(1)}-${(band + 0.5).toFixed(1)}`
+    : band.toFixed(1);
+  return { band: display, label, tone, approximate };
 }
 
 function countQuestions(test: ReadingPracticeTest) {
@@ -849,6 +871,6 @@ function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm }
 
 function ReadingResultScreen({ test, result, answers, onLibrary, onRetry, onReview, onNext }: { test: ReadingPracticeTest; result: TestResult; answers: Record<string, AnswerValue>; onLibrary: () => void; onRetry: () => void; onReview: () => void; onNext: () => void }) {
   const questions = allReadingQuestions(test);
-  const band = bandGuidance(result.score, result.total);
-  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> Reading library</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> Test complete</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">Estimated Reading band: <span className={band.tone}>{band.band}</span></p><p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. Time used: {formatTime(result.timeUsed)}. {result.unanswered.length ? `Unanswered: ${result.unanswered.join(", ")}.` : "Every question received an answer."}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">What to do next</p><p className="mt-2 text-sm leading-7 text-ink">Review every incorrect answer beside the evidence sentence, then retry only when you can explain the trap in your own words.</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> Review mistakes</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> Retry test</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">Answer review</p><h2 className="mt-1 text-2xl font-black text-ink">Your evidence trail</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || "No answer"; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">Your answer: <strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">Correct answer: <strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">Evidence: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> Retry test</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> Review mistakes</Button><Button variant="secondary" onClick={onNext}>Next passage <ArrowRight className="size-4" /></Button></div></main>;
+  const band = bandGuidance(result.score, result.total, test.track);
+  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> Reading library</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> Test complete</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">Estimated Reading band: <span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">This set is shorter than a real paper, where one answer rarely moves the band. Treat the range as a rough indication.</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. Time used: {formatTime(result.timeUsed)}. {result.unanswered.length ? `Unanswered: ${result.unanswered.join(", ")}.` : "Every question received an answer."}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">What to do next</p><p className="mt-2 text-sm leading-7 text-ink">Review every incorrect answer beside the evidence sentence, then retry only when you can explain the trap in your own words.</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> Review mistakes</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> Retry test</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">Answer review</p><h2 className="mt-1 text-2xl font-black text-ink">Your evidence trail</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || "No answer"; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">Your answer: <strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">Correct answer: <strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">Evidence: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> Retry test</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> Review mistakes</Button><Button variant="secondary" onClick={onNext}>Next passage <ArrowRight className="size-4" /></Button></div></main>;
 }

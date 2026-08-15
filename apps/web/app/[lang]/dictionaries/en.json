@@ -829,7 +829,8 @@
     "recentTitle": "Recent results",
     "speakingCtaTitle": "Ready for a real interview?",
     "speakingCtaDesc": "The AI examiner runs a full IELTS Speaking test — Parts 1-3, live voice, and a band report with feedback.",
-    "speakingCtaButton": "Start with the examiner"
+    "speakingCtaButton": "Start with the examiner",
+    "listeningPlaysOnce": "The recording plays once, as in the real exam. You can pause, and replay it after you submit."
   },
   "billing": {
     "title": "Pricing",

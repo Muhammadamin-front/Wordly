@@ -23,10 +23,15 @@ type Ielts = Dictionary["ielts"];
 
 const TIME_LIMIT: Record<ComprehensionKind, number> = { reading: 480, listening: 360 };
 
-/** Longer passages earn more time: ~300 words → 8 min, 700+ words → 20 min. */
-function readingSeconds(body: string): number {
+/** Real Academic Reading allows 20 minutes for a 700-900 word passage with 13-14
+ *  questions — roughly 90 seconds per question, with the passage read once. The
+ *  old formula ignored the question count and gave ~19 minutes for a 700-word
+ *  passage with 8 questions, about twice the real pace. */
+function readingSeconds(body: string, questionCount: number): number {
   const words = body.split(/\s+/).length;
-  return Math.min(1200, Math.max(TIME_LIMIT.reading, Math.round(words * 1.6)));
+  const reading = words * 0.6; // ~100 wpm for careful first read
+  const answering = questionCount * 60;
+  return Math.min(1500, Math.max(240, Math.round(reading + answering)));
 }
 
 function fmt(sec: number): string {
@@ -56,6 +61,10 @@ export function ComprehensionTest({
   const [error, setError] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  // IELTS Listening is played once. Pausing is allowed, restarting is not until
+  // the answers are in — the app's own cheatsheet teaches this, and unlimited
+  // replay made the practice score meaningless.
+  const [audioFinished, setAudioFinished] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
 
@@ -82,6 +91,7 @@ export function ComprehensionTest({
       audio.onpause = () => setAudioPlaying(false);
       audio.onended = () => {
         setAudioPlaying(false);
+        setAudioFinished(true);
         URL.revokeObjectURL(url);
       };
       audioRef.current = audio;
@@ -116,8 +126,13 @@ export function ComprehensionTest({
 
   function begin(generated: GeneratedTest) {
     setTest(generated);
+    setAudioFinished(false);
     setAnswers(new Array(generated.questions.length).fill(-1));
-    setSecondsLeft(kind === "reading" ? readingSeconds(generated.body) : TIME_LIMIT[kind]);
+    setSecondsLeft(
+      kind === "reading"
+        ? readingSeconds(generated.body, generated.questions.length)
+        : TIME_LIMIT[kind]
+    );
     if (kind === "listening") {
       // Play the recording once, automatically — like the real exam.
       window.setTimeout(() => playNarration(generated.test_id, generated.body), 400);
@@ -344,23 +359,31 @@ export function ComprehensionTest({
             }
             return (
               <>
-                <div className="flex items-center justify-center gap-3 rounded-2xl border border-line bg-card p-5">
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      if (audioRef.current) {
-                        if (audioPlaying) audioRef.current.pause();
-                        else void audioRef.current.play();
-                      } else if (speech.speaking) {
-                        speech.cancel();
-                      } else {
-                        void playNarration(test.test_id, test.body);
-                      }
-                    }}
-                  >
-                    {audioPlaying || speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
-                  </Button>
-                  <p className="text-xs text-ink-soft">{t.listeningHint}</p>
+                <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-card p-5">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="secondary"
+                      disabled={!result && audioFinished}
+                      onClick={() => {
+                        if (audioRef.current) {
+                          if (audioPlaying) audioRef.current.pause();
+                          else void audioRef.current.play();
+                        } else if (speech.speaking) {
+                          speech.cancel();
+                        } else {
+                          void playNarration(test.test_id, test.body);
+                        }
+                      }}
+                    >
+                      {audioPlaying || speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
+                    </Button>
+                    <p className="text-xs text-ink-soft">{t.listeningHint}</p>
+                  </div>
+                  {!result && (
+                    <p className="text-center text-[11px] leading-4 text-ink-soft">
+                      {t.listeningPlaysOnce}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-5">{questionsBlock}</div>
               </>

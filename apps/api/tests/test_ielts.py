@@ -47,11 +47,36 @@ async def learner(client, email="ielts@words.uz") -> dict:
     return {"Authorization": "Bearer " + data["access_token"]}
 
 
-def test_band_from_ratio_monotonic():
-    assert band_from_ratio(1.0) == 9.0
-    assert band_from_ratio(0.5) == 6.0
-    assert band_from_ratio(0.0) == 3.0
-    assert band_from_ratio(0.67) >= band_from_ratio(0.5)
+def test_band_from_ratio_follows_the_published_tables():
+    """Reference points from the 40-question papers.
+
+    The previous table awarded band 6.0 for half marks; Academic Reading needs
+    23/40 for a 6.0 and gives 20/40 a 5.5, so practice results were inflated and
+    the stored "best band" was wrong.
+    """
+    # Academic Reading: 23/40 -> 6.0, 20/40 -> 5.5, 30/40 -> 7.0.
+    assert band_from_ratio(23 / 40, "reading") == 6.0
+    assert band_from_ratio(20 / 40, "reading") == 5.5
+    assert band_from_ratio(30 / 40, "reading") == 7.0
+    assert band_from_ratio(1.0, "reading") == 9.0
+
+    # Listening is a little more forgiving in the middle: 23/40 -> 6.0,
+    # 30/40 -> 7.0, 26/40 -> 6.5.
+    assert band_from_ratio(26 / 40, "listening") == 6.5
+    assert band_from_ratio(30 / 40, "listening") == 7.0
+
+    # General Training Reading is stricter than Academic at the same raw score.
+    assert band_from_ratio(30 / 40, "general_reading") <= band_from_ratio(
+        30 / 40, "reading"
+    )
+
+
+def test_band_from_ratio_is_monotonic():
+    previous = 0.0
+    for step in range(0, 101):
+        band = band_from_ratio(step / 100, "reading")
+        assert band >= previous
+        previous = band
 
 
 async def test_ielts_requires_auth(client):

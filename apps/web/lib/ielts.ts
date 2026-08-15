@@ -94,6 +94,8 @@ export interface GradeResult {
   correct: number;
   total: number;
   band: number;
+  /** Short practice sets cannot resolve a single band — show a range instead. */
+  approximate: boolean;
   answers: number[];
   reward: IeltsReward;
 }

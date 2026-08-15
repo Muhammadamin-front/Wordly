@@ -829,7 +829,8 @@
     "recentTitle": "So'nggi natijalar",
     "speakingCtaTitle": "Haqiqiy suhbatga tayyormisiz?",
     "speakingCtaDesc": "AI imtihonchi to'liq IELTS Speaking testini o'tkazadi — Part 1-3, jonli ovoz va band hisoboti.",
-    "speakingCtaButton": "Imtihonchi bilan boshlash"
+    "speakingCtaButton": "Imtihonchi bilan boshlash",
+    "listeningPlaysOnce": "Yozuv haqiqiy imtihondagidek bir marta ijro etiladi. Pauza qilishingiz mumkin, javoblarni yuborgach qayta tinglaysiz."
   },
   "billing": {
     "title": "Narxlar",

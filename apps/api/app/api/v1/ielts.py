@@ -163,6 +163,7 @@ async def _submit(payload: SubmitRequest, user: User, db: AsyncSession):
     await db.commit()
     return GradeOut(
         correct=result.correct, total=result.total, band=result.band,
+        approximate=result.approximate,
         answers=result.answers, reward=_reward(result.reward),
     )
 
