@@ -600,16 +600,35 @@ const LISTENING_SECTIONS: IeltsResourceSection[] = [
   },
 ];
 
+/** Counts drawn from the sections themselves.
+ *
+ *  These figures used to be typed in by hand and had drifted well past the
+ *  content: "50+ academic phrases" against fourteen, "100 core synonyms"
+ *  against twelve, "12 essay types" against five. Deriving them means a claim
+ *  cannot outrun what is actually on the page.
+ */
+function countVocabulary(sections: IeltsResourceSection[]): number {
+  return sections.reduce((total, section) => total + (section.vocabulary?.length ?? 0), 0);
+}
+
+function countTraps(sections: IeltsResourceSection[]): number {
+  return sections.reduce((total, section) => total + (section.traps?.length ?? 0), 0);
+}
+
+function countSteps(sections: IeltsResourceSection[]): number {
+  return sections.reduce((total, section) => total + (section.steps?.length ?? 0), 0);
+}
+
 export const IELTS_SKILL_CONTENT: Record<IeltsSkill, IeltsSkillContent> = {
   speaking: {
     eyebrow: "Speaking vocabulary lab",
     title: "Speak naturally, not mechanically",
     description:
-      "120 common topics, band 8–9 answer models, native-like phrases and examiner guidance without AI scoring.",
+      "Common topics by family, band 8–9 answer models, native-like phrases and examiner guidance without AI scoring.",
     stats: [
-      { value: "120", label: "common topics" },
-      { value: "12", label: "topic families" },
-      { value: "30+", label: "natural phrases" },
+      { value: String(Object.values(SPEAKING_TOPICS).flat().length), label: "common topics" },
+      { value: String(Object.keys(SPEAKING_TOPICS).length), label: "topic families" },
+      { value: String(countVocabulary(SPEAKING_SECTIONS)), label: "natural phrases" },
     ],
     sections: SPEAKING_SECTIONS,
   },
@@ -617,11 +636,11 @@ export const IELTS_SKILL_CONTENT: Record<IeltsSkill, IeltsSkillContent> = {
     eyebrow: "Writing model library",
     title: "Study what high-band writing does",
     description:
-      "Model structures for every major Task 1 and Task 2 type, with vocabulary, grammar and scoring analysis.",
+      "Model structures for the main Task 1 and Task 2 types, with vocabulary, grammar and scoring analysis.",
     stats: [
-      { value: "12", label: "essay types" },
+      { value: String(WRITING_SECTIONS.length), label: "model breakdowns" },
       { value: "8–9", label: "target band" },
-      { value: "50+", label: "academic phrases" },
+      { value: String(countVocabulary(WRITING_SECTIONS)), label: "academic phrases" },
     ],
     sections: WRITING_SECTIONS,
   },
@@ -631,9 +650,9 @@ export const IELTS_SKILL_CONTENT: Record<IeltsSkill, IeltsSkillContent> = {
     description:
       "Step-by-step guides for every common question type, built around traps, paraphrase and high-frequency synonyms.",
     stats: [
-      { value: "8", label: "question guides" },
-      { value: "100", label: "core synonyms" },
-      { value: "4", label: "strategy stages" },
+      { value: String(READING_SECTIONS.length), label: "question guides" },
+      { value: String(countVocabulary(READING_SECTIONS)), label: "core synonyms" },
+      { value: String(countTraps(READING_SECTIONS)), label: "traps explained" },
     ],
     sections: READING_SECTIONS,
   },
@@ -643,9 +662,9 @@ export const IELTS_SKILL_CONTENT: Record<IeltsSkill, IeltsSkillContent> = {
     description:
       "Practical guidance for sections 1–4, accents, numbers, maps and the vocabulary that causes avoidable errors.",
     stats: [
-      { value: "4", label: "section strategies" },
-      { value: "40+", label: "confusing forms" },
-      { value: "10m", label: "daily routine" },
+      { value: String(LISTENING_SECTIONS.length), label: "section strategies" },
+      { value: String(countVocabulary(LISTENING_SECTIONS)), label: "confusing forms" },
+      { value: String(countSteps(LISTENING_SECTIONS)), label: "practice steps" },
     ],
     sections: LISTENING_SECTIONS,
   },
