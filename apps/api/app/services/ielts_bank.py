@@ -45,12 +45,12 @@ READING_BANK: List[Item] = [
             "debated — but many city residents, it seems, need the bees."
         ),
         "questions": [
-            {"prompt": "Why did urban beekeeping originally become popular?", "options": ["Because honey prices rose sharply", "As a reaction to reports of declining bees in rural areas", "Because governments paid people to keep hives", "As a way to reduce pesticide use in cities"], "answer_index": 1},
-            {"prompt": "According to the passage, why can cities suit bees well?", "options": ["Cities are warmer than the countryside all year", "There are no other pollinators to compete with", "Varied plants provide nectar for much of the year", "Urban honey sells for more money"], "answer_index": 2},
-            {"prompt": "What did the Berlin studies find?", "options": ["Urban colonies often out-performed rural ones", "Rural bees produced more honey", "City bees suffered more in winter", "Berlin banned rooftop hives"], "answer_index": 0},
-            {"prompt": "What concern do some ecologists raise?", "options": ["Honeybees may spread disease to humans", "Managed honeybees can crowd out wild pollinators", "Rooftop hives are dangerous for residents", "Urban honey is unsafe to eat"], "answer_index": 1},
-            {"prompt": "The phrase 'managed livestock' suggests honeybees are…", "options": ["wild animals in danger of extinction", "animals kept and controlled by people", "a species that cannot survive outdoors", "illegal in most cities"], "answer_index": 1},
-            {"prompt": "What is the writer's overall conclusion?", "options": ["Bees would be better off without cities", "Beekeeping should be limited to schools", "City people gain something valuable from beekeeping", "Honey production is the main benefit of urban hives"], "answer_index": 2},
+            {"prompt": "Why did urban beekeeping originally become popular?", "options": ["Because honey prices rose sharply", "As a reaction to reports of declining bees in rural areas", "Because governments paid people to keep hives", "As a way to reduce pesticide use in cities"], "answer_index": 1, "explanation": "Paragraph 1: the trend began 'partly as a response to alarming reports of bee decline in the countryside'."},
+            {"prompt": "According to the passage, why can cities suit bees well?", "options": ["Cities are warmer than the countryside all year", "There are no other pollinators to compete with", "Varied plants provide nectar for much of the year", "Urban honey sells for more money"], "answer_index": 2, "explanation": "Paragraph 2: urban parks, gardens and balcony flower boxes give 'a diverse, almost year-round supply of nectar', unlike a single rural crop."},
+            {"prompt": "What did the Berlin studies find?", "options": ["Urban colonies often out-performed rural ones", "Rural bees produced more honey", "City bees suffered more in winter", "Berlin banned rooftop hives"], "answer_index": 0, "explanation": "Paragraph 2: the Berlin studies found urban colonies 'often produced more honey than their rural counterparts and survived winters at higher rates'."},
+            {"prompt": "What concern do some ecologists raise?", "options": ["Honeybees may spread disease to humans", "Managed honeybees can crowd out wild pollinators", "Rooftop hives are dangerous for residents", "Urban honey is unsafe to eat"], "answer_index": 1, "explanation": "Paragraph 3: ecologists warn that honeybees 'can out-compete wild pollinators such as bumblebees and solitary bees'."},
+            {"prompt": "The phrase 'managed livestock' suggests honeybees are…", "options": ["wild animals in danger of extinction", "animals kept and controlled by people", "a species that cannot survive outdoors", "illegal in most cities"], "answer_index": 1, "explanation": "Paragraph 3 calls honeybees 'essentially managed livestock' — animals people keep and control, not wild ones."},
+            {"prompt": "What is the writer's overall conclusion?", "options": ["Bees would be better off without cities", "Beekeeping should be limited to schools", "City people gain something valuable from beekeeping", "Honey production is the main benefit of urban hives"], "answer_index": 2, "explanation": "The final line — 'many city residents, it seems, need the bees' — puts the value on what people gain."},
         ],
     },
     {
@@ -82,12 +82,12 @@ READING_BANK: List[Item] = [
             "carry an extraordinary past."
         ),
         "questions": [
-            {"prompt": "How was tea first used in ancient China?", "options": ["As a religious offering", "As a medicine", "As a trade currency", "As a cooking ingredient"], "answer_index": 1},
-            {"prompt": "Why did Buddhist monks value tea?", "options": ["It helped them stay awake during meditation", "It was part of their religious texts", "It could be traded for food", "It grew inside their temples"], "answer_index": 0},
-            {"prompt": "When did tea first arrive in Europe?", "options": ["In the ninth century", "In the fourteenth century", "In 1610", "In the late eighteenth century"], "answer_index": 2},
-            {"prompt": "What helped tea become Britain's national drink?", "options": ["A government campaign", "Falling prices and adding milk and sugar", "The invention of the teabag", "A ban on coffee"], "answer_index": 1},
-            {"prompt": "Why did the East India Company sell opium in China?", "options": ["To fund its tea purchases", "To weaken the Chinese army", "Because tea sales were banned", "To support Indian farmers"], "answer_index": 0},
-            {"prompt": "What is the main idea of the final paragraph?", "options": ["Tea is losing popularity to coffee", "Everyday products can have remarkable histories", "Water remains the world's favourite drink", "Tea production must increase further"], "answer_index": 1},
+            {"prompt": "How was tea first used in ancient China?", "options": ["As a religious offering", "As a medicine", "As a trade currency", "As a cooking ingredient"], "answer_index": 1, "explanation": "Paragraph 1: tea was cultivated in Yunnan 'first as a medicine and only later as a daily drink'."},
+            {"prompt": "Why did Buddhist monks value tea?", "options": ["It helped them stay awake during meditation", "It was part of their religious texts", "It could be traded for food", "It grew inside their temples"], "answer_index": 0, "explanation": "Paragraph 2: monks 'valued its power to keep them alert during long meditation'."},
+            {"prompt": "When did tea first arrive in Europe?", "options": ["In the ninth century", "In the fourteenth century", "In 1610", "In the late eighteenth century"], "answer_index": 2, "explanation": "Paragraph 2: 'Dutch traders carried the first chests to Amsterdam in 1610'."},
+            {"prompt": "What helped tea become Britain's national drink?", "options": ["A government campaign", "Falling prices and adding milk and sugar", "The invention of the teabag", "A ban on coffee"], "answer_index": 1, "explanation": "Paragraph 3: the shift was 'helped by falling prices and the new custom of adding milk and sugar'."},
+            {"prompt": "Why did the East India Company sell opium in China?", "options": ["To fund its tea purchases", "To weaken the Chinese army", "Because tea sales were banned", "To support Indian farmers"], "answer_index": 0, "explanation": "Paragraph 3: 'To pay for its imports, the British East India Company grew opium in India and sold it in China'."},
+            {"prompt": "What is the main idea of the final paragraph?", "options": ["Tea is losing popularity to coffee", "Everyday products can have remarkable histories", "Water remains the world's favourite drink", "Tea production must increase further"], "answer_index": 1, "explanation": "The closing sentence: 'even the most ordinary items on our kitchen shelves can carry an extraordinary past'."},
         ],
     },
     {
@@ -119,12 +119,12 @@ READING_BANK: List[Item] = [
             "refreshes more than an hour-long one."
         ),
         "questions": [
-            {"prompt": "What is the main point of the first paragraph?", "options": ["Sleep is a single uniform state", "Sleep consists of distinct repeating stages", "Scientists cannot measure sleep", "Dreams occur all night long"], "answer_index": 1},
-            {"prompt": "How long does a typical sleep cycle last?", "options": ["Twenty minutes", "Half an hour", "About ninety minutes", "Four to six hours"], "answer_index": 2},
-            {"prompt": "Slow-wave sleep is linked to…", "options": ["vivid dreaming", "physical recovery and factual memory", "emotional problems", "acting out dreams"], "answer_index": 1},
-            {"prompt": "Why is the body paralysed during REM sleep?", "options": ["To conserve energy", "Because muscles are exhausted", "Probably to prevent us acting out dreams", "To keep the heart rate low"], "answer_index": 2},
-            {"prompt": "What happens to REM periods through the night?", "options": ["They become longer", "They become shorter", "They disappear after midnight", "They stay exactly the same"], "answer_index": 0},
-            {"prompt": "Why can a 20-minute nap beat an hour-long one?", "options": ["It is easier to schedule", "It avoids entering deep sleep, so no sleep inertia", "It includes more REM sleep", "It lowers heart rate further"], "answer_index": 1},
+            {"prompt": "What is the main point of the first paragraph?", "options": ["Sleep is a single uniform state", "Sleep consists of distinct repeating stages", "Scientists cannot measure sleep", "Dreams occur all night long"], "answer_index": 1, "explanation": "Paragraph 1 contrasts the feeling of one uniform state with the reality: the brain 'moves through a repeating cycle of distinct stages'."},
+            {"prompt": "How long does a typical sleep cycle last?", "options": ["Twenty minutes", "Half an hour", "About ninety minutes", "Four to six hours"], "answer_index": 2, "explanation": "Paragraph 2: 'A typical cycle lasts about ninety minutes and repeats four to six times a night.'"},
+            {"prompt": "Slow-wave sleep is linked to…", "options": ["vivid dreaming", "physical recovery and factual memory", "emotional problems", "acting out dreams"], "answer_index": 1, "explanation": "Paragraph 2 links slow-wave sleep 'to physical recovery and to the consolidation of factual memories'."},
+            {"prompt": "Why is the body paralysed during REM sleep?", "options": ["To conserve energy", "Because muscles are exhausted", "Probably to prevent us acting out dreams", "To keep the heart rate low"], "answer_index": 2, "explanation": "Paragraph 3: the body is paralysed 'presumably to stop us acting out our dreams'."},
+            {"prompt": "What happens to REM periods through the night?", "options": ["They become longer", "They become shorter", "They disappear after midnight", "They stay exactly the same"], "answer_index": 0, "explanation": "Paragraph 3: 'REM periods lengthen as the night goes on'."},
+            {"prompt": "Why can a 20-minute nap beat an hour-long one?", "options": ["It is easier to schedule", "It avoids entering deep sleep, so no sleep inertia", "It includes more REM sleep", "It lowers heart rate further"], "answer_index": 1, "explanation": "Paragraph 4: a twenty-minute nap is 'too short to enter deep sleep', so it avoids the sleep inertia that follows waking mid-cycle."},
         ],
     },
     {
@@ -156,12 +156,12 @@ READING_BANK: List[Item] = [
             "north shows that even severe environmental damage need not always be final."
         ),
         "questions": [
-            {"prompt": "What was the Aral Sea sixty years ago?", "options": ["A salt desert", "The world's fourth-largest lake", "A small fishing pond", "An artificial reservoir"], "answer_index": 1},
-            {"prompt": "Why was river water diverted in the 1960s?", "options": ["To supply drinking water to cities", "To generate electricity", "To irrigate cotton fields", "To prevent flooding"], "answer_index": 2},
-            {"prompt": "Did planners expect the sea to shrink?", "options": ["No, it was a complete surprise", "Yes, but the loss exceeded predictions", "Yes, and their predictions were accurate", "The passage does not say"], "answer_index": 1},
-            {"prompt": "What killed the native fish?", "options": ["Overfishing by the Soviet fleet", "Rising water temperature", "Increasing saltiness of the water", "Pesticides sprayed on the water"], "answer_index": 2},
-            {"prompt": "How did the shrinking sea affect local climate?", "options": ["Summers cooled and winters warmed", "The growing season became longer", "Summers grew hotter and winters colder", "Rainfall increased sharply"], "answer_index": 2},
-            {"prompt": "What does the North Aral example demonstrate?", "options": ["Environmental damage is always permanent", "Dams inevitably cause harm", "Severe damage can sometimes be partly reversed", "Fishing should be banned in recovering lakes"], "answer_index": 2},
+            {"prompt": "What was the Aral Sea sixty years ago?", "options": ["A salt desert", "The world's fourth-largest lake", "A small fishing pond", "An artificial reservoir"], "answer_index": 1, "explanation": "Paragraph 1: the Aral Sea 'was the fourth-largest lake on Earth'."},
+            {"prompt": "Why was river water diverted in the 1960s?", "options": ["To supply drinking water to cities", "To generate electricity", "To irrigate cotton fields", "To prevent flooding"], "answer_index": 2, "explanation": "Paragraph 2: planners 'diverted both to irrigate enormous new cotton fields'."},
+            {"prompt": "Did planners expect the sea to shrink?", "options": ["No, it was a complete surprise", "Yes, but the loss exceeded predictions", "Yes, and their predictions were accurate", "The passage does not say"], "answer_index": 1, "explanation": "Paragraph 2: they were 'fully aware that the lake would shrink', but 'the scale of the loss... outran every prediction'."},
+            {"prompt": "What killed the native fish?", "options": ["Overfishing by the Soviet fleet", "Rising water temperature", "Increasing saltiness of the water", "Pesticides sprayed on the water"], "answer_index": 2, "explanation": "Paragraph 2: 'As the water withdrew it grew saltier, killing the native fish'."},
+            {"prompt": "How did the shrinking sea affect local climate?", "options": ["Summers cooled and winters warmed", "The growing season became longer", "Summers grew hotter and winters colder", "Rainfall increased sharply"], "answer_index": 2, "explanation": "Paragraph 3: once the sea stopped moderating the climate, 'summers became hotter, winters colder'."},
+            {"prompt": "What does the North Aral example demonstrate?", "options": ["Environmental damage is always permanent", "Dams inevitably cause harm", "Severe damage can sometimes be partly reversed", "Fishing should be banned in recovering lakes"], "answer_index": 2, "explanation": "Paragraph 4: the North Aral shows 'that even severe environmental damage need not always be final'."},
         ],
     },
     {
@@ -194,12 +194,12 @@ READING_BANK: List[Item] = [
             "not because they failed, but because single-use packaging was cheaper to administer."
         ),
         "questions": [
-            {"prompt": "In what way is glass superior to paper and plastic?", "options": ["It is lighter to transport", "It can be recycled endlessly without degrading", "It is cheaper to produce", "It cannot break"], "answer_index": 1},
-            {"prompt": "What is 'cullet'?", "options": ["A type of furnace", "Raw sand for glassmaking", "Recycled crushed glass", "A brand of bottle"], "answer_index": 2},
-            {"prompt": "Why do manufacturers value cullet?", "options": ["It melts at lower temperature, saving energy", "It is stronger than new glass", "It is easier to colour", "Governments require its use"], "answer_index": 0},
-            {"prompt": "What problem can a ceramic mug cause?", "options": ["It blocks collection trucks", "It can weaken a whole batch of recycled glass", "It changes the colour of the furnace", "It raises the melting temperature of sand"], "answer_index": 1},
-            {"prompt": "What do the most successful recycling countries have in common?", "options": ["Larger landfill sites", "Deposit-return schemes", "Bans on green glass", "Cheaper electricity"], "answer_index": 1},
-            {"prompt": "Why were old bottle-reuse systems abandoned?", "options": ["They failed to work properly", "Customers refused to return bottles", "Single-use packaging was cheaper to manage", "Washed bottles were unsafe"], "answer_index": 2},
+            {"prompt": "In what way is glass superior to paper and plastic?", "options": ["It is lighter to transport", "It can be recycled endlessly without degrading", "It is cheaper to produce", "It cannot break"], "answer_index": 1, "explanation": "Paragraph 1: glass reforms 'with no loss of clarity or strength — something neither paper... nor plastic... can claim'."},
+            {"prompt": "What is 'cullet'?", "options": ["A type of furnace", "Raw sand for glassmaking", "Recycled crushed glass", "A brand of bottle"], "answer_index": 2, "explanation": "Paragraph 2 defines it: 'Recycled crushed glass, known in the industry as cullet'."},
+            {"prompt": "Why do manufacturers value cullet?", "options": ["It melts at lower temperature, saving energy", "It is stronger than new glass", "It is easier to colour", "Governments require its use"], "answer_index": 0, "explanation": "Paragraph 2: cullet 'melts at a lower temperature', and every ten per cent added 'cuts its energy use by roughly three per cent'."},
+            {"prompt": "What problem can a ceramic mug cause?", "options": ["It blocks collection trucks", "It can weaken a whole batch of recycled glass", "It changes the colour of the furnace", "It raises the melting temperature of sand"], "answer_index": 1, "explanation": "Paragraph 2: 'A single ceramic coffee mug in a load of bottles can weaken an entire batch'."},
+            {"prompt": "What do the most successful recycling countries have in common?", "options": ["Larger landfill sites", "Deposit-return schemes", "Bans on green glass", "Cheaper electricity"], "answer_index": 1, "explanation": "Paragraph 3: 'The highest-recycling countries almost all use deposit-return schemes'."},
+            {"prompt": "Why were old bottle-reuse systems abandoned?", "options": ["They failed to work properly", "Customers refused to return bottles", "Single-use packaging was cheaper to manage", "Washed bottles were unsafe"], "answer_index": 2, "explanation": "Paragraph 4: they were abandoned 'not because they failed, but because single-use packaging was cheaper to administer'."},
         ],
     },
     {
@@ -232,12 +232,12 @@ READING_BANK: List[Item] = [
             "spreading. Every debate about the internet today has a fifteenth-century echo."
         ),
         "questions": [
-            {"prompt": "What was Gutenberg's original goal?", "options": ["To start a political revolution", "To profit from mass-produced religious books", "To replace paper with parchment", "To teach Europeans to read"], "answer_index": 1},
-            {"prompt": "What was truly new in Gutenberg's system?", "options": ["The screw press", "Oil-based ink", "Reusable movable metal type", "Cheap paper"], "answer_index": 2},
-            {"prompt": "What does the passage say about book production after 1450?", "options": ["It fell due to censorship", "More books appeared in 50 years than in the previous 1000", "Only Bibles were printed", "Prices rose sharply"], "answer_index": 1},
-            {"prompt": "Why did page numbers matter to scholars?", "options": ["They made books heavier", "They enabled precise citation and criticism", "They were required by law", "They helped printers charge more"], "answer_index": 1},
-            {"prompt": "How did authorities react to printing?", "options": ["They ignored it completely", "They funded more printing shops", "They introduced censorship and licensing", "They banned paper production"], "answer_index": 2},
-            {"prompt": "What comparison does the passage end with?", "options": ["Printing and the internet raise similar debates", "Gutenberg was richer than modern publishers", "Books are better than websites", "Censorship works better today"], "answer_index": 0},
+            {"prompt": "What was Gutenberg's original goal?", "options": ["To start a political revolution", "To profit from mass-produced religious books", "To replace paper with parchment", "To teach Europeans to read"], "answer_index": 1, "explanation": "Paragraph 1: 'his ambitions were commercial, not revolutionary' — he wanted to mass-produce Bibles and prayer books."},
+            {"prompt": "What was truly new in Gutenberg's system?", "options": ["The screw press", "Oil-based ink", "Reusable movable metal type", "Cheap paper"], "answer_index": 2, "explanation": "Paragraph 2: 'The core insight was not the press itself... but movable metal type', which could be reused endlessly."},
+            {"prompt": "What does the passage say about book production after 1450?", "options": ["It fell due to censorship", "More books appeared in 50 years than in the previous 1000", "Only Bibles were printed", "Prices rose sharply"], "answer_index": 1, "explanation": "Paragraph 3: 'more books were produced in that half-century than in the previous thousand years'."},
+            {"prompt": "Why did page numbers matter to scholars?", "options": ["They made books heavier", "They enabled precise citation and criticism", "They were required by law", "They helped printers charge more"], "answer_index": 1, "explanation": "Paragraph 3: identical texts 'complete with page numbers' made 'precise citation — and therefore systematic criticism — possible'."},
+            {"prompt": "How did authorities react to printing?", "options": ["They ignored it completely", "They funded more printing shops", "They introduced censorship and licensing", "They banned paper production"], "answer_index": 2, "explanation": "Paragraph 4: authorities 'responded with licensing laws, censorship and lists of forbidden books'."},
+            {"prompt": "What comparison does the passage end with?", "options": ["Printing and the internet raise similar debates", "Gutenberg was richer than modern publishers", "Books are better than websites", "Censorship works better today"], "answer_index": 0, "explanation": "The final line: 'Every debate about the internet today has a fifteenth-century echo.'"},
         ],
     },
     {
@@ -273,12 +273,12 @@ READING_BANK: List[Item] = [
             "that in nature, nothing exists alone."
         ),
         "questions": [
-            {"prompt": "How were wolves regarded before the 1920s?", "options": ["As protected symbols", "As a valuable tourist attraction", "As harmful pests to be removed", "As sacred animals"], "answer_index": 2},
-            {"prompt": "What happened to the park after the wolves were gone?", "options": ["The elk population grew and overgrazed the trees", "Elk numbers fell sharply", "Beavers multiplied rapidly", "The rivers became deeper"], "answer_index": 0},
-            {"prompt": "Besides reducing their numbers, how did the wolves affect the elk?", "options": ["They made the elk breed faster", "They drove the elk out of the park entirely", "They had no effect on elk behaviour", "They changed the elk's behaviour and movements"], "answer_index": 3},
-            {"prompt": "What is a 'trophic cascade'?", "options": ["A sudden collapse of a riverbank", "Effects spreading down from a top predator through an ecosystem", "A method of counting wolves", "A type of waterfall"], "answer_index": 1},
-            {"prompt": "What caution do some researchers add?", "options": ["The wolves should be removed again", "The whole story is completely false", "Other factors also contributed and the recovery is incomplete", "Elk were never really a problem"], "answer_index": 2},
-            {"prompt": "What is the main message of the passage?", "options": ["Wolves are dangerous to humans", "Species are connected, and losing one can affect many others", "National parks should ban all predators", "Rivers cannot change their shape"], "answer_index": 1},
+            {"prompt": "How were wolves regarded before the 1920s?", "options": ["As protected symbols", "As a valuable tourist attraction", "As harmful pests to be removed", "As sacred animals"], "answer_index": 2, "explanation": "Paragraph 1: 'Wolves were seen as vicious pests, and their removal was official policy.'"},
+            {"prompt": "What happened to the park after the wolves were gone?", "options": ["The elk population grew and overgrazed the trees", "Elk numbers fell sharply", "Beavers multiplied rapidly", "The rivers became deeper"], "answer_index": 0, "explanation": "Paragraph 2: 'the park's elk population exploded', eating young trees 'faster than the plants could regrow'."},
+            {"prompt": "Besides reducing their numbers, how did the wolves affect the elk?", "options": ["They made the elk breed faster", "They drove the elk out of the park entirely", "They had no effect on elk behaviour", "They changed the elk's behaviour and movements"], "answer_index": 3, "explanation": "Paragraph 3: the wolves 'did not merely reduce elk numbers; they changed elk behaviour, keeping the herds moving'."},
+            {"prompt": "What is a 'trophic cascade'?", "options": ["A sudden collapse of a riverbank", "Effects spreading down from a top predator through an ecosystem", "A method of counting wolves", "A type of waterfall"], "answer_index": 1, "explanation": "Paragraph 4 defines it as 'a chain of effects that spreads downward from a top predator through an entire ecosystem'."},
+            {"prompt": "What caution do some researchers add?", "options": ["The wolves should be removed again", "The whole story is completely false", "Other factors also contributed and the recovery is incomplete", "Elk were never really a problem"], "answer_index": 2, "explanation": "Paragraph 4: 'weather, rising bear numbers and other factors also played a part, and the recovery is patchy rather than complete'."},
+            {"prompt": "What is the main message of the passage?", "options": ["Wolves are dangerous to humans", "Species are connected, and losing one can affect many others", "National parks should ban all predators", "Rivers cannot change their shape"], "answer_index": 1, "explanation": "The closing line: 'in nature, nothing exists alone'."},
         ],
     },
     {
@@ -314,12 +314,12 @@ READING_BANK: List[Item] = [
             "a little, precisely so that it never has to break."
         ),
         "questions": [
-            {"prompt": "Why are visitors sometimes alarmed on windy days?", "options": ["The lift moves too fast", "The observation deck is very high", "The windows are left open", "They feel the building move and assume it is unsafe"], "answer_index": 3},
-            {"prompt": "What is the main source of danger from wind?", "options": ["A steady, constant breeze", "Rain combined with wind", "Gusts and swirling eddies that push the tower rhythmically", "Cold temperatures at height"], "answer_index": 2},
-            {"prompt": "What is 'resonance' in this context?", "options": ["A method of measuring wind speed", "When wind's rhythm matches the building's natural frequency and enlarges its motion", "A type of building material", "The stiffness of steel beams"], "answer_index": 1},
-            {"prompt": "How does tapering or twisting a tower help?", "options": ["It stops wind forming a regular rhythm around the tower", "It makes the building cheaper to build", "It increases the building's weight", "It blocks out sunlight"], "answer_index": 0},
-            {"prompt": "What does a tuned mass damper do?", "options": ["It generates electricity for the tower", "It measures the sway for engineers", "It swings opposite to the building to cancel much of the motion", "It supports the weight of the roof"], "answer_index": 2},
-            {"prompt": "Why is comfort described as a stricter limit than safety?", "options": ["Safety rules are ignored in tall towers", "A structurally safe building can still sway enough to make people feel ill", "Comfort is cheaper to achieve than safety", "People never notice a building swaying"], "answer_index": 1},
+            {"prompt": "Why are visitors sometimes alarmed on windy days?", "options": ["The lift moves too fast", "The observation deck is very high", "The windows are left open", "They feel the building move and assume it is unsafe"], "answer_index": 3, "explanation": "Paragraph 1: 'Their instinct is that a building should be rigid, and that any movement signals danger.'"},
+            {"prompt": "What is the main source of danger from wind?", "options": ["A steady, constant breeze", "Rain combined with wind", "Gusts and swirling eddies that push the tower rhythmically", "Cold temperatures at height"], "answer_index": 2, "explanation": "Paragraph 2: 'the danger comes from gusts and, more subtly, from the way wind forms swirling eddies'."},
+            {"prompt": "What is 'resonance' in this context?", "options": ["A method of measuring wind speed", "When wind's rhythm matches the building's natural frequency and enlarges its motion", "A type of building material", "The stiffness of steel beams"], "answer_index": 1, "explanation": "Paragraph 2: resonance is when the wind's rhythm matches the tower's own natural frequency, so 'the movements can reinforce one another and grow alarmingly large'."},
+            {"prompt": "How does tapering or twisting a tower help?", "options": ["It stops wind forming a regular rhythm around the tower", "It makes the building cheaper to build", "It increases the building's weight", "It blocks out sunlight"], "answer_index": 0, "explanation": "Paragraph 3: shaping the tower means 'wind cannot organise itself into a regular rhythm'."},
+            {"prompt": "What does a tuned mass damper do?", "options": ["It generates electricity for the tower", "It measures the sway for engineers", "It swings opposite to the building to cancel much of the motion", "It supports the weight of the roof"], "answer_index": 2, "explanation": "Paragraph 3: the damper is 'suspended so that it swings in the opposite direction to the building, cancelling much of the motion'."},
+            {"prompt": "Why is comfort described as a stricter limit than safety?", "options": ["Safety rules are ignored in tall towers", "A structurally safe building can still sway enough to make people feel ill", "Comfort is cheaper to achieve than safety", "People never notice a building swaying"], "answer_index": 1, "explanation": "Paragraph 4: 'a building can be structurally fine yet sway enough to make people on the upper floors queasy'."},
         ],
     },
     {
@@ -356,12 +356,12 @@ READING_BANK: List[Item] = [
             "economy for? — is one that pure income figures were never able to answer."
         ),
         "questions": [
-            {"prompt": "What awkward question have some economists begun to ask?", "options": ["Whether the economy will keep growing", "How to measure national output", "Whether more money actually makes people happier", "Why prices rise over time"], "answer_index": 2},
-            {"prompt": "What did Easterlin observe?", "options": ["Richer people are always unhappy", "Nations do not necessarily get happier as they grow richer over time", "Money has no effect on anyone", "Poor countries are the happiest"], "answer_index": 1},
-            {"prompt": "What does 'relative' satisfaction mean here?", "options": ["The exact amount of money you earn", "The total wealth of a nation", "The price of everyday goods", "How much you have compared with the people around you"], "answer_index": 3},
-            {"prompt": "What is 'adaptation'?", "options": ["People get used to a higher standard of living", "People give away their extra money", "Incomes tend to fall over time", "Happiness can never change"], "answer_index": 0},
-            {"prompt": "For whom does more income reliably improve well-being?", "options": ["Wealthy business owners", "Retired people", "People living in poverty", "Government officials"], "answer_index": 2},
-            {"prompt": "How have the findings influenced policy?", "options": ["All governments have banned income statistics", "Some governments now track well-being alongside economic output", "Economists have stopped studying happiness", "Wealth is no longer measured at all"], "answer_index": 1},
+            {"prompt": "What awkward question have some economists begun to ask?", "options": ["Whether the economy will keep growing", "How to measure national output", "Whether more money actually makes people happier", "Why prices rise over time"], "answer_index": 2, "explanation": "Paragraph 1: economists began asking 'does more money actually make people happier?'"},
+            {"prompt": "What did Easterlin observe?", "options": ["Richer people are always unhappy", "Nations do not necessarily get happier as they grow richer over time", "Money has no effect on anyone", "Poor countries are the happiest"], "answer_index": 1, "explanation": "Paragraph 2: Easterlin noticed that 'entire nations do not necessarily grow happier as they get richer over time'."},
+            {"prompt": "What does 'relative' satisfaction mean here?", "options": ["The exact amount of money you earn", "The total wealth of a nation", "The price of everyday goods", "How much you have compared with the people around you"], "answer_index": 3, "explanation": "Paragraph 3: 'What matters is not how much you have, but how much you have compared with the people around you.'"},
+            {"prompt": "What is 'adaptation'?", "options": ["People get used to a higher standard of living", "People give away their extra money", "Incomes tend to fall over time", "Happiness can never change"], "answer_index": 0, "explanation": "Paragraph 3: adaptation is that 'people quickly grow used to a higher standard of living'."},
+            {"prompt": "For whom does more income reliably improve well-being?", "options": ["Wealthy business owners", "Retired people", "People living in poverty", "Government officials"], "answer_index": 2, "explanation": "Paragraph 4: 'For those in poverty, more income reliably improves well-being'."},
+            {"prompt": "How have the findings influenced policy?", "options": ["All governments have banned income statistics", "Some governments now track well-being alongside economic output", "Economists have stopped studying happiness", "Wealth is no longer measured at all"], "answer_index": 1, "explanation": "Paragraph 5: 'Some governments now track measures of national well-being alongside economic output'."},
         ],
     },
     {
@@ -396,12 +396,12 @@ READING_BANK: List[Item] = [
             "Protecting them means, above all, keeping the seas from warming."
         ),
         "questions": [
-            {"prompt": "What actually builds a coral reef?", "options": ["Ocean currents piling up sand", "Millions of tiny animals called polyps", "Volcanic rock rising from the seabed", "Fish depositing shells"], "answer_index": 1},
-            {"prompt": "What does each polyp make from seawater?", "options": ["A soft outer shell", "A cloud of eggs", "A hard limestone skeleton beneath itself", "A layer of algae"], "answer_index": 2},
-            {"prompt": "What do the algae inside coral provide?", "options": ["Oxygen for breathing", "Protection from predators", "Sugars made from sunlight", "Calcium for the skeleton"], "answer_index": 2},
-            {"prompt": "What gives coral most of its colour?", "options": ["The limestone rock", "The surrounding seawater", "The polyps themselves", "The algae living inside the polyps"], "answer_index": 3},
-            {"prompt": "What causes coral bleaching?", "options": ["Pollution washed in from rivers", "Water becoming too warm, so the polyps expel the algae", "Too many fish eating the coral", "A lack of sunlight"], "answer_index": 1},
-            {"prompt": "Why do reefs matter beyond their beauty?", "options": ["They produce most of the world's oxygen", "They shelter about a quarter of all marine species", "They are made of valuable minerals", "They slow down ocean currents"], "answer_index": 1},
+            {"prompt": "What actually builds a coral reef?", "options": ["Ocean currents piling up sand", "Millions of tiny animals called polyps", "Volcanic rock rising from the seabed", "Fish depositing shells"], "answer_index": 1, "explanation": "Paragraph 1: what looks like stone 'is in fact built by millions of tiny animals called polyps'."},
+            {"prompt": "What does each polyp make from seawater?", "options": ["A soft outer shell", "A cloud of eggs", "A hard limestone skeleton beneath itself", "A layer of algae"], "answer_index": 2, "explanation": "Paragraph 2: each polyp 'draws calcium and carbonate from seawater and lays down a hard skeleton of limestone beneath itself'."},
+            {"prompt": "What do the algae inside coral provide?", "options": ["Oxygen for breathing", "Protection from predators", "Sugars made from sunlight", "Calcium for the skeleton"], "answer_index": 2, "explanation": "Paragraph 3: the algae 'use sunlight to make sugars and share them with their hosts'."},
+            {"prompt": "What gives coral most of its colour?", "options": ["The limestone rock", "The surrounding seawater", "The polyps themselves", "The algae living inside the polyps"], "answer_index": 3, "explanation": "Paragraph 3: 'the algae, not the polyps, supply most of the hue'."},
+            {"prompt": "What causes coral bleaching?", "options": ["Pollution washed in from rivers", "Water becoming too warm, so the polyps expel the algae", "Too many fish eating the coral", "A lack of sunlight"], "answer_index": 1, "explanation": "Paragraph 4: when water grows too warm 'the algae produce harmful chemicals and the polyps expel them'."},
+            {"prompt": "Why do reefs matter beyond their beauty?", "options": ["They produce most of the world's oxygen", "They shelter about a quarter of all marine species", "They are made of valuable minerals", "They slow down ocean currents"], "answer_index": 1, "explanation": "Paragraph 5: 'reefs shelter a quarter of all marine species while covering less than one per cent of the ocean floor'."},
         ],
     },
     {
@@ -435,12 +435,12 @@ READING_BANK: List[Item] = [
             "voyage helped spark a wider revival of Pacific culture that continues today."
         ),
         "questions": [
-            {"prompt": "What did the peoples of the Pacific achieve?", "options": ["They deliberately settled islands across a vast ocean without instruments", "They built the first compasses", "They mapped the whole Pacific on charts", "They traded regularly with Europe"], "answer_index": 0},
-            {"prompt": "What did European scholars wrongly believe?", "options": ["That the voyages were carefully planned", "That the islands were reached only by accident", "That no one ever lived on the islands", "That the canoes carried secret instruments"], "answer_index": 1},
-            {"prompt": "How did navigators steer when the stars were hidden?", "options": ["By using a hidden compass", "By waiting for the stars to return", "By following other canoes", "By the direction of the ocean swells"], "answer_index": 3},
-            {"prompt": "How could seabirds help the navigators?", "options": ["They frightened away storms", "Their morning song predicted the weather", "Their evening flight pointed the way toward land", "They carried messages between islands"], "answer_index": 2},
-            {"prompt": "Why did the knowledge almost disappear?", "options": ["The canoes were too small", "A series of storms destroyed them", "Colonial rule and Western navigation replaced the old skills", "The navigators forgot on purpose"], "answer_index": 2},
-            {"prompt": "What did the Hokule'a voyage demonstrate?", "options": ["That Europeans had invented navigation", "That the traditional methods really worked", "That the islands were uninhabited", "That compasses are unnecessary anywhere"], "answer_index": 1},
+            {"prompt": "What did the peoples of the Pacific achieve?", "options": ["They deliberately settled islands across a vast ocean without instruments", "They built the first compasses", "They mapped the whole Pacific on charts", "They traded regularly with Europe"], "answer_index": 0, "explanation": "Paragraph 1: they settled islands across a vast ocean 'in open canoes, without instruments of any kind'."},
+            {"prompt": "What did European scholars wrongly believe?", "options": ["That the voyages were carefully planned", "That the islands were reached only by accident", "That no one ever lived on the islands", "That the canoes carried secret instruments"], "answer_index": 1, "explanation": "Paragraph 1: scholars insisted the islands 'must have been reached by accident' — and the passage answers, 'They were wrong.'"},
+            {"prompt": "How did navigators steer when the stars were hidden?", "options": ["By using a hidden compass", "By waiting for the stars to return", "By following other canoes", "By the direction of the ocean swells"], "answer_index": 3, "explanation": "Paragraph 2: 'By day, when the stars were hidden, they steered by the direction of the ocean swells'."},
+            {"prompt": "How could seabirds help the navigators?", "options": ["They frightened away storms", "Their morning song predicted the weather", "Their evening flight pointed the way toward land", "They carried messages between islands"], "answer_index": 2, "explanation": "Paragraph 3: seabirds 'return to land at dusk, so their flight path in the evening points the way to an island'."},
+            {"prompt": "Why did the knowledge almost disappear?", "options": ["The canoes were too small", "A series of storms destroyed them", "Colonial rule and Western navigation replaced the old skills", "The navigators forgot on purpose"], "answer_index": 2, "explanation": "Paragraph 4: 'As colonial rule spread and Western navigation took over, the old skills fell into disuse'."},
+            {"prompt": "What did the Hokule'a voyage demonstrate?", "options": ["That Europeans had invented navigation", "That the traditional methods really worked", "That the islands were uninhabited", "That compasses are unnecessary anywhere"], "answer_index": 1, "explanation": "Paragraph 4: the Hokule'a voyage 'proved to a doubting world that the ancient techniques worked'."},
         ],
     },
     {
@@ -478,12 +478,12 @@ READING_BANK: List[Item] = [
             "well."
         ),
         "questions": [
-            {"prompt": "What is the passage's central claim about forgetting?", "options": ["It is a serious medical disorder", "It only affects older people", "It is a useful, active process rather than merely a failure", "It can always be prevented"], "answer_index": 2},
-            {"prompt": "What do people who cannot forget often report?", "options": ["That their perfect recall is often a burden", "That it makes them excellent problem-solvers", "That they actually forget more than others", "That they enjoy reliving every day"], "answer_index": 0},
-            {"prompt": "Why is discarding detail important for intelligence?", "options": ["Because detail takes up physical space", "Because generalisation requires throwing away specifics", "Because the brain dislikes information", "Because memories are always false"], "answer_index": 1},
-            {"prompt": "What role does deep sleep appear to play?", "options": ["It erases all memories equally", "It has no effect on memory", "It only stores phone numbers", "It strengthens important connections while weakening others"], "answer_index": 3},
-            {"prompt": "How does forgetting keep knowledge current?", "options": ["By repeating information endlessly", "By allowing outdated information to fade so newer information can take its place", "By preventing any new learning", "By copying memories exactly"], "answer_index": 1},
-            {"prompt": "What practical point does the passage end on?", "options": ["Smooth, effortless review is always best", "Studying is essentially pointless", "Effortful, half-forgotten study can produce stronger, lasting learning", "Memory cannot be improved at all"], "answer_index": 2},
+            {"prompt": "What is the passage's central claim about forgetting?", "options": ["It is a serious medical disorder", "It only affects older people", "It is a useful, active process rather than merely a failure", "It can always be prevented"], "answer_index": 2, "explanation": "Paragraph 1: 'forgetting is not a flaw in the system but a feature of it: an active, useful process'."},
+            {"prompt": "What do people who cannot forget often report?", "options": ["That their perfect recall is often a burden", "That it makes them excellent problem-solvers", "That they actually forget more than others", "That they enjoy reliving every day"], "answer_index": 0, "explanation": "Paragraph 2: although they recall almost every day, 'many describe their gift as a burden'."},
+            {"prompt": "Why is discarding detail important for intelligence?", "options": ["Because detail takes up physical space", "Because generalisation requires throwing away specifics", "Because the brain dislikes information", "Because memories are always false"], "answer_index": 1, "explanation": "Paragraph 3: 'intelligence depends on generalisation, and generalisation depends on discarding detail'."},
+            {"prompt": "What role does deep sleep appear to play?", "options": ["It erases all memories equally", "It has no effect on memory", "It only stores phone numbers", "It strengthens important connections while weakening others"], "answer_index": 3, "explanation": "Paragraph 4: 'During deep sleep the brain seems to strengthen important connections while weakening others'."},
+            {"prompt": "How does forgetting keep knowledge current?", "options": ["By repeating information endlessly", "By allowing outdated information to fade so newer information can take its place", "By preventing any new learning", "By copying memories exactly"], "answer_index": 1, "explanation": "Paragraph 4: an outdated phone number 'becomes clutter, and letting it fade allows newer, relevant information to take its place'."},
+            {"prompt": "What practical point does the passage end on?", "options": ["Smooth, effortless review is always best", "Studying is essentially pointless", "Effortful, half-forgotten study can produce stronger, lasting learning", "Memory cannot be improved at all"], "answer_index": 2, "explanation": "Paragraph 5: techniques that feel like failures 'often produce stronger, more durable learning' — 'The difficulty is the point.'"},
         ],
     },
 ]
@@ -515,11 +515,11 @@ LISTENING_BANK: List[Item] = [
             "the public library. The nearest bus stop is called Museum Corner."
         ),
         "questions": [
-            {"prompt": "When does the upper-intermediate class meet?", "options": ["Mondays and Wednesdays", "Tuesdays and Thursdays", "Friday evenings", "Every weekday"], "answer_index": 1},
-            {"prompt": "What is the early-bird price?", "options": ["$240", "$200", "$220", "$245"], "answer_index": 1},
-            {"prompt": "How long is the placement test in total?", "options": ["Thirty minutes", "About forty-five minutes", "Two hours", "Fifteen minutes"], "answer_index": 1},
-            {"prompt": "What must students bring to the test?", "options": ["A booking confirmation", "Photo ID and headphones", "Two photographs", "A previous certificate"], "answer_index": 1},
-            {"prompt": "Where is the language centre?", "options": ["Above the public library", "Inside the museum", "Next to the bus station", "On Riverside Road's ground floor"], "answer_index": 0},
+            {"prompt": "When does the upper-intermediate class meet?", "options": ["Mondays and Wednesdays", "Tuesdays and Thursdays", "Friday evenings", "Every weekday"], "answer_index": 1, "explanation": "The receptionist lists 'upper-intermediate on Tuesdays and Thursdays'."},
+            {"prompt": "What is the early-bird price?", "options": ["$240", "$200", "$220", "$245"], "answer_index": 1, "explanation": "'If you enrol before the twentieth of September you get the early-bird rate of two hundred' — the full price is $240."},
+            {"prompt": "How long is the placement test in total?", "options": ["Thirty minutes", "About forty-five minutes", "Two hours", "Fifteen minutes"], "answer_index": 1, "explanation": "The test 'takes about forty-five minutes — thirty minutes of grammar and vocabulary... then a short speaking interview'."},
+            {"prompt": "What must students bring to the test?", "options": ["A booking confirmation", "Photo ID and headphones", "Two photographs", "A previous certificate"], "answer_index": 1, "explanation": "'Bring some photo identification' and 'bring your own headphones for the computer section, we no longer provide them'."},
+            {"prompt": "Where is the language centre?", "options": ["Above the public library", "Inside the museum", "Next to the bus station", "On Riverside Road's ground floor"], "answer_index": 0, "explanation": "'Forty-two Riverside Road, on the third floor, directly above the public library.'"},
         ],
     },
     {
@@ -545,11 +545,11 @@ LISTENING_BANK: List[Item] = [
             "early today, at three o'clock, for conservation work."
         ),
         "questions": [
-            {"prompt": "Where is photography forbidden?", "options": ["In the whole gallery", "At the manuscript case", "Near the camel model", "In the textile room"], "answer_index": 1},
-            {"prompt": "How much could one camel carry?", "options": ["About 500 kilograms", "About 200 kilograms", "About 50 kilograms", "About 700 kilograms"], "answer_index": 1},
-            {"prompt": "Why is the bronze mirror significant?", "options": ["It is the oldest mirror ever found", "It was found far from where it was made", "It belonged to a famous emperor", "It is made of pure silver"], "answer_index": 1},
-            {"prompt": "How long did paper-making take to reach Europe?", "options": ["About seventy years", "About four hundred years", "Almost seven hundred years", "One thousand years"], "answer_index": 2},
-            {"prompt": "Why should visitors see the manuscripts first?", "options": ["That section closes at 3 pm today", "The queue grows in the afternoon", "The textile room is closed", "The interactive map is broken"], "answer_index": 0},
+            {"prompt": "Where is photography forbidden?", "options": ["In the whole gallery", "At the manuscript case", "Near the camel model", "In the textile room"], "answer_index": 1, "explanation": "'Photography is allowed everywhere in this room except at the manuscript case by the far wall'."},
+            {"prompt": "How much could one camel carry?", "options": ["About 500 kilograms", "About 200 kilograms", "About 50 kilograms", "About 700 kilograms"], "answer_index": 1, "explanation": "'A healthy camel carried around two hundred kilograms of goods'."},
+            {"prompt": "Why is the bronze mirror significant?", "options": ["It is the oldest mirror ever found", "It was found far from where it was made", "It belonged to a famous emperor", "It is made of pure silver"], "answer_index": 1, "explanation": "The mirror 'was found not in China but four thousand kilometres away in Samarkand, proof of how far single objects travelled'."},
+            {"prompt": "How long did paper-making take to reach Europe?", "options": ["About seventy years", "About four hundred years", "Almost seven hundred years", "One thousand years"], "answer_index": 2, "explanation": "Paper-making spread from China to Europe, 'taking almost seven hundred years to complete the journey'."},
+            {"prompt": "Why should visitors see the manuscripts first?", "options": ["That section closes at 3 pm today", "The queue grows in the afternoon", "The textile room is closed", "The interactive map is broken"], "answer_index": 0, "explanation": "'Please visit the manuscripts first, as that section closes early today, at three o'clock.'"},
         ],
     },
     {
@@ -575,11 +575,11 @@ LISTENING_BANK: List[Item] = [
             "months ahead. Nothing protects a new habit like a date in the calendar."
         ),
         "questions": [
-            {"prompt": "What is the biggest beginner mistake?", "options": ["Running too fast too soon", "Buying cheap shoes", "Running in the morning", "Skipping breakfast"], "answer_index": 0},
-            {"prompt": "What should beginners focus on in month one?", "options": ["Distance covered", "Time on their feet", "Running speed", "Calories burned"], "answer_index": 1},
-            {"prompt": "What does failing the 'talk test' mean?", "options": ["You should stop for the day", "You are running too fast", "You need water", "You are ready to race"], "answer_index": 1},
-            {"prompt": "Why avoid running on consecutive days at first?", "options": ["Muscles adapt during rest", "It becomes boring", "Shoes need to dry out", "The weather may change"], "answer_index": 0},
-            {"prompt": "Which purchase does the speaker recommend?", "options": ["A fitness watch", "Properly fitted running shoes", "A treadmill", "Compression clothing"], "answer_index": 1},
+            {"prompt": "What is the biggest beginner mistake?", "options": ["Running too fast too soon", "Buying cheap shoes", "Running in the morning", "Skipping breakfast"], "answer_index": 0, "explanation": "'The biggest mistake beginners make is simple — they run too fast, too soon.'"},
+            {"prompt": "What should beginners focus on in month one?", "options": ["Distance covered", "Time on their feet", "Running speed", "Calories burned"], "answer_index": 1, "explanation": "'For the first month, forget distance completely and think only about time on your feet.'"},
+            {"prompt": "What does failing the 'talk test' mean?", "options": ["You should stop for the day", "You are running too fast", "You need water", "You are ready to race"], "answer_index": 1, "explanation": "'If you can't speak a full sentence while jogging, you're going too fast.'"},
+            {"prompt": "Why avoid running on consecutive days at first?", "options": ["Muscles adapt during rest", "It becomes boring", "Shoes need to dry out", "The weather may change"], "answer_index": 0, "explanation": "'Muscles and tendons adapt during rest, not during exercise'."},
+            {"prompt": "Which purchase does the speaker recommend?", "options": ["A fitness watch", "Properly fitted running shoes", "A treadmill", "Compression clothing"], "answer_index": 1, "explanation": "'The only purchase that genuinely matters is a proper pair of running shoes fitted at a specialist shop'."},
         ],
     },
     {
@@ -608,11 +608,11 @@ LISTENING_BANK: List[Item] = [
             "Student: Perfect. I'll get my CV updated tonight."
         ),
         "questions": [
-            {"prompt": "How many hours a week is the library job?", "options": ["Ten", "Twelve", "Fifteen", "Sixteen"], "answer_index": 1},
-            {"prompt": "What is a benefit of the library job?", "options": ["Free meals", "Studying at the desk after shelving", "Higher pay than other jobs", "Working from home"], "answer_index": 1},
-            {"prompt": "Why does the adviser warn about the café job?", "options": ["It pays the least", "Late shifts can harm morning classes", "It requires experience", "It is far from campus"], "answer_index": 1},
-            {"prompt": "How must students apply?", "options": ["Through the student portal", "By paper form", "By visiting each employer", "By email to the adviser"], "answer_index": 0},
-            {"prompt": "When do library applications close?", "options": ["Wednesday morning", "Friday at 5 pm", "Sunday at noon", "Monday at 9 am"], "answer_index": 1},
+            {"prompt": "How many hours a week is the library job?", "options": ["Ten", "Twelve", "Fifteen", "Sixteen"], "answer_index": 1, "explanation": "The library job is 'twelve hours a week, spread over three evenings'."},
+            {"prompt": "What is a benefit of the library job?", "options": ["Free meals", "Studying at the desk after shelving", "Higher pay than other jobs", "Working from home"], "answer_index": 1, "explanation": "'They let you study at the desk once the shelving is done.'"},
+            {"prompt": "Why does the adviser warn about the café job?", "options": ["It pays the least", "Late shifts can harm morning classes", "It requires experience", "It is far from campus"], "answer_index": 1, "explanation": "'The shifts there finish at eleven at night, and first-year students often find that hurts their morning classes.'"},
+            {"prompt": "How must students apply?", "options": ["Through the student portal", "By paper form", "By visiting each employer", "By email to the adviser"], "answer_index": 0, "explanation": "'Everything goes through the student portal — no paper forms any more.'"},
+            {"prompt": "When do library applications close?", "options": ["Wednesday morning", "Friday at 5 pm", "Sunday at noon", "Monday at 9 am"], "answer_index": 1, "explanation": "'Applications for the library close this Friday at five'."},
         ],
     },
     {
@@ -640,11 +640,11 @@ LISTENING_BANK: List[Item] = [
             "us a new way to think about thinking itself."
         ),
         "questions": [
-            {"prompt": "What does the lecturer say about a single ant?", "options": ["It is surprisingly intelligent", "It is not impressive on its own", "It can solve complex problems alone", "It gives orders to others"], "answer_index": 1},
-            {"prompt": "What is the queen's actual role?", "options": ["Commanding the workers", "Choosing food routes", "Laying eggs", "Defending the nest"], "answer_index": 2},
-            {"prompt": "Why do shorter routes end up with more scent?", "options": ["Ants prefer cooler paths", "They are completed faster, so get more traffic", "The queen marks them", "Longer routes are blocked"], "answer_index": 1},
-            {"prompt": "What is 'emergence'?", "options": ["Complex behaviour from simple interacting parts", "The birth of new queens", "A type of pheromone", "An ant war strategy"], "answer_index": 0},
-            {"prompt": "Why do engineers build robot swarms?", "options": ["Swarms look more natural", "A swarm keeps working when members fail", "Single robots are illegal", "Swarms need no programming"], "answer_index": 1},
+            {"prompt": "What does the lecturer say about a single ant?", "options": ["It is surprisingly intelligent", "It is not impressive on its own", "It can solve complex problems alone", "It gives orders to others"], "answer_index": 1, "explanation": "'A single ant is, frankly, not impressive' — a small brain following a handful of simple rules."},
+            {"prompt": "What is the queen's actual role?", "options": ["Commanding the workers", "Choosing food routes", "Laying eggs", "Defending the nest"], "answer_index": 2, "explanation": "'The queen, despite her title, gives no orders; she is simply the colony's egg-layer.'"},
+            {"prompt": "Why do shorter routes end up with more scent?", "options": ["Ants prefer cooler paths", "They are completed faster, so get more traffic", "The queen marks them", "Longer routes are blocked"], "answer_index": 1, "explanation": "'Shorter routes get completed faster, so they receive more traffic and therefore more scent'."},
+            {"prompt": "What is 'emergence'?", "options": ["Complex behaviour from simple interacting parts", "The birth of new queens", "A type of pheromone", "An ant war strategy"], "answer_index": 0, "explanation": "Emergence is 'complex behaviour arising from many simple parts interacting'."},
+            {"prompt": "Why do engineers build robot swarms?", "options": ["Swarms look more natural", "A swarm keeps working when members fail", "Single robots are illegal", "Swarms need no programming"], "answer_index": 1, "explanation": "'A swarm keeps working when individual members fail' — unlike one expensive machine."},
         ],
     },
     {
@@ -674,11 +674,11 @@ LISTENING_BANK: List[Item] = [
             "Assistant: You're welcome. Could I take a name to hold the booking?"
         ),
         "questions": [
-            {"prompt": "What type of pitch does the caller book?", "options": ["A caravan pitch", "A standard tent pitch", "A large pitch by the lake", "A cabin"], "answer_index": 1},
-            {"prompt": "How much will the caller pay in total?", "options": ["£18", "£25", "£36", "£50"], "answer_index": 2},
-            {"prompt": "By what time must guests leave on their departure day?", "options": ["2 in the afternoon", "10 in the morning", "11 in the morning", "Midday"], "answer_index": 2},
-            {"prompt": "What is the rule about campfires?", "options": ["All fires are completely forbidden", "Open ground fires are banned, but fire bowls can be hired", "Fires are allowed anywhere on the site", "Only wood fires are permitted"], "answer_index": 1},
-            {"prompt": "What does the assistant advise the caller to bring?", "options": ["Extra tent pegs", "Warm clothing", "Evening food and supplies, since the shop is far and closes early", "Swimming gear"], "answer_index": 2},
+            {"prompt": "What type of pitch does the caller book?", "options": ["A caravan pitch", "A standard tent pitch", "A large pitch by the lake", "A cabin"], "answer_index": 1, "explanation": "The caller says 'We'll take a standard one' after asking for a tent pitch for four people."},
+            {"prompt": "How much will the caller pay in total?", "options": ["£18", "£25", "£36", "£50"], "answer_index": 2, "explanation": "A standard pitch is 'eighteen pounds a night' for two nights: 'That's thirty-six pounds altogether.'"},
+            {"prompt": "By what time must guests leave on their departure day?", "options": ["2 in the afternoon", "10 in the morning", "11 in the morning", "Midday"], "answer_index": 2, "explanation": "'We ask everyone to leave by eleven on the morning you depart.'"},
+            {"prompt": "What is the rule about campfires?", "options": ["All fires are completely forbidden", "Open ground fires are banned, but fire bowls can be hired", "Fires are allowed anywhere on the site", "Only wood fires are permitted"], "answer_index": 1, "explanation": "'Not open fires on the ground' — but 'you can hire a raised fire bowl from reception for five pounds'."},
+            {"prompt": "What does the assistant advise the caller to bring?", "options": ["Extra tent pegs", "Warm clothing", "Evening food and supplies, since the shop is far and closes early", "Swimming gear"], "answer_index": 2, "explanation": "'The nearest shop is two miles away and closes early, so bring what you need for the evening.'"},
         ],
     },
     {
@@ -704,11 +704,11 @@ LISTENING_BANK: List[Item] = [
             "I'm in the green tent by the main gate all weekend."
         ),
         "questions": [
-            {"prompt": "How long is a single volunteer shift?", "options": ["The whole weekend", "Four hours", "Two hours", "One full day"], "answer_index": 1},
-            {"prompt": "Why is the T-shirt bright yellow?", "options": ["It is the festival's official colour", "So visitors can easily spot the volunteers", "To keep volunteers warm", "It was the cheapest option available"], "answer_index": 1},
-            {"prompt": "What should volunteers do if they can't answer a question?", "options": ["Guess politely", "Send the visitor away", "Radio the supervisor rather than guess", "Close the information point"], "answer_index": 2},
-            {"prompt": "What do volunteers receive instead of a free lunch?", "options": ["A free hot meal", "A small cash payment", "Five pounds of tokens to spend at food stalls", "A second T-shirt"], "answer_index": 2},
-            {"prompt": "What are volunteers told to do before their shift?", "options": ["Test all the radios", "Locate the two emergency exits on the map", "Count the stalls", "Meet all the other volunteers"], "answer_index": 1},
+            {"prompt": "How long is a single volunteer shift?", "options": ["The whole weekend", "Four hours", "Two hours", "One full day"], "answer_index": 1, "explanation": "'As a volunteer you're only asked to do one shift of four hours.'"},
+            {"prompt": "Why is the T-shirt bright yellow?", "options": ["It is the festival's official colour", "So visitors can easily spot the volunteers", "To keep volunteers warm", "It was the cheapest option available"], "answer_index": 1, "explanation": "'The T-shirt is bright yellow so visitors can spot you easily'."},
+            {"prompt": "What should volunteers do if they can't answer a question?", "options": ["Guess politely", "Send the visitor away", "Radio the supervisor rather than guess", "Close the information point"], "answer_index": 2, "explanation": "'If you don't know the answer to a visitor's question, don't guess — radio the supervisor.'"},
+            {"prompt": "What do volunteers receive instead of a free lunch?", "options": ["A free hot meal", "A small cash payment", "Five pounds of tokens to spend at food stalls", "A second T-shirt"], "answer_index": 2, "explanation": "'Lunch isn't provided, but every volunteer gets five pounds of festival tokens'."},
+            {"prompt": "What are volunteers told to do before their shift?", "options": ["Test all the radios", "Locate the two emergency exits on the map", "Count the stalls", "Meet all the other volunteers"], "answer_index": 1, "explanation": "'Familiarise yourself with the two emergency exits marked on the map... before your shift begins.'"},
         ],
     },
     {
@@ -735,11 +735,11 @@ LISTENING_BANK: List[Item] = [
             "industries."
         ),
         "questions": [
-            {"prompt": "How was chocolate mostly consumed for most of its history?", "options": ["As a solid sweet bar", "As a bitter drink", "As a medicine only", "As a baked cake"], "answer_index": 1},
-            {"prompt": "What did the Maya and Aztecs often add to it?", "options": ["Sugar", "Milk", "Chilli", "Honey"], "answer_index": 2},
-            {"prompt": "What surprising use did cacao beans have?", "options": ["They were burned as fuel", "They were used as money", "They were planted only for decoration", "They were fed to animals"], "answer_index": 1},
-            {"prompt": "What did Europeans add to chocolate?", "options": ["Chilli and spices", "Sugar and honey", "Salt", "Nothing at all"], "answer_index": 1},
-            {"prompt": "When was the solid chocolate bar developed?", "options": ["Three thousand years ago", "In the sixteenth century", "In the nineteenth century", "In the twentieth century"], "answer_index": 2},
+            {"prompt": "How was chocolate mostly consumed for most of its history?", "options": ["As a solid sweet bar", "As a bitter drink", "As a medicine only", "As a baked cake"], "answer_index": 1, "explanation": "'For most of that history, chocolate was not eaten at all — it was drunk, and it was bitter.'"},
+            {"prompt": "What did the Maya and Aztecs often add to it?", "options": ["Sugar", "Milk", "Chilli", "Honey"], "answer_index": 2, "explanation": "The drink was 'often flavoured with chilli rather than sugar, which of course they did not have'."},
+            {"prompt": "What surprising use did cacao beans have?", "options": ["They were burned as fuel", "They were used as money", "They were planted only for decoration", "They were fed to animals"], "answer_index": 1, "explanation": "'It was valued so highly that the beans themselves were used as money'."},
+            {"prompt": "What did Europeans add to chocolate?", "options": ["Chilli and spices", "Sugar and honey", "Salt", "Nothing at all"], "answer_index": 1, "explanation": "'Europeans added sugar and honey to soften the bitterness'."},
+            {"prompt": "When was the solid chocolate bar developed?", "options": ["Three thousand years ago", "In the sixteenth century", "In the nineteenth century", "In the twentieth century"], "answer_index": 2, "explanation": "'It was only in the nineteenth century that manufacturers... worked out how to press cacao and recombine it into a smooth solid bar'."},
         ],
     },
     {
@@ -764,11 +764,11 @@ LISTENING_BANK: List[Item] = [
             "whatever the forecast says. Right — any questions before tomorrow?"
         ),
         "questions": [
-            {"prompt": "What are students told about arrival time?", "options": ["Arrive exactly on time", "Be early, because the coach won't wait", "Arrive after the ranger", "Meet at the reserve directly"], "answer_index": 1},
-            {"prompt": "Why are waterproof boots essential?", "options": ["The reserve requires a uniform", "Boots are simply warmer", "Those in trainers must stay on the path and miss the best part", "Trainers are not allowed on the coach"], "answer_index": 2},
-            {"prompt": "Why must students bring a full water bottle?", "options": ["The water there is unsafe to drink", "Nothing can be bought inside the reserve", "To share with the ranger", "It is expected to be very hot"], "answer_index": 1},
-            {"prompt": "What will the afternoon activity provide?", "options": ["A free souvenir", "A second guided walk", "The data needed for their coursework", "A packed lunch"], "answer_index": 2},
-            {"prompt": "Why must students keep noise down?", "options": ["Loud noise damages the equipment", "It is breeding season and disturbance can make birds abandon their eggs", "The ranger simply dislikes noise", "Other visitors are studying nearby"], "answer_index": 1},
+            {"prompt": "What are students told about arrival time?", "options": ["Arrive exactly on time", "Be early, because the coach won't wait", "Arrive after the ranger", "Meet at the reserve directly"], "answer_index": 1, "explanation": "'The coach won't wait, so please be early rather than on time.'"},
+            {"prompt": "Why are waterproof boots essential?", "options": ["The reserve requires a uniform", "Boots are simply warmer", "Those in trainers must stay on the path and miss the best part", "Trainers are not allowed on the coach"], "answer_index": 2, "explanation": "'Anyone in trainers will have to stay on the visitor path and will miss the best part.'"},
+            {"prompt": "Why must students bring a full water bottle?", "options": ["The water there is unsafe to drink", "Nothing can be bought inside the reserve", "To share with the ranger", "It is expected to be very hot"], "answer_index": 1, "explanation": "'There's nowhere to buy anything once we're inside the reserve.'"},
+            {"prompt": "What will the afternoon activity provide?", "options": ["A free souvenir", "A second guided walk", "The data needed for their coursework", "A packed lunch"], "answer_index": 2, "explanation": "The pond-dipping survey is 'the data you'll need for your coursework'."},
+            {"prompt": "Why must students keep noise down?", "options": ["Loud noise damages the equipment", "It is breeding season and disturbance can make birds abandon their eggs", "The ranger simply dislikes noise", "Other visitors are studying nearby"], "answer_index": 1, "explanation": "'This is the breeding season... a single disturbance can make birds abandon their eggs.'"},
         ],
     },
     {
@@ -797,11 +797,11 @@ LISTENING_BANK: List[Item] = [
             "are given a safe and convenient way to do so."
         ),
         "questions": [
-            {"prompt": "Why did cycling decline during the twentieth century?", "options": ["Bicycles became too expensive", "People forgot how to ride", "Cities were planned around the car", "The weather grew worse"], "answer_index": 2},
-            {"prompt": "How did congestion help the bicycle's comeback?", "options": ["Cycling became the fastest way across many city centres at rush hour", "Cycling became fashionable", "Cars were banned", "Buses stopped running"], "answer_index": 0},
-            {"prompt": "Why did governments start to favour cycling?", "options": ["It raised tax revenue", "They saw it as cheap preventive medicine", "It reduced traffic noise", "It was a long tradition"], "answer_index": 1},
-            {"prompt": "What does the speaker say made the biggest difference?", "options": ["Telling people to cycle more", "Lowering the price of bikes", "Banning cars from city centres", "Building physically separated bike lanes"], "answer_index": 3},
-            {"prompt": "What is the overall lesson?", "options": ["Cycling suits every city equally", "Only flat cities can succeed", "People cycle when given a safe, convenient way, not when lectured", "Electric bikes have failed"], "answer_index": 2},
+            {"prompt": "Why did cycling decline during the twentieth century?", "options": ["Bicycles became too expensive", "People forgot how to ride", "Cities were planned around the car", "The weather grew worse"], "answer_index": 2, "explanation": "'For most of the twentieth century, urban planning was built around the car.'"},
+            {"prompt": "How did congestion help the bicycle's comeback?", "options": ["Cycling became the fastest way across many city centres at rush hour", "Cycling became fashionable", "Cars were banned", "Buses stopped running"], "answer_index": 0, "explanation": "'As traffic thickened, the bicycle quietly became the fastest way to cross many city centres at rush hour'."},
+            {"prompt": "Why did governments start to favour cycling?", "options": ["It raised tax revenue", "They saw it as cheap preventive medicine", "It reduced traffic noise", "It was a long tradition"], "answer_index": 1, "explanation": "Governments 'began to see cycling as cheap preventive medicine'."},
+            {"prompt": "What does the speaker say made the biggest difference?", "options": ["Telling people to cycle more", "Lowering the price of bikes", "Banning cars from city centres", "Building physically separated bike lanes"], "answer_index": 3, "explanation": "'The real turning point, most experts agree, was infrastructure' — 'physically separated bike lanes'."},
+            {"prompt": "What is the overall lesson?", "options": ["Cycling suits every city equally", "Only flat cities can succeed", "People cycle when given a safe, convenient way, not when lectured", "Electric bikes have failed"], "answer_index": 2, "explanation": "'People cycle not when they are lectured, but when they are given a safe and convenient way to do so.'"},
         ],
     },
 ]
