@@ -35,6 +35,9 @@ export interface SpeakingTopic {
     followUps: string[];
   };
   cueSample?: string;
+  /** Preparation prompts for the one-minute planning phase, shown under the
+   *  cue card. Not exam questions — the label says so. */
+  planning?: Array<{ question: string; answer: string }>;
   advanced?: boolean;
 }
 
@@ -248,13 +251,23 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
       part: "part2" as const,
       title,
       description: `Cue-card practice about ${theme}, with a one-minute plan and a two-minute answer.`,
-      questions: [
-        title,
-        `What details would make this ${theme} story more personal?`,
-        `Which vocabulary can help you describe this ${theme} clearly?`,
-      ],
-      sampleAnswers,
+      // A cue card is one long turn, so there is a single question: the card.
+      // The other two entries were preparation guidance sitting in a list the
+      // cue-card view never renders, and they re-used the theme slug, producing
+      // "this people story" and "this place story".
+      questions: [title],
+      sampleAnswers: [sampleAnswers[0]],
       cueSample: sampleAnswers[0],
+      planning: [
+        {
+          question: "What details would make this answer more personal?",
+          answer: sampleAnswers[1],
+        },
+        {
+          question: "Which vocabulary will help you describe it clearly?",
+          answer: sampleAnswers[2],
+        },
+      ],
       cueCard: {
         instruction: title,
         // Bullets and follow-ups are written per card; see speaking-cue-cards.ts

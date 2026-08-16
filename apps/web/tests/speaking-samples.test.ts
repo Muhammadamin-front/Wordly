@@ -16,9 +16,11 @@ function normalise(value: string) {
 describe("IELTS Speaking Band 8+ samples", () => {
   it("provides a dedicated answer for every question and cue card", () => {
     expect(SPEAKING_PRACTICE_TOPICS).toHaveLength(70);
+    // 30 Part 1 topics x 7 questions, 20 cue cards (one question each — the
+    // card), 20 Part 3 topics x 8 questions.
     expect(
       SPEAKING_PRACTICE_TOPICS.reduce((total, topic) => total + topic.questions.length, 0)
-    ).toBe(430);
+    ).toBe(30 * 7 + 20 * 1 + 20 * 8);
 
     for (const topic of SPEAKING_PRACTICE_TOPICS) {
       expect(topic.sampleAnswers, topic.slug).toHaveLength(topic.questions.length);
@@ -27,6 +29,15 @@ describe("IELTS Speaking Band 8+ samples", () => {
       });
       if (topic.part === "part2") {
         expect(topic.cueSample, topic.slug).toBe(topic.sampleAnswers[0]);
+        // The planning prompts moved out of `questions`, where the cue-card
+        // view never rendered them, into their own labelled section.
+        expect(topic.planning, topic.slug).toHaveLength(2);
+        for (const item of topic.planning ?? []) {
+          expect(item.question.trim(), topic.slug).not.toBe("");
+          expect(item.answer.trim(), topic.slug).not.toBe("");
+          // They used to be built from the theme slug: "this people story".
+          expect(item.question, topic.slug).not.toMatch(/this \w+ story/);
+        }
       }
     }
   });

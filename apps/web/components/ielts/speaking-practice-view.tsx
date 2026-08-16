@@ -457,6 +457,22 @@ function CueCard({ topic }: { topic: SpeakingTopic }) {
           ))}
         </ul>
       </div>
+      {topic.planning && topic.planning.length > 0 && (
+        <div className="mt-5">
+          <p className="text-xs font-black uppercase text-ink-soft">Planning notes</p>
+          <p className="mt-1 text-xs leading-5 text-ink-soft">
+            Not exam questions — use these during the one minute of preparation.
+          </p>
+          <div className="mt-3 space-y-3">
+            {topic.planning.map((item) => (
+              <div key={item.question} className="rounded-lg border border-line bg-card/70 p-3">
+                <p className="text-sm font-bold text-ink">{item.question}</p>
+                <p className="mt-1.5 text-sm leading-6 text-ink-soft">{item.answer}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       <div className="mt-5">
         <Button type="button" variant="ghost" onClick={() => setShowSample((value) => !value)}>
           {showSample ? "Hide model answer" : "Show model answer"}

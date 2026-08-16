@@ -58,9 +58,10 @@ describe("listening library grouping", () => {
     expect(shown(/Im Busy On Friday/i)).toBe(0);
   });
 
-  it("keeps every track reachable from All", async () => {
+  it("keeps every track reachable from the default All view", () => {
+    // "All" is the initial filter, so this needs no click — and clicking it
+    // re-renders all hundred tracks, which is needlessly slow in jsdom.
     render(<ListeningAudioLibrary />);
-    await chooseGroup(/^All$/i);
     expect(shown(/At Home 1/i)).toBeGreaterThan(0);
     expect(shown(/Photography Class/i)).toBeGreaterThan(0);
     expect(shown(/A Death/i)).toBeGreaterThan(0);
