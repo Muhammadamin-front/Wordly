@@ -1371,6 +1371,17 @@
     "keepWorking": "Продолжить работу",
     "startTip": "найдите ключевые слова вопроса, затем ищите их синонимы внутри текста.",
     "vocabularyEmpty": "Сохраняйте полезную лексику",
-    "submitConfirmBody": "Вы ответили на {answered} из {total} вопросов. После просмотра результатов можно вернуться к тесту."
+    "submitConfirmBody": "Вы ответили на {answered} из {total} вопросов. После просмотра результатов можно вернуться к тесту.",
+    "showQuestions": "Показать вопросы",
+    "hideQuestions": "Скрыть вопросы",
+    "passageProgress": "Текст {index} из {total} · отвечено {done} из {questions}",
+    "answeredShort": "{done}/{questions} отв.",
+    "exitTest": "Выйти из теста",
+    "startTest": "Начать тест",
+    "passageCount": "Текстов: {count}",
+    "minutesCount": "{count} минут",
+    "passageOfTotal": "Текст {index} из {total}",
+    "notesCount": "Заметок: {count}",
+    "savedWordsCount": "Сохранённых слов: {count}"
   }
 }

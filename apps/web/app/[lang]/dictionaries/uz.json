@@ -1371,6 +1371,17 @@
     "keepWorking": "Davom etish",
     "startTip": "savol kalit so'zlarini toping, keyin passage ichidagi sinonimlarini qidiring.",
     "vocabularyEmpty": "Foydali so'zlarni saqlang",
-    "submitConfirmBody": "{total} savoldan {answered} tasiga javob berdingiz. Natijalarni ko'rgach testga qaytishingiz mumkin."
+    "submitConfirmBody": "{total} savoldan {answered} tasiga javob berdingiz. Natijalarni ko'rgach testga qaytishingiz mumkin.",
+    "showQuestions": "Savollarni ochish",
+    "hideQuestions": "Savollarni yopish",
+    "passageProgress": "{index}/{total}-matn · {done}/{questions} javob",
+    "answeredShort": "{done}/{questions} javob",
+    "exitTest": "Testdan chiqish",
+    "startTest": "Testni boshlash",
+    "passageCount": "{count} ta matn",
+    "minutesCount": "{count} daqiqa",
+    "passageOfTotal": "{index}/{total}-matn",
+    "notesCount": "{count} ta izoh",
+    "savedWordsCount": "{count} ta saqlangan so'z"
   }
 }

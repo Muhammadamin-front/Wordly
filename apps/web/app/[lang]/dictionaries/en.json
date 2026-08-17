@@ -1371,6 +1371,17 @@
     "keepWorking": "Keep working",
     "startTip": "find the key words in the question, then look for their synonyms inside the passage.",
     "vocabularyEmpty": "Save useful vocabulary",
-    "submitConfirmBody": "You have answered {answered} of {total} questions. You can still return to the test after reviewing your results."
+    "submitConfirmBody": "You have answered {answered} of {total} questions. You can still return to the test after reviewing your results.",
+    "showQuestions": "Show questions",
+    "hideQuestions": "Hide questions",
+    "passageProgress": "Passage {index} of {total} · {done}/{questions} answered",
+    "answeredShort": "{done}/{questions} answered",
+    "exitTest": "Leave the test",
+    "startTest": "Start test",
+    "passageCount": "{count} passages",
+    "minutesCount": "{count} minutes",
+    "passageOfTotal": "Passage {index} of {total}",
+    "notesCount": "{count} notes",
+    "savedWordsCount": "{count} saved words"
   }
 }

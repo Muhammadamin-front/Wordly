@@ -466,7 +466,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
             <h2 className="mt-1 text-2xl font-black text-ink">{selectedPart.title}</h2>
           </div>
           <span className="hidden text-sm font-semibold text-ink-soft sm:block">
-            Passage {READING_PARTS.findIndex((part) => part.key === activePart) + 1} of 3
+            {t.passageOfTotal.replace("{index}", String(READING_PARTS.findIndex((part) => part.key === activePart) + 1)).replace("{total}", "3")}
           </span>
         </div>
         <TestCard t={t} test={selectedTest} history={history[selectedTest.id]} featured onOpen={onOpen} />
@@ -565,9 +565,9 @@ function ReadingStartScreen({ test, mode, onBack, onStart, t }: { test: ReadingP
         <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-6xl">{test.title}</h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{test.description}</p>
         <div className="mt-7 grid gap-3 sm:grid-cols-3">
-          <StartStat icon={LibraryBig} title={`${test.passages.length} passage${test.passages.length > 1 ? "s" : ""}`} text={test.passages.map((passage) => passage.title).join(" · ")} />
+          <StartStat icon={LibraryBig} title={t.passageCount.replace("{count}", String(test.passages.length))} text={test.passages.map((passage) => passage.title).join(" · ")} />
           <StartStat icon={SearchCheck} title={t.questionsCount.replace("{count}", String(countQuestions(test)))} text={t.questionsMeta} />
-          <StartStat icon={Clock3} title={`${test.minutes} minutes`} text={t.timeLimit} />
+          <StartStat icon={Clock3} title={t.minutesCount.replace("{count}", String(test.minutes))} text={t.timeLimit} />
         </div>
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           <ModeCard active={selectedMode === "exam"} onClick={() => setSelectedMode("exam")} title={t.examMode} text={t.examModeBody} icon={Clock3} />
@@ -575,7 +575,7 @@ function ReadingStartScreen({ test, mode, onBack, onStart, t }: { test: ReadingP
         </div>
         <div className="mt-8 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm leading-6 text-ink-soft"><strong className="text-ink">{t.tipLabel}</strong> {t.startTip}</p>
-          <Button onClick={() => onStart(selectedMode)} className="shrink-0"><Play className="size-4" /> Start test</Button>
+          <Button onClick={() => onStart(selectedMode)} className="shrink-0"><Play className="size-4" /> {t.startTest}</Button>
         </div>
       </section>
     </main>
@@ -606,7 +606,12 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   onExit: () => void; t: Copy }) {
   const [panelRatio, setPanelRatio] = useState(52);
   const [fontSize, setFontSize] = useState(16);
-  const [mobilePane, setMobilePane] = useState<"passage" | "questions">("passage");
+  // Share of the phone workspace given to the question sheet. 0 collapses it to
+  // its handle so the passage fills the screen; the reader drags to rebalance.
+  const [sheetRatio, setSheetRatio] = useState(46);
+  const [draggingSheet, setDraggingSheet] = useState(false);
+  const sheetMovedRef = useRef(false);
+  const [visitedQuestionId, setVisitedQuestionId] = useState<string | null>(null);
   const [confirmEnd, setConfirmEnd] = useState(false);
   const [drawer, setDrawer] = useState<Drawer>(null);
   const [highlights, setHighlights] = useState<Highlight[]>(() => restoreHighlights(test));
@@ -616,9 +621,16 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   const [noteDraft, setNoteDraft] = useState("");
   const [clearConfirm, setClearConfirm] = useState(false);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const navRef = useRef<HTMLDivElement>(null);
   const currentPassage = test.passages[passageIndex];
   const currentQuestions = currentPassage.questions;
   const answeredCount = Object.values(answers).filter((answer) => Array.isArray(answer) ? answer.length : Boolean(answer)).length;
+  const sheetOpen = sheetRatio > 6;
+  // The navigator marks where the learner last jumped to, falling back to the
+  // opening question of the passage they are on.
+  const activeQuestionId = currentQuestions.some((question) => question.id === visitedQuestionId)
+    ? visitedQuestionId
+    : currentQuestions[0]?.id;
 
   const persistHighlights = (next: Highlight[]) => { setHighlights(next); writeStore(`${STORAGE_PREFIX}:${test.id}:highlights`, next); };
   const persistNotes = (next: PassageNote[]) => { setNotes(next); writeStore(`${STORAGE_PREFIX}:${test.id}:notes`, next); };
@@ -660,11 +672,61 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
     setSelectedRange(null);
   };
 
+  // The phone workspace owns the whole screen so the passage and the question
+  // sheet can share one viewport. Letting the page scroll underneath it would
+  // drag the test out from under the reader's thumb.
+  useEffect(() => {
+    const phone = window.matchMedia("(max-width: 639px)");
+    const apply = () => { document.body.style.overflow = phone.matches ? "hidden" : ""; };
+    apply();
+    phone.addEventListener("change", apply);
+    return () => { phone.removeEventListener("change", apply); document.body.style.overflow = ""; };
+  }, []);
+
+  // Keep the number strip showing where the learner is; with forty questions
+  // the active one is otherwise scrolled off the end of the rail.
+  useEffect(() => {
+    navRef.current?.querySelector(`[data-question-nav="${activeQuestionId}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [activeQuestionId]);
+
   const navigateQuestion = (question: ReadingQuestion) => {
     const nextPassageIndex = test.passages.findIndex((passage) => passage.questions.some((item) => item.id === question.id));
     if (nextPassageIndex !== -1) onPassageChange(nextPassageIndex);
-    setMobilePane("questions");
+    setVisitedQuestionId(question.id);
+    setSheetRatio((ratio) => (ratio > 6 ? ratio : 46));
     window.setTimeout(() => questionRefs.current[question.id]?.scrollIntoView({ behavior: "smooth", block: "start" }), 30);
+  };
+
+  /** The phone grabber is both a drag handle and a toggle: drag to rebalance the
+   *  split, tap (or press it with a keyboard) to hide or restore the sheet. */
+  const dragSheet = (event: React.PointerEvent<HTMLButtonElement>) => {
+    const container = event.currentTarget.parentElement;
+    if (!container) return;
+    const startY = event.clientY;
+    sheetMovedRef.current = false;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const move = (moveEvent: PointerEvent) => {
+      if (!sheetMovedRef.current && Math.abs(moveEvent.clientY - startY) <= 6) return;
+      if (!sheetMovedRef.current) setDraggingSheet(true);
+      sheetMovedRef.current = true;
+      const bounds = container.getBoundingClientRect();
+      setSheetRatio(Math.min(84, Math.max(0, ((bounds.bottom - moveEvent.clientY) / bounds.height) * 100)));
+    };
+    const stop = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", stop);
+      setDraggingSheet(false);
+      // Snap out of the awkward slivers at either end of the drag.
+      if (sheetMovedRef.current) setSheetRatio((ratio) => (ratio < 12 ? 0 : ratio > 78 ? 84 : ratio));
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", stop);
+  };
+
+  const toggleSheet = () => {
+    if (sheetMovedRef.current) { sheetMovedRef.current = false; return; }
+    setSheetRatio((ratio) => (ratio > 6 ? 0 : 46));
   };
 
   const dragDivider = (event: React.PointerEvent<HTMLButtonElement>) => {
@@ -685,56 +747,77 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
 
   return (
     <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
-      <section className="overflow-hidden rounded-lg border border-line bg-page shadow-[0_20px_65px_rgba(27,64,55,0.12)]">
-        <header className="sticky top-[calc(3.5rem+env(safe-area-inset-top))] z-30 flex flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur sm:top-[calc(4rem+env(safe-area-inset-top))] sm:px-5">
-          <div className="flex min-w-0 items-center gap-3">
-            <button type="button" onClick={onExit} className="hidden min-h-10 items-center gap-2 rounded-lg px-2 text-sm font-bold text-ink-soft hover:bg-hover hover:text-ink sm:inline-flex"><ArrowLeft className="size-4" /> Library</button>
-            <div className="min-w-0"><p className="truncate text-sm font-black text-ink">{test.title}</p><p className="text-xs text-ink-soft">Passage {passageIndex + 1} of {test.passages.length} · {answeredCount}/{countQuestions(test)} answered</p></div>
+      <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[0_20px_65px_rgba(27,64,55,0.12)] max-sm:bg-page">
+        <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:sticky sm:top-[calc(4rem+env(safe-area-inset-top))] sm:px-5">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
+            <button type="button" onClick={onExit} aria-label={t.exitTest} title={t.exitTest} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-2 text-sm font-bold text-ink-soft hover:bg-hover hover:text-ink max-sm:size-10 max-sm:justify-center max-sm:px-0"><ArrowLeft className="size-4" /> <span className="max-sm:hidden">{t.readingLibrary}</span></button>
+            <div className="min-w-0"><p className="truncate text-sm font-black text-ink">{test.title}</p><p className="truncate text-xs text-ink-soft">{t.passageProgress.replace("{index}", String(passageIndex + 1)).replace("{total}", String(test.passages.length)).replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</p></div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {studyMode === "exam" ? <span className={cn("inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 font-black tabular-nums", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
-            {studyMode === "exam" && <button type="button" onClick={onPause} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink" title={paused ? "Resume" : "Pause"}>{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+            {studyMode === "exam" ? <span className={cn("inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 font-black tabular-nums max-sm:min-h-9 max-sm:px-2 max-sm:text-sm", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
+            {studyMode === "exam" && <button type="button" onClick={onPause} aria-label={paused ? t.resume : t.pause} title={paused ? t.resume : t.pause} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink max-sm:size-9">{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
+            <button type="button" onClick={() => setConfirmEnd(true)} aria-label={t.submitAnswers} title={t.submitAnswers} className="inline-flex size-9 items-center justify-center rounded-lg bg-primary text-white dark:text-brand-950 sm:hidden"><Send className="size-4" /></button>
             <Button size="sm" variant="secondary" onClick={() => setConfirmEnd(true)} className="hidden sm:inline-flex"><Send className="size-4" /> {t.submitAnswers}</Button>
           </div>
         </header>
 
-        <div className="flex border-b border-line bg-card/70 px-3 py-2 sm:hidden">
-          <button type="button" onClick={() => setMobilePane("passage")} className={cn("flex-1 rounded-md px-3 py-2 text-sm font-black", mobilePane === "passage" ? "bg-primary text-white dark:text-brand-950" : "text-ink-soft")}>{t.passage}</button>
-          <button type="button" onClick={() => setMobilePane("questions")} className={cn("flex-1 rounded-md px-3 py-2 text-sm font-black", mobilePane === "questions" ? "bg-primary text-white dark:text-brand-950" : "text-ink-soft")}>{t.questionsLabel}</button>
-        </div>
-
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-card/55 px-4 py-2 text-xs font-semibold text-ink-soft sm:px-5">
-          <div className="flex items-center gap-1"><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.max(14, size - 1))} title={t.smallerText}><Minimize2 className="size-3.5" /></button><span className="min-w-8 text-center">{fontSize}px</span><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.min(21, size + 1))} title={t.largerText}><Maximize2 className="size-3.5" /></button></div>
-          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><NotebookPen className="size-3.5" /> Notes {notes.length}</button><button type="button" onClick={() => setDrawer("vocabulary")} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><Bookmark className="size-3.5" /> Words {vocabulary.length}</button><button type="button" onClick={() => setClearConfirm(true)} className="hidden min-h-8 items-center gap-1.5 rounded-md px-2 text-ink-soft hover:bg-hover hover:text-danger sm:inline-flex"><Eraser className="size-3.5" /> {t.clearHighlights}</button></div>
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line bg-card/55 px-4 py-2 text-xs font-semibold text-ink-soft max-sm:px-3 max-sm:py-0.5 sm:px-5">
+          <div className="flex items-center gap-1"><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.max(14, size - 1))} aria-label={t.smallerText} title={t.smallerText}><Minimize2 className="size-3.5" /></button><span className="min-w-8 text-center">{fontSize}px</span><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.min(21, size + 1))} aria-label={t.largerText} title={t.largerText}><Maximize2 className="size-3.5" /></button></div>
+          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} title={t.myNotes} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><NotebookPen className="size-3.5" /> <span className="max-sm:hidden">{t.myNotes}</span> {notes.length}</button><button type="button" onClick={() => setDrawer("vocabulary")} title={t.myVocabulary} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><Bookmark className="size-3.5" /> <span className="max-sm:hidden">{t.myVocabulary}</span> {vocabulary.length}</button><button type="button" onClick={() => setClearConfirm(true)} title={t.clearHighlights} aria-label={t.clearHighlights} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 text-ink-soft hover:bg-hover hover:text-danger"><Eraser className="size-3.5" /> <span className="max-sm:hidden">{t.clearHighlights}</span></button></div>
         </div>
 
         <div className="hidden items-center gap-2 overflow-x-auto border-b border-line bg-card/45 px-4 py-2 sm:flex">
           {test.passages.map((passage, index) => <button key={passage.id} type="button" onClick={() => onPassageChange(index)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-xs font-black transition-colors", passageIndex === index ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : "border-line text-ink-soft hover:bg-hover")}>{t.passage} {index + 1}: {passage.title}</button>)}
         </div>
 
+        {/* On a phone the two panes stack into one screen: the passage takes the
+            room the question sheet leaves it, so a learner can read and answer
+            without ever scrolling one of them out of reach. */}
         <div
-          className="grid min-h-[calc(100svh-15rem)] grid-cols-1 sm:min-h-[calc(100svh-12.5rem)] sm:grid-cols-[minmax(0,var(--reading-passage-width))_12px_minmax(0,1fr)]"
-          style={{ "--reading-passage-width": `${panelRatio}%` } as React.CSSProperties}
+          className="flex min-h-0 flex-1 flex-col sm:grid sm:min-h-[calc(100svh-12.5rem)] sm:grid-cols-[minmax(0,var(--reading-passage-width))_12px_minmax(0,1fr)]"
+          style={{ "--reading-passage-width": `${panelRatio}%`, "--reading-sheet-height": `${sheetRatio}%` } as React.CSSProperties}
         >
-          <article className={cn("min-w-0 overflow-y-auto bg-page p-5 sm:max-h-[calc(100vh-12.5rem)] sm:p-7", mobilePane !== "passage" && "hidden sm:block")} onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
-            <p className="type-label text-brand-600 dark:text-brand-300">{t.readingPassage}</p>
-            <h1 className="mt-2 text-2xl font-black tracking-tight text-ink sm:text-3xl">{currentPassage.title}</h1>
-            <p className="mt-2 text-sm italic text-ink-soft">{currentPassage.subtitle}</p>
-            <div className="mt-7 space-y-5" style={{ fontSize: `${fontSize}px` }}>
+          <article className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-page p-4 sm:max-h-[calc(100vh-12.5rem)] sm:p-7" onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
+            <p className="type-label text-brand-600 dark:text-brand-300 max-sm:hidden">{t.readingPassage}</p>
+            <h1 className="text-lg font-black tracking-tight text-ink sm:mt-2 sm:text-3xl">{currentPassage.title}</h1>
+            <p className="mt-1 text-sm italic text-ink-soft sm:mt-2">{currentPassage.subtitle}</p>
+            <div className="mt-4 space-y-5 sm:mt-7" style={{ fontSize: `${fontSize}px` }}>
               {currentPassage.paragraphs.map((paragraph, index) => <PassageParagraph key={`${currentPassage.id}-${paragraph.label}`} passageId={currentPassage.id} paragraph={paragraph} paragraphIndex={index} highlights={highlights} />)}
             </div>
           </article>
           <button type="button" aria-label={t.resizePanels} onPointerDown={dragDivider} className="hidden cursor-col-resize bg-line/70 transition-colors hover:bg-brand-400 sm:block" />
-          <aside className={cn("min-w-0 overflow-y-auto bg-card/62 p-4 sm:max-h-[calc(100vh-12.5rem)] sm:p-5", mobilePane !== "questions" && "hidden sm:block")}>
-            <div className="mb-5 flex items-start justify-between gap-3"><div><p className="type-label text-brand-600 dark:text-brand-300">{t.questionsHeading.replace("{from}", String(currentQuestions[0]?.number ?? "")).replace("{to}", String(currentQuestions.at(-1)?.number ?? ""))}</p><p className="mt-1 text-sm leading-6 text-ink-soft">{t.questionsHint}</p></div><button type="button" onClick={() => setConfirmEnd(true)} className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-black text-white dark:text-brand-950 sm:hidden"><Send className="size-4" /> {t.submitAnswers}</button></div>
-            <div className="space-y-3 pb-24">
+
+          <button
+            type="button"
+            onPointerDown={dragSheet}
+            onClick={toggleSheet}
+            aria-expanded={sheetOpen}
+            aria-controls="reading-question-sheet"
+            aria-label={sheetOpen ? t.hideQuestions : t.showQuestions}
+            title={sheetOpen ? t.hideQuestions : t.showQuestions}
+            className="flex shrink-0 touch-none cursor-row-resize items-center justify-center border-t border-line bg-raised py-2.5 active:bg-hover sm:hidden"
+          >
+            <span aria-hidden className={cn("h-1 w-10 rounded-full transition-colors", draggingSheet ? "bg-brand-400" : "bg-line")} />
+          </button>
+
+          <aside
+            id="reading-question-sheet"
+            className={cn(
+              "min-w-0 overflow-y-auto bg-card/62 p-4 sm:max-h-[calc(100vh-12.5rem)] sm:p-5",
+              "max-sm:h-[var(--reading-sheet-height)] max-sm:shrink-0",
+              !draggingSheet && "max-sm:transition-[height] max-sm:duration-200",
+              !sheetOpen && "max-sm:overflow-hidden max-sm:p-0"
+            )}
+          >
+            <div className="mb-3 max-sm:hidden sm:mb-5"><p className="type-label text-brand-600 dark:text-brand-300">{t.questionsHeading.replace("{from}", String(currentQuestions[0]?.number ?? "")).replace("{to}", String(currentQuestions.at(-1)?.number ?? ""))}</p><p className="mt-1 text-sm leading-6 text-ink-soft max-sm:hidden">{t.questionsHint}</p></div>
+            <div className="space-y-3 pb-6 sm:pb-24">
               {currentQuestions.map((question, index) => <QuestionCard t={t} key={question.id} question={question} answer={answers[question.id]} flagged={flagged.includes(question.id)} setRef={(node) => { questionRefs.current[question.id] = node; }} showGroup={index === 0 || currentQuestions[index - 1].group !== question.group} onAnswer={(answer) => onAnswer(question.id, answer)} onFlag={() => onToggleFlag(question.id)} />)}
             </div>
           </aside>
         </div>
 
-        <nav className="reading-question-nav sticky bottom-0 z-20 border-t border-line bg-raised/96 px-3 py-3 backdrop-blur sm:px-5" aria-label={t.questionNavigation}>
-          <div className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1"><span className="sticky left-0 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.questionsLabel}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" onClick={() => navigateQuestion(question)} className={cn("relative flex size-9 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === currentQuestions[0]?.id ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
+        <nav className="reading-question-nav z-20 shrink-0 border-t border-line bg-raised/96 px-3 py-3 backdrop-blur max-sm:py-2 max-sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:sticky sm:bottom-0 sm:px-5" aria-label={t.questionNavigation}>
+          <div ref={navRef} className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 max-sm:pb-0"><span className="sticky left-0 z-10 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.answeredShort.replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" data-question-nav={question.id} onClick={() => navigateQuestion(question)} className={cn("relative flex size-9 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === activeQuestionId ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
         </nav>
       </section>
 
@@ -752,7 +835,7 @@ function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights }: 
   let cursor = 0;
   matches.forEach((highlight) => { if (highlight.start > cursor) fragments.push({ text: paragraph.text.slice(cursor, highlight.start) }); fragments.push({ text: paragraph.text.slice(Math.max(cursor, highlight.start), highlight.end), color: highlight.color }); cursor = Math.max(cursor, highlight.end); });
   if (cursor < paragraph.text.length) fragments.push({ text: paragraph.text.slice(cursor) });
-  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.86] text-ink"><span aria-hidden="true" className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span><span data-reading-paragraph-text>{fragments.map((fragment, index) => fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{fragment.text}</mark> : <span key={`${fragment.text}-${index}`}>{fragment.text}</span>)}</span></p>;
+  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.68] text-ink sm:leading-[1.86]"><span aria-hidden="true" className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span><span data-reading-paragraph-text>{fragments.map((fragment, index) => fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{fragment.text}</mark> : <span key={`${fragment.text}-${index}`}>{fragment.text}</span>)}</span></p>;
 }
 
 function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, setSelectedRange: (range: SelectedRange | null) => void) {
@@ -781,7 +864,7 @@ function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.Keybo
 function elementForNode(node: Node) { return node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement; }
 
 function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, onFlag, t }: { question: ReadingQuestion; answer: AnswerValue | undefined; flagged: boolean; setRef: (node: HTMLDivElement | null) => void; showGroup: boolean; onAnswer: (value: AnswerValue) => void; onFlag: () => void; t: Copy }) {
-  return <div ref={setRef} className="scroll-mt-4">{showGroup && <p className="mb-2 mt-5 text-xs font-black uppercase tracking-wide text-accent-500 first:mt-0">{question.group}</p>}<section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[0_8px_20px_rgba(34,65,58,0.04)]"><div className="flex items-start gap-3"><span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{question.number}</span><div className="min-w-0 flex-1"><p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>{question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}</div><button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-8 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}><Flag className={cn("size-4", flagged && "fill-current")} /></button></div><div className="mt-4"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div></section></div>;
+  return <div ref={setRef} className="scroll-mt-4">{showGroup && <p className="mb-2 mt-5 text-xs font-black uppercase tracking-wide text-accent-500 first:mt-0 max-sm:mt-3">{question.group}</p>}<section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[0_8px_20px_rgba(34,65,58,0.04)] max-sm:p-3"><div className="flex items-start gap-3"><span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{question.number}</span><div className="min-w-0 flex-1"><p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>{question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}</div><button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-8 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}><Flag className={cn("size-4", flagged && "fill-current")} /></button></div><div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div></section></div>;
 }
 
 function QuestionInput({ question, value, onChange, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; t: Copy }) {
@@ -832,7 +915,7 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
           <div>
             <p className="type-label text-brand-600 dark:text-brand-300">{isNotes ? t.myNotes : t.myVocabulary}</p>
             <h2 id="reading-drawer-title" className="mt-1 text-xl font-black text-ink">
-              {isNotes ? `${notes.length} notes` : `${vocabulary.length} saved words`}
+              {isNotes ? t.notesCount.replace("{count}", String(notes.length)) : t.savedWordsCount.replace("{count}", String(vocabulary.length))}
             </h2>
           </div>
           <button
@@ -878,5 +961,5 @@ function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm, 
 function ReadingResultScreen({ test, result, answers, onLibrary, onRetry, onReview, onNext, t }: { test: ReadingPracticeTest; result: TestResult; answers: Record<string, AnswerValue>; onLibrary: () => void; onRetry: () => void; onReview: () => void; onNext: () => void; t: Copy }) {
   const questions = allReadingQuestions(test);
   const band = bandGuidance(result.score, result.total, test.track, t);
-  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> Test complete</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">This set is shorter than a real paper, where one answer rarely moves the band. Treat the range as a rough indication.</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
+  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> {t.testComplete}</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">{t.bandApproximate}</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
 }
