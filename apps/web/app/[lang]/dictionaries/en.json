@@ -1175,7 +1175,22 @@
     "tryAgainHint": "Review the lesson and try again — you need 60%.",
     "retry": "Try again",
     "nextLesson": "Next lesson",
-    "backToList": "All topics"
+    "backToList": "All topics",
+    "lessonEyebrow": "Grammar lesson",
+    "keyTerms": "Key terms",
+    "importantNotes": "Important notes",
+    "ieltsFocus": "IELTS focus",
+    "deepLab": "Deep grammar lab",
+    "deepLabBody": "Control the rule inside a sentence",
+    "modelSentences": "{count} model sentences",
+    "patternExamples": "Pattern examples",
+    "productionLadder": "Production ladder",
+    "ladder1": "Read one model sentence aloud and pick out its structure.",
+    "ladder2": "Build a new sentence with the same pattern, changing the subject or the tense.",
+    "ladder3": "Make a negative or a question from it, and check the auxiliary verb.",
+    "ladder4": "Use the structure in a sentence about yourself or in an IELTS context.",
+    "cefrPath": "CEFR path",
+    "studio": "Grammar studio"
   },
   "expressions": {
     "title": "Expressions",

@@ -1175,7 +1175,22 @@
     "tryAgainHint": "Darsni qayta ko'rib chiqing — 60% kerak.",
     "retry": "Qayta urinish",
     "nextLesson": "Keyingi dars",
-    "backToList": "Barcha mavzular"
+    "backToList": "Barcha mavzular",
+    "lessonEyebrow": "Grammatika darsi",
+    "keyTerms": "Kalit so'zlar",
+    "importantNotes": "Muhim eslatmalar",
+    "ieltsFocus": "IELTS fokus",
+    "deepLab": "Chuqur grammar lab",
+    "deepLabBody": "Qoidani gap ichida boshqaring",
+    "modelSentences": "{count} ta model gap",
+    "patternExamples": "Pattern misollari",
+    "productionLadder": "Amaliyot bosqichlari",
+    "ladder1": "Bitta model gapni ovoz chiqarib o'qing va strukturani ajrating.",
+    "ladder2": "Ega yoki vaqtni almashtirib shu pattern bilan yangi gap tuzing.",
+    "ladder3": "Inkor yoki savol variantini yarating; yordamchi fe'lni tekshiring.",
+    "ladder4": "Mavzuni o'zingiz haqingizdagi yoki IELTS kontekstidagi gapda ishlating.",
+    "cefrPath": "CEFR yo'li",
+    "studio": "Grammatika studiyasi"
   },
   "expressions": {
     "title": "Iboralar",

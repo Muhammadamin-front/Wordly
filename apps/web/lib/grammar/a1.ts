@@ -1,7 +1,11 @@
+import { A1_TRANSLATIONS } from "./translations/a1";
 import type { GrammarLesson } from "./types";
 
-/** A1 — absolute foundations. Every later structure builds on these. */
-export const A1_LESSONS: GrammarLesson[] = [
+/** A1 — absolute foundations. Every later structure builds on these.
+ *
+ *  The teaching text here is Uzbek; Russian and English come from
+ *  ./translations/a1 and are attached at the bottom of this file. */
+const A1_BASE: GrammarLesson[] = [
   {
     slug: "to-be",
     level: "A1",
@@ -340,3 +344,8 @@ export const A1_LESSONS: GrammarLesson[] = [
     ],
   },
 ];
+
+export const A1_LESSONS: GrammarLesson[] = A1_BASE.map((lesson) => {
+  const translation = A1_TRANSLATIONS[lesson.slug];
+  return translation ? { ...lesson, translations: translation } : lesson;
+});

@@ -196,7 +196,7 @@ export function LessonView({
           <div>
             <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
               <BookOpenCheck className="size-4" aria-hidden />
-              Grammar dars
+              {t.lessonEyebrow}
             </span>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
               {lesson.title}
@@ -222,7 +222,7 @@ export function LessonView({
           <section className="surface-panel rounded-lg p-5">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
               <Highlighter className="size-4 text-accent-500" aria-hidden />
-              {"Kalit so'zlar"}
+              {t.keyTerms}
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {terms.slice(0, 10).map((term) => (
@@ -268,7 +268,7 @@ export function LessonView({
             ))}
           </section>
 
-          <LessonPatternLab lesson={lesson} terms={terms} examples={patternExamples} />
+          <LessonPatternLab t={t} lesson={lesson} terms={terms} examples={patternExamples} />
           <LessonExamples lesson={lesson} terms={terms} t={t} />
           <LessonMistakes lesson={lesson} terms={terms} t={t} />
           <LessonQuiz
@@ -338,7 +338,7 @@ export function LessonView({
           <section className="surface-panel rounded-lg p-4">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
               <AlertTriangle className="size-4 text-warning" aria-hidden />
-              Muhim eslatmalar
+              {t.importantNotes}
             </h2>
             <div className="mt-3 space-y-2">
               {importantNotes.map((note, i) => (
@@ -352,7 +352,7 @@ export function LessonView({
           <section className="surface-panel rounded-lg p-4">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
               <Sparkles className="size-4 text-accent-500" aria-hidden />
-              IELTS fokus
+              {t.ieltsFocus}
             </h2>
             <div className="mt-3 space-y-2">
               {examTips.map((tip, i) => (
@@ -372,10 +372,12 @@ function LessonPatternLab({
   lesson,
   terms,
   examples,
+  t,
 }: {
   lesson: GrammarLesson;
   terms: string[];
   examples: string[];
+  t: T;
 }) {
   return (
     <section className="surface-panel rounded-lg p-5">
@@ -383,14 +385,14 @@ function LessonPatternLab({
         <div>
           <p className="flex items-center gap-2 text-xs font-extrabold uppercase text-accent-500">
             <ScanText className="size-4" aria-hidden />
-            Chuqur grammar lab
+            {t.deepLab}
           </p>
           <h2 className="mt-1 text-xl font-extrabold text-ink">
-            Qoidani gap ichida boshqaring
+            {t.deepLabBody}
           </h2>
         </div>
         <span className="rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-bold text-ink-soft">
-          {lesson.examples.length + examples.length} ta model gap
+          {t.modelSentences.replace("{count}", String(lesson.examples.length + examples.length))}
         </span>
       </div>
 
@@ -398,7 +400,7 @@ function LessonPatternLab({
         <div className="rounded-lg border border-line bg-card/60 p-4">
           <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
             <PanelsTopLeft className="size-4 text-brand-500" aria-hidden />
-            Pattern examples
+            {t.patternExamples}
           </h3>
           <div className="mt-3 space-y-2">
             {examples.length > 0 ? (
@@ -427,14 +429,14 @@ function LessonPatternLab({
         <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
           <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
             <Target className="size-4 text-accent-500" aria-hidden />
-            Production ladder
+            {t.productionLadder}
           </h3>
           <ol className="mt-3 space-y-2">
             {[
-              "Bitta model gapni ovoz chiqarib o'qing va strukturani ajrating.",
-              "Ega yoki vaqtni almashtirib shu pattern bilan yangi gap tuzing.",
-              "Inkor yoki savol variantini yarating; yordamchi fe'lni tekshiring.",
-              "Mavzuni o'zingiz haqingizdagi yoki IELTS kontekstidagi gapda ishlating.",
+              t.ladder1,
+              t.ladder2,
+              t.ladder3,
+              t.ladder4,
             ].map((step, index) => (
               <li key={step} className="flex gap-3 text-sm leading-6 text-ink-soft">
                 <span className="font-black text-accent-500">{index + 1}.</span>
@@ -459,7 +461,11 @@ function LessonExamples({ lesson, terms, t }: { lesson: GrammarLesson; terms: st
         {lesson.examples.map((ex, i) => (
           <div key={i} className="rounded-lg border border-line bg-card/60 px-4 py-3">
             <p className="text-[15px] font-bold leading-7 text-ink">{highlightText(ex.en, terms)}</p>
-            <p className="mt-1 text-sm leading-6 text-ink-soft">{highlightText(ex.uz, terms)}</p>
+            {/* English readers get no translation row — rendering an English
+                sentence twice would say nothing. */}
+            {ex.uz && (
+              <p className="mt-1 text-sm leading-6 text-ink-soft">{highlightText(ex.uz, terms)}</p>
+            )}
           </div>
         ))}
       </div>

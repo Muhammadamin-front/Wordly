@@ -22,8 +22,33 @@ export interface GrammarKeyPoint {
   body: string;
 }
 
-/** One grammar lesson. Explanations are written in Uzbek (the app's audience)
- *  with English terminology kept inline; examples are bilingual. */
+/** A lesson's teaching text in one language.
+ *
+ *  The base lesson is written in Uzbek — the app's first audience — so a
+ *  translation supplies the same fields for another locale. Arrays must line up
+ *  with the base lesson index for index, which `tests/grammar-translations`
+ *  enforces; an empty string leaves that entry as it is, which is what English
+ *  needs for gap-fill prompts that are already English.
+ */
+export interface GrammarLessonTranslation {
+  /** The lesson name in this language, shown under the English grammar term. */
+  name: string;
+  explanation: string[];
+  formula?: string;
+  keyPoints?: GrammarKeyPoint[];
+  importantNotes?: string[];
+  examTips?: string[];
+  /** One per example. Omitted for English, where translating an English
+   *  sentence into English would say nothing — the view hides the row. */
+  exampleTranslations?: string[];
+  /** One per mistake, same order. */
+  mistakeNotes: string[];
+  /** One per quiz item, same order. Empty string = keep the base prompt. */
+  quizPrompts?: string[];
+}
+
+/** One grammar lesson. The base text is Uzbek (the app's first audience) with
+ *  English terminology kept inline; `translations` carries other locales. */
 export interface GrammarLesson {
   slug: string;
   level: GrammarLevel;
@@ -39,4 +64,6 @@ export interface GrammarLesson {
   examples: GrammarExample[];
   mistakes: GrammarMistake[];
   quiz: GrammarQuizItem[];
+  /** Other locales. A missing entry falls back to the Uzbek base text. */
+  translations?: Partial<Record<"ru" | "en", GrammarLessonTranslation>>;
 }
