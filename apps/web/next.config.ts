@@ -19,10 +19,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "**.gstatic.com" }],
   },
   async rewrites() {
+    // Docker Compose always passes INTERNAL_API_URL (http://api:8000, the
+    // service name on the compose network). Running `next dev` on the host
+    // there is no such hostname, so the fallback points at the published port
+    // — otherwise every /api/v1 call fails the rewrite and returns 500.
+    //
+    // 127.0.0.1 rather than localhost: compose publishes the port on IPv4
+    // only, while Node resolves localhost to ::1 first and the proxy fails
+    // with ECONNREFUSED.
     const apiOrigin =
       process.env.INTERNAL_API_URL ??
       process.env.NEXT_PUBLIC_API_URL ??
-      "http://api:8000";
+      "http://127.0.0.1:8000";
     return [
       {
         source: "/api/v1/:path*",
