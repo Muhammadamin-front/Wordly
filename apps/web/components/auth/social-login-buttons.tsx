@@ -110,10 +110,15 @@ export function SocialLoginButtons({
       });
     }
 
-    // If the script loaded but rendered nothing — blocked iframe, offline, an
-    // extension — fall back to our own mark rather than leaving an empty tile.
+    // If the script loaded but produced nothing usable, fall back to our own
+    // mark rather than leaving an empty tile. Google inserts an iframe even
+    // when it refuses to render — an unauthorised JavaScript origin is the
+    // common case — so an existing child is not proof that a button is there;
+    // measure it.
     const check = window.setTimeout(() => {
-      if (container.childElementCount === 0) setGoogleScriptFailed(true);
+      const rendered = container.firstElementChild;
+      const height = rendered?.getBoundingClientRect().height ?? 0;
+      if (!rendered || height < 8) setGoogleScriptFailed(true);
     }, 1500);
     return () => window.clearTimeout(check);
   }, [googleReady, handleGoogleCredential, lang]);

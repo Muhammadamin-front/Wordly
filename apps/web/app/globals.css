@@ -157,12 +157,12 @@
   --auth-field-line: rgb(22 35 28 / 0.22);
   --auth-primary: #33513f;
   --auth-primary-hover: #294232;
-  --shadow-auth-card: 0 40px 110px rgb(15 32 24 / 0.26), 0 4px 14px rgb(15 32 24 / 0.08);
+  --auth-card-shadow: 0 40px 110px rgb(15 32 24 / 0.26), 0 4px 14px rgb(15 32 24 / 0.08);
   /* The floating card on small screens sits directly on the foliage, so it is
      frosted rather than opaque and the leaves read through it. */
   --auth-glass: rgb(252 253 251 / 0.68);
   --auth-glass-line: rgb(255 255 255 / 0.58);
-  --shadow-auth-glass:
+  --auth-glass-shadow:
     0 30px 80px rgb(10 26 18 / 0.34),
     inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
@@ -189,10 +189,10 @@
   --auth-field-line: rgb(255 255 255 / 0.16);
   --auth-primary: #4f7d63;
   --auth-primary-hover: #5e9273;
-  --shadow-auth-card: 0 40px 120px rgb(0 0 0 / 0.6);
+  --auth-card-shadow: 0 40px 120px rgb(0 0 0 / 0.6);
   --auth-glass: rgb(14 26 21 / 0.62);
   --auth-glass-line: rgb(255 255 255 / 0.14);
-  --shadow-auth-glass:
+  --auth-glass-shadow:
     0 30px 80px rgb(0 0 0 / 0.55),
     inset 0 1px 0 rgb(255 255 255 / 0.09);
   --shadow-card: 0 22px 70px rgb(0 0 0 / 0.38), inset 0 1px 0 rgb(255 255 255 / 0.09);
@@ -235,10 +235,10 @@ html[data-theme="dark"] {
   --color-auth-line: var(--auth-field-line);
   --color-auth-primary: var(--auth-primary);
   --color-auth-primary-hover: var(--auth-primary-hover);
-  --shadow-auth-card: var(--shadow-auth-card);
+  --shadow-auth-card: var(--auth-card-shadow);
   --color-auth-glass: var(--auth-glass);
   --color-auth-glass-line: var(--auth-glass-line);
-  --shadow-auth-glass: var(--shadow-auth-glass);
+  --shadow-auth-glass: var(--auth-glass-shadow);
 }
 
 *,
