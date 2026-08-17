@@ -95,8 +95,13 @@ export default async function RootLayout({
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
 
+  // No data-theme attribute here on purpose: the inline script below sets it
+  // before paint, and React leaves an attribute it does not render alone.
+  // Hardcoding data-theme="light" meant that switching language re-rendered
+  // this layout — the [lang] segment changes — and React reset the attribute,
+  // throwing the reader back to the light theme mid-session.
   return (
-    <html lang={lang} data-theme="light" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
