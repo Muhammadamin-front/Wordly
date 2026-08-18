@@ -18,10 +18,11 @@ import { notFound } from "next/navigation";
 
 import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
-import { VocoraForestHero } from "@/components/site/vocora-forest-hero";
+import { HomeHero, type HomeHeroCopy } from "@/components/site/home-hero";
 import { Reveal } from "@/components/site/reveal";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
+import { getWordsLabel } from "@/lib/nav-labels";
 import { fetchCatalogMeta } from "@/lib/vocab";
 import { getDictionary, hasLocale } from "./dictionaries";
 
@@ -53,12 +54,30 @@ export default async function LandingPage({
     { icon: Trophy, title: landing.feature4Title, body: landing.feature4Body },
   ];
 
+  const heroNav = [
+    { href: `/${lang}/vocabulary`, label: getWordsLabel(lang as Locale) },
+    { href: `/${lang}/grammar`, label: nav.grammar },
+    { href: `/${lang}/ielts`, label: nav.ielts },
+    { href: `/${lang}/pricing`, label: nav.pricing },
+  ];
+
   return (
     <>
-      <SiteHeader lang={lang as Locale} nav={nav} />
+      <div className="lg:hidden">
+        <SiteHeader lang={lang as Locale} nav={nav} />
+      </div>
+
+      <HomeHero
+        lang={lang}
+        copy={copy.hero}
+        ctaLabel={landing.heroCta}
+        ctaContinueLabel={landing.heroCtaContinue}
+        navLinks={heroNav}
+        signIn={nav.login}
+        signUp={nav.register}
+      />
 
       <main className="flex-1 px-3 pb-8 sm:px-5">
-        <VocoraForestHero lang={lang} copy={copy} landing={landing} />
 
         <section className="mx-auto mt-5 grid max-w-[1480px] gap-5 xl:grid-cols-[2.1fr_1fr]">
           <Reveal>
@@ -267,6 +286,7 @@ const homeCopy: Record<
     systemKicker: string;
     systemTitle: string;
     previewLevel: string;
+    hero: HomeHeroCopy;
   }
 > = {
   uz: {
@@ -303,6 +323,21 @@ const homeCopy: Record<
     systemKicker: "Bitta o'quv tizimi",
     systemTitle: "So'z yodlashdan ravon gapirishgacha hammasi bir joyda",
     previewLevel: "5 ta so'zni sinash",
+    hero: {
+      eyebrow: "Aniq reja. Haqiqiy natija.",
+      title: "Ingliz tili shu yerdan boshlanadi",
+      subtitle:
+        "O'zbek tilidagi izohlar, aqlli takrorlash va IELTS uchun amaliy mashqlar — bir joyda, har kuni.",
+      heroImageAlt: "Yashillik orasida ingliz tilini o'rganayotgan talaba",
+      pillars: ["So'z boyligi", "Grammatika", "Talaffuz", "IELTS"],
+      shelfTitle: "To'liq ingliz tili yo'li",
+      shelfBody: "A1 dan C2 gacha — har bir daraja o'z lug'ati va mashqlari bilan.",
+      badgeTitle: "O'zbek tilida",
+      badgeBody: "Izohlar va tarjimalar ona tilingizda",
+      browseLevels: "Barcha darajalar",
+      search: "So'z qidirish",
+      menu: "Menyu",
+    },
   },
   ru: {
     eyebrow: "Каждый день — уверенный шаг к свободной речи",
@@ -338,6 +373,21 @@ const homeCopy: Record<
     systemKicker: "Единая система обучения",
     systemTitle: "От запоминания слов до свободной речи в одном месте",
     previewLevel: "Попробовать 5 слов",
+    hero: {
+      eyebrow: "Чёткий план. Реальный результат.",
+      title: "Английский начинается здесь",
+      subtitle:
+        "Объяснения на узбекском, умное повторение и практика для IELTS — в одном месте, каждый день.",
+      heroImageAlt: "Студент изучает английский в окружении зелени",
+      pillars: ["Словарь", "Грамматика", "Произношение", "IELTS"],
+      shelfTitle: "Полный путь в английском",
+      shelfBody: "От A1 до C2 — у каждого уровня свой словарь и свои упражнения.",
+      badgeTitle: "На узбекском",
+      badgeBody: "Объяснения и переводы на родном языке",
+      browseLevels: "Все уровни",
+      search: "Поиск слова",
+      menu: "Меню",
+    },
   },
   en: {
     eyebrow: "A focused path to fluent English, every day",
@@ -373,5 +423,20 @@ const homeCopy: Record<
     systemKicker: "One learning system",
     systemTitle: "Everything from memorizing words to speaking fluently",
     previewLevel: "Try 5 words",
+    hero: {
+      eyebrow: "A clear plan. Real progress.",
+      title: "English starts right here",
+      subtitle:
+        "Uzbek explanations, spaced repetition and hands-on IELTS practice — in one place, every day.",
+      heroImageAlt: "A student studying English surrounded by greenery",
+      pillars: ["Vocabulary", "Grammar", "Pronunciation", "IELTS"],
+      shelfTitle: "The complete English path",
+      shelfBody: "A1 through C2 — every level with its own words and drills.",
+      badgeTitle: "In Uzbek",
+      badgeBody: "Explanations and translations in your first language",
+      browseLevels: "All levels",
+      search: "Search a word",
+      menu: "Menu",
+    },
   },
 };

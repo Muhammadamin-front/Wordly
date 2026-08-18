@@ -30,6 +30,7 @@ import { ThemeToggle } from "@/components/site/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { getHomeLabel, getWordsLabel } from "@/lib/nav-labels";
 import type { Locale } from "@/lib/locales";
 
 const StatsWidget = dynamic(
@@ -524,22 +525,6 @@ function getDashboardLabel(lang: Locale): string {
     uz: "Bosh",
     ru: "Главная",
     en: "Home",
-  }[lang];
-}
-
-function getHomeLabel(lang: Locale): string {
-  return {
-    uz: "Bosh sahifa",
-    ru: "Главная",
-    en: "Home",
-  }[lang];
-}
-
-function getWordsLabel(lang: Locale): string {
-  return {
-    uz: "So'zlar",
-    ru: "Слова",
-    en: "Words",
   }[lang];
 }
 

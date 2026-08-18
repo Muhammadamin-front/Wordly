@@ -138,6 +138,21 @@
   --semantic-selected: rgb(23 107 92 / 0.12);
   --semantic-disabled: rgb(83 102 96 / 0.42);
   --semantic-focus: #b8892f;
+
+  /* Home hero — a grass-green field carrying one white card. Its own palette:
+     the app's brand green is a deeper teal and reads muddy at this saturation. */
+  --home-field-top: #62b544;
+  --home-field-bottom: #43902d;
+  --home-card: #ffffff;
+  --home-card-soft: #f6f9f4;
+  --home-ink: #0f2a17;
+  --home-muted: #63776a;
+  --home-accent: #2f7d28;
+  --home-accent-hover: #276c21;
+  --home-accent-soft: #4fae44;
+  --home-line: rgb(15 42 23 / 0.10);
+  --home-card-shadow: 0 32px 90px rgb(12 46 20 / 0.28), 0 4px 12px rgb(12 46 20 / 0.12);
+  --home-nav-scrim: rgb(255 255 255 / 0.86);
   --shadow-card:
     0 1px 2px rgb(19 60 51 / 0.04),
     0 14px 36px rgb(30 72 63 / 0.07),
@@ -169,6 +184,18 @@
 
 [data-theme="dark"] {
   --surface-page: #071410;
+  --home-field-top: #1d5c2b;
+  --home-field-bottom: #0d3418;
+  --home-card: #0d221a;
+  --home-card-soft: #122c22;
+  --home-ink: #f2f8ef;
+  --home-muted: #9fb6a5;
+  --home-accent: #57b94c;
+  --home-accent-hover: #6fcc63;
+  --home-accent-soft: #7ad06d;
+  --home-line: rgb(255 255 255 / 0.12);
+  --home-card-shadow: 0 32px 90px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
+  --home-nav-scrim: rgb(13 34 26 / 0.9);
   --surface-card: rgb(13 36 31 / 0.82);
   --surface-raised: rgb(18 48 41 / 0.94);
   --border-subtle: rgb(255 255 255 / 0.12);
@@ -227,6 +254,15 @@ html[data-theme="dark"] {
   --color-selected: var(--semantic-selected);
   --color-disabled: var(--semantic-disabled);
   --color-focus: var(--semantic-focus);
+  --color-home-card: var(--home-card);
+  --color-home-card-soft: var(--home-card-soft);
+  --color-home-ink: var(--home-ink);
+  --color-home-muted: var(--home-muted);
+  --color-home-accent: var(--home-accent);
+  --color-home-accent-hover: var(--home-accent-hover);
+  --color-home-accent-soft: var(--home-accent-soft);
+  --color-home-line: var(--home-line);
+  --shadow-home-card: var(--home-card-shadow);
   --color-auth-page: var(--auth-page);
   --color-auth-sheet: var(--auth-sheet);
   --color-auth-ink: var(--auth-ink);
@@ -777,4 +813,24 @@ html.theme-switching *::after {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
+}
+
+/* The grass field the landing card sits on: a vertical wash with a soft glow
+   behind the card, so the white edge reads as lit rather than pasted on. */
+.home-field {
+  background:
+    radial-gradient(120% 78% at 50% 22%, rgb(255 255 255 / 0.22), transparent 62%),
+    linear-gradient(178deg, var(--home-field-top), var(--home-field-bottom));
+}
+
+/* The page below the hero keeps the app's own ivory world; fade the field out
+   so the seam reads as a deliberate horizon rather than two pasted slabs. */
+.home-field::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 5rem;
+  background: linear-gradient(to bottom, transparent, var(--surface-page));
+  pointer-events: none;
 }
