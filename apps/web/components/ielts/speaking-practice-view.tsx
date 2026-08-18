@@ -158,7 +158,7 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
               className={cn(
                 "rounded-full px-3 py-2 text-center transition-all",
                 activePart === part.key
-                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(7,58,53,0.18)]"
+                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(12,46,20,0.22)] dark:text-brand-950"
                   : "text-ink-soft hover:bg-hover hover:text-ink"
               )}
             >
