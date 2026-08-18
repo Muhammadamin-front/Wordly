@@ -212,7 +212,9 @@
     "findInCards": "Find matching cards",
     "openCards": "Open IELTS word cards",
     "expressionLibrary": "Expression library",
-    "dailyChallenge": "Choose one topic daily: 1 minute to plan, 2 minutes to answer, and 1 minute to review vocabulary."
+    "dailyChallenge": "Choose one topic daily: 1 minute to plan, 2 minutes to answer, and 1 minute to review vocabulary.",
+    "listeningTestEyebrow": "Listening practice",
+    "listeningTestTitle": "Hear the recording once, then answer"
   },
   "preview": {
     "sample": "Free level sample",

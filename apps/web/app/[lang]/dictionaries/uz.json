@@ -212,7 +212,9 @@
     "findInCards": "Mos kartalarni topish",
     "openCards": "IELTS so'z kartalarini ochish",
     "expressionLibrary": "Iboralar kutubxonasi",
-    "dailyChallenge": "Har kuni bitta mavzu tanlang: 1 daqiqa reja, 2 daqiqa javob va 1 daqiqa lug'at tahlili."
+    "dailyChallenge": "Har kuni bitta mavzu tanlang: 1 daqiqa reja, 2 daqiqa javob va 1 daqiqa lug'at tahlili.",
+    "listeningTestEyebrow": "Listening amaliyoti",
+    "listeningTestTitle": "Yozuvni bir marta tinglang, so'ng javob bering"
   },
   "preview": {
     "sample": "Bepul daraja namunasi",

@@ -25,6 +25,24 @@ if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => {};
 }
 
+// Nor IntersectionObserver, which framer-motion's viewport features reach for
+// the moment a `whileInView` element mounts.
+if (typeof window !== "undefined" && typeof window.IntersectionObserver !== "function") {
+  class StubIntersectionObserver implements IntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = "";
+    readonly thresholds: ReadonlyArray<number> = [];
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  }
+  window.IntersectionObserver = StubIntersectionObserver as unknown as typeof IntersectionObserver;
+  globalThis.IntersectionObserver = window.IntersectionObserver;
+}
+
 // RTL auto-cleanup needs vitest globals; we don't use them, so do it explicitly.
 afterEach(() => {
   cleanup();
