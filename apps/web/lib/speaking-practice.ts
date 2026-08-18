@@ -1,4 +1,7 @@
 import { CUE_CARD_DETAILS } from "./speaking-cue-cards";
+import { PART1_CONTENT } from "./speaking-part1-content";
+import { PART2_VOCABULARY } from "./speaking-part2-vocabulary";
+import { PART3_CONTENT } from "./speaking-part3-content";
 import {
   buildCueQuestionSamples,
   buildPart1Samples,
@@ -120,60 +123,6 @@ const DISCUSSION_TOPICS = [
   ["tradition-and-modern-life", "Tradition and Modern Life", "Discuss customs, change, heritage, and young people."],
 ] as const;
 
-const BASE_VOCABULARY: SpeakingVocabularyItem[] = [
-  {
-    word: "meaningful",
-    uz: "mazmunli, ahamiyatli",
-    definition: "important because it has personal value or purpose",
-    example: "Learning English became more meaningful when I connected it with my career goals.",
-  },
-  {
-    word: "habit",
-    uz: "odat",
-    definition: "something you do regularly, often without thinking much",
-    example: "I have built a habit of reviewing new vocabulary every evening.",
-  },
-  {
-    word: "convenient",
-    uz: "qulay",
-    definition: "easy to use or suitable for your situation",
-    example: "Online lessons are convenient because I can study after work.",
-  },
-  {
-    word: "memorable",
-    uz: "eslab qolishga arzigulik",
-    definition: "special enough to be remembered",
-    example: "The trip was memorable because I met people from different cultures.",
-  },
-];
-
-const ADVANCED_VOCABULARY: SpeakingVocabularyItem[] = [
-  {
-    word: "significant",
-    uz: "muhim, sezilarli",
-    definition: "large or important enough to be noticed",
-    example: "Public transport has a significant impact on the quality of city life.",
-  },
-  {
-    word: "long-term impact",
-    uz: "uzoq muddatli ta'sir",
-    definition: "an effect that continues for a long time",
-    example: "A good education can have a long-term impact on someone's confidence.",
-  },
-  {
-    word: "balanced approach",
-    uz: "muvozanatli yondashuv",
-    definition: "a way of dealing with something that considers different sides",
-    example: "A balanced approach is needed when children use technology.",
-  },
-  {
-    word: "widely regarded",
-    uz: "keng tan olingan",
-    definition: "believed by many people to be true or important",
-    example: "Reading is widely regarded as one of the best ways to improve vocabulary.",
-  },
-];
-
 const PHRASES = {
   starting: [
     "To be honest, I would say...",
@@ -206,40 +155,15 @@ const MISTAKES = [
   "Speaking too fast and losing pronunciation clarity.",
 ];
 
-function everydayQuestions(topic: string): string[] {
-  return [
-    `Do you enjoy talking about ${topic.toLowerCase()}? Why or why not?`,
-    `How often does ${topic.toLowerCase()} appear in your daily life?`,
-    `Did you feel differently about ${topic.toLowerCase()} when you were younger?`,
-    `What do people in your country usually think about ${topic.toLowerCase()}?`,
-    `Is ${topic.toLowerCase()} more important now than in the past?`,
-    `Would you like to learn more about ${topic.toLowerCase()} in the future?`,
-    `Can you give an example related to ${topic.toLowerCase()} from your own life?`,
-  ];
-}
-
-function discussionQuestions(topic: string): string[] {
-  return [
-    `Why do some people consider ${topic.toLowerCase()} important in modern life?`,
-    `How has ${topic.toLowerCase()} changed compared with the past?`,
-    `What are the advantages and disadvantages connected with ${topic.toLowerCase()}?`,
-    `Do you think governments should do more in this area? Why?`,
-    `How might this topic affect young people differently from older people?`,
-    `What changes do you expect to see in the next ten years?`,
-    `Can education help people make better decisions about this issue?`,
-    `Is this mostly an individual responsibility or a social responsibility?`,
-  ];
-}
-
 export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
   ...EVERYDAY_TOPICS.map(([slug, title, description], topicIndex) => ({
     slug,
     part: "part1" as const,
     title,
     description,
-    questions: everydayQuestions(title),
+    questions: [...PART1_CONTENT[slug].questions],
     sampleAnswers: buildPart1Samples(slug, topicIndex),
-    vocabulary: BASE_VOCABULARY,
+    vocabulary: [...PART1_CONTENT[slug].vocabulary],
     phrases: PHRASES,
     tips: TIPS,
     mistakes: MISTAKES,
@@ -275,7 +199,7 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
         prompts: [...CUE_CARD_DETAILS[slug].prompts],
         followUps: [...CUE_CARD_DETAILS[slug].followUps],
       },
-      vocabulary: BASE_VOCABULARY,
+      vocabulary: [...PART2_VOCABULARY[slug]],
       phrases: PHRASES,
       tips: [
         "Use the first minute to write keywords only, not full sentences.",
@@ -294,9 +218,9 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
     part: "part3" as const,
     title,
     description,
-    questions: discussionQuestions(title),
+    questions: [...PART3_CONTENT[slug].questions],
     sampleAnswers: buildPart3Samples(slug, topicIndex),
-    vocabulary: ADVANCED_VOCABULARY,
+    vocabulary: [...PART3_CONTENT[slug].vocabulary],
     phrases: {
       starting: [
         "Broadly speaking, I would argue that...",
