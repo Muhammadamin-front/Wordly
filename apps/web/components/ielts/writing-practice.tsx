@@ -79,7 +79,7 @@ export function WritingPractice({
   return (
     <div>
       <nav
-        className="sticky top-[4.5rem] z-20 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        className="sticky top-[6.25rem] z-20 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
         aria-label="IELTS Writing tasks"
       >
         <div className="grid grid-cols-2 gap-1">

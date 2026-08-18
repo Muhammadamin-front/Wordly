@@ -435,7 +435,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
       </section>
 
       <nav
-        className="sticky top-[4.5rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        className="sticky top-[6.25rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
         aria-label={t.academicParts}
       >
         <div className="grid grid-cols-3 gap-1">
@@ -748,7 +748,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   return (
     <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
       <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[0_20px_65px_rgba(27,64,55,0.12)] max-sm:bg-page">
-        <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:sticky sm:top-[calc(4rem+env(safe-area-inset-top))] sm:px-5">
+        <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:sticky sm:top-[calc(6rem+env(safe-area-inset-top))] sm:px-5">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
             <button type="button" onClick={onExit} aria-label={t.exitTest} title={t.exitTest} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-2 text-sm font-bold text-ink-soft hover:bg-hover hover:text-ink max-sm:size-10 max-sm:justify-center max-sm:px-0"><ArrowLeft className="size-4" /> <span className="max-sm:hidden">{t.readingLibrary}</span></button>
             <div className="min-w-0"><p className="truncate text-sm font-black text-ink">{test.title}</p><p className="truncate text-xs text-ink-soft">{t.passageProgress.replace("{index}", String(passageIndex + 1)).replace("{total}", String(test.passages.length)).replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</p></div>

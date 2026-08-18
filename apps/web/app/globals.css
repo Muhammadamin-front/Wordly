@@ -4,18 +4,18 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Vocora — Uzbek emerald, turquoise tile, ivory paper, and warm brass. */
-  --color-brand-50: #eef8f4;
-  --color-brand-100: #d8eee6;
-  --color-brand-200: #b4ddcf;
-  --color-brand-300: #83c5b1;
-  --color-brand-400: #4ca78f;
-  --color-brand-500: #288773;
-  --color-brand-600: #176b5c;
-  --color-brand-700: #11564b;
-  --color-brand-800: #0c453d;
-  --color-brand-900: #073a35;
-  --color-brand-950: #032925;
+  /* Vocora — grass green from the landing field, ivory paper, warm brass. */
+  --color-brand-50: #f1f8ee;
+  --color-brand-100: #ddf0d6;
+  --color-brand-200: #bce3ae;
+  --color-brand-300: #92d081;
+  --color-brand-400: #67b951;
+  --color-brand-500: #489d34;
+  --color-brand-600: #2f7d28;
+  --color-brand-700: #266621;
+  --color-brand-800: #1f521c;
+  --color-brand-900: #1a4419;
+  --color-brand-950: #0c260d;
 
   --color-accent-300: #e4c47a;
   --color-accent-400: #d2a84f;
@@ -125,18 +125,18 @@
 :root {
   --font-manrope: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  --surface-page: #f3f5ef;
-  --surface-card: rgb(252 253 248 / 0.84);
-  --surface-raised: rgb(255 255 252 / 0.97);
-  --border-subtle: rgb(10 67 57 / 0.14);
-  --text-primary: #062f2a;
-  --text-secondary: #536660;
+  --surface-page: #eef5ea;
+  --surface-card: rgb(255 255 255 / 0.88);
+  --surface-raised: rgb(255 255 255 / 0.98);
+  --border-subtle: rgb(15 42 23 / 0.12);
+  --text-primary: #0f2a17;
+  --text-secondary: #56695c;
   --text-inverse: #ffffff;
-  --semantic-primary: #073a35;
-  --semantic-primary-hover: #0c453d;
-  --semantic-hover: rgb(7 58 53 / 0.06);
-  --semantic-selected: rgb(23 107 92 / 0.12);
-  --semantic-disabled: rgb(83 102 96 / 0.42);
+  --semantic-primary: #2f7d28;
+  --semantic-primary-hover: #266621;
+  --semantic-hover: rgb(15 42 23 / 0.06);
+  --semantic-selected: rgb(47 125 40 / 0.12);
+  --semantic-disabled: rgb(86 105 92 / 0.42);
   --semantic-focus: #b8892f;
 
   /* Home hero — a grass-green field carrying one white card. Its own palette:
@@ -153,14 +153,16 @@
   --home-line: rgb(15 42 23 / 0.10);
   --home-card-shadow: 0 32px 90px rgb(12 46 20 / 0.28), 0 4px 12px rgb(12 46 20 / 0.12);
   --home-nav-scrim: rgb(255 255 255 / 0.86);
+  /* The landing card's recipe — green-tinted, real offset, soft blur — scaled
+     down for surfaces that repeat, so a list of cards does not read as heroes. */
   --shadow-card:
-    0 1px 2px rgb(19 60 51 / 0.04),
-    0 14px 36px rgb(30 72 63 / 0.07),
-    inset 0 1px 0 rgb(255 255 255 / 0.96);
+    0 2px 4px rgb(12 46 20 / 0.06),
+    0 16px 44px rgb(12 46 20 / 0.13),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
   --shadow-raised:
-    0 1px 2px rgb(19 60 51 / 0.04),
-    0 22px 56px rgb(30 72 63 / 0.1),
-    inset 0 1px 0 rgb(255 255 255 / 0.92);
+    0 4px 12px rgb(12 46 20 / 0.1),
+    0 28px 74px rgb(12 46 20 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
 
   /* Auth screens. The split card is its own small palette: pale paper against
      the paper-cut foliage, so it does not inherit the app's tinted surfaces. */
@@ -183,7 +185,7 @@
 }
 
 [data-theme="dark"] {
-  --surface-page: #071410;
+  --surface-page: #0b1a10;
   --home-field-top: #1d5c2b;
   --home-field-bottom: #0d3418;
   --home-card: #0d221a;
@@ -196,14 +198,14 @@
   --home-line: rgb(255 255 255 / 0.12);
   --home-card-shadow: 0 32px 90px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
   --home-nav-scrim: rgb(13 34 26 / 0.9);
-  --surface-card: rgb(13 36 31 / 0.82);
-  --surface-raised: rgb(18 48 41 / 0.94);
+  --surface-card: rgb(18 41 28 / 0.84);
+  --surface-raised: rgb(23 53 34 / 0.95);
   --border-subtle: rgb(255 255 255 / 0.12);
-  --text-primary: #f7f4eb;
-  --text-secondary: #aebdb7;
+  --text-primary: #f2f8ef;
+  --text-secondary: #9fb6a5;
   --text-inverse: #06130f;
-  --semantic-primary: #62d6bc;
-  --semantic-primary-hover: #8ce4d0;
+  --semantic-primary: #67b951;
+  --semantic-primary-hover: #92d081;
   --semantic-hover: rgb(255 255 255 / 0.075);
   --semantic-selected: rgb(98 214 188 / 0.16);
   --semantic-disabled: rgb(174 189 183 / 0.4);
@@ -222,8 +224,14 @@
   --auth-glass-shadow:
     0 30px 80px rgb(0 0 0 / 0.55),
     inset 0 1px 0 rgb(255 255 255 / 0.09);
-  --shadow-card: 0 22px 70px rgb(0 0 0 / 0.38), inset 0 1px 0 rgb(255 255 255 / 0.09);
-  --shadow-raised: 0 34px 90px rgb(0 0 0 / 0.42), inset 0 1px 0 rgb(255 255 255 / 0.11);
+  --shadow-card:
+    0 2px 4px rgb(0 0 0 / 0.24),
+    0 18px 52px rgb(2 14 6 / 0.42),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  --shadow-raised:
+    0 4px 12px rgb(0 0 0 / 0.3),
+    0 30px 82px rgb(2 14 6 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.1);
 }
 
 html[data-theme="light"] {

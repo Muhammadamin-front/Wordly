@@ -1,7 +1,9 @@
 import { trackApiFailure } from "@/lib/analytics";
 
+// "api" only resolves inside the compose network; outside it, server-side
+// fetches must reach the published port. Matches next.config.ts.
 const serverApiUrl =
-  process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://api:8000";
+  process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 export const API_URL = typeof window === "undefined" ? serverApiUrl : "";
 
 export interface Profile {

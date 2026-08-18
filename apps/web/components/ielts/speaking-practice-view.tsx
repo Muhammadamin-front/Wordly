@@ -148,7 +148,7 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
         </div>
       </section>
 
-      <div className="sticky top-[4.5rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md">
+      <div className="sticky top-[6.25rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md">
         <div className="grid grid-cols-3 gap-1">
           {parts.map((part) => (
             <button
