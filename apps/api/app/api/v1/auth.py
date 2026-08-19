@@ -16,11 +16,13 @@ from app.models.user import Profile, User
 from app.schemas.auth import (
     AppleLoginRequest,
     ForgotPasswordRequest,
+    GithubLoginRequest,
     GoogleLoginRequest,
     LoginRequest,
     MessageOut,
     RegisterRequest,
     ResetPasswordRequest,
+    TelegramLoginRequest,
     TokenPair,
     UserOut,
     VerifyEmailRequest,
@@ -30,6 +32,8 @@ from app.services import referrals
 from app.services.emailer import EmailDeliveryError, Emailer, account_email, get_emailer
 from app.services.google_oauth import GoogleVerifier, get_google_verifier
 from app.services.apple_oauth import AppleVerifier, get_apple_verifier
+from app.services.github_oauth import GithubOAuthClient, get_github_oauth_client
+from app.services.telegram_oauth import TelegramVerifier, get_telegram_verifier
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -225,6 +229,87 @@ async def apple_login(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
     if user.email_verified_at is None:
         user.email_verified_at = utcnow()
+    return await build_token_pair(db, user, request, response)
+
+
+@router.post("/github", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+async def github_login(
+    payload: GithubLoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    oauth_client: GithubOAuthClient = Depends(get_github_oauth_client),
+):
+    identity = await oauth_client.exchange(payload.code, payload.redirect_uri)
+    if identity is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="GitHub sign-in failed"
+        )
+
+    user = await db.scalar(select(User).where(User.github_id == identity.sub))
+    if user is None:
+        if not identity.email or not identity.email_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="GitHub did not provide a verified email for this account",
+            )
+        email = identity.email.lower()
+        user = await db.scalar(select(User).where(User.email == email))
+        if user is not None:
+            user.github_id = identity.sub  # GitHub verified this email before linking it.
+        else:
+            user = User(email=email, github_id=identity.sub, email_verified_at=utcnow())
+            user.profile = Profile(
+                display_name=(identity.name or email.split("@")[0])[:80],
+                avatar_url=identity.avatar_url,
+            )
+            db.add(user)
+        await db.flush()
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
+    if user.email_verified_at is None:
+        user.email_verified_at = utcnow()
+    return await build_token_pair(db, user, request, response)
+
+
+@router.post("/telegram", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+async def telegram_login(
+    payload: TelegramLoginRequest,
+    request: Request,
+    response: Response,
+    db: AsyncSession = Depends(get_db),
+    verifier: TelegramVerifier = Depends(get_telegram_verifier),
+):
+    identity = verifier.verify(payload.model_dump(exclude_none=True))
+    if identity is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Telegram sign-in failed"
+        )
+
+    user = await db.scalar(select(User).where(User.telegram_id == identity.sub))
+    if user is None:
+        # Telegram accounts carry no email; a stable synthetic address keeps
+        # every other flow (which assumes User.email exists) working without
+        # widening the schema. It is never a real inbox — nothing is sent to
+        # it. Unlike Google/Apple/GitHub, a matching email here proves
+        # nothing about identity (it's synthesized, not Telegram-verified),
+        # so it's a conflict to reject, not an account to silently link.
+        email = f"telegram-{identity.sub}@users.vocora.uz"
+        if await db.scalar(select(User.id).where(User.email == email)) is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Account already exists"
+            )
+        display_name = (
+            " ".join(filter(None, [identity.first_name, identity.last_name])).strip()
+            or identity.username
+            or "Vocora learner"
+        )
+        user = User(email=email, telegram_id=identity.sub, email_verified_at=utcnow())
+        user.profile = Profile(display_name=display_name[:80], avatar_url=identity.photo_url)
+        db.add(user)
+        await db.flush()
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
     return await build_token_pair(db, user, request, response)
 
 

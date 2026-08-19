@@ -18,6 +18,8 @@ class User(Base):
     password_hash: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     google_id: Mapped[Optional[str]] = mapped_column(String(64), unique=True, nullable=True)
     apple_id: Mapped[Optional[str]] = mapped_column(String(255), unique=True, nullable=True)
+    github_id: Mapped[Optional[str]] = mapped_column(String(64), unique=True, nullable=True)
+    telegram_id: Mapped[Optional[str]] = mapped_column(String(64), unique=True, nullable=True)
     referral_code: Mapped[Optional[str]] = mapped_column(String(12), unique=True, nullable=True)
     email_verified_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
