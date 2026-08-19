@@ -9,10 +9,14 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { authApi } from "@/lib/api";
+import { startGithubSignIn } from "@/lib/github-oauth";
+import { startTelegramSignIn } from "@/lib/telegram-oauth";
 
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const APPLE_CLIENT_ID = process.env.NEXT_PUBLIC_APPLE_CLIENT_ID;
 const APPLE_REDIRECT_URI = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI;
+const GITHUB_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+const TELEGRAM_BOT_ID = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
 
 type AppleAuthorization = {
   authorization: { id_token: string };
@@ -46,6 +50,26 @@ function AppleMark() {
   );
 }
 
+function GithubMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="size-5 fill-current">
+      <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.11.78-.25.78-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.09-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.2-1.49 3.17-1.18 3.17-1.18.64 1.59.24 2.77.12 3.06.74.8 1.18 1.83 1.18 3.09 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .3.21.67.79.55A10.51 10.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+    </svg>
+  );
+}
+
+function TelegramMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="size-5">
+      <circle cx="12" cy="12" r="11.5" fill="#29A9EA" />
+      <path
+        fill="#fff"
+        d="M17.53 6.87 15.6 17.2c-.14.66-.53.82-1.08.51l-2.98-2.2-1.44 1.38c-.16.16-.29.29-.6.29l.22-3.04 5.53-5c.24-.21-.05-.33-.37-.12l-6.84 4.3-2.94-.92c-.64-.2-.65-.64.13-.95l11.5-4.43c.53-.2 1 .13.8.93Z"
+      />
+    </svg>
+  );
+}
+
 export function SocialLoginButtons({
   lang,
   auth,
@@ -62,7 +86,12 @@ export function SocialLoginButtons({
   const [error, setError] = useState<string | null>(null);
   const { applySession } = useAuth();
   const router = useRouter();
-  const socialEnabled = Boolean(GOOGLE_CLIENT_ID || (APPLE_CLIENT_ID && APPLE_REDIRECT_URI));
+  const socialEnabled = Boolean(
+    GOOGLE_CLIENT_ID ||
+      (APPLE_CLIENT_ID && APPLE_REDIRECT_URI) ||
+      GITHUB_CLIENT_ID ||
+      TELEGRAM_BOT_ID
+  );
 
   const continueWith = useCallback(
     (pair: Awaited<ReturnType<typeof authApi.google>>) => {
@@ -111,14 +140,16 @@ export function SocialLoginButtons({
     }
 
     // If the script loaded but produced nothing usable, fall back to our own
-    // mark rather than leaving an empty tile. Google inserts an iframe even
-    // when it refuses to render — an unauthorised JavaScript origin is the
-    // common case — so an existing child is not proof that a button is there;
-    // measure it.
+    // mark rather than leaving an empty tile. On a misconfigured or
+    // unauthorised JavaScript origin, Google's SDK still builds a
+    // full-size, correctly positioned button shell (so measuring that
+    // wrapper always looks fine) — only the "G" mark inside it collapses to
+    // 0x0, because the origin-gated styling that would size it never
+    // arrives. Measure the mark itself, not the shell around it.
     const check = window.setTimeout(() => {
-      const rendered = container.firstElementChild;
-      const height = rendered?.getBoundingClientRect().height ?? 0;
-      if (!rendered || height < 8) setGoogleScriptFailed(true);
+      const mark = container.querySelector("svg, img");
+      const rect = mark?.getBoundingClientRect();
+      if (!rect || rect.width < 8 || rect.height < 8) setGoogleScriptFailed(true);
     }, 1500);
     return () => window.clearTimeout(check);
   }, [googleReady, handleGoogleCredential, lang]);
@@ -151,6 +182,22 @@ export function SocialLoginButtons({
     } finally {
       setAppleLoading(false);
     }
+  }
+
+  function handleGithubSignIn() {
+    if (!GITHUB_CLIENT_ID) return;
+    setError(null);
+    // A full-page redirect, not a popup: GitHub's OAuth app flow needs a
+    // server-held client secret to exchange the code, so there's no
+    // same-page JS SDK the way Google/Apple offer. The callback route picks
+    // this back up and finishes the sign-in.
+    startGithubSignIn(GITHUB_CLIENT_ID, lang);
+  }
+
+  function handleTelegramSignIn() {
+    if (!TELEGRAM_BOT_ID) return;
+    setError(null);
+    startTelegramSignIn(TELEGRAM_BOT_ID, lang);
   }
 
   if (!socialEnabled) return null;
@@ -207,6 +254,28 @@ export function SocialLoginButtons({
             ) : (
               <AppleMark />
             )}
+          </button>
+        )}
+        {GITHUB_CLIENT_ID && (
+          <button
+            type="button"
+            onClick={handleGithubSignIn}
+            aria-label={auth.githubButton}
+            title={auth.githubButton}
+            className="grid size-[3.4rem] place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
+          >
+            <GithubMark />
+          </button>
+        )}
+        {TELEGRAM_BOT_ID && (
+          <button
+            type="button"
+            onClick={handleTelegramSignIn}
+            aria-label={auth.telegramButton}
+            title={auth.telegramButton}
+            className="grid size-[3.4rem] place-items-center overflow-hidden rounded-2xl border border-auth-line bg-auth-field transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
+          >
+            <TelegramMark />
           </button>
         )}
       </div>

@@ -76,6 +76,9 @@ class Settings(BaseSettings):
     # OAuth
     GOOGLE_CLIENT_ID: Optional[str] = None
     APPLE_CLIENT_ID: Optional[str] = None
+    GITHUB_CLIENT_ID: Optional[str] = None
+    GITHUB_CLIENT_SECRET: Optional[str] = None
+    TELEGRAM_BOT_TOKEN: Optional[str] = None
 
     # AI. Features are disabled gracefully when no provider key is configured.
     AI_MAX_TOKENS: int = 1024

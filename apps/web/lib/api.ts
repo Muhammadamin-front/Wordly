@@ -181,6 +181,15 @@ export const authApi = {
       body: { id_token: idToken, display_name: displayName },
     }),
 
+  github: (code: string, redirectUri: string) =>
+    apiFetch<TokenPair>("/auth/github", {
+      method: "POST",
+      body: { code, redirect_uri: redirectUri },
+    }),
+
+  telegram: (fields: Record<string, string>) =>
+    apiFetch<TokenPair>("/auth/telegram", { method: "POST", body: fields }),
+
   refresh: () => apiFetch<TokenPair>("/auth/refresh", { method: "POST", body: {} }),
 
   logout: () => apiFetch<{ message: string }>("/auth/logout", { method: "POST", body: {} }),

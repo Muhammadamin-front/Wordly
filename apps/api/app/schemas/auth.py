@@ -26,6 +26,21 @@ class AppleLoginRequest(BaseModel):
     display_name: Optional[str] = Field(default=None, max_length=80)
 
 
+class GithubLoginRequest(BaseModel):
+    code: str = Field(min_length=1, max_length=255)
+    redirect_uri: str = Field(min_length=10, max_length=2048)
+
+
+class TelegramLoginRequest(BaseModel):
+    id: str = Field(min_length=1, max_length=32)
+    first_name: Optional[str] = Field(default=None, max_length=255)
+    last_name: Optional[str] = Field(default=None, max_length=255)
+    username: Optional[str] = Field(default=None, max_length=255)
+    photo_url: Optional[str] = Field(default=None, max_length=2048)
+    auth_date: str = Field(min_length=1, max_length=20)
+    hash: str = Field(min_length=10, max_length=255)
+
+
 class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
