@@ -7,13 +7,12 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { authApi } from "@/lib/api";
+import { ApiError, authApi } from "@/lib/api";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { readTelegramCallback } from "@/lib/telegram-oauth";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Status = "checking" | "failed";
-
-const TELEGRAM_FIELDS = ["id", "first_name", "last_name", "username", "photo_url", "auth_date", "hash"];
 
 const MISSING_FIELDS = new Error("missing_telegram_fields");
 
@@ -33,12 +32,8 @@ export function TelegramCallbackView({ lang, auth }: { lang: string; auth: Dicti
     ranRef.current = true;
 
     async function run() {
-      const fields: Record<string, string> = {};
-      for (const key of TELEGRAM_FIELDS) {
-        const value = searchParams.get(key);
-        if (value) fields[key] = value;
-      }
-      if (!fields.id || !fields.hash) throw MISSING_FIELDS;
+      const fields = readTelegramCallback(searchParams, window.location.hash);
+      if (!fields) throw MISSING_FIELDS;
 
       const startLang = searchParams.get("lang") || lang;
       const pair = await authApi.telegram(fields);
@@ -49,7 +44,12 @@ export function TelegramCallbackView({ lang, auth }: { lang: string; auth: Dicti
     }
 
     run().catch((cause) => {
-      if (cause !== MISSING_FIELDS) setError(authErrorMessage(cause, auth));
+      // A 401 here means the provider rejected the sign-in, so the generic
+      // "incorrect email or password" that maps to would be nonsense on a
+      // page with no email or password on it — fall through to the
+      // provider-specific message instead.
+      const unhelpful = cause === MISSING_FIELDS || (cause instanceof ApiError && cause.status === 401);
+      if (!unhelpful) setError(authErrorMessage(cause, auth));
       setStatus("failed");
     });
   }, [applySession, auth, lang, router, searchParams]);

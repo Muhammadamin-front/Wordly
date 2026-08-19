@@ -24,6 +24,11 @@ EMAIL_REPLY_TO=support@vocora.uz
 NEXT_PUBLIC_API_URL=https://api.vocora.uz  # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
+NEXT_PUBLIC_GITHUB_CLIENT_ID=...           # optional: GitHub sign-in
+GITHUB_CLIENT_ID=...                        # same client id, API side
+GITHUB_CLIENT_SECRET=...                    # API side only, never in the bundle
+NEXT_PUBLIC_TELEGRAM_BOT_ID=...            # optional: Telegram sign-in (digits before ":" in the bot token)
+TELEGRAM_BOT_TOKEN=...                      # API side only, never in the bundle
 GEMINI_API_KEY=...                          # optional: AI tutor (off without an LLM key)
 # Optional alternative LLM provider. Charges can apply when configured.
 BEDROCK_API_KEY=...
@@ -58,6 +63,17 @@ Notes that will bite you if skipped:
   redirect URIs empty for this implementation. Use the same Web application
   client ID for `NEXT_PUBLIC_GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_ID`; no Google
   client secret is used or stored by Vocora.
+- Every variable above belongs in **this file** — the repo-root `.env` that
+  `docker compose` interpolates. `apps/api/.env` and `apps/web/.env.local` are
+  for local development only; the containers never read them, so a provider
+  configured there alone fails in production with no obvious error.
+- GitHub sign-in: register an OAuth App with Authorization callback URL
+  `https://vocora.uz/uz/auth/github/callback` — exactly that path, including
+  `/uz`, whichever language the learner starts in (GitHub allows one callback
+  URL, so the locale is carried in `state` instead).
+- Telegram sign-in: `/setdomain` the bot to `vocora.uz` in @BotFather.
+  `NEXT_PUBLIC_TELEGRAM_BOT_ID` is the numeric part of the token before the
+  colon; the full token stays server-side as `TELEGRAM_BOT_TOKEN`.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
   cookies (`COOKIE_SECURE=true`).
 - Checkout is exposed only for fully configured providers. Sandbox activation
