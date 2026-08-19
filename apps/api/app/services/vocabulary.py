@@ -5,7 +5,7 @@ import unicodedata
 from typing import List, Optional, Tuple
 from uuid import UUID, uuid4
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, select, union
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.vocabulary import (
@@ -158,13 +158,17 @@ async def list_words(
         )
     if q:
         needle = "%{}%".format(q.lower())
-        query = query.outerjoin(WordSense, WordSense.word_id == Word.id).where(
-            or_(
-                func.lower(Word.headword).like(needle),
-                func.lower(WordSense.translation_uz).like(needle),
-                func.lower(WordSense.translation_ru).like(needle),
-            )
-        ).distinct()
+        # A join + OR across both tables can't use either trigram index — the
+        # planner has to hash-join everything first, then filter. Three
+        # separately indexed id lookups, combined with UNION, let each branch
+        # hit its own GIN index and only join the (small) matching id set
+        # back to words.
+        matching_ids = union(
+            select(Word.id).where(func.lower(Word.headword).like(needle)),
+            select(WordSense.word_id).where(func.lower(WordSense.translation_uz).like(needle)),
+            select(WordSense.word_id).where(func.lower(WordSense.translation_ru).like(needle)),
+        ).subquery()
+        query = query.where(Word.id.in_(select(matching_ids.c.id)))
 
     total = (
         await db.scalar(select(func.count()).select_from(query.subquery()))

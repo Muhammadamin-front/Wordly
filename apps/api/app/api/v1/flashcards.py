@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, UploadFile, status
 from fastapi.responses import StreamingResponse
-from sqlalchemy import func, select
+from sqlalchemy import func, select, union
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -313,15 +313,13 @@ async def list_cards(
     base = select(Card).where(Card.user_id == user.id, Card.word_id.isnot(None))
     if q:
         needle = "%{}%".format(q.lower())
-        base = (
-            base.join(Word, Word.id == Card.word_id)
-            .outerjoin(WordSense, WordSense.word_id == Word.id)
-            .where(
-                func.lower(Word.headword).like(needle)
-                | func.lower(WordSense.translation_uz).like(needle)
-            )
-            .distinct()
-        )
+        # See services.vocabulary.list_words: separately indexed id lookups
+        # combined with UNION let each branch use its own trigram index.
+        matching_ids = union(
+            select(Word.id).where(func.lower(Word.headword).like(needle)),
+            select(WordSense.word_id).where(func.lower(WordSense.translation_uz).like(needle)),
+        ).subquery()
+        base = base.where(Card.word_id.in_(select(matching_ids.c.id)))
     total = (await db.scalar(select(func.count()).select_from(base.subquery()))) or 0
     cards = (
         await db.scalars(
