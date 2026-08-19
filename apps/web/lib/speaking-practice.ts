@@ -1,6 +1,9 @@
 import { CUE_CARD_DETAILS } from "./speaking-cue-cards";
+import { PART1_COACHING } from "./speaking-part1-coaching";
 import { PART1_CONTENT } from "./speaking-part1-content";
+import { PART2_COACHING } from "./speaking-part2-coaching";
 import { PART2_VOCABULARY } from "./speaking-part2-vocabulary";
+import { PART3_COACHING } from "./speaking-part3-coaching";
 import { PART3_CONTENT } from "./speaking-part3-content";
 import {
   buildCueQuestionSamples,
@@ -123,73 +126,50 @@ const DISCUSSION_TOPICS = [
   ["tradition-and-modern-life", "Tradition and Modern Life", "Discuss customs, change, heritage, and young people."],
 ] as const;
 
-const PHRASES = {
-  starting: [
-    "To be honest, I would say...",
-    "That's an interesting question because...",
-    "From my personal experience...",
-  ],
-  extending: [
-    "The main reason is that...",
-    "For example, a lot of people in Uzbekistan...",
-    "Another point worth mentioning is...",
-  ],
-  concluding: [
-    "So overall, I think...",
-    "That's why I would describe it as...",
-    "In the long run, this can...",
-  ],
-};
-
-const TIPS = [
-  "Answer directly first, then add a reason and a small example. Uzbek: avval qisqa javob, keyin sabab va misol.",
-  "Use natural fillers only when needed: 'Well', 'Let me think', 'I suppose'. Do not repeat them too often.",
-  "Compare past and present when possible: this shows range and makes your answer longer naturally.",
-  "Avoid memorised speeches. Use flexible phrases and adapt them to the exact question.",
-];
-
-const MISTAKES = [
-  "Giving only one sentence with no reason or example.",
-  "Translating directly from Uzbek and making the sentence sound unnatural.",
-  "Using advanced words without knowing the exact meaning.",
-  "Speaking too fast and losing pronunciation clarity.",
-];
-
+// Phrases, tips and mistakes used to be three shared constants rendered
+// identically on all 70 topics. They are now written per topic; see
+// speaking-part{1,2,3}-coaching.ts.
 export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
-  ...EVERYDAY_TOPICS.map(([slug, title, description], topicIndex) => ({
+  ...EVERYDAY_TOPICS.map(([slug, title, description]) => ({
     slug,
     part: "part1" as const,
     title,
     description,
     questions: [...PART1_CONTENT[slug].questions],
-    sampleAnswers: buildPart1Samples(slug, topicIndex),
+    // One model answer per question, in the same order; see
+    // speaking-part1-samples.ts for why they are no longer assembled from
+    // shared sentence pools.
+    sampleAnswers: buildPart1Samples(slug),
     vocabulary: [...PART1_CONTENT[slug].vocabulary],
-    phrases: PHRASES,
-    tips: TIPS,
-    mistakes: MISTAKES,
+    phrases: PART1_COACHING[slug].phrases,
+    tips: [...PART1_COACHING[slug].tips],
+    mistakes: [...PART1_COACHING[slug].mistakes],
   })),
-  ...CUE_TOPICS.map(([slug, title, theme], topicIndex) => {
-    const sampleAnswers = buildCueQuestionSamples(slug, topicIndex);
+  ...CUE_TOPICS.map(([slug, title]) => {
+    const [longTurn, planNotes, planLanguage] = buildCueQuestionSamples(slug);
+    const coaching = PART2_COACHING[slug];
     return {
       slug,
       part: "part2" as const,
       title,
-      description: `Cue-card practice about ${theme}, with a one-minute plan and a two-minute answer.`,
+      // Written per card. Every card used to share one template built from the
+      // theme slug, so all twenty read "Cue-card practice about ...".
+      description: coaching.description,
       // A cue card is one long turn, so there is a single question: the card.
       // The other two entries were preparation guidance sitting in a list the
       // cue-card view never renders, and they re-used the theme slug, producing
       // "this people story" and "this place story".
       questions: [title],
-      sampleAnswers: [sampleAnswers[0]],
-      cueSample: sampleAnswers[0],
+      sampleAnswers: [longTurn],
+      cueSample: longTurn,
       planning: [
         {
-          question: "What details would make this answer more personal?",
-          answer: sampleAnswers[1],
+          question: "What would you write in the one minute?",
+          answer: planNotes,
         },
         {
-          question: "Which vocabulary will help you describe it clearly?",
-          answer: sampleAnswers[2],
+          question: "Which language will help you describe it clearly?",
+          answer: planLanguage,
         },
       ],
       cueCard: {
@@ -200,56 +180,24 @@ export const SPEAKING_PRACTICE_TOPICS: SpeakingTopic[] = [
         followUps: [...CUE_CARD_DETAILS[slug].followUps],
       },
       vocabulary: [...PART2_VOCABULARY[slug]],
-      phrases: PHRASES,
-      tips: [
-        "Use the first minute to write keywords only, not full sentences.",
-        "Organise your answer as past → details → feelings → final reflection.",
-        ...TIPS.slice(1, 3),
-      ],
-      mistakes: [
-        "Reading your notes like a script instead of speaking naturally.",
-        "Finishing after 40 seconds because you give only basic facts.",
-        ...MISTAKES.slice(1, 3),
-      ],
+      phrases: coaching.phrases,
+      tips: [...coaching.tips],
+      mistakes: [...coaching.mistakes],
     };
   }),
-  ...DISCUSSION_TOPICS.map(([slug, title, description], topicIndex) => ({
+  ...DISCUSSION_TOPICS.map(([slug, title, description]) => ({
     slug,
     part: "part3" as const,
     title,
     description,
     questions: [...PART3_CONTENT[slug].questions],
-    sampleAnswers: buildPart3Samples(slug, topicIndex),
+    // One model answer per question, in the same order; see
+    // speaking-part3-samples.ts.
+    sampleAnswers: buildPart3Samples(slug),
     vocabulary: [...PART3_CONTENT[slug].vocabulary],
-    phrases: {
-      starting: [
-        "Broadly speaking, I would argue that...",
-        "It depends on the context, but in many cases...",
-        "There are two sides to this issue.",
-      ],
-      extending: [
-        "One possible explanation is that...",
-        "This can be seen in the way...",
-        "At the same time, we should not ignore...",
-      ],
-      concluding: [
-        "For that reason, I believe...",
-        "So a balanced approach would be...",
-        "Ultimately, the long-term impact depends on...",
-      ],
-    },
-    tips: [
-      "Part 3 needs analysis, not personal stories only. Explain causes, effects, and comparisons.",
-      "Use cautious language: 'tends to', 'can be', 'in many cases', 'to some extent'.",
-      "Develop both sides briefly before giving your final opinion.",
-      "Use examples from society, education, technology, or Uzbekistan when relevant.",
-    ],
-    mistakes: [
-      "Answering Part 3 like Part 1 with short personal comments only.",
-      "Giving a strong opinion without explaining the reason.",
-      "Using memorised linking phrases that do not match the question.",
-      "Ignoring the plural or abstract wording of the question.",
-    ],
+    phrases: PART3_COACHING[slug].phrases,
+    tips: [...PART3_COACHING[slug].tips],
+    mistakes: [...PART3_COACHING[slug].mistakes],
     advanced: true,
   })),
 ];
