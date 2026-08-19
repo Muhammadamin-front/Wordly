@@ -63,7 +63,9 @@ export function WordFlipCard({
   // rotation read as a physical flip rather than a mirror), but the actual
   // show/hide is driven directly by `flipped` via `visibility`, so a face is
   // guaranteed hidden regardless of whether the browser computed the
-  // geometry correctly.
+  // geometry correctly. Also split overflow-hidden onto an inner wrapper —
+  // WebKit separately ignores backface-visibility on an element that also
+  // clips its own overflow.
   const faceClass = "absolute inset-0";
   const faceStyle = (hiddenWhen: boolean): CSSProperties => ({
     backfaceVisibility: "hidden",
