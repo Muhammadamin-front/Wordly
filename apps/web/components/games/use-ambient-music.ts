@@ -7,7 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
  *  copyright. Slow-crossfading seventh-chord pads through a lowpass filter,
  *  with an occasional soft octave "sparkle" from the current chord. */
 
-const STORAGE_KEY = "wordly:game-music";
+const STORAGE_KEY = "vocora:game-music";
+const LEGACY_STORAGE_KEY = "wordly:game-music";
 const MASTER_VOLUME = 0.07;
 
 // A calm loop: Am7 → Fmaj7 → Cmaj7 → G6 (frequencies in Hz, low-mid register).
@@ -135,7 +136,7 @@ export function useAmbientMusic(active: boolean) {
   const engineRef = useRef<AmbientEngine | null>(null);
   // Safe on the client only; the toggle is never part of server-rendered HTML.
   const [enabled, setEnabled] = useState(
-    () => typeof window === "undefined" || window.localStorage.getItem(STORAGE_KEY) !== "off"
+    () => typeof window === "undefined" || (window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_STORAGE_KEY)) !== "off"
   );
 
   useEffect(() => {

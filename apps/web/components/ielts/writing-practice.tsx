@@ -79,7 +79,7 @@ export function WritingPractice({
   return (
     <div>
       <nav
-        className="sticky top-[4.5rem] z-20 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        className="sticky top-[6.25rem] z-20 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
         aria-label="IELTS Writing tasks"
       >
         <div className="grid grid-cols-2 gap-1">
@@ -92,7 +92,7 @@ export function WritingPractice({
               className={cn(
                 "rounded-full px-3 py-2 text-center transition-all",
                 taskType === task.key
-                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(7,58,53,0.18)]"
+                  ? "bg-primary text-white shadow-[0_10px_24px_rgba(12,46,20,0.22)] dark:text-brand-950"
                   : "text-ink-soft hover:bg-hover hover:text-ink"
               )}
             >

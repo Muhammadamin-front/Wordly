@@ -416,17 +416,47 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
 }
 
 
-def band_from_ratio(ratio: float) -> float:
-    """Map a correct-answer ratio to an approximate IELTS band (0.5 steps)."""
-    table = [
-        (0.95, 9.0), (0.9, 8.5), (0.83, 8.0), (0.75, 7.5), (0.67, 7.0),
-        (0.58, 6.5), (0.5, 6.0), (0.42, 5.5), (0.33, 5.0), (0.25, 4.5),
-        (0.17, 4.0), (0.08, 3.5),
-    ]
-    for threshold, band in table:
+# Published raw-score conversions for the 40-question papers, expressed as the
+# ratio at the bottom of each band. The previous single table was materially
+# more generous than either — it returned band 6.0 for half marks, where the
+# Academic Reading paper needs 23/40 (0.575) and awards 20/40 a 5.5 — so
+# practice scores flattered the learner and the stored "best band" was wrong.
+_ACADEMIC_READING_BANDS = [
+    (0.975, 9.0), (0.925, 8.5), (0.875, 8.0), (0.825, 7.5), (0.750, 7.0),
+    (0.675, 6.5), (0.575, 6.0), (0.475, 5.5), (0.375, 5.0), (0.325, 4.5),
+    (0.250, 4.0), (0.200, 3.5), (0.150, 3.0),
+]
+
+# General Training Reading is marked more strictly than Academic.
+_GENERAL_READING_BANDS = [
+    (1.000, 9.0), (0.975, 8.5), (0.900, 8.0), (0.850, 7.5), (0.775, 7.0),
+    (0.700, 6.5), (0.600, 6.0), (0.375, 5.5), (0.375, 5.0), (0.300, 4.5),
+    (0.225, 4.0), (0.150, 3.5), (0.100, 3.0),
+]
+
+_LISTENING_BANDS = [
+    (0.975, 9.0), (0.925, 8.5), (0.875, 8.0), (0.800, 7.5), (0.750, 7.0),
+    (0.650, 6.5), (0.575, 6.0), (0.450, 5.5), (0.400, 5.0), (0.325, 4.5),
+    (0.250, 4.0), (0.200, 3.5), (0.150, 3.0),
+]
+
+_BAND_TABLES = {
+    "reading": _ACADEMIC_READING_BANDS,
+    "general_reading": _GENERAL_READING_BANDS,
+    "listening": _LISTENING_BANDS,
+}
+
+# Below this many questions one answer moves the band by a whole step or more,
+# so the figure is reported as approximate and the UI shows a range.
+RELIABLE_QUESTION_COUNT = 20
+
+
+def band_from_ratio(ratio: float, kind: str = "reading") -> float:
+    """Map a correct-answer ratio to an IELTS band using the published tables."""
+    for threshold, band in _BAND_TABLES.get(kind, _ACADEMIC_READING_BANDS):
         if ratio >= threshold:
             return band
-    return 3.0
+    return 2.5
 
 
 def _half_band(value: Any) -> float:
@@ -451,8 +481,9 @@ _COMPREHENSION_SCHEMA = {
                     "prompt": {"type": "string"},
                     "options": {"type": "array", "items": {"type": "string"}},
                     "answer_index": {"type": "integer"},
+                    "explanation": {"type": "string"},
                 },
-                "required": ["prompt", "options", "answer_index"],
+                "required": ["prompt", "options", "answer_index", "explanation"],
                 "additionalProperties": False,
             },
         },
@@ -469,7 +500,9 @@ _READING_PROMPT = (
     "the first half TRUE/FALSE/NOT GIVEN statements (options exactly "
     "['TRUE', 'FALSE', 'NOT GIVEN'] — statement in the prompt, answer_index 0-based; include "
     "at least one NOT GIVEN), the rest multiple-choice with exactly 4 plausible options "
-    "testing main ideas, detail, inference and vocabulary."
+    "testing main ideas, detail, inference and vocabulary. For every question give a "
+    "one-sentence explanation that quotes or paraphrases the exact part of the passage "
+    "which settles it, so a learner can see why the answer is right."
 )
 
 _LISTENING_PROMPT = (
@@ -477,7 +510,9 @@ _LISTENING_PROMPT = (
     "MONOLOGUE or DIALOGUE script of 200-300 words (e.g. a lecture excerpt, a tour guide, or two "
     "people arranging plans) that will be read aloud to the learner. Then write {n} multiple-"
     "choice questions testing comprehension of specific details and gist. Each question has "
-    "exactly 4 options with one correct answer (answer_index is 0-based)."
+    "exactly 4 options with one correct answer (answer_index is 0-based). For every "
+    "question give a one-sentence explanation pointing at the line of the script that "
+    "settles it, so a learner can see why the answer is right."
 )
 
 
@@ -513,7 +548,8 @@ async def generate_test(
     db.add(test)
     await db.flush()
 
-    # Client view: same, but each question strips answer_index.
+    # Client view: same, but each question strips answer_index and explanation —
+    # both are revealed only after grading.
     client_payload = {
         "title": payload["title"],
         "body": payload["body"],
@@ -580,6 +616,12 @@ class GradeResult:
     correct: int
     total: int
     band: float
+    # True when the test is too short for a single band to mean much; the client
+    # shows a range and a caveat rather than a precise figure.
+    approximate: bool
+    # Why each answer is right, revealed with the answers after grading. The
+    # results screen used to show only which option was correct.
+    explanations: List[str]
     answers: List[int]  # correct answer_index per question, revealed after submit
     reward: RewardSummary
 
@@ -596,14 +638,15 @@ async def grade_test(
     payload = json.loads(test.payload_json)
     questions = payload["questions"]
     answers = [int(q["answer_index"]) for q in questions]
+    explanations = [str(q.get("explanation", "")).strip() for q in questions]
 
     correct = sum(
         1 for i, ans in enumerate(answers) if i < len(submitted) and submitted[i] == ans
     )
     total = len(answers)
-    band = band_from_ratio(correct / total) if total else 0.0
-
     skill = "reading" if test.kind == "reading" else "listening"
+    band = band_from_ratio(correct / total, skill) if total else 0.0
+    approximate = total < RELIABLE_QUESTION_COUNT
     xp = XP_READING if test.kind == "reading" else XP_LISTENING
     reward = await apply_skill_xp(db, user, xp)
     detail: Dict[str, Any] = {"correct": correct, "total": total}
@@ -614,7 +657,15 @@ async def grade_test(
     )
     # One-shot content: drop the stored test after grading.
     await db.delete(test)
-    return GradeResult(correct=correct, total=total, band=band, answers=answers, reward=reward)
+    return GradeResult(
+        correct=correct,
+        total=total,
+        band=band,
+        approximate=approximate,
+        answers=answers,
+        explanations=explanations,
+        reward=reward,
+    )
 
 
 # --- Writing scoring ---------------------------------------------------------

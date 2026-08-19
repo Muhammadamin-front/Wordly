@@ -16,12 +16,58 @@ const AUDIO_FILES = [
   "english-conversations-0091-91-giving-directions.mp3", "english-conversations-0092-92-talking-about-pets.mp3", "english-conversations-0093-93-where-is-the-post-office.mp3", "english-conversations-0094-94-meeting-an-old-friend.mp3", "english-conversations-0095-95-using-public-transportation.mp3", "english-conversations-0096-96-cafeteria-menu.mp3", "english-conversations-0097-97-weekend-plans.mp3", "english-conversations-0098-98-visiting-a-national-park.mp3", "english-conversations-0099-99-bad-room-service.mp3", "english-conversations-0100-100-photography-class.mp3",
 ] as const;
 
+type TrackGroup = "Everyday life" | "Health & services" | "Work & travel" | "Social & feelings";
+
 type Track = {
   file: string;
   number: number;
   title: string;
-  group: "Foundation" | "Everyday" | "Work & travel";
+  group: TrackGroup;
 };
+
+/** Topic keywords, checked against the file name. Groups used to be assigned by
+ *  position in the list — the first thirty were "Foundation", the last thirty
+ *  "Work & travel" — which put "A Death", "A Birth" and "Talking About Pets"
+ *  under work and travel, and "Getting A Visa" and "At The Customs" under
+ *  foundation. The filter is only useful if it follows the content. */
+const GROUP_RULES: ReadonlyArray<{ group: TrackGroup; match: readonly string[] }> = [
+  {
+    group: "Work & travel",
+    match: [
+      "visa", "customs", "travelling", "air", "flight", "flying", "plane", "reservation",
+      "job", "employing", "interview", "applying", "grant", "loan", "cashier", "office",
+      "taxi", "cab", "bus", "transportation", "directions", "post-office", "national-park",
+      "hotel", "room-service", "ticket", "drive", "car", "traffic", "skiing", "shore",
+    ],
+  },
+  {
+    group: "Health & services",
+    match: [
+      "doctor", "appointment", "sore-throat", "dont-feel-well", "operating-room",
+      "help-me", "out-of-order", "sale", "shop", "buying", "present", "menu",
+      "restaurant", "eating-out", "coffee", "drink", "bread", "cafeteria",
+    ],
+  },
+  {
+    group: "Social & feelings",
+    match: [
+      "death", "birth", "baby", "single", "date", "friend", "coincidence",
+      "how-have-you-been", "birthday", "bless-you", "busy", "lazy", "young",
+      "afraid", "hate", "call", "telephone", "phone", "know",
+    ],
+  },
+];
+
+function groupFor(file: string): TrackGroup {
+  const slug = file.replace(/^english-conversations-\d{4}-\d+-/, "").replace(/\.mp3$/, "");
+  // Match whole hyphen-separated segments, not substrings: "im-busy-on-friday"
+  // contains "bus" and would otherwise be filed under travel.
+  const padded = `-${slug}-`;
+  const hit = GROUP_RULES.find((rule) =>
+    rule.match.some((word) => padded.includes(`-${word}-`))
+  );
+  return hit?.group ?? "Everyday life";
+}
 
 function titleFromFile(file: string) {
   return file
@@ -36,10 +82,16 @@ const TRACKS: Track[] = AUDIO_FILES.map((file, index) => ({
   file,
   number: index + 1,
   title: titleFromFile(file),
-  group: index < 30 ? "Foundation" : index < 70 ? "Everyday" : "Work & travel",
+  group: groupFor(file),
 }));
 
-const GROUPS: Array<Track["group"] | "All"> = ["All", "Foundation", "Everyday", "Work & travel"];
+const GROUPS: Array<TrackGroup | "All"> = [
+  "All",
+  "Everyday life",
+  "Health & services",
+  "Work & travel",
+  "Social & feelings",
+];
 
 export function ListeningAudioLibrary() {
   const [query, setQuery] = useState("");

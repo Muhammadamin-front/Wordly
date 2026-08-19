@@ -77,7 +77,7 @@ export function AdminDashboard({
               onClick={() => setTab(key)}
               className={cn(
                 "min-h-11 shrink-0 rounded-lg px-4 text-sm font-bold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-                activeTab === key ? "bg-primary text-white shadow-sm" : "text-ink-soft hover:bg-hover hover:text-ink"
+                activeTab === key ? "bg-primary text-white shadow-sm dark:text-brand-950" : "text-ink-soft hover:bg-hover hover:text-ink"
               )}
             >
               {t[key]}

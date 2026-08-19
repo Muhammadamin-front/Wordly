@@ -7,7 +7,7 @@ import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { API_URL, ApiError, getAccessToken } from "@/lib/api";
+import { API_URL, ApiError, waitForAccessToken } from "@/lib/api";
 import {
   BAND_COLOR,
   ieltsApi,
@@ -23,10 +23,15 @@ type Ielts = Dictionary["ielts"];
 
 const TIME_LIMIT: Record<ComprehensionKind, number> = { reading: 480, listening: 360 };
 
-/** Longer passages earn more time: ~300 words → 8 min, 700+ words → 20 min. */
-function readingSeconds(body: string): number {
+/** Real Academic Reading allows 20 minutes for a 700-900 word passage with 13-14
+ *  questions — roughly 90 seconds per question, with the passage read once. The
+ *  old formula ignored the question count and gave ~19 minutes for a 700-word
+ *  passage with 8 questions, about twice the real pace. */
+function readingSeconds(body: string, questionCount: number): number {
   const words = body.split(/\s+/).length;
-  return Math.min(1200, Math.max(TIME_LIMIT.reading, Math.round(words * 1.6)));
+  const reading = words * 0.6; // ~100 wpm for careful first read
+  const answering = questionCount * 60;
+  return Math.min(1500, Math.max(240, Math.round(reading + answering)));
 }
 
 function fmt(sec: number): string {
@@ -56,6 +61,11 @@ export function ComprehensionTest({
   const [error, setError] = useState<string | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  // IELTS Listening is played once. Pausing is allowed, restarting is not until
+  // the answers are in — the app's own cheatsheet teaches this, and unlimited
+  // replay made the practice score meaningless.
+  const [audioFinished, setAudioFinished] = useState(false);
+  const [heard, setHeard] = useState({ current: 0, duration: 0 });
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
 
@@ -69,7 +79,7 @@ export function ComprehensionTest({
 
   async function playNarration(testId: string, body: string) {
     try {
-      const token = getAccessToken();
+      const token = await waitForAccessToken();
       const resp = await fetch(`${API_URL}/api/v1/ielts/listening/${testId}/audio`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
         credentials: "include",
@@ -80,8 +90,12 @@ export function ComprehensionTest({
       const audio = new Audio(url);
       audio.onplay = () => setAudioPlaying(true);
       audio.onpause = () => setAudioPlaying(false);
+      audio.onloadedmetadata = () => setHeard({ current: 0, duration: audio.duration || 0 });
+      audio.ontimeupdate = () => setHeard({ current: audio.currentTime, duration: audio.duration || 0 });
       audio.onended = () => {
         setAudioPlaying(false);
+        setAudioFinished(true);
+        setHeard((prev) => ({ ...prev, current: prev.duration }));
         URL.revokeObjectURL(url);
       };
       audioRef.current = audio;
@@ -93,6 +107,17 @@ export function ComprehensionTest({
   }
 
   useEffect(() => stopAudio, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The active test takes over the phone screen; letting the hub scroll behind
+  // it would drag a timed, play-once exercise out from under the learner.
+  useEffect(() => {
+    if (!test) return;
+    const phone = window.matchMedia("(max-width: 639px)");
+    const apply = () => { document.body.style.overflow = phone.matches ? "hidden" : ""; };
+    apply();
+    phone.addEventListener("change", apply);
+    return () => { phone.removeEventListener("change", apply); document.body.style.overflow = ""; };
+  }, [test]);
 
   useEffect(() => {
     ieltsApi.bank(kind).then(setBank).catch(() => setBank([]));
@@ -116,8 +141,14 @@ export function ComprehensionTest({
 
   function begin(generated: GeneratedTest) {
     setTest(generated);
+    setAudioFinished(false);
+    setHeard({ current: 0, duration: 0 });
     setAnswers(new Array(generated.questions.length).fill(-1));
-    setSecondsLeft(kind === "reading" ? readingSeconds(generated.body) : TIME_LIMIT[kind]);
+    setSecondsLeft(
+      kind === "reading"
+        ? readingSeconds(generated.body, generated.questions.length)
+        : TIME_LIMIT[kind]
+    );
     if (kind === "listening") {
       // Play the recording once, automatically — like the real exam.
       window.setTimeout(() => playNarration(generated.test_id, generated.body), 400);
@@ -186,12 +217,12 @@ export function ComprehensionTest({
           </p>
 
           {/* AI unlimited card */}
-          <div className="flex items-center justify-between gap-3 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-brand-400/40 bg-linear-to-r from-brand-600/10 to-transparent p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="font-bold text-ink">✨ {t.aiUnlimited}</p>
               <p className="text-xs text-ink-soft">{t.aiUnlimitedDesc}</p>
             </div>
-            <Button size="sm" loading={loadingId === "ai"} onClick={() => start("ai")}>
+            <Button size="sm" className="shrink-0 max-sm:w-full" loading={loadingId === "ai"} onClick={() => start("ai")}>
               {t.startTest}
             </Button>
           </div>
@@ -212,10 +243,10 @@ export function ComprehensionTest({
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04 }}
-                className="flex items-center justify-between gap-3 rounded-2xl border border-line bg-card p-4"
+                className="flex flex-col gap-3 rounded-2xl border border-line bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-semibold text-ink">
+                  <p className="font-semibold text-ink max-sm:text-balance sm:truncate">
                     {item.done && <span className="mr-1 text-success">✓</span>}
                     {item.title}
                   </p>
@@ -239,6 +270,7 @@ export function ComprehensionTest({
                 </div>
                 <Button
                   size="sm"
+                  className="shrink-0 max-sm:w-full"
                   variant={item.done ? "secondary" : "primary"}
                   loading={loadingId === item.id}
                   onClick={() => start(item.id)}
@@ -251,10 +283,11 @@ export function ComprehensionTest({
         </div>
       )}
 
-      {/* Active test */}
+      {/* Active test. On a phone it takes over the screen: a timed, play-once
+          exercise cannot share a viewport with the hub it was launched from. */}
       {test && (
-        <div className="space-y-5">
-          <div className="flex items-center justify-between">
+        <div className="max-sm:fixed max-sm:inset-0 max-sm:z-50 max-sm:flex max-sm:flex-col max-sm:bg-page max-sm:pt-[env(safe-area-inset-top)] sm:space-y-5">
+          <div className="flex shrink-0 items-center justify-between gap-3 max-sm:border-b max-sm:border-line max-sm:bg-raised max-sm:px-4 max-sm:py-2.5">
             <button
               type="button"
               onClick={backToList}
@@ -277,7 +310,7 @@ export function ComprehensionTest({
           </div>
 
           {(() => {
-            const questionsBlock = (
+            const questionList = (
               <>
                 {test.questions.map((q, qi) => (
                   <div key={qi} className="rounded-2xl border border-line bg-card p-4">
@@ -315,15 +348,26 @@ export function ComprehensionTest({
                         );
                       })}
                     </div>
+                    {result?.explanations?.[qi] && (
+                      <p className="mt-3 rounded-lg border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm leading-6 text-ink-soft">
+                        {result.explanations[qi]}
+                      </p>
+                    )}
                   </div>
                 ))}
-                {!result ? (
-                  <Button fullWidth onClick={submit} disabled={answers.some((a) => a === -1)}>
-                    {t.submitTest}
-                  </Button>
-                ) : (
-                  <ResultCard result={result} t={t} onBack={backToList} />
-                )}
+              </>
+            );
+            const footer = !result ? (
+              <Button fullWidth onClick={submit} disabled={answers.some((a) => a === -1)}>
+                {t.submitTest}
+              </Button>
+            ) : (
+              <ResultCard result={result} t={t} onBack={backToList} />
+            );
+            const questionsBlock = (
+              <>
+                {questionList}
+                {footer}
               </>
             );
 
@@ -342,27 +386,69 @@ export function ComprehensionTest({
                 </div>
               );
             }
+            const played = heard.duration > 0 ? Math.min(1, heard.current / heard.duration) : 0;
             return (
               <>
-                <div className="flex items-center justify-center gap-3 rounded-2xl border border-line bg-card p-5">
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      if (audioRef.current) {
-                        if (audioPlaying) audioRef.current.pause();
-                        else void audioRef.current.play();
-                      } else if (speech.speaking) {
-                        speech.cancel();
-                      } else {
-                        void playNarration(test.test_id, test.body);
-                      }
-                    }}
-                  >
-                    {audioPlaying || speech.speaking ? `⏸ ${t.pause}` : `▶ ${t.replay}`}
-                  </Button>
-                  <p className="text-xs text-ink-soft">{t.listeningHint}</p>
+                <div className="shrink-0 border-line bg-card max-sm:border-b sm:rounded-2xl sm:border">
+                  <div className="flex items-center gap-3 p-4 sm:p-5">
+                    <Button
+                      variant="secondary"
+                      className="size-12 shrink-0 rounded-full p-0 text-lg"
+                      aria-label={audioPlaying || speech.speaking ? t.pause : t.replay}
+                      disabled={!result && audioFinished}
+                      onClick={() => {
+                        if (audioRef.current) {
+                          if (audioPlaying) audioRef.current.pause();
+                          else void audioRef.current.play();
+                        } else if (speech.speaking) {
+                          speech.cancel();
+                        } else {
+                          void playNarration(test.test_id, test.body);
+                        }
+                      }}
+                    >
+                      {audioPlaying || speech.speaking ? "⏸" : "▶"}
+                    </Button>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <p className="truncate text-sm font-bold text-ink">{test.title}</p>
+                        {heard.duration > 0 && (
+                          <span className="shrink-0 text-xs tabular-nums text-ink-soft">
+                            {fmt(Math.round(heard.current))} / {fmt(Math.round(heard.duration))}
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        role="progressbar"
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={Math.round(played * 100)}
+                        aria-label={t.listeningHint}
+                        className="mt-2 h-1.5 overflow-hidden rounded-full bg-line"
+                      >
+                        <div
+                          className="h-full rounded-full bg-brand-500 transition-[width] duration-300"
+                          style={{ width: `${played * 100}%` }}
+                        />
+                      </div>
+                      <p className="mt-1.5 text-[11px] leading-4 text-ink-soft">
+                        {result ? t.listeningHint : t.listeningPlaysOnce}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-5">{questionsBlock}</div>
+                <div className="space-y-5 max-sm:min-h-0 max-sm:flex-1 max-sm:overflow-y-auto max-sm:px-4 max-sm:py-4">
+                  {/* Graded: the band leads, then the answer review scrolls under
+                      it. Ungraded: the submit button is pinned below instead. */}
+                  {result && <div className="sm:hidden">{footer}</div>}
+                  {questionList}
+                  <div className="max-sm:hidden">{footer}</div>
+                </div>
+                {!result && (
+                  <div className="shrink-0 border-t border-line bg-raised px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:hidden">
+                    {footer}
+                  </div>
+                )}
               </>
             );
           })()}

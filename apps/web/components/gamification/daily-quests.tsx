@@ -24,6 +24,7 @@ function questCopy(code: string, gam: Dictionary["gam"]): { title: string; body:
     case "combo_3":
       return { title: gam.questCombo3, body: gam.questCombo3Desc, icon: Flame };
     case "phrasal_5":
+    case "phrasal_blank_5":
       return { title: gam.questPhrasal5, body: gam.questPhrasal5Desc, icon: Link2 };
     case "memory_1":
       return { title: gam.questMemory1, body: gam.questMemory1Desc, icon: BrainCircuit };
@@ -31,6 +32,8 @@ function questCopy(code: string, gam: Dictionary["gam"]): { title: string; body:
       return { title: gam.questComplete2, body: gam.questComplete2Desc, icon: Award };
     case "perfect_1":
       return { title: gam.questPerfect1, body: gam.questPerfect1Desc, icon: Zap };
+    // match_1 and story_1 are both "finish one round"; they differ only in
+    // which game the card links to.
     default:
       return { title: gam.questComplete1, body: gam.questComplete1Desc, icon: Award };
   }

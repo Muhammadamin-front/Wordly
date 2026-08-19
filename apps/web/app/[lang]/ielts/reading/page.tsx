@@ -8,10 +8,11 @@ import { getDictionary, hasLocale } from "../../dictionaries";
 export default async function IeltsSkillPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
+  const dict = await getDictionary(lang);
   return (
     <>
-      <SiteHeader lang={lang as Locale} nav={(await getDictionary(lang)).nav} />
-      <ReadingPracticeView lang={lang} />
+      <SiteHeader lang={lang as Locale} nav={dict.nav} />
+      <ReadingPracticeView t={dict.readingPractice} />
     </>
   );
 }

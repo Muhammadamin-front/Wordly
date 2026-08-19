@@ -25,14 +25,17 @@ BASE_QUESTS = (
     QuestDefinition("combo_3", 3, 15, "speed_quiz"),
 )
 
+# One per weekday. Codes are unique across the tuple: DailyQuestClaim rows are
+# keyed by code, so two slots sharing one would collide if both ever ran on the
+# same day.
 ROTATING_QUESTS = (
-    QuestDefinition("complete_1", 1, 20, "word_match"),
+    QuestDefinition("match_1", 1, 20, "word_match"),
     QuestDefinition("phrasal_5", 5, 25, "speed_quiz", "phrasal"),
     QuestDefinition("memory_1", 1, 25, "memory"),
     QuestDefinition("complete_2", 2, 25, "speed_quiz"),
-    QuestDefinition("phrasal_5", 5, 25, "fill_blank", "phrasal"),
+    QuestDefinition("phrasal_blank_5", 5, 25, "fill_blank", "phrasal"),
     QuestDefinition("perfect_1", 1, 30, "speed_quiz"),
-    QuestDefinition("complete_1", 1, 20, "story_mode"),
+    QuestDefinition("story_1", 1, 20, "story_mode"),
 )
 
 
@@ -40,22 +43,33 @@ def definitions_for(day: date) -> tuple[QuestDefinition, ...]:
     return (*BASE_QUESTS, ROTATING_QUESTS[day.weekday()])
 
 
-def _metrics(runs: list[GameRun]) -> dict[str, int]:
-    completed = [run for run in runs if run.completed_at is not None]
-    return {
-        "correct_5": sum(run.correct_count for run in runs),
-        "combo_3": max((run.best_combo for run in runs), default=0),
-        "complete_1": len(completed),
-        "complete_2": len(completed),
-        "phrasal_5": sum(
-            run.correct_count for run in runs if run.source_category == "phrasal"
-        ),
-        "memory_1": sum(run.game_type == "memory" for run in completed),
-        "perfect_1": sum(
+def _progress_for(definition: QuestDefinition, runs: list[GameRun]) -> int:
+    """Progress towards one quest, counted only from runs that actually match it.
+
+    Progress used to be measured across every game played that day while the
+    quest card linked to a specific one, so a card reading "play Word Match"
+    was satisfied by a round of Hangman. The card names a game; only that game
+    should count.
+    """
+    matching = [run for run in runs if run.game_type == definition.game_type]
+    if definition.source_category:
+        matching = [
+            run for run in matching if run.source_category == definition.source_category
+        ]
+    finished = [run for run in matching if run.completed_at is not None]
+
+    if definition.code in ("correct_5", "phrasal_5", "phrasal_blank_5"):
+        return sum(run.correct_count for run in matching)
+    if definition.code == "combo_3":
+        return max((run.best_combo for run in matching), default=0)
+    if definition.code in ("match_1", "complete_2", "memory_1", "story_1"):
+        return len(finished)
+    if definition.code == "perfect_1":
+        return sum(
             run.correct_count == run.total_questions and run.total_questions > 0
-            for run in completed
-        ),
-    }
+            for run in finished
+        )
+    return 0
 
 
 async def _day_state(
@@ -85,10 +99,9 @@ async def _day_state(
 async def daily_quest_snapshot(db: AsyncSession, user: User) -> dict:
     day = local_today(user.profile.timezone or "UTC")
     runs, claims = await _day_state(db, user, day)
-    metrics = _metrics(runs)
     quests = []
     for definition in definitions_for(day):
-        progress = min(definition.target, metrics.get(definition.code, 0))
+        progress = min(definition.target, _progress_for(definition, runs))
         quests.append(
             {
                 "code": definition.code,
@@ -117,12 +130,11 @@ async def award_completed_quests(
 ) -> tuple[list[str], RewardSummary]:
     day = local_today(user.profile.timezone or "UTC")
     runs, claims = await _day_state(db, user, day)
-    metrics = _metrics(runs)
     completed = [
         definition
         for definition in definitions_for(day)
         if definition.code not in claims
-        and metrics.get(definition.code, 0) >= definition.target
+        and _progress_for(definition, runs) >= definition.target
     ]
     if not completed:
         return [], RewardSummary()

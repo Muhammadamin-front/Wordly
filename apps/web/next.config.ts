@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Self-contained server bundle for the Docker image (see Dockerfile).
@@ -19,10 +20,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [{ protocol: "https", hostname: "**.gstatic.com" }],
   },
   async rewrites() {
+    // Docker Compose always passes INTERNAL_API_URL (http://api:8000, the
+    // service name on the compose network). Running `next dev` on the host
+    // there is no such hostname, so the fallback points at the published port
+    // — otherwise every /api/v1 call fails the rewrite and returns 500.
+    //
+    // 127.0.0.1 rather than localhost: compose publishes the port on IPv4
+    // only, while Node resolves localhost to ::1 first and the proxy fails
+    // with ECONNREFUSED.
     const apiOrigin =
       process.env.INTERNAL_API_URL ??
       process.env.NEXT_PUBLIC_API_URL ??
-      "http://api:8000";
+      "http://127.0.0.1:8000";
     return [
       {
         source: "/api/v1/:path*",
@@ -30,6 +39,30 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        // Google Identity Services popup communication needs this fallback
+        // when the browser is not using FedCM.
+        source: "/:lang/auth/:path*",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
+    ];
+  },
 };
 
-export default nextConfig;
+// Source-map upload only runs once SENTRY_ORG/SENTRY_PROJECT are set (a later
+// step — create the project, then set these plus SENTRY_AUTH_TOKEN in CI).
+// Without them this wrapper is a no-op passthrough of nextConfig.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+});

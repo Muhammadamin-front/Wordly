@@ -19,7 +19,10 @@ class ExpressionOut(BaseModel):
     slug: str
     expression: str
     uzbek: str
-    translation: str
+    # None when this locale has no translation on file (always for English).
+    # The UI falls back to `usage`; flashcards use `flashcard_back`.
+    translation: Optional[str]
+    flashcard_back: str
     cefr: str
     ielts_band: str
     category: str
@@ -41,7 +44,9 @@ class ExpressionListItem(BaseModel):
     slug: str
     expression: str
     uzbek: str
-    translation: str
+    translation: Optional[str]
+    flashcard_back: str
+    usage: str
     cefr: str
     ielts_band: str
     category: str
@@ -67,12 +72,29 @@ class ExpressionMeta(BaseModel):
     categories: List[CategoryCount]
 
 
-def localized_translation(expression: Expression, locale: str) -> str:
+def localized_translation(expression: Expression, locale: str) -> Optional[str]:
+    """The translation for this locale, or None when there isn't one.
+
+    There is no English column: an English speaker needs the usage note, not a
+    translation, and callers compose that themselves. Returning `usage` here
+    made the field lie about what it held, and the Russian branch used to fall
+    back to the English expression, so a card could read
+    "break the ice" -> "break the ice".
+    """
     if locale == "uz":
         return expression.uzbek
     if locale == "ru":
-        return expression.russian or expression.expression
-    return expression.usage
+        return expression.russian
+    return None
+
+
+def flashcard_back(expression: Expression, locale: str) -> str:
+    """A value that is always a genuine translation, for saving onto a card.
+
+    Falls back to Uzbek, which is required on every row, rather than to the
+    usage note or to the English expression itself.
+    """
+    return localized_translation(expression, locale) or expression.uzbek
 
 
 def to_list_item(expression: Expression, locale: str) -> ExpressionListItem:
@@ -81,6 +103,8 @@ def to_list_item(expression: Expression, locale: str) -> ExpressionListItem:
         expression=expression.expression,
         uzbek=expression.uzbek,
         translation=localized_translation(expression, locale),
+        flashcard_back=flashcard_back(expression, locale),
+        usage=expression.usage,
         cefr=expression.cefr,
         ielts_band=expression.ielts_band,
         category=expression.category,
@@ -94,6 +118,7 @@ def to_detail(expression: Expression, locale: str) -> ExpressionOut:
         expression=expression.expression,
         uzbek=expression.uzbek,
         translation=localized_translation(expression, locale),
+        flashcard_back=flashcard_back(expression, locale),
         cefr=expression.cefr,
         ielts_band=expression.ielts_band,
         category=expression.category,

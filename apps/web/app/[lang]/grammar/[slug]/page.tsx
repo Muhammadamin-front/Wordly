@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { LessonView } from "@/components/grammar/lesson-view";
 import { SiteHeader } from "@/components/site/header";
 import { ALL_LESSONS, lessonBySlug } from "@/lib/grammar";
+import { localiseLesson } from "@/lib/grammar/localise";
 import type { Locale } from "@/lib/locales";
 import { getDictionary, hasLocale } from "../../dictionaries";
 
@@ -24,7 +25,7 @@ export default async function GrammarLessonPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <LessonView lang={lang} lesson={lesson} t={dict.grammar} />
+      <LessonView lang={lang} lesson={localiseLesson(lesson, lang)} t={dict.grammar} />
     </>
   );
 }

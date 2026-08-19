@@ -25,6 +25,7 @@ export type PlacementCopy = {
   placementResultTitle: string;
   placementResultBody: string;
   placementScore: string;
+  placementPracticeCap: string;
   placementUseLevel: string;
   placementRetake: string;
 };
@@ -122,6 +123,11 @@ export function PlacementTest({
                 .replace("{score}", String(result.score))
                 .replace("{total}", String(result.total))}
             </p>
+            {result.practiceLevel !== result.level && (
+              <p className="mt-2 text-sm text-ink-soft">
+                {copy.placementPracticeCap.replace("{level}", result.practiceLevel)}
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-6 flex flex-wrap gap-3">

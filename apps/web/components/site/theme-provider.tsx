@@ -1,9 +1,11 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
   type ReactNode,
@@ -11,8 +13,8 @@ import {
 
 export type Theme = "light" | "dark";
 
-const THEME_STORAGE_KEY = "wordly-theme";
-const THEME_CHANGE_EVENT = "wordly-theme-change";
+const THEME_STORAGE_KEY = "vocora-theme";
+const THEME_CHANGE_EVENT = "vocora-theme-change";
 const THEME_COLORS: Record<Theme, string> = {
   light: "#f3f5ef",
   dark: "#071410",
@@ -26,7 +28,19 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+/** The chosen theme, read from storage rather than from the DOM.
+ *
+ *  The DOM attribute used to be the source of truth, which broke on a locale
+ *  switch: changing /uz/... to /ru/... re-renders the [lang] layout, React
+ *  reconciles <html> and drops the data-theme attribute it did not render, and
+ *  the reader was thrown back to light mid-session. Storage survives that. */
 function currentDocumentTheme(): Theme {
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored === "dark" || stored === "light") return stored;
+  } catch {
+    // Fall through to whatever the pre-paint script put on the element.
+  }
   return document.documentElement.dataset.theme === "dark" ? "dark" : "light";
 }
 
@@ -59,6 +73,15 @@ function subscribeToTheme(onStoreChange: () => void) {
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const theme = useSyncExternalStore(subscribeToTheme, currentDocumentTheme, serverTheme);
+  const pathname = usePathname();
+
+  // Re-assert the attribute after navigation. Moving between locales re-renders
+  // the root layout, and React clears data-theme on the way through.
+  useEffect(() => {
+    if (document.documentElement.dataset.theme !== theme) {
+      applyDocumentTheme(theme);
+    }
+  }, [pathname, theme]);
 
   const setTheme = useCallback((nextTheme: Theme) => {
     const root = document.documentElement;

@@ -35,6 +35,13 @@ CLICK_SERVICE_ID=...
 CLICK_MERCHANT_ID=...
 CLICK_SECRET_KEY=...
 PAYMENTS_SANDBOX=false
+# Error tracking (Sentry). Unset on either service = errors stay in logs only.
+SENTRY_DSN=...                             # api — Project Settings -> Client Keys
+NEXT_PUBLIC_SENTRY_DSN=...                 # web — separate Sentry project; baked into the browser bundle at build
+# Optional, web build-time only: enables production source maps.
+SENTRY_ORG=...
+SENTRY_PROJECT=...
+SENTRY_AUTH_TOKEN=...
 ```
 
 Notes that will bite you if skipped:
@@ -45,6 +52,12 @@ Notes that will bite you if skipped:
   production. The API refuses to boot with the console email backend.
 - `NEXT_PUBLIC_*` are **build-time** args: changing them means rebuilding the
   web image, not just restarting it.
+- Google sign-in uses the popup/callback flow. In Google Cloud, set Authorized
+  JavaScript origins to `https://vocora.uz` and `https://www.vocora.uz` (if the
+  `www` host is served), with no trailing slash or path. Leave Authorized
+  redirect URIs empty for this implementation. Use the same Web application
+  client ID for `NEXT_PUBLIC_GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_ID`; no Google
+  client secret is used or stored by Vocora.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
   cookies (`COOKIE_SECURE=true`).
 - Checkout is exposed only for fully configured providers. Sandbox activation
@@ -82,6 +95,11 @@ Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
 
 ## 4. Health & observability
 
+- Sentry captures unhandled exceptions on both services when `SENTRY_DSN` (api)
+  and `NEXT_PUBLIC_SENTRY_DSN` (web) are set — use two separate Sentry projects,
+  not one DSN for both. Request bodies, cookies, and auth headers are scrubbed
+  before an event leaves the process; see `apps/api/app/core/observability.py`
+  and `apps/web/instrumentation.ts`.
 - `GET /health` — liveness (cheap, no dependencies).
 - `GET /health/detail` — readiness: DB ping, version, uptime, and whether the
   cache/rate-limit backend is `redis` (it must be, in production) — this is the

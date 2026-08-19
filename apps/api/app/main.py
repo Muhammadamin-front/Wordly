@@ -11,7 +11,7 @@ from sqlalchemy import text
 from app.api.v1.router import api_router
 from app.core.cache import MemoryCache, RedisCache
 from app.core.config import get_settings
-from app.core.observability import capture_exception
+from app.core.observability import capture_exception, init_sentry
 from app.core.rate_limit import MemoryStorage, RedisStorage, client_ip
 from app.db.session import get_session_factory, init_engine
 
@@ -49,6 +49,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     settings = get_settings()
     is_prod = settings.ENVIRONMENT == "production"
+    init_sentry(settings)
     app = FastAPI(
         title=settings.APP_NAME,
         version=APP_VERSION,

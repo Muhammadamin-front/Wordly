@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { GRAMMAR_LEVELS, LESSONS_BY_LEVEL, type GrammarLevel } from "@/lib/grammar";
+import { localiseLesson } from "@/lib/grammar/localise";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -19,7 +20,8 @@ const LEVEL_ACCENT: Record<GrammarLevel, string> = {
   IELTS: "border-warning/50 bg-warning/10 text-warning",
 };
 
-const DONE_KEY = "wordly:grammar-done";
+const DONE_KEY = "vocora:grammar-done";
+const LEGACY_DONE_KEY = "wordly:grammar-done";
 
 function subscribeToDone(callback: () => void): () => void {
   window.addEventListener("storage", callback);
@@ -33,7 +35,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
   // client re-renders with real progress right after hydration.
   const doneJson = useSyncExternalStore(
     subscribeToDone,
-    () => window.localStorage.getItem(DONE_KEY) ?? "[]",
+    () => (window.localStorage.getItem(DONE_KEY) ?? window.localStorage.getItem(LEGACY_DONE_KEY)) ?? "[]",
     () => "[]"
   );
   const done = useMemo(() => {
@@ -44,7 +46,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
     }
   }, [doneJson]);
 
-  const lessons = LESSONS_BY_LEVEL[level];
+  const lessons = LESSONS_BY_LEVEL[level].map((lesson) => localiseLesson(lesson, lang));
   const totalLessons = GRAMMAR_LEVELS.reduce((sum, lv) => sum + LESSONS_BY_LEVEL[lv].length, 0);
   const totalDone = [...done].length;
   const progress = Math.round((totalDone / totalLessons) * 100);
@@ -56,7 +58,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
           <div>
             <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
               <Layers3 className="size-4" aria-hidden />
-              Grammar studio
+              {t.studio}
             </span>
             <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
               {t.title}
@@ -89,7 +91,7 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
 
       <div className="mt-6 flex items-end justify-between">
         <div>
-          <p className="text-xs font-extrabold uppercase text-ink-soft">CEFR path</p>
+          <p className="text-xs font-extrabold uppercase text-ink-soft">{t.cefrPath}</p>
           <p className="mt-1 text-sm text-ink-soft">
             {level} · {lessons.length}
           </p>

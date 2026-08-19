@@ -197,11 +197,12 @@ const roofGardens: ReadingPassage = {
       number: 7,
       group: "Questions 5-8: True / False / Not Given",
       kind: "true-false-not-given",
-      prompt: "Roof gardens can completely prevent flooding in every city.",
+      prompt: "Planted roofs deliver their largest temperature benefits in hot weather.",
       options: tfng,
-      answer: "FALSE",
-      explanation: "The writer clearly limits the claim: a green roof cannot eliminate flooding by itself.",
-      evidence: "cannot eliminate flooding on its own",
+      answer: "TRUE",
+      explanation:
+        "Paragraph C states this directly, and contrasts it with the modest winter insulation that designers warn against exaggerating.",
+      evidence: "The greatest gains are normally recorded during hot weather",
     },
     {
       id: "q8",
@@ -572,7 +573,7 @@ const cityLibraries: ReadingPassage = {
       ],
       answer: "D",
       explanation: "Loans are simple to count; social benefits are not.",
-      evidence: "Counting loans is straightforward, while the benefits ... are harder to record",
+      evidence: "Counting loans is straightforward, while the benefits of a safe study space or a successful job application are harder to record",
     },
     {
       id: "q33",
@@ -862,30 +863,143 @@ const FULL_TEST_SEEDS: readonly FullTestSeed[] = [
   },
 ];
 
+const ROMAN = ["i", "ii", "iii", "iv", "v", "vi", "vii"] as const;
+
+/** Stable per-passage number, so each passage gets its own heading order and
+ *  True/False/Not Given key while the content stays reproducible between
+ *  builds. Previously every generated passage shared one answer key
+ *  (i, ii, iii, iv / TRUE, FALSE, NOT GIVEN, FALSE), which meant finishing one
+ *  test handed the learner the answers to all the others. */
+function passageVariant(id: string): number {
+  let hash = 0;
+  for (let index = 0; index < id.length; index += 1) {
+    hash = (hash * 31 + id.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+}
+
+function rotated<T>(items: readonly T[], by: number): T[] {
+  const size = items.length;
+  const offset = ((by % size) + size) % size;
+  return [...items.slice(offset), ...items.slice(0, offset)];
+}
+
+/** Four of these describe an assessed paragraph; the other three are
+ *  distractors. Real matching-headings tasks always offer more headings than
+ *  paragraphs, and never run in paragraph order.
+ *
+ *  The assessed headings sit at positions 3, 1, 6, 4 for paragraphs A, B, E, G.
+ *  Rotation shifts all four by the same amount, so the key is never the
+ *  giveaway sequence i, ii, iii, iv at any rotation — including rotation 0. */
+const HEADING_BANK = [
+  { paragraph: null, text: "A technology that failed to scale" },
+  { paragraph: "B", text: "A method rather than a product" },
+  { paragraph: null, text: "Changing government funding priorities" },
+  { paragraph: "A", text: "Reconsidering a long-standing response" },
+  { paragraph: "G", text: "From trial project to wider practice" },
+  { paragraph: null, text: "The influence of public opinion" },
+  { paragraph: "E", text: "Why the results should be read with care" },
+] as const;
+
 function originalAcademicPassage(
   seed: FullTestPassageSeed,
   questionStart: number,
   questionCount: number
 ): ReadingPassage {
-  const headings: ReadingOption[] = [
-    { value: "i", label: "i. Reconsidering the old response" },
-    { value: "ii", label: "ii. The process behind the change" },
-    { value: "iii", label: "iii. Results with an important limit" },
-    { value: "iv", label: "iv. Moving from research to wider use" },
-  ];
+  const variant = passageVariant(seed.id);
+  const headingOrder = rotated(HEADING_BANK, variant);
+  const headings: ReadingOption[] = headingOrder.map((heading, index) => ({
+    value: ROMAN[index],
+    label: `${ROMAN[index]}. ${heading.text}`,
+  }));
+  const headingFor = (paragraph: string) =>
+    ROMAN[headingOrder.findIndex((heading) => heading.paragraph === paragraph)];
+
   const question = (offset: number, input: Omit<ReadingQuestion, "id" | "number">): ReadingQuestion => ({
     ...input,
     id: `${seed.id}-q${questionStart + offset}`,
     number: questionStart + offset,
   });
   const completionAnswers = [
-    ["Earlier work relied on ______.", seed.oldMethod, `Earlier responses commonly relied on ${seed.oldMethod}.`],
-    ["The newer approach focuses on ______.", seed.focus, `The newer approach centres on ${seed.focus}.`],
-    ["Its key process is ______.", seed.mechanism, `Its main mechanism is ${seed.mechanism}.`],
-    ["Outcomes vary with ______.", seed.variation, `outcomes vary with ${seed.variation}.`],
-    ["Teams begin by ______.", seed.planning, `wider use begins when teams start by ${seed.planning}.`],
-    ["A future direction is ______.", seed.future, `a future direction is ${seed.future}.`],
+    ["Earlier work relied on ______.", seed.oldMethod, `the standard response relied on ${seed.oldMethod}`],
+    ["The newer approach focuses on ______.", seed.focus, `centres on ${seed.focus}`],
+    ["Its key process is ______.", seed.mechanism, `Its central mechanism is ${seed.mechanism}`],
+    ["Outcomes vary with ______.", seed.variation, `Outcomes also vary with ${seed.variation}`],
+    ["Teams begin by ______.", seed.planning, `teams start by ${seed.planning}`],
+    ["A future direction is ______.", seed.future, `a plausible future direction is ${seed.future}`],
   ] as const;
+
+  // Six candidate statements, two of each answer type. Four are selected and
+  // reordered per passage so the key differs between tests. Every `evidence`
+  // string below is a literal substring of the paragraphs — the old NOT GIVEN
+  // item quoted "No cost is stated in the passage.", which appeared nowhere in
+  // the text the learner was told to search.
+  const statements = [
+    {
+      prompt: `Before the newer approach, the standard response relied on ${seed.oldMethod}.`,
+      answer: "TRUE",
+      explanation: "Paragraph A states this directly.",
+      evidence: `the standard response relied on ${seed.oldMethod}`,
+    },
+    {
+      prompt: "Trials lasting a full season produced more dependable evidence than shorter ones.",
+      answer: "TRUE",
+      explanation: "Paragraph D contrasts multi-season trials with shorter ones whose gains proved unreliable.",
+      evidence: "The strongest results have come from projects that ran long enough to observe a full seasonal cycle",
+    },
+    {
+      prompt: "The passage states that outcomes are the same at every site.",
+      answer: "FALSE",
+      explanation: "Paragraph E says the opposite: results differ enough to make comparison misleading.",
+      evidence: `Outcomes also vary with ${seed.variation}`,
+    },
+    {
+      prompt: "The writer suggests the approach can be adopted successfully without preparation.",
+      answer: "FALSE",
+      explanation: "Paragraph G calls preparation decisive and describes what teams must establish first.",
+      evidence: "preparation appears to be decisive",
+    },
+    {
+      prompt: `The newer approach costs less to install than ${seed.oldMethod}.`,
+      answer: "NOT GIVEN",
+      explanation:
+        "Paragraph F discusses resources being diverted from other programmes, but the passage never compares installation costs.",
+      evidence: "resources committed here are resources withdrawn from established programmes",
+    },
+    {
+      prompt: "Most researchers now agree the older approach should be abandoned.",
+      answer: "NOT GIVEN",
+      explanation:
+        "Paragraph F reports continuing disagreement but gives no indication of how many researchers hold either view.",
+      evidence: "Both positions have merit, and the disagreement is unlikely to be settled by a single study",
+    },
+  ] as const;
+
+  // Take one TRUE, one FALSE and one NOT GIVEN, plus a fourth from a rotating
+  // pair, then reorder — so neither the composition nor the sequence repeats.
+  // `digit` avoids `>>`, which is a signed shift and turns the unsigned hash
+  // negative above 2^31, producing out-of-range indices.
+  const digit = (place: number, base: number) =>
+    Math.floor(variant / base ** place) % base;
+  const trueIndex = digit(0, 2);
+  const falseIndex = digit(1, 2);
+  const notGivenIndex = digit(2, 2);
+  const extraPair = digit(0, 3);
+  const extra = [
+    statements[1 - trueIndex],
+    statements[2 + (1 - falseIndex)],
+    statements[4 + (1 - notGivenIndex)],
+  ][extraPair];
+
+  const picked = rotated(
+    [
+      statements[trueIndex],
+      statements[2 + falseIndex],
+      statements[4 + notGivenIndex],
+      extra,
+    ],
+    digit(1, 4)
+  );
 
   return {
     id: seed.id,
@@ -894,30 +1008,49 @@ function originalAcademicPassage(
     paragraphs: [
       {
         label: "A",
-        text: `In ${seed.context}, ${seed.title.toLowerCase()} is attracting growing attention. Earlier responses commonly relied on ${seed.oldMethod}, because it offered a familiar and easy-to-explain solution. Yet that response can overlook local conditions and the way different systems interact. Researchers are therefore reconsidering the problem, asking whether a more carefully designed approach could improve performance without simply increasing consumption or complexity.`,
+        text: `In ${seed.context}, ${seed.title.toLowerCase()} has moved from a marginal interest to a mainstream research question. For most of the past century the standard response relied on ${seed.oldMethod}, an approach with the considerable advantages of being simple to specify, straightforward to fund and easy to explain to the public. Its logic was essentially additive: where a system underperformed, the remedy was to supply more of whatever it appeared to lack. That reasoning produced measurable results for several decades, and it would be unfair to characterise it as a failure. What has changed is the context in which it operates. As demands have intensified, the limitations of a single-variable solution have become harder to overlook, and researchers have begun asking whether the problem was ever framed correctly in the first place.`,
       },
       {
         label: "B",
-        text: `The newer approach centres on ${seed.focus}. Its main mechanism is ${seed.mechanism}: instead of treating the challenge as an isolated technical fault, the method uses a process that responds to conditions already present in the setting. Early pilots have reported ${seed.outcome}. Supporters stress that the change is not a single product or rule, but a way of connecting design decisions with the behaviour of people, materials or living systems.`,
+        text: `The alternative now attracting attention centres on ${seed.focus}. Rather than treating the difficulty as an isolated technical fault, this approach begins from the observation that the setting already contains processes capable of doing much of the work. Its central mechanism is ${seed.mechanism}, and the design task becomes one of arranging conditions so that this process operates reliably rather than intermittently. Proponents are careful to stress that the change is a method and not a product. Two installations following the same principle may look entirely different, because the principle specifies what must happen rather than what must be built.`,
       },
       {
         label: "C",
-        text: `The evidence also has to be interpreted cautiously. One practical limitation is ${seed.limitation}, which can affect whether a trial is realistic beyond a well-supported research site. In addition, outcomes vary with ${seed.variation}. This does not make the approach ineffective; rather, it explains why comparisons between projects need to describe their setting carefully. Researchers are now looking for patterns that separate a reliable result from one produced only by unusually favourable conditions.`,
+        text: `In practice the mechanism works through a sequence rather than a single step. ${seed.mechanism.charAt(0).toUpperCase()}${seed.mechanism.slice(1)} is initiated by conditions already common in ${seed.context}, so the intervention required is often surprisingly modest. What matters is timing and scale. Too small an intervention produces no measurable effect, while too large a one can overwhelm the very process it was meant to support. Early adopters consistently report that the most demanding judgement is not technical but proportional, and that this judgement improves considerably with local experience rather than with better equipment.`,
       },
       {
         label: "D",
-        text: `For wider use, preparation is essential. The passage does not suggest that the approach works without planning: implementation begins when teams start by ${seed.planning}. They can then adapt the method to local constraints, monitor results and explain trade-offs to users. If these steps are followed, a future direction is ${seed.future}. The value of the work may therefore lie not only in one successful pilot, but in a repeatable process for making better decisions.`,
+        text: `Pilot studies have reported ${seed.outcome}, and these findings have since been reproduced at several independent sites. The strongest results have come from projects that ran long enough to observe a full seasonal cycle; shorter trials tend to record improvements that later prove to have been produced by unusually favourable conditions. Reviewers therefore place more weight on the small number of multi-year studies than on the much larger body of short-term reports, even though the latter are more widely cited in the general press.`,
+      },
+      {
+        label: "E",
+        text: `The evidence nonetheless has to be interpreted cautiously. One recurring practical limitation is ${seed.limitation}, which can determine whether a trial is realistic beyond a well-supported research site. Outcomes also vary with ${seed.variation}, on occasion to a degree that makes direct comparison between projects actively misleading. None of this makes the approach ineffective. It explains why any serious report now describes its setting in detail, and why the research community has grown sceptical of headline figures presented without that context.`,
+      },
+      {
+        label: "F",
+        text: `Not everyone is persuaded. Critics point out that enthusiasm for a new method frequently outruns the evidence supporting it, and that resources committed here are resources withdrawn from established programmes which, whatever their limits, are known to work. Supporters respond that the comparison is unfair, since ${seed.oldMethod} was itself widely adopted long before it had been rigorously evaluated. Both positions have merit, and the disagreement is unlikely to be settled by a single study.`,
+      },
+      {
+        label: "G",
+        text: `For wider adoption, preparation appears to be decisive. Implementation typically begins when teams start by ${seed.planning}, since this establishes what local conditions actually are before any commitment is made. Teams can then adapt the method to local constraints, monitor results against a baseline and explain the trade-offs to the people affected. Where those steps are followed, a plausible future direction is ${seed.future}. The value of the work may therefore lie less in any single successful pilot than in a repeatable process for making better decisions under uncertainty.`,
       },
     ],
     questions: [
-      question(0, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph A.", options: headings, answer: "i", explanation: "Paragraph A introduces the familiar earlier response and explains why it is being reconsidered.", evidence: `Earlier responses commonly relied on ${seed.oldMethod}` }),
-      question(1, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph B.", options: headings, answer: "ii", explanation: "Paragraph B explains the focus and mechanism of the newer approach.", evidence: `Its main mechanism is ${seed.mechanism}` }),
-      question(2, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph C.", options: headings, answer: "iii", explanation: "Paragraph C gives a limitation and explains why outcomes differ between settings.", evidence: `outcomes vary with ${seed.variation}` }),
-      question(3, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph D.", options: headings, answer: "iv", explanation: "Paragraph D is about preparation and the route from a pilot to wider use.", evidence: `teams start by ${seed.planning}` }),
-      question(4, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: `Before the newer approach, the usual response relied on ${seed.oldMethod}.`, options: tfng, answer: "TRUE", explanation: "This is stated directly in paragraph A.", evidence: `Earlier responses commonly relied on ${seed.oldMethod}` }),
-      question(5, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The passage says that outcomes are identical in every location.", options: tfng, answer: "FALSE", explanation: "Paragraph C explicitly says that outcomes vary with local conditions.", evidence: `outcomes vary with ${seed.variation}` }),
-      question(6, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The passage gives the exact total cost of the programme.", options: tfng, answer: "NOT GIVEN", explanation: "No total budget or exact cost is provided.", evidence: "No cost is stated in the passage." }),
-      question(7, { group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`, kind: "true-false-not-given", prompt: "The newer approach can be used successfully without preparation.", options: tfng, answer: "FALSE", explanation: "Paragraph D says that planning and preparation are essential.", evidence: "The passage does not suggest that the approach works without planning" }),
+      question(0, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph A.", options: headings, answer: headingFor("A"), explanation: "Paragraph A sets out the long-standing earlier response and explains why it is now being reconsidered.", evidence: `the standard response relied on ${seed.oldMethod}` }),
+      question(1, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph B.", options: headings, answer: headingFor("B"), explanation: "Paragraph B stresses that the change is a method rather than a product, since two installations may look entirely different.", evidence: "the change is a method and not a product" }),
+      question(2, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph E.", options: headings, answer: headingFor("E"), explanation: "Paragraph E is about interpreting the evidence cautiously and why comparisons can mislead.", evidence: "The evidence nonetheless has to be interpreted cautiously" }),
+      question(3, { group: `Questions ${questionStart}-${questionStart + 3}: Matching headings`, kind: "matching-headings", prompt: "Choose the best heading for paragraph G.", options: headings, answer: headingFor("G"), explanation: "Paragraph G describes the preparation that moves the method from a trial to wider adoption.", evidence: `teams start by ${seed.planning}` }),
+      ...picked.map((statement, index) =>
+        question(4 + index, {
+          group: `Questions ${questionStart + 4}-${questionStart + 7}: True / False / Not Given`,
+          kind: "true-false-not-given",
+          prompt: statement.prompt,
+          options: tfng,
+          answer: statement.answer,
+          explanation: statement.explanation,
+          evidence: statement.evidence,
+        })
+      ),
       ...completionAnswers.slice(0, questionCount - 8).map(([prompt, answer, evidence], index) => question(index + 8, { group: `Questions ${questionStart + 8}-${questionStart + questionCount - 1}: Sentence completion`, kind: "sentence-completion", prompt: `Complete the sentence. ${prompt}`, instruction: "Write NO MORE THAN THREE WORDS.", answer, acceptedAnswers: [answer], explanation: "The answer is stated directly in the passage.", evidence })),
     ],
   };
@@ -940,6 +1073,26 @@ function originalFullTest(seed: FullTestSeed): ReadingPracticeTest {
 }
 
 const ORIGINAL_FULL_TESTS = FULL_TEST_SEEDS.map(originalFullTest);
+
+/** Re-opens a full-test passage as a standalone practice set.
+ *
+ *  Inside a three-passage test these questions are numbered 14-26 or 27-40. On
+ *  their own they have to start at 1, otherwise a 13-question set opens at
+ *  "Question 14" and looks as though something is missing. The passage id is
+ *  deliberately preserved so highlights made in one context still show in the
+ *  other; only the question numbering is rebased. */
+function standalonePassage(passage: ReadingPassage): ReadingPassage {
+  const shift = Math.min(...passage.questions.map((question) => question.number)) - 1;
+  if (shift === 0) return passage;
+  return {
+    ...passage,
+    questions: passage.questions.map((question) => ({
+      ...question,
+      number: question.number - shift,
+      group: question.group.replace(/\d+/g, (value) => String(Number(value) - shift)),
+    })),
+  };
+}
 
 export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
   {
@@ -968,7 +1121,7 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
     track: "Academic",
     level: "Intermediate",
     minutes: 20,
-    passages: [roofGardens],
+    passages: [standalonePassage(roofGardens)],
   },
   {
     id: "academic-aerofoil",
@@ -977,7 +1130,7 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
     track: "Academic",
     level: "Advanced",
     minutes: 20,
-    passages: [aerofoil],
+    passages: [standalonePassage(aerofoil)],
   },
   {
     id: "academic-libraries",
@@ -986,7 +1139,7 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
     track: "Academic",
     level: "Advanced",
     minutes: 20,
-    passages: [cityLibraries],
+    passages: [standalonePassage(cityLibraries)],
   },
 ];
 
@@ -1120,4 +1273,36 @@ export function getQuestionsForReadingQuestionType(
     seen.add(item.question.id);
     return true;
   });
+}
+
+
+/** Published raw-score conversions for the 40-question Reading papers, as the
+ *  ratio at the bottom of each band. General Training is marked more strictly
+ *  than Academic at the same raw score, so the two tracks cannot share a curve.
+ */
+const ACADEMIC_BAND_TABLE: ReadonlyArray<readonly [number, number]> = [
+  [0.975, 9], [0.925, 8.5], [0.875, 8], [0.825, 7.5], [0.75, 7],
+  [0.675, 6.5], [0.575, 6], [0.475, 5.5], [0.375, 5], [0.325, 4.5],
+  [0.25, 4], [0.2, 3.5], [0.15, 3],
+];
+
+const GENERAL_BAND_TABLE: ReadonlyArray<readonly [number, number]> = [
+  [1, 9], [0.975, 8.5], [0.9, 8], [0.85, 7.5], [0.775, 7],
+  [0.7, 6.5], [0.6, 6], [0.475, 5.5], [0.375, 5], [0.3, 4.5],
+  [0.225, 4], [0.15, 3.5], [0.1, 3],
+];
+
+/** Below this many questions, one answer moves the result by a whole band or
+ *  more, so a single figure would be misleading. */
+export const RELIABLE_QUESTION_COUNT = 20;
+
+export function readingBand(
+  score: number,
+  total: number,
+  track: ReadingPracticeTest["track"]
+): { band: number; approximate: boolean } {
+  const ratio = total ? score / total : 0;
+  const table = track === "General Training" ? GENERAL_BAND_TABLE : ACADEMIC_BAND_TABLE;
+  const match = table.find(([threshold]) => ratio >= threshold);
+  return { band: match ? match[1] : 2.5, approximate: total < RELIABLE_QUESTION_COUNT };
 }

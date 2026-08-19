@@ -195,6 +195,14 @@ class Settings(BaseSettings):
     HSTS_MAX_AGE: int = 63072000  # 2 years; sent only in production (HTTPS)
     SLOW_REQUEST_MS: int = 1000  # log a warning above this
 
+    # Error tracking (Sentry). Unset = errors stay in application logs only.
+    SENTRY_DSN: Optional[str] = None
+    SENTRY_TRACES_SAMPLE_RATE: float = 0.0  # 0..1; performance tracing is opt-in
+
+    @property
+    def sentry_enabled(self) -> bool:
+        return bool(self.SENTRY_DSN)
+
     @property
     def cors_origins(self) -> List[str]:
         origins = [self.FRONTEND_ORIGIN]

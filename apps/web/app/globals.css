@@ -4,18 +4,18 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Vocora — Uzbek emerald, turquoise tile, ivory paper, and warm brass. */
-  --color-brand-50: #eef8f4;
-  --color-brand-100: #d8eee6;
-  --color-brand-200: #b4ddcf;
-  --color-brand-300: #83c5b1;
-  --color-brand-400: #4ca78f;
-  --color-brand-500: #288773;
-  --color-brand-600: #176b5c;
-  --color-brand-700: #11564b;
-  --color-brand-800: #0c453d;
-  --color-brand-900: #073a35;
-  --color-brand-950: #032925;
+  /* Vocora — grass green from the landing field, ivory paper, warm brass. */
+  --color-brand-50: #f1f8ee;
+  --color-brand-100: #ddf0d6;
+  --color-brand-200: #bce3ae;
+  --color-brand-300: #92d081;
+  --color-brand-400: #67b951;
+  --color-brand-500: #489d34;
+  --color-brand-600: #2f7d28;
+  --color-brand-700: #266621;
+  --color-brand-800: #1f521c;
+  --color-brand-900: #1a4419;
+  --color-brand-950: #0c260d;
 
   --color-accent-300: #e4c47a;
   --color-accent-400: #d2a84f;
@@ -32,6 +32,11 @@
   --color-info: #0f766e;
 
   --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  /* Display serif for the auth headings. System stack: the artifact CSP and
+     our own build both block remote font files, and a silent fallback to the
+     body sans would flatten the whole treatment. */
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+    ui-serif, Georgia, serif;
 
   --radius-xl2: 1.5rem;
 
@@ -120,45 +125,113 @@
 :root {
   --font-manrope: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  --surface-page: #f3f5ef;
-  --surface-card: rgb(252 253 248 / 0.84);
-  --surface-raised: rgb(255 255 252 / 0.97);
-  --border-subtle: rgb(10 67 57 / 0.14);
-  --text-primary: #062f2a;
-  --text-secondary: #536660;
+  --surface-page: #eef5ea;
+  --surface-card: rgb(255 255 255 / 0.88);
+  --surface-raised: rgb(255 255 255 / 0.98);
+  --border-subtle: rgb(15 42 23 / 0.12);
+  --text-primary: #0f2a17;
+  --text-secondary: #56695c;
   --text-inverse: #ffffff;
-  --semantic-primary: #073a35;
-  --semantic-primary-hover: #0c453d;
-  --semantic-hover: rgb(7 58 53 / 0.06);
-  --semantic-selected: rgb(23 107 92 / 0.12);
-  --semantic-disabled: rgb(83 102 96 / 0.42);
+  --semantic-primary: #2f7d28;
+  --semantic-primary-hover: #266621;
+  --semantic-hover: rgb(15 42 23 / 0.06);
+  --semantic-selected: rgb(47 125 40 / 0.12);
+  --semantic-disabled: rgb(86 105 92 / 0.42);
   --semantic-focus: #b8892f;
+
+  /* Home hero — a grass-green field carrying one white card. Its own palette:
+     the app's brand green is a deeper teal and reads muddy at this saturation. */
+  --home-field-top: #62b544;
+  --home-field-bottom: #43902d;
+  --home-card: #ffffff;
+  --home-card-soft: #f6f9f4;
+  --home-ink: #0f2a17;
+  --home-muted: #63776a;
+  --home-accent: #2f7d28;
+  --home-accent-hover: #276c21;
+  --home-accent-soft: #4fae44;
+  --home-line: rgb(15 42 23 / 0.10);
+  --home-card-shadow: 0 32px 90px rgb(12 46 20 / 0.28), 0 4px 12px rgb(12 46 20 / 0.12);
+  --home-nav-scrim: rgb(255 255 255 / 0.86);
+  /* The landing card's recipe — green-tinted, real offset, soft blur — scaled
+     down for surfaces that repeat, so a list of cards does not read as heroes. */
   --shadow-card:
-    0 1px 2px rgb(19 60 51 / 0.04),
-    0 14px 36px rgb(30 72 63 / 0.07),
-    inset 0 1px 0 rgb(255 255 255 / 0.96);
+    0 2px 4px rgb(12 46 20 / 0.06),
+    0 16px 44px rgb(12 46 20 / 0.13),
+    inset 0 1px 0 rgb(255 255 255 / 0.9);
   --shadow-raised:
-    0 1px 2px rgb(19 60 51 / 0.04),
-    0 22px 56px rgb(30 72 63 / 0.1),
-    inset 0 1px 0 rgb(255 255 255 / 0.92);
+    0 4px 12px rgb(12 46 20 / 0.1),
+    0 28px 74px rgb(12 46 20 / 0.2),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
+
+  /* Auth screens. The split card is its own small palette: pale paper against
+     the paper-cut foliage, so it does not inherit the app's tinted surfaces. */
+  --auth-page: #dfe4dc;
+  --auth-sheet: #f6f6f3;
+  --auth-ink: #16231c;
+  --auth-muted: #63736a;
+  --auth-field: #ffffff;
+  --auth-field-line: rgb(22 35 28 / 0.22);
+  --auth-primary: #33513f;
+  --auth-primary-hover: #294232;
+  --auth-card-shadow: 0 40px 110px rgb(15 32 24 / 0.26), 0 4px 14px rgb(15 32 24 / 0.08);
+  /* The floating card on small screens sits directly on the foliage, so it is
+     frosted rather than opaque and the leaves read through it. */
+  --auth-glass: rgb(252 253 251 / 0.68);
+  --auth-glass-line: rgb(255 255 255 / 0.58);
+  --auth-glass-shadow:
+    0 30px 80px rgb(10 26 18 / 0.34),
+    inset 0 1px 0 rgb(255 255 255 / 0.6);
 }
 
 [data-theme="dark"] {
-  --surface-page: #071410;
-  --surface-card: rgb(13 36 31 / 0.82);
-  --surface-raised: rgb(18 48 41 / 0.94);
+  --surface-page: #0b1a10;
+  --home-field-top: #1d5c2b;
+  --home-field-bottom: #0d3418;
+  --home-card: #0d221a;
+  --home-card-soft: #122c22;
+  --home-ink: #f2f8ef;
+  --home-muted: #9fb6a5;
+  --home-accent: #57b94c;
+  --home-accent-hover: #6fcc63;
+  --home-accent-soft: #7ad06d;
+  --home-line: rgb(255 255 255 / 0.12);
+  --home-card-shadow: 0 32px 90px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
+  --home-nav-scrim: rgb(13 34 26 / 0.9);
+  --surface-card: rgb(18 41 28 / 0.84);
+  --surface-raised: rgb(23 53 34 / 0.95);
   --border-subtle: rgb(255 255 255 / 0.12);
-  --text-primary: #f7f4eb;
-  --text-secondary: #aebdb7;
+  --text-primary: #f2f8ef;
+  --text-secondary: #9fb6a5;
   --text-inverse: #06130f;
-  --semantic-primary: #62d6bc;
-  --semantic-primary-hover: #8ce4d0;
+  --semantic-primary: #67b951;
+  --semantic-primary-hover: #92d081;
   --semantic-hover: rgb(255 255 255 / 0.075);
   --semantic-selected: rgb(98 214 188 / 0.16);
   --semantic-disabled: rgb(174 189 183 / 0.4);
   --semantic-focus: #e4c47a;
-  --shadow-card: 0 22px 70px rgb(0 0 0 / 0.38), inset 0 1px 0 rgb(255 255 255 / 0.09);
-  --shadow-raised: 0 34px 90px rgb(0 0 0 / 0.42), inset 0 1px 0 rgb(255 255 255 / 0.11);
+  --auth-page: #050f0b;
+  --auth-sheet: #0e1a15;
+  --auth-ink: #eef3ee;
+  --auth-muted: #9aaba1;
+  --auth-field: rgb(255 255 255 / 0.045);
+  --auth-field-line: rgb(255 255 255 / 0.16);
+  --auth-primary: #4f7d63;
+  --auth-primary-hover: #5e9273;
+  --auth-card-shadow: 0 40px 120px rgb(0 0 0 / 0.6);
+  --auth-glass: rgb(14 26 21 / 0.62);
+  --auth-glass-line: rgb(255 255 255 / 0.14);
+  --auth-glass-shadow:
+    0 30px 80px rgb(0 0 0 / 0.55),
+    inset 0 1px 0 rgb(255 255 255 / 0.09);
+  --shadow-card:
+    0 2px 4px rgb(0 0 0 / 0.24),
+    0 18px 52px rgb(2 14 6 / 0.42),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+  --shadow-raised:
+    0 4px 12px rgb(0 0 0 / 0.3),
+    0 30px 82px rgb(2 14 6 / 0.5),
+    inset 0 1px 0 rgb(255 255 255 / 0.1);
 }
 
 html[data-theme="light"] {
@@ -189,6 +262,27 @@ html[data-theme="dark"] {
   --color-selected: var(--semantic-selected);
   --color-disabled: var(--semantic-disabled);
   --color-focus: var(--semantic-focus);
+  --color-home-card: var(--home-card);
+  --color-home-card-soft: var(--home-card-soft);
+  --color-home-ink: var(--home-ink);
+  --color-home-muted: var(--home-muted);
+  --color-home-accent: var(--home-accent);
+  --color-home-accent-hover: var(--home-accent-hover);
+  --color-home-accent-soft: var(--home-accent-soft);
+  --color-home-line: var(--home-line);
+  --shadow-home-card: var(--home-card-shadow);
+  --color-auth-page: var(--auth-page);
+  --color-auth-sheet: var(--auth-sheet);
+  --color-auth-ink: var(--auth-ink);
+  --color-auth-muted: var(--auth-muted);
+  --color-auth-field: var(--auth-field);
+  --color-auth-line: var(--auth-field-line);
+  --color-auth-primary: var(--auth-primary);
+  --color-auth-primary-hover: var(--auth-primary-hover);
+  --shadow-auth-card: var(--auth-card-shadow);
+  --color-auth-glass: var(--auth-glass);
+  --color-auth-glass-line: var(--auth-glass-line);
+  --shadow-auth-glass: var(--auth-glass-shadow);
 }
 
 *,
@@ -446,32 +540,19 @@ body::after {
   }
 }
 
-.auth-background {
+.auth-page-glow {
   pointer-events: none;
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(130deg, rgb(87 79 231 / 0.1), transparent 28%),
-    linear-gradient(310deg, rgb(39 205 164 / 0.11), transparent 34%),
-    #061a18;
+    radial-gradient(circle at 22% 18%, rgb(103 140 116 / 0.34), transparent 42%),
+    radial-gradient(circle at 82% 84%, rgb(58 92 71 / 0.32), transparent 46%);
 }
 
-.auth-showcase {
+[data-theme="dark"] .auth-page-glow {
   background:
-    radial-gradient(circle at 18% 24%, rgb(21 117 95 / 0.08), transparent 28%),
-    radial-gradient(circle at 84% 72%, rgb(184 137 47 / 0.08), transparent 30%),
-    linear-gradient(145deg, #fffefa 0%, #f2f6f0 100%);
-}
-
-.auth-showcase::after {
-  position: absolute;
-  right: -14%;
-  bottom: -34%;
-  width: 52%;
-  height: 72%;
-  border-radius: 50%;
-  background: rgb(21 117 95 / 0.08);
-  content: "";
+    radial-gradient(circle at 22% 18%, rgb(48 92 70 / 0.3), transparent 44%),
+    radial-gradient(circle at 82% 84%, rgb(20 48 36 / 0.5), transparent 48%);
 }
 
 /* Focus visibility for keyboard users. */
@@ -740,4 +821,24 @@ html.theme-switching *::after {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
+}
+
+/* The grass field the landing card sits on: a vertical wash with a soft glow
+   behind the card, so the white edge reads as lit rather than pasted on. */
+.home-field {
+  background:
+    radial-gradient(120% 78% at 50% 22%, rgb(255 255 255 / 0.22), transparent 62%),
+    linear-gradient(178deg, var(--home-field-top), var(--home-field-bottom));
+}
+
+/* The page below the hero keeps the app's own ivory world; fade the field out
+   so the seam reads as a deliberate horizon rather than two pasted slabs. */
+.home-field::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 5rem;
+  background: linear-gradient(to bottom, transparent, var(--surface-page));
+  pointer-events: none;
 }

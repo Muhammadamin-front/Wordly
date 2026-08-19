@@ -32,6 +32,7 @@ import {
 } from "@/lib/ielts-resources";
 import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { ComprehensionTest } from "./comprehension-test";
 import { ListeningAudioLibrary } from "./listening-audio-library";
 import { WritingPractice } from "./writing-practice";
 
@@ -46,12 +47,12 @@ export function SkillView({
   lang,
   skill,
   t,
-  writingT,
+  ieltsT,
 }: {
   lang: string;
   skill: IeltsSkill;
   t: Dictionary["ieltsHub"];
-  writingT?: Dictionary["ielts"];
+  ieltsT?: Dictionary["ielts"];
 }) {
   const content = ieltsSkillContent(lang, skill);
   const vocabularyResources = ieltsVocabularyResources(lang);
@@ -109,7 +110,7 @@ export function SkillView({
         </div>
       </motion.section>
 
-      {skill === "writing" && writingT && (
+      {skill === "writing" && ieltsT && (
         <section id="practice" className="mt-5 scroll-mt-24">
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
@@ -120,7 +121,17 @@ export function SkillView({
               Task 1 · 150 words &nbsp; Task 2 · 250 words
             </span>
           </div>
-          <WritingPractice lang={lang} t={writingT} onTaskChange={setActiveWritingTask} />
+          <WritingPractice lang={lang} t={ieltsT} onTaskChange={setActiveWritingTask} />
+        </section>
+      )}
+
+      {skill === "listening" && ieltsT && (
+        <section id="practice" className="mt-5 scroll-mt-24">
+          <div className="mb-4">
+            <p className="text-xs font-extrabold uppercase text-accent-500">{t.listeningTestEyebrow}</p>
+            <h2 className="mt-1 text-2xl font-black text-ink">{t.listeningTestTitle}</h2>
+          </div>
+          <ComprehensionTest lang={lang} kind="listening" t={ieltsT} />
         </section>
       )}
 
