@@ -13,7 +13,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f3f5ef",
+  themeColor: "#f3e6cb",
 };
 
 const themeScript = `
@@ -71,7 +71,7 @@ export async function generateMetadata({
       siteName: dict.common.appName,
       title: `${dict.common.appName} - ${dict.common.tagline}`,
       description: dict.landing.heroSubtitle,
-      images: [{ url: "/images/vocora-uzbek-student-hero.webp", width: 1200, height: 630 }],
+      images: [{ url: "/images/vocora-cat-tutor-poster.png", width: 1122, height: 1402 }],
     },
     twitter: { card: "summary_large_image" },
     appleWebApp: {
@@ -101,7 +101,7 @@ export default async function RootLayout({
   // this layout — the [lang] segment changes — and React reset the attribute,
   // throwing the reader back to the light theme mid-session.
   return (
-    <html lang={lang} suppressHydrationWarning>
+    <html lang={lang} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

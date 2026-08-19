@@ -37,7 +37,7 @@ export function ForgotForm({ lang, auth }: { lang: string; auth: Dictionary["aut
         <Alert tone="success">{auth.forgotSent}</Alert>
         <Link
           href={`/${lang}/auth/login`}
-          className="block text-center text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
+          className="flex min-h-11 items-center justify-center text-center text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
         >
           {auth.backToLogin}
         </Link>
@@ -64,7 +64,7 @@ export function ForgotForm({ lang, auth }: { lang: string; auth: Dictionary["aut
       <p className="mt-6 text-center">
         <Link
           href={`/${lang}/auth/login`}
-          className="text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-600 hover:underline dark:text-brand-300"
         >
           {auth.backToLogin}
         </Link>

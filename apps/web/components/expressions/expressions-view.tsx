@@ -440,7 +440,7 @@ function DetailModal({
               <div className="rounded-lg border border-brand-400/20 bg-brand-600/5 p-4">
                 <Section title={t.nativeNotes}>
                   <span className="mb-2 flex items-center gap-2">
-                    <Lightbulb className="size-4 text-amber-600 dark:text-amber-300" aria-hidden />
+                    <Lightbulb className="size-4 text-accent-600 dark:text-accent-300" aria-hidden />
                   </span>
                   {expr.native_notes}
                 </Section>

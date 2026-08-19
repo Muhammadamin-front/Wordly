@@ -32,8 +32,8 @@ export function AuthCard({
           <div className="mb-6 flex justify-center">
             <Logo lang={lang} className="text-2xl" />
           </div>
-          <div className="surface-panel rounded-lg p-6 sm:p-8">
-            <h1 className="text-2xl font-black text-ink">{title}</h1>
+          <div className="surface-panel rounded-[16px] p-6 sm:p-8">
+            <h1 className="font-display text-4xl tracking-wide text-ink">{title}</h1>
             <p className="mt-1 text-sm text-ink-soft">{subtitle}</p>
             <div className="mt-6">{children}</div>
           </div>
@@ -51,19 +51,19 @@ export function AuthCard({
       </div>
 
       <div className="relative z-10 flex w-full max-w-[1180px] justify-center px-6 py-12 sm:px-8 lg:block lg:px-0 lg:py-0">
-        <div className="grid w-full max-w-[25.5rem] overflow-hidden rounded-[30px] border border-auth-glass-line bg-auth-glass shadow-auth-glass backdrop-blur-2xl lg:max-w-none lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:rounded-[32px] lg:border-0 lg:bg-auth-sheet lg:shadow-auth-card lg:backdrop-blur-none">
+        <div className="grid w-full max-w-[25.5rem] overflow-hidden rounded-[18px] border-2 border-auth-line bg-auth-sheet shadow-auth-card lg:max-w-none lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:rounded-[22px]">
           <div className="relative hidden lg:order-last lg:block">
             <PaperCutLeaves className="absolute inset-0 size-full" />
           </div>
 
           <section className="flex min-w-0 flex-col px-6 py-8 sm:px-8 lg:px-14 lg:py-12 xl:px-20">
-            <div className="flex min-w-0 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center justify-between gap-3 max-[359px]:flex-col max-[359px]:items-center max-[359px]:gap-2">
               <Logo lang={lang} className="shrink-0 text-lg lg:text-xl" />
               <LocaleSwitcher current={lang as Locale} />
             </div>
 
             <div className="mx-auto flex w-full min-w-0 max-w-[27rem] flex-1 flex-col justify-center py-7 lg:py-10">
-              <h1 className="text-center font-display text-[2rem] font-semibold leading-[1.08] tracking-[-0.02em] text-balance text-auth-ink sm:text-[2.3rem] lg:text-left lg:text-[3.1rem] lg:leading-[1.05]">
+              <h1 className="text-center font-display text-[2.8rem] leading-[0.88] tracking-[0.015em] text-balance text-auth-ink sm:text-[3.4rem] lg:text-left lg:text-[4.4rem]">
                 {title}
               </h1>
               <p className="mt-3 text-center text-[0.9rem] leading-6 text-auth-muted lg:text-left lg:text-[0.95rem]">

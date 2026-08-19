@@ -25,6 +25,14 @@ if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => {};
 }
 
+// jsdom does define window.scrollTo, but calling it logs a "not implemented"
+// error rather than actually doing nothing quietly like a real browser tab
+// with nowhere to scroll would. Replace it outright rather than guard on
+// typeof, which is true either way.
+if (typeof window !== "undefined") {
+  window.scrollTo = () => {};
+}
+
 // Nor IntersectionObserver, which framer-motion's viewport features reach for
 // the moment a `whileInView` element mounts.
 if (typeof window !== "undefined" && typeof window.IntersectionObserver !== "function") {

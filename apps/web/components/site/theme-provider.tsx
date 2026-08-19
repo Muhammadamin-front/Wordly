@@ -16,8 +16,8 @@ export type Theme = "light" | "dark";
 const THEME_STORAGE_KEY = "vocora-theme";
 const THEME_CHANGE_EVENT = "vocora-theme-change";
 const THEME_COLORS: Record<Theme, string> = {
-  light: "#f3f5ef",
-  dark: "#071410",
+  light: "#f3e6cb",
+  dark: "#24130c",
 };
 
 interface ThemeContextValue {

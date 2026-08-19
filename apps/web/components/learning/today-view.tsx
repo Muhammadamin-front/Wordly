@@ -164,16 +164,16 @@ export function TodayView({
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
-      <section className="surface-panel rounded-lg p-5 sm:p-7 lg:p-8">
+      <section className="surface-panel rounded-[18px] p-5 sm:p-7 lg:p-8">
         <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>
             <span className="icon-tile size-12 rounded-lg">
               <Target className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
-            <p className="mt-5 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+            <p className="print-label mt-5 inline-flex border-accent-500 bg-accent-400/10 text-accent-600 dark:text-accent-300">
               {t.todayEyebrow}
             </p>
-            <h1 className="mt-2 max-w-3xl text-4xl font-black tracking-tight text-ink sm:text-5xl">
+            <h1 className="type-h1 mt-3 max-w-3xl text-ink">
               {t.todayTitle}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
@@ -182,7 +182,7 @@ export function TodayView({
           </div>
           <Link
             href={nextStep.href}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-brand-900 px-6 text-sm font-black text-white shadow-[0_16px_36px_rgba(7,58,53,0.22)] transition-transform hover:-translate-y-0.5"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-md border-2 border-brand-950 bg-brand-600 px-6 text-sm font-black text-white shadow-[4px_5px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[6px_7px_0_#54250f]"
           >
             {completed === steps.length ? t.startAgain : t.continue}
             <ChevronRight className="size-4" aria-hidden />
@@ -200,7 +200,7 @@ export function TodayView({
       <section className="mt-5">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-black text-ink">{t.todaysRoute}</h2>
+            <h2 className="font-display text-4xl tracking-wide text-ink">{t.todaysRoute}</h2>
             <p className="mt-1 text-sm text-ink-soft">{t.routeDescription}</p>
           </div>
           <span className="text-sm font-black text-brand-700 dark:text-brand-200">
@@ -211,7 +211,7 @@ export function TodayView({
           className="mt-4"
           value={(completed / steps.length) * 100}
           label={t.todaysRoute}
-          barClassName="bg-linear-to-r from-brand-600 via-brand-400 to-accent-400"
+          barClassName="bg-brand-600"
         />
 
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -224,7 +224,7 @@ export function TodayView({
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.06 }}
-                className="premium-card rounded-lg p-5 sm:p-6"
+                className="premium-card rounded-[14px] p-5 sm:p-6"
               >
                 <div className="flex items-start justify-between gap-4">
                   <span className="icon-tile size-11 rounded-lg">
@@ -244,10 +244,10 @@ export function TodayView({
                     <Check className="size-4" aria-hidden />
                   </button>
                 </div>
-                <p className="mt-5 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+                <p className="print-label mt-5 inline-flex border-accent-500 bg-accent-400/10 text-accent-600 dark:text-accent-300">
                   {index + 1}. {step.meta}
                 </p>
-                <h3 className="mt-2 text-xl font-black text-ink">{step.title}</h3>
+                <h3 className="mt-3 font-display text-3xl tracking-wide text-ink">{step.title}</h3>
                 <p className="mt-2 min-h-12 text-sm leading-6 text-ink-soft">{step.description}</p>
                 <Link
                   href={step.href}
@@ -268,7 +268,7 @@ export function TodayView({
 function Metric({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <p className="text-2xl font-black text-ink sm:text-3xl">{value}</p>
+      <p className="font-display text-4xl tracking-wide text-ink sm:text-5xl">{value}</p>
       <p className="mt-1 text-xs font-bold text-ink-soft">{label}</p>
     </div>
   );

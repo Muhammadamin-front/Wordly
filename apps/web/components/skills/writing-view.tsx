@@ -89,7 +89,7 @@ export function WritingView({ lang, skills }: { lang: string; skills: Dictionary
       </div>
 
       {prompt && (
-        <div className="mt-4 rounded-xl2 border border-line bg-linear-to-br from-amber-500/10 to-transparent p-5">
+        <div className="mt-4 rounded-xl2 border border-brand-400/35 bg-linear-to-br from-brand-500/10 to-transparent p-5">
           <p className="font-medium text-ink">{prompt}</p>
           <button
             type="button"

@@ -41,10 +41,10 @@ export function LocaleSwitcher({
           aria-pressed={locale === current}
           title={LOCALE_LABELS[locale]}
           className={cn(
-            "rounded-md px-2 py-1 text-xs font-bold uppercase transition-colors",
+            "min-h-11 min-w-10 rounded-md px-2 py-1 text-xs font-bold uppercase transition-colors",
             locale === current
               ? tone === "dark"
-                ? "bg-white text-[#0b2925]"
+                ? "bg-white text-brand-950"
                 : "bg-brand-600 text-white"
               : tone === "dark"
                 ? "text-white/62 hover:bg-white/10 hover:text-white"

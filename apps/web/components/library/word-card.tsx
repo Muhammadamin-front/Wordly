@@ -48,7 +48,7 @@ export function WordCard({
           onClick={() => speak(word.headword)}
           title={labels.listen}
           aria-label={labels.listen}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full border border-line/70 bg-raised/90 text-ink-soft shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:text-brand-600 sm:size-10 dark:hover:text-brand-300"
+          className="flex size-11 shrink-0 items-center justify-center rounded-md border border-line/70 bg-raised text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:text-brand-600 dark:hover:text-brand-300"
         >
           <Volume2 className="size-4" />
         </button>
@@ -60,7 +60,7 @@ export function WordCard({
             onClick={onOpen}
             title={labels.details}
             aria-label={labels.details}
-            className="flex size-9 shrink-0 items-center justify-center rounded-md border border-line/70 bg-raised/85 text-ink-soft shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:text-brand-600 sm:size-11 sm:rounded-lg dark:hover:text-brand-300"
+            className="flex size-11 shrink-0 items-center justify-center rounded-md border border-line/70 bg-raised text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all hover:-translate-y-0.5 hover:border-brand-400/60 hover:text-brand-600 dark:hover:text-brand-300"
           >
             <BookOpen className="size-4" />
           </button>
@@ -69,7 +69,7 @@ export function WordCard({
             disabled={added}
             onClick={onAdd}
             className={cn(
-              "flex min-h-9 min-w-0 flex-1 items-center justify-center gap-1 rounded-md px-2 text-[11px] font-bold transition-all sm:h-11 sm:gap-2 sm:rounded-lg sm:px-3 sm:text-sm",
+              "flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-md px-2 text-[11px] font-bold transition-all sm:gap-2 sm:rounded-lg sm:px-3 sm:text-sm",
               added
                 ? "border border-success/20 bg-success/10 text-success"
                 : "border border-brand-400/20 bg-brand-600/10 text-brand-600 hover:-translate-y-0.5 hover:bg-brand-600/16 dark:text-brand-300"
@@ -83,7 +83,7 @@ export function WordCard({
       front={
         <div className="flex h-full flex-col p-3 sm:p-5">
           <div className="flex min-w-0 items-start gap-3 pr-7 sm:pr-12">
-            <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-lg border border-white/15 bg-white/30 shadow-[0_12px_30px_rgba(8,12,20,0.08)] sm:block">
+            <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-lg border border-brand-200 bg-sand-100 shadow-[2px_3px_0_rgb(84,37,15,0.14)] sm:block">
               {word.image_url ? (
                 <Image
                   src={word.image_url}
@@ -96,13 +96,13 @@ export function WordCard({
               ) : (
                 <div
                   aria-hidden
-                  className="flex size-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,rgba(255,255,255,0.68),transparent_24%),linear-gradient(145deg,rgba(113,184,151,0.42),rgba(243,213,162,0.32))] text-brand-800/75"
+                  className="flex size-full items-center justify-center bg-[radial-gradient(circle_at_25%_20%,rgb(255_248_234_/_0.82),transparent_26%),linear-gradient(145deg,rgb(108_147_144_/_0.28),rgb(185_78_40_/_0.16))] text-brand-800/75"
                 >
                   <ImageIcon className="size-6" strokeWidth={1.7} />
                 </div>
               )}
               {word.image_url && (
-                <div className="absolute inset-0 bg-linear-to-t from-black/14 via-transparent to-white/10" />
+                <div className="absolute inset-0 bg-linear-to-t from-brand-950/20 via-transparent to-raised/20" />
               )}
             </div>
             <div className="min-w-0 flex-1">
@@ -116,7 +116,7 @@ export function WordCard({
           </div>
 
           <div className="mt-3 flex min-w-0 flex-wrap items-center gap-1 text-[10px] sm:mt-5 sm:gap-1.5 sm:text-xs">
-            <span className="max-w-full truncate rounded-full border border-line/70 bg-card/60 px-1.5 py-0.5 font-bold text-ink-soft backdrop-blur-xl sm:px-2.5 sm:py-1">
+            <span className="max-w-full truncate rounded-md border border-line/70 bg-raised px-1.5 py-0.5 font-bold text-ink-soft sm:px-2.5 sm:py-1">
               {word.pos}
             </span>
             {word.ipa && <span className="text-ink-soft/70">/{word.ipa}/</span>}
@@ -134,10 +134,10 @@ export function WordCard({
           <p className="truncate pr-5 text-[10px] font-black uppercase text-ink-soft sm:pr-7 sm:text-xs">{word.headword}</p>
           <p className="mt-2 line-clamp-3 text-sm font-black leading-tight text-ink sm:mt-4 sm:text-2xl">{translation}</p>
           <div className="mt-2 flex flex-wrap items-center gap-1 text-[10px] sm:mt-4 sm:gap-1.5 sm:text-xs">
-            <span className="rounded-full bg-brand-600/10 px-2.5 py-1 font-bold text-brand-600 dark:text-brand-300">
+            <span className="print-label border-brand-600 bg-brand-600/10 px-2 py-1 text-brand-600 dark:text-brand-300">
               {word.cefr_level}
             </span>
-            <span className="rounded-full bg-ink/5 px-2.5 py-1 font-bold text-ink-soft dark:bg-white/10">
+            <span className="rounded-md border border-line/70 bg-raised px-2.5 py-1 font-bold text-ink-soft">
               {word.pos}
             </span>
           </div>

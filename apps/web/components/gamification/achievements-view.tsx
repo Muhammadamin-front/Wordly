@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CircleDollarSign, Flame, Medal } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card } from "@/components/ui/card";
@@ -62,26 +63,24 @@ export function AchievementsView({
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink">{page.title}</h1>
+      <h1 className="type-h1 text-ink">{page.title}</h1>
       <p className="mt-1 text-sm text-ink-soft">{page.subtitle}</p>
 
       {/* Level / XP summary */}
-      <Card className="mt-6 bg-linear-to-br from-brand-600/10 to-accent-500/5">
+      <Card className="mt-6 border-brand-400/45 bg-brand-50">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm text-ink-soft">
               {gam.level} {stats.level}
             </p>
-            <p className="mt-0.5 text-2xl font-extrabold text-ink">
+            <p className="mt-0.5 font-display text-4xl tracking-wide text-ink">
               {stats.xp} <span className="text-base font-semibold text-ink-soft">XP</span>
             </p>
           </div>
-          <div className="text-right text-sm">
-            <p className="font-bold text-orange-500">🔥 {stats.current_streak}</p>
-            <p className="mt-0.5 font-bold text-amber-500">🪙 {stats.coins}</p>
-            <p className="mt-0.5 text-ink-soft">
-              🏅 {unlockedCount}/{items.length}
-            </p>
+          <div className="space-y-1 text-right text-sm">
+            <p className="flex items-center justify-end gap-1 font-bold text-brand-600"><Flame className="size-4" aria-hidden /> {stats.current_streak}</p>
+            <p className="flex items-center justify-end gap-1 font-bold text-accent-600"><CircleDollarSign className="size-4" aria-hidden /> {stats.coins}</p>
+            <p className="flex items-center justify-end gap-1 text-ink-soft"><Medal className="size-4" aria-hidden /> {unlockedCount}/{items.length}</p>
           </div>
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-line">
@@ -102,7 +101,7 @@ export function AchievementsView({
             <div
               key={item.code}
               className={cn(
-                "flex items-center gap-4 rounded-xl2 border p-4 transition-all",
+                "flex items-center gap-4 rounded-[14px] border p-4 shadow-[2px_3px_0_rgb(84,37,15,0.1)] transition-all",
                 item.unlocked
                   ? "border-brand-400/50 bg-card"
                   : "border-line bg-card opacity-60"
@@ -115,11 +114,11 @@ export function AchievementsView({
                 {meta.i}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="font-bold text-ink">{meta.t}</p>
+                <p className="font-display text-2xl tracking-wide text-ink">{meta.t}</p>
                 <p className="text-xs text-ink-soft">{meta.d}</p>
-                <p className="mt-1 text-[11px] font-semibold text-ink-soft">
+                <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-ink-soft">
                   {page[CATEGORY_LABEL[item.category]]} · +{item.xp_reward} XP · +
-                  {item.coin_reward} 🪙
+                  {item.coin_reward} <CircleDollarSign className="size-3" aria-hidden />
                 </p>
               </div>
               {item.unlocked && (

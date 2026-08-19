@@ -341,7 +341,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
                 key={row.user_id}
                 className={cn(
                   "flex items-center gap-3 rounded-xl border px-4 py-3",
-                  row.rank === 1 ? "border-yellow-500/50 bg-yellow-500/10" : "border-line bg-card"
+                  row.rank === 1 ? "border-brand-500/50 bg-brand-500/10" : "border-line bg-card"
                 )}
               >
                 <span className="w-6 text-center text-lg">{row.rank === 1 ? "🥇" : row.rank === 2 ? "🥈" : row.rank === 3 ? "🥉" : row.rank}</span>

@@ -25,19 +25,14 @@ export type HomeHeroCopy = {
 
 const PILLAR_ICONS = [BookOpenText, Languages, Mic2, GraduationCap] as const;
 
-/** The phone band wants a portrait-friendly frame. Point this at a dedicated
- *  crop when one lands in /public/images; the forest frame holds until then. */
-const MOBILE_HERO = "/images/vocora-forest-hero.webp";
-
 const SHELF_TILES = [
-  { href: "vocabulary", image: "/images/vocora-forest-hero.webp", position: "object-[30%_center]" },
-  { href: "grammar", image: "/images/vocora-uzbek-student-hero.webp", position: "object-[70%_center]" },
-  { href: "ielts", image: "/images/vocora-study-desk-hero.png", position: "object-center" },
+  { href: "vocabulary", image: "/images/vocora-cat-tutor-poster.png", position: "object-center" },
+  { href: "grammar", image: "/images/vocora-grammar-desk-poster.png", position: "object-center" },
+  { href: "ielts", image: "/images/vocora-ielts-desk-poster.png", position: "object-center" },
 ] as const;
 
-/** The landing hero: one white card floating on a grass-green field, split by a
- *  curve that hands the right side to the photograph. The card carries its own
- *  navigation, so the global site header stands down on this route. */
+/** The landing hero keeps the established navigation and CTA behavior, but gives
+ * the page a dedicated editorial composition and Vocora's recurring mascot. */
 export function HomeHero({
   lang,
   copy,
@@ -56,40 +51,12 @@ export function HomeHero({
   signUp: string;
 }) {
   return (
-    <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-8 sm:px-8 sm:py-14">
-      <svg aria-hidden className="pointer-events-none absolute size-0">
-        <defs>
-          <clipPath id="home-hero-curve" clipPathUnits="objectBoundingBox">
-            <path d="M0.487 0 C0.427 0.16 0.400 0.34 0.417 0.52 C0.438 0.72 0.488 0.89 0.542 1 L1 1 L1 0 Z" />
-          </clipPath>
-        </defs>
-      </svg>
-
-      <div className="relative w-full max-w-[1180px] overflow-hidden rounded-[26px] bg-home-card shadow-home-card sm:rounded-[32px]">
-        {/* Hero region: nav, headline and the curved photograph share one box. */}
+    <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-7 sm:px-8 sm:py-12">
+      <div className="relative w-full max-w-[1180px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-home-card shadow-home-card sm:rounded-[26px]">
         <div className="relative isolate">
-          <div
-            aria-hidden
-            className="absolute inset-0 hidden lg:block"
-            style={{ clipPath: "url(#home-hero-curve)" }}
-          >
-            <Image
-              src="/images/vocora-forest-hero.webp"
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 1023px) 0px, 700px"
-              className="object-cover object-[68%_center] brightness-[1.18] saturate-[1.35]"
-            />
-            <span className="absolute inset-0 bg-[linear-gradient(200deg,rgb(120_190_90/0.55),rgb(30_92_40/0.18)_46%,rgb(9_40_18/0.42))]" />
-            {/* Keeps the navigation legible where it crosses the photograph. */}
-            <span className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(to_bottom,var(--home-nav-scrim),transparent)]" />
-          </div>
-
-          {/* Below lg the global site header is in charge, drawer and all. */}
           <nav
             aria-label={copy.menu}
-            className="relative z-10 hidden items-center justify-between gap-4 px-8 py-5 lg:flex"
+            className="relative z-10 hidden items-center justify-between gap-4 border-b border-home-line px-8 py-5 lg:flex"
           >
             <Logo lang={lang} className="shrink-0 text-lg text-home-ink" />
             <div className="flex items-center gap-7 text-[0.78rem] font-black uppercase tracking-[0.06em] text-home-ink">
@@ -110,7 +77,7 @@ export function HomeHero({
               </Link>
               <Link
                 href={`/${lang}/auth/register`}
-                className="inline-flex min-h-10 items-center rounded-full bg-home-accent px-4 text-sm font-black text-white transition-colors hover:bg-home-accent-hover"
+                className="inline-flex min-h-10 items-center rounded-md border border-[#f3e6cb]/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
               >
                 {signUp}
               </Link>
@@ -124,29 +91,12 @@ export function HomeHero({
             </div>
           </nav>
 
-          {/* Mobile and tablet take the photograph as a band, since the curve
-              needs two columns to read as a split rather than a smear. */}
-          <div className="relative h-52 overflow-hidden sm:h-64 lg:hidden">
-            <Image
-              src={MOBILE_HERO}
-              alt={copy.heroImageAlt}
-              fill
-              priority
-              sizes="(max-width: 1023px) 100vw, 0px"
-              className="object-cover object-[68%_center] brightness-[1.15] saturate-[1.3]"
-            />
-          </div>
-
-          <div className="relative z-10 grid gap-8 px-5 pb-8 pt-7 sm:px-8 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:pb-12 lg:pt-0">
-            <div className="min-w-0">
-              <p className="flex items-center gap-4 text-[0.68rem] font-black uppercase tracking-[0.14em] text-home-accent">
-                {copy.eyebrow}
-                <span aria-hidden className="hidden h-px w-16 bg-home-accent/40 sm:block" />
-              </p>
-              <h1 className="mt-4 max-w-[14ch] text-balance text-[2.5rem] font-black leading-[0.97] tracking-[-0.035em] text-home-ink sm:text-[3.1rem] lg:max-w-[13ch] lg:text-[3.35rem]">
+          <div className="relative z-10 grid gap-8 px-5 py-7 sm:px-8 sm:py-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(21rem,0.75fr)] lg:items-center lg:gap-12 lg:px-12 lg:py-12">
+            <div className="min-w-0 lg:py-4">
+              <h1 className="editorial-title max-w-[12ch] text-balance text-[3.5rem] text-home-ink sm:text-[4.75rem] lg:max-w-[11ch] lg:text-[clamp(4.4rem,7.3vw,6.6rem)]">
                 {copy.title}
               </h1>
-              <p className="mt-5 max-w-[42ch] text-[0.92rem] leading-7 text-home-muted lg:max-w-[34ch]">
+              <p className="mt-6 max-w-[48ch] text-[0.9rem] leading-7 text-home-muted sm:text-[0.96rem]">
                 {copy.subtitle}
               </p>
               <div className="mt-7">
@@ -155,21 +105,21 @@ export function HomeHero({
                   guestLabel={ctaLabel}
                   userLabel={ctaContinueLabel}
                   variant="ghost"
-                  className="min-h-12 gap-2.5 rounded-lg bg-home-accent px-6 text-[0.82rem] font-black uppercase tracking-[0.06em] text-white hover:bg-home-accent-hover"
+                  className="min-h-12 gap-2.5 whitespace-nowrap rounded-md border-2 border-[#f3e6cb]/30 bg-home-accent px-6 text-[0.82rem] font-black uppercase tracking-[0.06em] text-white shadow-[5px_6px_0_rgba(0,0,0,0.38)] hover:-translate-y-0.5 hover:bg-home-accent-hover hover:shadow-[7px_8px_0_rgba(0,0,0,0.38)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_3px_0_rgba(0,0,0,0.38)] max-[359px]:px-4"
                   icon={<ArrowRight className="order-last size-4" aria-hidden />}
                 />
               </div>
 
-              <ul className="mt-9 grid grid-cols-2 gap-y-6 sm:grid-cols-4">
+              <ul className="mt-10 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
                 {copy.pillars.map((pillar, index) => {
                   const Icon = PILLAR_ICONS[index];
                   return (
                     <li
                       key={pillar}
-                      className="flex flex-col items-center gap-2.5 px-2 text-center sm:not-first:border-l sm:not-first:border-home-line"
+                      className="flex items-center gap-2.5 border border-home-line px-3 py-2.5 text-left sm:min-w-[9rem]"
                     >
-                      <Icon className="size-6 text-home-accent" aria-hidden strokeWidth={1.6} />
-                      <span className="text-[0.6rem] font-black uppercase tracking-[0.08em] text-home-ink">
+                      <Icon className="size-4 text-home-accent" aria-hidden strokeWidth={1.7} />
+                      <span className="text-[0.62rem] font-black uppercase tracking-[0.08em] text-home-ink">
                         {pillar}
                       </span>
                     </li>
@@ -177,23 +127,46 @@ export function HomeHero({
                 })}
               </ul>
             </div>
+
+            <div className="relative mx-auto w-full max-w-[29rem]">
+              <span aria-hidden className="absolute -left-4 top-[17%] hidden size-16 rounded-full border border-[#f3e6cb]/28 bg-[#b94e28] lg:block" />
+              <span aria-hidden className="absolute -right-3 bottom-[12%] h-20 w-20 border border-[#f3e6cb]/22 bg-[#b94e28]" />
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border-2 border-[#f3e6cb]/80 bg-[#54250f] p-2 shadow-[10px_11px_0_rgba(0,0,0,0.42)]">
+                <Image
+                  src="/images/vocora-cat-tutor-poster.png"
+                  alt={copy.heroImageAlt}
+                  fill
+                  loading="eager"
+                  sizes="(max-width: 639px) calc(100vw - 4.5rem), (max-width: 1023px) 29rem, 38vw"
+                  className="object-cover"
+                />
+                <span aria-hidden className="absolute inset-2 border border-[#f3e6cb]/42" />
+                <span className="print-label absolute left-5 top-5 bg-[#f3e6cb] text-[#24130c]">Vocora</span>
+                <span className="absolute bottom-5 right-5 max-w-[13ch] text-right font-display text-3xl leading-[0.82] tracking-wide text-[#fff8ea] drop-shadow-[0_2px_0_rgba(36,19,12,0.75)] sm:text-4xl">
+                  {copy.shelfTitle}
+                </span>
+              </div>
+              <div className="absolute -left-4 bottom-8 hidden max-w-36 rotate-[-5deg] border-2 border-[#24130c] bg-[#f3e6cb] px-3 py-2 text-[#24130c] shadow-[4px_5px_0_rgba(0,0,0,0.35)] sm:block">
+                <p className="text-[0.58rem] font-black uppercase tracking-[0.1em]">{copy.pillars[0]}</p>
+                <p className="mt-1 font-display text-3xl leading-none">A1–C2</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Bottom strip: level shelf, its headline, and the promise badge. */}
-        <div className="grid gap-5 border-t border-home-line px-5 py-5 sm:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-7">
-          <div className="flex items-center gap-3">
+        <div className="grid gap-5 border-t border-home-line bg-black/10 px-5 py-5 sm:px-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-7">
+          <div className="grid min-w-0 grid-cols-2 gap-3 sm:flex sm:items-center">
             {SHELF_TILES.map((tile, index) => (
               <Link
                 key={tile.href}
                 href={`/${lang}/${tile.href}`}
-                className="group relative w-[5.6rem] shrink-0 sm:w-[7.2rem]"
+                className="group relative min-w-0 w-full sm:w-[7.2rem]"
               >
                 <span
                   className={`relative block aspect-4/3 overflow-hidden rounded-lg border-2 bg-home-card-soft transition-colors ${
                     index === 0
-                      ? "border-home-accent-soft"
-                      : "border-transparent group-hover:border-home-accent-soft/60"
+                      ? "border-home-accent"
+                      : "border-transparent group-hover:border-home-accent/60"
                   }`}
                 >
                   <Image
@@ -204,7 +177,7 @@ export function HomeHero({
                     className={`object-cover ${tile.position}`}
                   />
                 </span>
-                <span className="mt-1.5 block text-center text-[0.58rem] font-black uppercase tracking-[0.1em] text-home-muted">
+                <span className="mt-1.5 block line-clamp-2 text-center text-[0.58rem] font-black uppercase tracking-[0.1em] text-home-muted">
                   {copy.pillars[index === 2 ? 3 : index]}
                 </span>
               </Link>
@@ -212,7 +185,7 @@ export function HomeHero({
             <Link
               href={`/${lang}/vocabulary`}
               aria-label={copy.browseLevels}
-              className="grid size-9 shrink-0 place-items-center rounded-full border border-home-line text-home-ink transition-colors hover:bg-home-card-soft"
+              className="grid size-11 place-self-center place-items-center rounded-full border border-home-line text-home-ink transition-colors hover:bg-home-card-soft sm:size-9"
             >
               <ArrowRight className="size-4" aria-hidden />
             </Link>

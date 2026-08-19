@@ -175,8 +175,8 @@ export const ieltsApi = {
 };
 
 export const BAND_COLOR = (band: number): string => {
-  if (band >= 7.5) return "text-emerald-500";
+  if (band >= 7.5) return "text-accent-500";
   if (band >= 6.5) return "text-brand-500";
-  if (band >= 5.5) return "text-amber-500";
-  return "text-orange-500";
+  if (band >= 5.5) return "text-brand-400";
+  return "text-brand-600";
 };

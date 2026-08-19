@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/uz",
     display: "standalone",
     orientation: "portrait",
-    background_color: "#071410",
-    theme_color: "#071410",
+    background_color: "#f3e6cb",
+    theme_color: "#f3e6cb",
     categories: ["education"],
     icons: [
       { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

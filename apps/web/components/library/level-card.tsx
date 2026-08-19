@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import {
   ArrowRight,
   BookMarked,
@@ -78,22 +77,14 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "depth-scene group relative flex min-h-[268px] flex-col overflow-hidden rounded-[24px] border border-[#d8c09a]/22 bg-[#143427] p-3 text-white shadow-[0_24px_58px_rgba(4,22,14,0.34),inset_0_1px_0_rgba(255,255,255,0.18)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_34px_76px_rgba(4,22,14,0.42)] sm:aspect-4/5 sm:min-h-0 sm:rounded-[28px] sm:p-5",
+        "depth-scene group relative flex min-h-[268px] flex-col overflow-hidden rounded-[16px] border-2 border-[#24130c] bg-brand-950 p-3 text-white shadow-[5px_7px_0_rgba(84,37,15,0.55)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(84,37,15,0.6)] sm:aspect-4/5 sm:min-h-0 sm:rounded-[18px] sm:p-5",
         locked ? "grayscale-[0.35] opacity-75" : ""
       )}
     >
-      <Image
-        src={meta.cover}
-        alt=""
-        fill
-        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-        className="absolute inset-0 size-full object-cover opacity-[0.72] transition-transform duration-700 group-hover:scale-[1.055]"
-      />
-      <div aria-hidden className={cn("absolute inset-0 bg-linear-to-b from-[#082016]/12 to-[#05140d]/96", meta.overlay)} />
-      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_22%_16%,rgba(244,219,174,0.22),transparent_22%),radial-gradient(circle_at_78%_12%,rgba(129,181,125,0.16),transparent_24%)]" />
-      <div aria-hidden className="absolute -right-10 -top-8 h-36 w-28 rotate-12 rounded-full border border-[#f1ddb8]/18 bg-[#f3d4a4]/10 blur-[0.2px] sm:h-52 sm:w-40" />
-      <div aria-hidden className="absolute right-4 top-14 h-24 w-10 rotate-[18deg] rounded-full border border-[#f4dfb7]/18 bg-[#d9b184]/12 shadow-[0_18px_48px_rgba(0,0,0,0.16)] sm:right-8 sm:h-36 sm:w-14" />
-      <div aria-hidden className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-[#06140d] via-[#06140d]/72 to-transparent" />
+      <div aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_22%_16%,rgba(243,230,203,0.18),transparent_22%),radial-gradient(circle_at_78%_12%,rgba(185,78,40,0.18),transparent_24%)]" />
+      <div aria-hidden className="absolute -right-10 -top-8 h-36 w-28 rotate-12 border border-[#f3e6cb]/18 bg-[#b94e28]/18 sm:h-52 sm:w-40" />
+      <div aria-hidden className="absolute right-4 top-14 h-24 w-10 rotate-[18deg] border border-[#f3e6cb]/18 bg-[#d69c63]/20 sm:right-8 sm:h-36 sm:w-14" />
+      <div aria-hidden className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-[#24130c] via-[#24130c]/72 to-transparent" />
 
       <div className="relative z-20 flex items-start justify-between">
         <span className="flex items-center gap-2">
@@ -112,7 +103,7 @@ export function LevelCard({
       </div>
 
       <div className="relative z-10 mt-auto pt-5 sm:pt-24">
-        <h3 className="line-clamp-2 max-w-[13ch] text-[0.98rem] font-black leading-[1.08] tracking-tight text-white sm:text-[1.55rem] sm:leading-[1.02]">
+        <h3 className="line-clamp-2 max-w-[13ch] font-display text-2xl leading-[0.9] tracking-wide text-white sm:text-[2.35rem]">
           {strings.name}
         </h3>
         <p className="mt-2 line-clamp-2 max-w-[27ch] text-[11px] leading-4 text-[#d9cab2]/82 sm:mt-3 sm:block sm:text-sm/6">{strings.desc}</p>

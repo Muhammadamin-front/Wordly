@@ -80,10 +80,10 @@ export function MemoryGame({
                 className="relative block size-full transition-transform duration-500 [transform-style:preserve-3d] motion-reduce:transition-none"
                 style={{ transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
               >
-                <span className="absolute inset-0 flex items-center justify-center rounded-lg border border-brand-400/25 bg-linear-to-br from-brand-800 via-brand-900 to-[#061e1b] text-brand-100 shadow-[0_12px_28px_rgba(7,58,53,0.22)] [backface-visibility:hidden] group-hover:-translate-y-0.5 group-hover:border-accent-400/50">
+                <span className="absolute inset-0 flex items-center justify-center rounded-lg border border-brand-400/25 bg-linear-to-br from-brand-700 via-brand-900 to-brand-950 text-brand-100 shadow-[3px_4px_0_rgba(84,37,15,0.3)] [backface-visibility:hidden] group-hover:-translate-y-0.5 group-hover:border-accent-400/50">
                   <BrainCircuit className="size-6 opacity-75" aria-hidden />
                 </span>
-                <span className="absolute inset-0 flex items-center justify-center rounded-lg border border-brand-400/45 bg-card p-2 text-center text-xs font-bold leading-tight text-ink shadow-[0_14px_34px_rgba(7,58,53,0.16)] [backface-visibility:hidden] [transform:rotateY(180deg)] sm:text-sm">
+                <span className="absolute inset-0 flex items-center justify-center rounded-lg border border-brand-400/45 bg-card p-2 text-center text-xs font-bold leading-tight text-ink shadow-[3px_4px_0_rgba(84,37,15,0.16)] [backface-visibility:hidden] [transform:rotateY(180deg)] sm:text-sm">
                   {tile.text}
                   {isMatched && (
                     <span className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-success text-white">

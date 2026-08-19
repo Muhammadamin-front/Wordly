@@ -255,10 +255,10 @@ export function ComprehensionTest({
                       className={cn(
                         "rounded-full px-1.5 py-0.5 font-bold tabular-nums",
                         item.band >= 7.5
-                          ? "bg-danger/10 text-danger"
+                          ? "bg-accent-500/12 text-accent-600 dark:text-accent-300"
                           : item.band >= 6.5
-                            ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                            : "bg-success/10 text-success"
+                            ? "bg-brand-500/12 text-brand-600 dark:text-brand-300"
+                            : "bg-sand-200/80 text-brand-800 dark:bg-brand-500/20 dark:text-brand-200"
                       )}
                     >
                       {t.bandLabel} {item.band.toFixed(1)}
@@ -349,7 +349,7 @@ export function ComprehensionTest({
                       })}
                     </div>
                     {result?.explanations?.[qi] && (
-                      <p className="mt-3 rounded-lg border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm leading-6 text-ink-soft">
+                      <p className="mt-3 rounded-lg bg-brand-600/6 px-3 py-2 text-sm leading-6 text-ink-soft">
                         {result.explanations[qi]}
                       </p>
                     )}

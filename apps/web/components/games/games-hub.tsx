@@ -46,17 +46,17 @@ const GAME_ICONS: Record<GameType, LucideIcon> = {
 
 const GAME_ACCENT: Record<GameType, string> = {
   word_match: "from-brand-400/24 via-card to-accent-400/10",
-  speed_quiz: "from-amber-400/24 via-card to-brand-400/10",
+  speed_quiz: "from-[#c88a55]/24 via-card to-brand-400/10",
   fill_blank: "from-accent-400/24 via-card to-brand-400/10",
   audio_guess: "from-brand-600/24 via-card to-accent-400/10",
-  typing_race: "from-teal-500/24 via-card to-brand-400/10",
+  typing_race: "from-accent-500/22 via-card to-brand-400/10",
   memory: "from-brand-700/24 via-card to-accent-400/10",
-  boss_battle: "from-red-400/24 via-card to-amber-400/10",
-  hangman: "from-slate-400/24 via-card to-brand-400/10",
-  spelling_bee: "from-yellow-400/24 via-card to-accent-400/10",
-  sentence_builder: "from-emerald-400/24 via-card to-brand-400/10",
-  word_search: "from-teal-500/24 via-card to-accent-400/10",
-  crossword: "from-lime-400/24 via-card to-brand-400/10",
+  boss_battle: "from-brand-600/25 via-card to-[#c88a55]/12",
+  hangman: "from-[#c88a55]/24 via-card to-brand-400/10",
+  spelling_bee: "from-[#e8c99a]/34 via-card to-accent-400/10",
+  sentence_builder: "from-accent-400/20 via-card to-brand-400/10",
+  word_search: "from-accent-500/22 via-card to-brand-400/10",
+  crossword: "from-[#c88a55]/24 via-card to-brand-400/10",
   story_mode: "from-accent-400/22 via-card to-brand-500/12",
   listening: "from-brand-600/24 via-card to-accent-400/10",
   speaking: "from-accent-500/22 via-card to-brand-400/10",
@@ -80,11 +80,12 @@ export function GamesHub({
 
   return (
     <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
-      <section className="surface-panel rounded-lg p-5 sm:p-7">
+      <section className="surface-panel relative overflow-hidden rounded-[18px] p-5 sm:p-7">
+        <span aria-hidden className="absolute -right-5 -top-6 font-display text-[10rem] leading-none tracking-wide text-brand-600/8">PLAY</span>
         <span className="icon-tile size-12 rounded-lg">
           <Gamepad2 className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
         </span>
-        <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-5xl">{games.title}</h1>
+        <h1 className="type-h1 mt-5 text-ink">{games.title}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{games.subtitle}</p>
       </section>
 
@@ -109,15 +110,15 @@ export function GamesHub({
             >
               <Link
                 href={`/${lang}/games/${type}`}
-                className={`premium-card group flex h-full min-h-44 flex-col rounded-lg bg-linear-to-br ${GAME_ACCENT[type]} p-5 active:scale-[0.98]`}
+                className={`premium-card group flex h-full min-h-44 flex-col rounded-[14px] bg-linear-to-br ${GAME_ACCENT[type]} p-5 active:scale-[0.98]`}
               >
                 <div className="flex items-start justify-between gap-4">
                   <span className="icon-tile size-12 rounded-lg">
                     <Icon className="size-6 text-ink" aria-hidden />
                   </span>
-                  <span className="h-1 w-14 rounded-full bg-linear-to-r from-brand-400 via-brand-200 to-accent-300 opacity-70 transition-all group-hover:w-20" />
+                  <span className="h-1 w-14 bg-brand-500 opacity-70 transition-all group-hover:w-20" />
                 </div>
-                <h2 className="mt-6 text-xl font-black text-ink">{meta.name}</h2>
+                <h2 className="mt-6 font-display text-3xl tracking-wide text-ink">{meta.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{meta.desc}</p>
               </Link>
             </motion.div>
