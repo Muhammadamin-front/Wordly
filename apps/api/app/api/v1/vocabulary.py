@@ -29,6 +29,7 @@ from app.schemas.vocabulary import (
 )
 from app.services import vocabulary as vocab_service
 from app.services.admin_audit import record_admin_action
+from app.services.inflection import inflection_candidates
 
 router = APIRouter(tags=["vocabulary"])
 admin_router = APIRouter(
@@ -116,23 +117,36 @@ async def browse_words(
     dependencies=[Depends(rate_limit("default"))],
 )
 async def lookup_words(payload: WordLookupRequest, db: AsyncSession = Depends(get_db)):
-    """Tap-to-translate while reading: one request per passage, not per tap."""
+    """Tap-to-translate while reading: one request per passage, not per tap.
+
+    The corpus indexes lemmas, but passage text is full of inflected forms
+    ("bicycles", "relied"), so each requested word is looked up alongside a
+    few guessed base forms — see services.inflection for why that's safe.
+    """
     normalized = sorted({w.strip().lower() for w in payload.headwords if w.strip()})
     if not normalized:
         return WordLookupResponse(entries={})
 
+    candidates_by_word = {word: [word, *inflection_candidates(word)] for word in normalized}
+    all_candidates = {candidate for candidates in candidates_by_word.values() for candidate in candidates}
+
     rows = await db.scalars(
         select(Word)
-        .where(Word.status == "published", func.lower(Word.headword).in_(normalized))
+        .where(Word.status == "published", func.lower(Word.headword).in_(all_candidates))
         .order_by(Word.frequency_rank.asc().nulls_last())
     )
-    entries: dict[str, WordLookupEntry] = {}
+    matched: dict[str, Word] = {}
     for word in rows.unique():
         key = word.headword.lower()
-        if key in entries:
-            continue  # a headword can have several pos entries; keep the most frequent
+        matched.setdefault(key, word)  # a headword can have several pos entries; keep the most frequent
+
+    entries: dict[str, WordLookupEntry] = {}
+    for original, candidates in candidates_by_word.items():
+        word = next((matched[c] for c in candidates if c in matched), None)
+        if word is None:
+            continue
         sense = word.senses[0] if word.senses else None
-        entries[key] = WordLookupEntry(
+        entries[original] = WordLookupEntry(
             headword=word.headword,
             pos=word.pos,
             slug=word.slug,

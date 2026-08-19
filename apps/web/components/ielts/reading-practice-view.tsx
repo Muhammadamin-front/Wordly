@@ -622,7 +622,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   const [noteDraft, setNoteDraft] = useState("");
   const [clearConfirm, setClearConfirm] = useState(false);
   const [wordLookup, setWordLookup] = useState<Record<string, WordLookupEntry>>({});
-  const [tappedWord, setTappedWord] = useState<{ word: string; entry: WordLookupEntry; x: number; y: number } | null>(null);
+  const [tappedWord, setTappedWord] = useState<{ word: string; entry: WordLookupEntry } | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navRef = useRef<HTMLDivElement>(null);
   const currentPassage = test.passages[passageIndex];
@@ -658,12 +658,15 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
     return () => { cancelled = true; };
   }, [currentPassage]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleWordTap = (word: string, target: HTMLElement) => {
+  const handleWordTap = (word: string) => {
     if (window.getSelection()?.toString()) return; // part of a drag-selection, not a tap
     const entry = wordLookup[word.toLowerCase()];
     if (!entry) return;
-    const rect = target.getBoundingClientRect();
-    setTappedWord({ word, entry, x: rect.left + rect.width / 2, y: rect.top - 8 });
+    // Centered on the viewport rather than anchored to the tapped word: a
+    // fixed-width popover anchored to text near the screen edge (common —
+    // passages fill the width) clips off-screen instead of just covering
+    // more of the passage.
+    setTappedWord({ word, entry });
   };
 
   const persistHighlights = (next: Highlight[]) => { setHighlights(next); writeStore(`${STORAGE_PREFIX}:${test.id}:highlights`, next); };
@@ -910,7 +913,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   );
 }
 
-function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights, wordLookup, onWordTap }: { passageId: string; paragraph: ReadingParagraph; paragraphIndex: number; highlights: Highlight[]; wordLookup: Record<string, WordLookupEntry>; onWordTap: (word: string, target: HTMLElement) => void }) {
+function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights, wordLookup, onWordTap }: { passageId: string; paragraph: ReadingParagraph; paragraphIndex: number; highlights: Highlight[]; wordLookup: Record<string, WordLookupEntry>; onWordTap: (word: string) => void }) {
   const matches = highlights.filter((highlight) => highlight.passageId === passageId && highlight.paragraphIndex === paragraphIndex).sort((a, b) => a.start - b.start);
   const fragments: Array<{ text: string; color?: HighlightColor }> = [];
   let cursor = 0;
@@ -926,7 +929,7 @@ function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights, wo
 // tap handler, while non-word characters (spaces, punctuation) pass through
 // unchanged — the combined text content stays byte-identical to `text`,
 // which is what keeps the character-offset highlight/selection math correct.
-function renderTappableWords(text: string, wordLookup: Record<string, WordLookupEntry>, onWordTap: (word: string, target: HTMLElement) => void, keyPrefix: string) {
+function renderTappableWords(text: string, wordLookup: Record<string, WordLookupEntry>, onWordTap: (word: string) => void, keyPrefix: string) {
   const parts: React.ReactNode[] = [];
   let lastIndex = 0;
   let i = 0;
@@ -938,7 +941,7 @@ function renderTappableWords(text: string, wordLookup: Record<string, WordLookup
     parts.push(
       <span
         key={`${keyPrefix}-${i++}`}
-        onClick={translatable ? (event) => onWordTap(word, event.currentTarget) : undefined}
+        onClick={translatable ? () => onWordTap(word) : undefined}
         className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline" : undefined}
       >
         {word}
@@ -950,7 +953,7 @@ function renderTappableWords(text: string, wordLookup: Record<string, WordLookup
   return parts;
 }
 
-function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word: string; entry: WordLookupEntry; x: number; y: number }; onSave: () => void; onClose: () => void; t: Copy }) {
+function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word: string; entry: WordLookupEntry }; onSave: () => void; onClose: () => void; t: Copy }) {
   useEffect(() => {
     const dismiss = () => onClose();
     window.addEventListener("scroll", dismiss, true);
@@ -961,11 +964,13 @@ function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word
   return (
     <>
       <div className="fixed inset-0 z-40" onClick={onClose} />
+      {/* Centered on the viewport rather than anchored to the tapped word:
+          passages fill the width, so a word-anchored popover routinely
+          clipped off the screen edge. */}
       <div
         role="dialog"
         aria-label={entry.headword}
-        className="fixed z-50 w-64 -translate-x-1/2 -translate-y-full rounded-lg border border-line bg-raised p-3 shadow-[3px_4px_0_rgba(84,37,15,0.2),0_16px_36px_rgba(84,37,15,0.16)]"
-        style={{ left: tapped.x, top: tapped.y }}
+        className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-line bg-raised p-3 shadow-[3px_4px_0_rgba(84,37,15,0.2),0_16px_36px_rgba(84,37,15,0.16)]"
       >
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">

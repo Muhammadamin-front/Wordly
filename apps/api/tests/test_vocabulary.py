@@ -157,6 +157,20 @@ async def test_word_lookup_matches_published_headwords_case_insensitively(client
     assert "not-a-real-word" not in entries
 
 
+async def test_word_lookup_matches_inflected_forms_against_the_base_headword(client):
+    headers = await make_admin(client)
+    await client.post("/api/v1/admin/words", json=WORD_PAYLOAD, headers=headers)
+
+    response = await client.post("/api/v1/words/lookup", json={"headwords": ["apples"]})
+    assert response.status_code == 200
+    entries = response.json()["entries"]
+    # Keyed by the word as it appeared in the passage text, not the lemma
+    # the match was found under — the frontend looks it up by surface form.
+    assert "apples" in entries
+    assert entries["apples"]["headword"] == "apple"
+    assert entries["apples"]["translation_uz"] == "olma"
+
+
 async def test_word_lookup_rejects_empty_and_oversized_batches(client):
     assert (await client.post("/api/v1/words/lookup", json={"headwords": []})).status_code == 422
     too_many = {"headwords": [f"word{i}" for i in range(301)]}
