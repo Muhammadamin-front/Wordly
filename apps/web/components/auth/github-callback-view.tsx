@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { authApi } from "@/lib/api";
+import { ApiError, authApi } from "@/lib/api";
 import { authErrorMessage } from "@/lib/auth-errors";
 import { GITHUB_OAUTH_STATE_KEY, githubRedirectUri, parseGithubState } from "@/lib/github-oauth";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -47,7 +47,12 @@ export function GithubCallbackView({ lang, auth }: { lang: string; auth: Diction
     }
 
     run().catch((cause) => {
-      if (cause !== INVALID_STATE) setError(authErrorMessage(cause, auth));
+      // A 401 here means the provider rejected the sign-in, so the generic
+      // "incorrect email or password" that maps to would be nonsense on a
+      // page with no email or password on it — fall through to the
+      // provider-specific message instead.
+      const unhelpful = cause === INVALID_STATE || (cause instanceof ApiError && cause.status === 401);
+      if (!unhelpful) setError(authErrorMessage(cause, auth));
       setStatus("failed");
     });
   }, [applySession, auth, lang, router, searchParams]);
