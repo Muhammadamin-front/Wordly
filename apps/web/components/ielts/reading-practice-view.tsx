@@ -436,7 +436,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
       </section>
 
       <nav
-        className="sticky top-[6.25rem] z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
+        className="sticky top-25 z-20 mt-5 rounded-full border border-line bg-raised/88 p-1 shadow-sm backdrop-blur-md"
         aria-label={t.academicParts}
       >
         <div className="grid grid-cols-3 gap-1">
@@ -810,7 +810,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   };
 
   return (
-    <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
+    <main className="reading-workspace mx-auto w-full max-w-375 flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
       <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)] max-sm:bg-page">
         <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:px-5">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">

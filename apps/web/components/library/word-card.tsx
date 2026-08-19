@@ -41,7 +41,7 @@ export function WordCard({
       flipTitle={labels.flip}
       unflipTitle={labels.unflip}
       minHeight={292}
-      responsiveHeightClass="min-h-[218px] sm:min-h-[292px]"
+      responsiveHeightClass="min-h-[218px] sm:min-h-73"
       frontActions={
         <button
           type="button"

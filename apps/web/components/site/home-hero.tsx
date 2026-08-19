@@ -52,7 +52,7 @@ export function HomeHero({
 }) {
   return (
     <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-7 sm:px-8 sm:py-12">
-      <div className="relative w-full max-w-[1180px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-home-card shadow-home-card sm:rounded-[26px]">
+      <div className="relative w-full max-w-295 overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-home-card shadow-home-card sm:rounded-[26px]">
         <div className="relative isolate">
           <nav
             aria-label={copy.menu}
@@ -116,7 +116,7 @@ export function HomeHero({
                   return (
                     <li
                       key={pillar}
-                      className="flex items-center gap-2.5 border border-home-line px-3 py-2.5 text-left sm:min-w-[9rem]"
+                      className="flex items-center gap-2.5 border border-home-line px-3 py-2.5 text-left sm:min-w-36"
                     >
                       <Icon className="size-4 text-home-accent" aria-hidden strokeWidth={1.7} />
                       <span className="text-[0.62rem] font-black uppercase tracking-[0.08em] text-home-ink">
@@ -128,7 +128,7 @@ export function HomeHero({
               </ul>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[29rem]">
+            <div className="relative mx-auto w-full max-w-116">
               <span aria-hidden className="absolute -left-4 top-[17%] hidden size-16 rounded-full border border-[#f3e6cb]/28 bg-[#b94e28] lg:block" />
               <span aria-hidden className="absolute -right-3 bottom-[12%] h-20 w-20 border border-[#f3e6cb]/22 bg-[#b94e28]" />
               <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border-2 border-[#f3e6cb]/80 bg-[#54250f] p-2 shadow-[10px_11px_0_rgba(0,0,0,0.42)]">

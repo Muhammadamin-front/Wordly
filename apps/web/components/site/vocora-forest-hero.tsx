@@ -36,7 +36,7 @@ export function VocoraForestHero({
   ];
 
   return (
-    <section className="relative mx-auto min-h-[calc(100svh-5rem)] max-w-[1480px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-[#24130c] shadow-[10px_12px_0_rgba(84,37,15,0.55)] sm:min-h-[720px]">
+    <section className="relative mx-auto min-h-[calc(100svh-5rem)] max-w-370 overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-[#24130c] shadow-[10px_12px_0_rgba(84,37,15,0.55)] sm:min-h-180">
       <Image
         aria-hidden
         src="/images/vocora-cat-tutor-poster.png"
@@ -58,7 +58,7 @@ export function VocoraForestHero({
       <div aria-hidden className="absolute inset-y-0 left-0 hidden w-full bg-[linear-gradient(145deg,rgba(185,78,40,0.16),transparent_32%)] sm:block" />
       <div aria-hidden className="absolute inset-y-0 left-[48%] hidden w-px bg-white/16 lg:block" />
 
-      <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col px-5 py-8 sm:min-h-[720px] sm:px-10 sm:py-12 lg:px-14 lg:py-14">
+      <div className="relative z-10 flex min-h-[calc(100svh-5rem)] flex-col px-5 py-8 sm:min-h-180 sm:px-10 sm:py-12 lg:px-14 lg:py-14">
         <Reveal>
           <p className="print-label inline-flex items-center gap-2 border-[#f3e6cb]/45 bg-[#382015]/72 text-[#f3e6cb] sm:rounded-none sm:border-x-0 sm:border-t-0 sm:bg-transparent sm:px-0 sm:pb-2">
             <span className="size-1.5 rounded-full bg-[#b94e28]" />
@@ -66,16 +66,16 @@ export function VocoraForestHero({
           </p>
         </Reveal>
 
-        <div className="mt-10 max-w-[760px] sm:mt-9">
+        <div className="mt-10 max-w-190 sm:mt-9">
           <Reveal delay={0.06}>
-            <p className="max-w-[340px] text-xs font-extrabold uppercase leading-5 tracking-[0.045em] text-white/72 sm:text-sm">{copy.eyebrow}</p>
-            <h1 className="editorial-title mt-5 max-w-[640px] text-[54px] text-[#fff8ea] min-[390px]:text-[62px] sm:mt-3 sm:max-w-[740px] sm:text-7xl lg:text-[92px]">
+            <p className="max-w-85 text-xs font-extrabold uppercase leading-5 tracking-[0.045em] text-white/72 sm:text-sm">{copy.eyebrow}</p>
+            <h1 className="editorial-title mt-5 max-w-160 text-[54px] text-[#fff8ea] min-[390px]:text-[62px] sm:mt-3 sm:max-w-185 sm:text-7xl lg:text-[92px]">
               <span className="block">{copy.title}</span>
             </h1>
           </Reveal>
 
           <Reveal delay={0.12}>
-            <p className="mt-6 max-w-[390px] text-[15px] font-medium leading-7 text-white/78 sm:mt-7 sm:max-w-[440px] sm:text-lg sm:leading-7">
+            <p className="mt-6 max-w-[390px] text-[15px] font-medium leading-7 text-white/78 sm:mt-7 sm:max-w-110 sm:text-lg sm:leading-7">
               {copy.subtitle}
             </p>
           </Reveal>

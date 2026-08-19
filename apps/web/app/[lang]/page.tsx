@@ -78,7 +78,7 @@ export default async function LandingPage({
 
       <main className="flex-1 px-3 pb-8 sm:px-5">
 
-        <section className="mx-auto mt-5 grid max-w-[1480px] gap-5 xl:grid-cols-[2.1fr_1fr]">
+        <section className="mx-auto mt-5 grid max-w-370 gap-5 xl:grid-cols-[2.1fr_1fr]">
           <Reveal>
             <div className="surface-panel rounded-[22px] p-6 sm:p-8">
               <div className="grid gap-7 lg:grid-cols-[260px_1fr]">
@@ -157,7 +157,7 @@ export default async function LandingPage({
           </Reveal>
 
           <Reveal delay={0.08}>
-            <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]">
+            <div className="relative min-h-130 overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]">
               <div aria-hidden className="absolute -right-20 -top-16 size-80 rounded-full border-[28px] border-accent-400/55" />
               <div aria-hidden className="absolute -bottom-24 -left-16 size-64 bg-brand-500/80 rotate-12" />
               <p aria-hidden className="absolute right-6 top-8 font-display text-[7rem] leading-none tracking-wide text-[#f3e6cb]/10">IELTS</p>
@@ -195,7 +195,7 @@ export default async function LandingPage({
           </Reveal>
         </section>
 
-        <section id="features" className="mx-auto mt-5 max-w-[1480px]">
+        <section id="features" className="mx-auto mt-5 max-w-370">
           <Reveal>
             <div className="surface-panel grid gap-6 rounded-[22px] p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
               <div>
@@ -217,7 +217,7 @@ export default async function LandingPage({
       </main>
 
       <footer className="mt-4 border-t border-line/70 py-7">
-        <div className="mx-auto flex max-w-[1480px] flex-col items-center justify-between gap-3 px-5 text-sm text-ink-soft sm:flex-row">
+        <div className="mx-auto flex max-w-370 flex-col items-center justify-between gap-3 px-5 text-sm text-ink-soft sm:flex-row">
           <span>
             © {new Date().getFullYear()} {common.appName}. {landing.footerRights}
           </span>

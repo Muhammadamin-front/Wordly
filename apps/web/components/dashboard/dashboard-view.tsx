@@ -146,7 +146,7 @@ export function DashboardView({
               </Alert>
             )}
 
-            <div className="premium-card mt-6 rounded-[16px] p-5 sm:p-6">
+            <div className="premium-card mt-6 rounded-2xl p-5 sm:p-6">
               <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
                   <span className="icon-tile size-12 rounded-lg">
@@ -183,7 +183,7 @@ export function DashboardView({
           </div>
 
           <aside className="grid gap-4">
-            <div className="premium-card rounded-[16px] p-5">
+            <div className="premium-card rounded-2xl p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="type-label text-ink-soft">{copy.goalTitle}</p>
@@ -316,7 +316,7 @@ function ContextCard({
   body: string;
 }) {
   return (
-    <Link href={href} className="premium-card group flex min-h-44 flex-col rounded-[16px] p-5">
+    <Link href={href} className="premium-card group flex min-h-44 flex-col rounded-2xl p-5">
       <div className="flex items-start justify-between gap-4">
         <span className="icon-tile size-11 rounded-lg">
           <Icon className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />

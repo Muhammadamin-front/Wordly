@@ -157,7 +157,7 @@ export function ListeningAudioLibrary() {
               </button>
             ))}
           </div>
-          <div className="mt-3 max-h-[25rem] space-y-1 overflow-y-auto pr-1">
+          <div className="mt-3 max-h-100 space-y-1 overflow-y-auto pr-1">
             {filtered.map((track) => (
               <button key={track.file} type="button" onClick={() => chooseTrack(track)} className={selected.file === track.file ? "flex w-full items-center gap-3 rounded-lg border border-brand-400/40 bg-brand-600/10 px-3 py-2.5 text-left" : "flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left hover:bg-line/40"}>
                 <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-md border border-line bg-card text-[10px] font-black text-ink-soft">{String(track.number).padStart(2, "0")}</span>
