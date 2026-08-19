@@ -63,7 +63,12 @@ export function AuthCard({
             </div>
 
             <div className="mx-auto flex w-full min-w-0 max-w-[27rem] flex-1 flex-col justify-center py-7 lg:py-10">
-              <h1 className="text-center font-display text-[2.8rem] leading-[0.88] tracking-[0.015em] text-balance text-auth-ink sm:text-[3.4rem] lg:text-left lg:text-[4.4rem]">
+              {/* The Russian "С возвращением" is a single unbreakable word that
+                  came within a pixel of the card edge at 360px and overflowed
+                  outright below that. The clamp keeps it inside the card on
+                  narrow phones at full size elsewhere; break-words is the
+                  backstop for any translation longer still. */}
+              <h1 className="text-center font-display text-[clamp(2.2rem,11vw,2.8rem)] leading-[0.88] tracking-[0.015em] text-balance wrap-break-word text-auth-ink sm:text-[3.4rem] lg:text-left lg:text-[4.4rem]">
                 {title}
               </h1>
               <p className="mt-3 text-center text-[0.9rem] leading-6 text-auth-muted lg:text-left lg:text-[0.95rem]">
