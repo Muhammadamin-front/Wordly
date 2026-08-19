@@ -124,6 +124,10 @@ export function GrammarHub({ lang, t }: { lang: string; t: T }) {
         {lessons.map((lesson, i) => (
           <motion.div
             key={lesson.slug}
+            // Grid items default to min-width:auto, so without this the row
+            // refuses to shrink below the lesson title's unwrapped width and
+            // pushes the whole page into a horizontal scroll on a narrow phone.
+            className="min-w-0"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
