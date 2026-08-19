@@ -107,7 +107,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
 
   return (
     <header className="site-header sticky top-0 z-40">
-      <div className="glass mx-auto flex h-14 max-w-[1480px] items-center gap-2 rounded-[18px] px-2 sm:h-16 sm:gap-3 sm:rounded-[20px] shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
+      <div className="glass mx-auto flex h-14 max-w-7xl items-center gap-2 rounded-[18px] px-2 sm:h-16 sm:gap-3 sm:rounded-[20px] shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
         <button
           type="button"
           onClick={() => setOpen(true)}

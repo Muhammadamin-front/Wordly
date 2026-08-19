@@ -161,7 +161,7 @@ export function WordDetailModal({
               "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
               added
                 ? "bg-success/10 text-success"
-                : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(40,135,115,0.24)] hover:-translate-y-0.5 hover:bg-brand-700"
+                : "border border-brand-950 bg-brand-600 text-white shadow-[3px_4px_0_rgb(84,37,15,0.32)] hover:-translate-y-0.5 hover:bg-brand-700"
             )}
           >
             {added ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
@@ -191,8 +191,8 @@ export function WordDetailModal({
                   <Section title={labels.definition}>
                     <p>{sense.definition_en}</p>
                     {sense.usage_note && (
-                      <p className="mt-2 flex gap-2 rounded-lg bg-amber-400/8 p-3 text-ink-soft">
-                        <Lightbulb className="mt-0.5 size-4 shrink-0 text-amber-400" aria-hidden />
+                      <p className="mt-2 flex gap-2 rounded-lg border border-accent-500/20 bg-accent-500/8 p-3 text-ink-soft">
+                        <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent-600 dark:text-accent-300" aria-hidden />
                         {sense.usage_note}
                       </p>
                     )}

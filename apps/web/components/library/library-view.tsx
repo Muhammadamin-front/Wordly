@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import {
   BookOpenCheck,
@@ -67,7 +66,7 @@ function CircularProgress({ percent, size = 120 }: { percent: number; size?: num
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         strokeLinecap="round"
-        className="text-[#9fd08b]"
+        className="text-accent-400"
         initial={{ strokeDashoffset: circumference }}
         animate={{ strokeDashoffset: offset }}
         transition={{ duration: 0.8, ease: "easeOut" }}
@@ -88,10 +87,10 @@ function StatTile({
   tone: string;
 }) {
   return (
-    <div className="rounded-[20px] border border-[#ead8b7]/16 bg-[#08251a]/48 px-4 py-3 shadow-[0_18px_42px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+    <div className="rounded-xl border border-[#f3e6cb]/25 bg-[#382015] px-4 py-3 shadow-[3px_4px_0_rgba(0,0,0,0.28)]">
       <Icon className={`size-5 ${tone}`} aria-hidden />
-      <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[#ead8b7]/66">{label}</p>
-      <p className="text-lg font-extrabold text-[#fff3dc]">{value}</p>
+      <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[#f3e6cb]/66">{label}</p>
+      <p className="font-display text-3xl tracking-wide text-[#fff8ea]">{value}</p>
     </div>
   );
 }
@@ -208,30 +207,22 @@ export function LibraryView({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative overflow-hidden rounded-[30px] border border-[#ead8b7]/20 bg-[#16382b] shadow-[0_34px_90px_rgba(4,25,15,0.34)]"
+        className="relative overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-brand-950 shadow-[10px_12px_0_rgba(84,37,15,0.55)]"
       >
-        <Image
-          src="/images/vocora-forest-hero.webp"
-          alt=""
-          fill
-          priority
-          sizes="(max-width: 768px) calc(100vw - 24px), 1280px"
-          className="absolute inset-0 size-full object-cover object-[68%_center] opacity-[0.58] saturate-[0.92]"
-        />
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(105deg,rgba(13,49,37,0.98)_0%,rgba(21,65,48,0.91)_42%,rgba(88,61,42,0.46)_100%)]" />
-        <div aria-hidden className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#e9cf9b]/12 blur-3xl" />
-        <div aria-hidden className="absolute -right-14 bottom-0 h-72 w-72 rounded-full bg-[#77a878]/14 blur-3xl" />
+        <div aria-hidden className="absolute -left-20 -top-20 size-72 rounded-full border-[32px] border-accent-400/45" />
+        <div aria-hidden className="absolute -right-16 bottom-0 size-64 rotate-12 bg-brand-500/80" />
+        <p aria-hidden className="absolute right-5 top-3 font-display text-[8rem] leading-none tracking-wide text-[#f3e6cb]/10 sm:right-10 sm:text-[12rem]">WORDS</p>
 
         <div className="relative z-10 grid gap-8 p-5 sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:p-10">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#ead8b7]/24 bg-[#f3dfbb]/12 px-3 py-2 text-[11px] font-black uppercase tracking-wide text-[#ead8b7] backdrop-blur-xl">
+            <span className="print-label inline-flex items-center gap-2 border-[#f3e6cb]/45 bg-[#f3e6cb]/10 text-[#f3e6cb]">
               <LibraryBig className="size-4" aria-hidden />
               Vocora library
             </span>
-            <h1 className="mt-6 max-w-[11ch] text-4xl font-black leading-[0.94] tracking-tight text-[#fff3dc] sm:text-6xl lg:text-7xl">
+            <h1 className="editorial-title mt-6 max-w-[11ch] text-5xl text-[#fff8ea] sm:text-7xl lg:text-8xl">
               {t.title}
             </h1>
-            <p className="mt-5 max-w-lg text-sm font-medium leading-7 text-[#ead8b7]/82 sm:text-lg">
+            <p className="mt-5 max-w-lg text-sm font-medium leading-7 text-[#f3e6cb]/82 sm:text-lg">
               {t.subtitle}
             </p>
 
@@ -240,32 +231,32 @@ export function LibraryView({
                 icon={BookOpenCheck}
                 label={t.words}
                 value={totalAdded}
-                tone="text-[#f1cf88]"
+                tone="text-[#e8c99a]"
               />
               <StatTile
                 icon={CheckCircle2}
                 label={t.learned}
                 value={totalLearned}
-                tone="text-[#a8d28f]"
+                tone="text-[#a1c2bd]"
               />
               <StatTile
                 icon={Layers3}
                 label="Levels"
                 value="6"
-                tone="text-[#d7b38a]"
+                tone="text-[#e8c99a]"
               />
             </div>
           </div>
 
           <div className="flex items-end justify-start lg:justify-end">
-            <div className="relative min-h-52 w-full max-w-sm overflow-hidden rounded-[26px] border border-[#ead8b7]/18 bg-[#08251a]/50 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.13)] backdrop-blur-xl">
-              <div aria-hidden className="absolute -right-10 -top-8 h-40 w-24 rotate-12 rounded-full border border-[#ead8b7]/18 bg-[#ead8b7]/10" />
-              <div className="relative text-[#ead8b7]">
+            <div className="relative min-h-52 w-full max-w-sm overflow-hidden rounded-[18px] border-2 border-[#24130c] bg-[#f3e6cb] p-5 text-[#24130c] shadow-[6px_7px_0_rgba(0,0,0,0.32)]">
+              <div aria-hidden className="absolute -right-10 -top-8 h-40 w-24 rotate-12 border border-[#54250f]/28 bg-[#b94e28]/18" />
+              <div className="relative text-accent-500">
                 <CircularProgress percent={progressPercent} size={136} />
               </div>
               <div className="relative mt-4">
-                <p className="text-5xl font-black tracking-tight text-[#fff3dc]">{progressPercent}%</p>
-                <p className="mt-2 text-sm font-bold text-[#ead8b7]/72">{t.continue.toLowerCase()}</p>
+                <p className="font-display text-6xl leading-none tracking-wide text-[#24130c]">{progressPercent}%</p>
+                <p className="mt-2 text-sm font-bold text-[#6c4935]">{t.continue.toLowerCase()}</p>
               </div>
             </div>
           </div>
@@ -297,25 +288,25 @@ export function LibraryView({
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-        className="relative mt-8 overflow-hidden rounded-[26px] border border-[#ead8b7]/16 bg-[#143427]/78 p-4 shadow-[0_22px_64px_rgba(4,24,14,0.25)] backdrop-blur-xl sm:mt-10 sm:p-6"
+        className="relative mt-8 overflow-hidden rounded-[18px] border-2 border-brand-800 bg-brand-950 p-4 shadow-[7px_8px_0_rgba(84,37,15,0.5)] sm:mt-10 sm:p-6"
         >
           <Link href={`/${lang}/library/my-cards`} className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <span className="icon-tile flex size-14 shrink-0 items-center justify-center rounded-lg">
-              <BookOpenCheck className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
+              <BookOpenCheck className="size-6 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
             <div className="min-w-0 flex-1">
-              <h2 className="text-lg font-extrabold text-[#fff3dc]">{t.myCards}</h2>
+              <h2 className="font-display text-3xl tracking-wide text-[#fff8ea]">{t.myCards}</h2>
               <div className="mt-2 h-2 w-full rounded-full bg-white/14">
                 <div
-                  className="h-full rounded-full bg-linear-to-r from-[#8fca82] to-[#1f9b7d] transition-all"
+                  className="h-full rounded-full bg-[#f3e6cb] transition-all"
                   style={{
                     width: `${queue.due_count + queue.new_count > 0 ? Math.min((queue.due_count + queue.new_count) / (totalAdded * 0.3) * 100, 100) : 0}%`,
                   }}
                 />
               </div>
-              <p className="mt-2 text-xs text-[#ead8b7]/70 sm:text-sm">
-                <strong className="text-[#fff3dc]">{queue.due_count + queue.new_count}</strong> {t.due}{" "}
-                · <strong className="text-[#9fd08b]">{totalAdded}</strong> {t.words.toLowerCase()}
+              <p className="mt-2 text-xs text-[#f3e6cb]/80 sm:text-sm">
+                <strong className="text-[#fff8ea]">{queue.due_count + queue.new_count}</strong> {t.due}{" "}
+                · <strong className="text-[#fff8ea]">{totalAdded}</strong> {t.words.toLowerCase()}
               </p>
             </div>
           </Link>

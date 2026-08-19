@@ -38,7 +38,7 @@ export function StatsWidget({ lang }: { lang: string }) {
     >
       <span className="inline-flex items-center gap-1.5">
         <Flame
-          className={stats.current_streak > 0 ? "size-3.5 text-orange-500" : "size-3.5 text-ink-soft/60"}
+          className={stats.current_streak > 0 ? "size-3.5 text-brand-500" : "size-3.5 text-ink-soft/60"}
           aria-hidden
         />
         {stats.current_streak}

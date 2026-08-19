@@ -43,6 +43,7 @@ import {
   type ReadingQuestionTypeGuideId,
 } from "@/lib/reading-practice";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { lookupWords, type WordLookupEntry } from "@/lib/vocab";
 import { cn } from "@/lib/utils";
 import { ReadingQuestionTypePractice } from "./reading-question-type-practice";
 
@@ -134,8 +135,8 @@ const READING_PARTS: Array<{
 const HIGHLIGHT_STYLE: Record<HighlightColor, string> = {
   yellow: "bg-[#f4d35e]/55 text-ink",
   green: "bg-brand-300/55 text-ink",
-  blue: "bg-sky-300/55 text-ink",
-  pink: "bg-rose-300/55 text-ink",
+  blue: "bg-accent-300/55 text-ink",
+  pink: "bg-brand-300/55 text-ink",
 };
 
 const VOCABULARY_HELP: Record<string, { translation: string; definition: string }> = {
@@ -503,7 +504,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
           {READING_QUESTION_TYPE_GUIDES.map((guide) => {
             const questionCount = getQuestionsForReadingQuestionType(guide.id).length;
             return (
-              <article key={guide.id} className="rounded-lg border border-line bg-card/80 p-5 shadow-[0_10px_28px_rgba(27,64,55,0.055)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[0_18px_46px_rgba(27,64,55,0.09)]">
+              <article key={guide.id} className="rounded-lg border border-line bg-card/80 p-5 shadow-[3px_4px_0_rgba(84,37,15,0.1)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[5px_6px_0_rgba(84,37,15,0.16)]">
                 <div className="flex items-start justify-between gap-3"><span className="icon-tile size-10 text-brand-600 dark:text-brand-300"><Target className="size-4" /></span><span className="rounded-full bg-brand-600/8 px-2.5 py-1 text-[11px] font-black text-brand-700 dark:text-brand-200">{questionCount} questions</span></div>
                 <h3 className="mt-5 text-xl font-black leading-tight text-ink">{guide.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{guide.description}</p>
@@ -531,7 +532,7 @@ function TestCard({ test, history, featured = false, onOpen, t }: { test: Readin
   const questions = countQuestions(test);
   const percentage = history?.completed && questions ? Math.round(((history.lastScore ?? 0) / questions) * 100) : 0;
   return (
-    <article className={cn("group rounded-lg border border-line bg-card/80 p-5 shadow-[0_10px_28px_rgba(27,64,55,0.055)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[0_18px_46px_rgba(27,64,55,0.09)]", featured && "bg-[linear-gradient(135deg,rgba(7,58,53,0.98),rgba(17,86,75,0.95))] text-white dark:bg-[linear-gradient(135deg,rgba(17,86,75,0.82),rgba(7,58,53,0.95))]" )}>
+    <article className={cn("group rounded-lg border border-line bg-card/80 p-5 shadow-[3px_4px_0_rgba(84,37,15,0.1)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[5px_6px_0_rgba(84,37,15,0.16)]", featured && "bg-[linear-gradient(135deg,#24130c,#54250f)] text-white dark:bg-[linear-gradient(135deg,#382015,#24130c)]" )}>
       <div className="flex items-start justify-between gap-3">
         <span className={cn("inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-black uppercase", featured ? "bg-white/12 text-brand-100" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}>{test.track}</span>
         {history?.completed && <span className={cn("inline-flex items-center gap-1 text-xs font-bold", featured ? "text-brand-100" : "text-success")}><CheckCircle2 className="size-4" /> Completed</span>}
@@ -587,7 +588,7 @@ function StartStat({ icon: Icon, title, text }: { icon: typeof Clock3; title: st
 }
 
 function ModeCard({ active, onClick, title, text, icon: Icon }: { active: boolean; onClick: () => void; title: string; text: string; icon: typeof Clock3 }) {
-  return <button type="button" onClick={onClick} className={cn("rounded-lg border p-5 text-left transition-all", active ? "border-brand-400 bg-brand-600/8 shadow-[0_12px_30px_rgba(7,58,53,0.10)]" : "border-line bg-card/60 hover:bg-hover")}><span className={cn("icon-tile size-10", active ? "text-brand-600 dark:text-brand-300" : "text-ink-soft")}><Icon className="size-4" /></span><p className="mt-4 font-black text-ink">{title}</p><p className="mt-1 text-sm leading-6 text-ink-soft">{text}</p></button>;
+  return <button type="button" onClick={onClick} className={cn("rounded-lg border p-5 text-left transition-all", active ? "border-brand-400 bg-brand-600/8 shadow-[3px_4px_0_rgba(84,37,15,0.14)]" : "border-line bg-card/60 hover:bg-hover")}><span className={cn("icon-tile size-10", active ? "text-brand-600 dark:text-brand-300" : "text-ink-soft")}><Icon className="size-4" /></span><p className="mt-4 font-black text-ink">{title}</p><p className="mt-1 text-sm leading-6 text-ink-soft">{text}</p></button>;
 }
 
 function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paused, passageIndex, onAnswer, onToggleFlag, onPassageChange, onPause, onEnd, onExit, t }: {
@@ -620,6 +621,8 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   const [selectedRange, setSelectedRange] = useState<SelectedRange | null>(null);
   const [noteDraft, setNoteDraft] = useState("");
   const [clearConfirm, setClearConfirm] = useState(false);
+  const [wordLookup, setWordLookup] = useState<Record<string, WordLookupEntry>>({});
+  const [tappedWord, setTappedWord] = useState<{ word: string; entry: WordLookupEntry; x: number; y: number } | null>(null);
   const questionRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const navRef = useRef<HTMLDivElement>(null);
   const currentPassage = test.passages[passageIndex];
@@ -631,6 +634,37 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   const activeQuestionId = currentQuestions.some((question) => question.id === visitedQuestionId)
     ? visitedQuestionId
     : currentQuestions[0]?.id;
+
+  // Tap-to-translate: look up every distinct word in the passage once, so a
+  // tap on any of them resolves instantly from the client-side map instead of
+  // firing a request per tap. Words already resolved from an earlier passage
+  // in this test are kept rather than re-fetched. Deliberately reads
+  // wordLookup without depending on it: this must run once per passage, not
+  // loop every time the lookup map it just wrote to changes.
+  useEffect(() => {
+    const words = new Set<string>();
+    for (const paragraph of currentPassage.paragraphs) {
+      for (const match of paragraph.text.matchAll(/[A-Za-z]+(?:'[A-Za-z]+)?/g)) {
+        words.add(match[0].toLowerCase());
+      }
+    }
+    const unresolved = Array.from(words).filter((word) => !(word in wordLookup));
+    if (unresolved.length === 0) return;
+    let cancelled = false;
+    lookupWords(unresolved).then((entries) => {
+      if (cancelled) return;
+      setWordLookup((current) => ({ ...current, ...entries }));
+    });
+    return () => { cancelled = true; };
+  }, [currentPassage]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleWordTap = (word: string, target: HTMLElement) => {
+    if (window.getSelection()?.toString()) return; // part of a drag-selection, not a tap
+    const entry = wordLookup[word.toLowerCase()];
+    if (!entry) return;
+    const rect = target.getBoundingClientRect();
+    setTappedWord({ word, entry, x: rect.left + rect.width / 2, y: rect.top - 8 });
+  };
 
   const persistHighlights = (next: Highlight[]) => { setHighlights(next); writeStore(`${STORAGE_PREFIX}:${test.id}:highlights`, next); };
   const persistNotes = (next: PassageNote[]) => { setNotes(next); writeStore(`${STORAGE_PREFIX}:${test.id}:notes`, next); };
@@ -672,6 +706,25 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
     setSelectedRange(null);
   };
 
+  // Sits in front of the question-nav effect below: entering a screen (e.g.
+  // library -> confirm -> test) resets this, so that effect's first firing
+  // in the new screen skips its scrollIntoView instead of treating the
+  // screen's initial activeQuestionId as a navigation.
+  const hasNavigatedRef = useRef(false);
+
+  // Switching screens is a client-side state change, not a navigation, so the
+  // browser never resets scroll on its own. Without this, starting a test
+  // from a scrolled-down confirm screen leaves the new screen scrolled too —
+  // its own top chrome renders hidden behind the sticky site header.
+  // `screen` (this component's local state) shadows the DOM global of the
+  // same name; exhaustive-deps resolves the identifier to the global and
+  // flags it as an invalid outer-scope dependency, but the local state is
+  // exactly what this effect needs to depend on.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    hasNavigatedRef.current = false;
+  }, [screen]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // The phone workspace owns the whole screen so the passage and the question
   // sheet can share one viewport. Letting the page scroll underneath it would
   // drag the test out from under the reader's thumb.
@@ -684,8 +737,16 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   }, []);
 
   // Keep the number strip showing where the learner is; with forty questions
-  // the active one is otherwise scrolled off the end of the rail.
+  // the active one is otherwise scrolled off the end of the rail. Skipped
+  // right after entering a screen: `block: "nearest"` scrolls the whole
+  // page, not just the strip, when the strip itself isn't yet in the
+  // viewport — which dragged the page down and out from under the sticky
+  // toolbar before the learner had navigated anywhere.
   useEffect(() => {
+    if (!hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+      return;
+    }
     navRef.current?.querySelector(`[data-question-nav="${activeQuestionId}"]`)
       ?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
   }, [activeQuestionId]);
@@ -747,27 +808,27 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
 
   return (
     <main className="reading-workspace mx-auto w-full max-w-[1500px] flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
-      <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[0_20px_65px_rgba(27,64,55,0.12)] max-sm:bg-page">
-        <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:sticky sm:top-[calc(6rem+env(safe-area-inset-top))] sm:px-5">
+      <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)] max-sm:bg-page">
+        <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:px-5">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-            <button type="button" onClick={onExit} aria-label={t.exitTest} title={t.exitTest} className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg px-2 text-sm font-bold text-ink-soft hover:bg-hover hover:text-ink max-sm:size-10 max-sm:justify-center max-sm:px-0"><ArrowLeft className="size-4" /> <span className="max-sm:hidden">{t.readingLibrary}</span></button>
+            <button type="button" onClick={onExit} aria-label={t.exitTest} title={t.exitTest} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg px-2 text-sm font-bold text-ink-soft hover:bg-hover hover:text-ink max-sm:size-11 max-sm:justify-center max-sm:px-0"><ArrowLeft className="size-4" /> <span className="max-sm:hidden">{t.readingLibrary}</span></button>
             <div className="min-w-0"><p className="truncate text-sm font-black text-ink">{test.title}</p><p className="truncate text-xs text-ink-soft">{t.passageProgress.replace("{index}", String(passageIndex + 1)).replace("{total}", String(test.passages.length)).replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</p></div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {studyMode === "exam" ? <span className={cn("inline-flex min-h-10 items-center gap-2 rounded-lg border px-3 font-black tabular-nums max-sm:min-h-9 max-sm:px-2 max-sm:text-sm", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
-            {studyMode === "exam" && <button type="button" onClick={onPause} aria-label={paused ? t.resume : t.pause} title={paused ? t.resume : t.pause} className="inline-flex size-10 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink max-sm:size-9">{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
-            <button type="button" onClick={() => setConfirmEnd(true)} aria-label={t.submitAnswers} title={t.submitAnswers} className="inline-flex size-9 items-center justify-center rounded-lg bg-primary text-white dark:text-brand-950 sm:hidden"><Send className="size-4" /></button>
+            {studyMode === "exam" ? <span className={cn("inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 font-black tabular-nums max-sm:px-2 max-sm:text-sm", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden min-h-11 rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
+            {studyMode === "exam" && <button type="button" onClick={onPause} aria-label={paused ? t.resume : t.pause} title={paused ? t.resume : t.pause} className="inline-flex size-11 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink">{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
+            <button type="button" onClick={() => setConfirmEnd(true)} aria-label={t.submitAnswers} title={t.submitAnswers} className="inline-flex size-11 items-center justify-center rounded-lg bg-primary text-white dark:text-brand-950 sm:hidden"><Send className="size-4" /></button>
             <Button size="sm" variant="secondary" onClick={() => setConfirmEnd(true)} className="hidden sm:inline-flex"><Send className="size-4" /> {t.submitAnswers}</Button>
           </div>
         </header>
 
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line bg-card/55 px-4 py-2 text-xs font-semibold text-ink-soft max-sm:px-3 max-sm:py-0.5 sm:px-5">
-          <div className="flex items-center gap-1"><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.max(14, size - 1))} aria-label={t.smallerText} title={t.smallerText}><Minimize2 className="size-3.5" /></button><span className="min-w-8 text-center">{fontSize}px</span><button type="button" className="inline-flex size-8 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.min(21, size + 1))} aria-label={t.largerText} title={t.largerText}><Maximize2 className="size-3.5" /></button></div>
-          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} title={t.myNotes} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><NotebookPen className="size-3.5" /> <span className="max-sm:hidden">{t.myNotes}</span> {notes.length}</button><button type="button" onClick={() => setDrawer("vocabulary")} title={t.myVocabulary} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 hover:bg-hover"><Bookmark className="size-3.5" /> <span className="max-sm:hidden">{t.myVocabulary}</span> {vocabulary.length}</button><button type="button" onClick={() => setClearConfirm(true)} title={t.clearHighlights} aria-label={t.clearHighlights} className="inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 text-ink-soft hover:bg-hover hover:text-danger"><Eraser className="size-3.5" /> <span className="max-sm:hidden">{t.clearHighlights}</span></button></div>
+          <div className="flex items-center gap-1"><button type="button" className="inline-flex size-11 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.max(14, size - 1))} aria-label={t.smallerText} title={t.smallerText}><Minimize2 className="size-3.5" /></button><span className="min-w-9 text-center">{fontSize}px</span><button type="button" className="inline-flex size-11 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.min(21, size + 1))} aria-label={t.largerText} title={t.largerText}><Maximize2 className="size-3.5" /></button></div>
+          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} title={t.myNotes} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><NotebookPen className="size-3.5" /> <span className="sr-only">{t.myNotes}</span> <span aria-hidden>{notes.length}</span></button><button type="button" onClick={() => setDrawer("vocabulary")} title={t.myVocabulary} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><Bookmark className="size-3.5" /> <span className="sr-only">{t.myVocabulary}</span> <span aria-hidden>{vocabulary.length}</span></button><button type="button" onClick={() => setClearConfirm(true)} title={t.clearHighlights} aria-label={t.clearHighlights} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md text-ink-soft hover:bg-hover hover:text-danger"><Eraser className="size-3.5" /></button></div>
         </div>
 
         <div className="hidden items-center gap-2 overflow-x-auto border-b border-line bg-card/45 px-4 py-2 sm:flex">
-          {test.passages.map((passage, index) => <button key={passage.id} type="button" onClick={() => onPassageChange(index)} className={cn("shrink-0 rounded-full border px-3 py-1.5 text-xs font-black transition-colors", passageIndex === index ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : "border-line text-ink-soft hover:bg-hover")}>{t.passage} {index + 1}: {passage.title}</button>)}
+          {test.passages.map((passage, index) => <button key={passage.id} type="button" onClick={() => onPassageChange(index)} className={cn("min-h-11 shrink-0 rounded-full border px-3 py-1.5 text-xs font-black transition-colors", passageIndex === index ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : "border-line text-ink-soft hover:bg-hover")}>{t.passage} {index + 1}: {passage.title}</button>)}
         </div>
 
         {/* On a phone the two panes stack into one screen: the passage takes the
@@ -782,7 +843,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
             <h1 className="text-lg font-black tracking-tight text-ink sm:mt-2 sm:text-3xl">{currentPassage.title}</h1>
             <p className="mt-1 text-sm italic text-ink-soft sm:mt-2">{currentPassage.subtitle}</p>
             <div className="mt-4 space-y-5 sm:mt-7" style={{ fontSize: `${fontSize}px` }}>
-              {currentPassage.paragraphs.map((paragraph, index) => <PassageParagraph key={`${currentPassage.id}-${paragraph.label}`} passageId={currentPassage.id} paragraph={paragraph} paragraphIndex={index} highlights={highlights} />)}
+              {currentPassage.paragraphs.map((paragraph, index) => <PassageParagraph key={`${currentPassage.id}-${paragraph.label}`} passageId={currentPassage.id} paragraph={paragraph} paragraphIndex={index} highlights={highlights} wordLookup={wordLookup} onWordTap={handleWordTap} />)}
             </div>
           </article>
           <button type="button" aria-label={t.resizePanels} onPointerDown={dragDivider} className="hidden cursor-col-resize bg-line/70 transition-colors hover:bg-brand-400 sm:block" />
@@ -817,11 +878,31 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
         </div>
 
         <nav className="reading-question-nav z-20 shrink-0 border-t border-line bg-raised/96 px-3 py-3 backdrop-blur max-sm:py-2 max-sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:sticky sm:bottom-0 sm:px-5" aria-label={t.questionNavigation}>
-          <div ref={navRef} className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 max-sm:pb-0"><span className="sticky left-0 z-10 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.answeredShort.replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" data-question-nav={question.id} onClick={() => navigateQuestion(question)} className={cn("relative flex size-9 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === activeQuestionId ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
+          <div ref={navRef} className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 max-sm:pb-0"><span className="sticky left-0 z-10 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.answeredShort.replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" data-question-nav={question.id} onClick={() => navigateQuestion(question)} className={cn("relative flex size-11 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === activeQuestionId ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
         </nav>
       </section>
 
       {selectedRange && <SelectionToolbar t={t} range={selectedRange} onHighlight={addHighlight} onRemove={removeHighlight} onNote={openNote} onSaveWord={saveSelectedWord} onClose={() => { window.getSelection()?.removeAllRanges(); setSelectedRange(null); }} />}
+      {tappedWord && (
+        <WordTranslationPopover
+          t={t}
+          tapped={tappedWord}
+          onSave={() => {
+            const entry = tappedWord.entry;
+            persistVocabulary([
+              ...vocabulary,
+              {
+                id: crypto.randomUUID(), word: entry.headword,
+                translation: [entry.translation_uz, entry.translation_ru].filter(Boolean).join(" / ") || t.translationPlaceholder,
+                definition: entry.definition_en ?? entry.pos, example: "", passageTitle: currentPassage.title,
+                note: "", color: "blue", favourite: false, learned: false,
+              },
+            ]);
+            setTappedWord(null);
+          }}
+          onClose={() => setTappedWord(null)}
+        />
+      )}
       {drawer && <ReadingDrawer t={t} drawer={drawer} notes={notes} vocabulary={vocabulary} selectedRange={selectedRange} noteDraft={noteDraft} setNoteDraft={setNoteDraft} onClose={() => { setDrawer(null); setSelectedRange(null); }} onSaveNote={() => { if (!selectedRange || !noteDraft.trim()) return; persistNotes([{ id: crypto.randomUUID(), quote: selectedRange.text, body: noteDraft.trim() }, ...notes]); setNoteDraft(""); setSelectedRange(null); }} onDeleteNote={(id) => persistNotes(notes.filter((note) => note.id !== id))} onUpdateVocabulary={(id, patch) => persistVocabulary(vocabulary.map((word) => word.id === id ? { ...word, ...patch } : word))} onDeleteVocabulary={(id) => persistVocabulary(vocabulary.filter((word) => word.id !== id))} />}
       {confirmEnd && <ConfirmDialog t={t} title={t.submitConfirm} text={t.submitConfirmBody.replace("{answered}", String(answeredCount)).replace("{total}", String(countQuestions(test)))} action={t.submitAnswers} onCancel={() => setConfirmEnd(false)} onConfirm={() => { setConfirmEnd(false); onEnd(); }} />}
       {clearConfirm && <ConfirmDialog t={t} title={t.clearHighlightsConfirm} text="This removes all colour highlights from this passage set. Your notes and saved vocabulary will stay." action={t.clearHighlights} destructive onCancel={() => setClearConfirm(false)} onConfirm={() => { persistHighlights([]); setClearConfirm(false); }} />}
@@ -829,13 +910,79 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   );
 }
 
-function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights }: { passageId: string; paragraph: ReadingParagraph; paragraphIndex: number; highlights: Highlight[] }) {
+function PassageParagraph({ passageId, paragraph, paragraphIndex, highlights, wordLookup, onWordTap }: { passageId: string; paragraph: ReadingParagraph; paragraphIndex: number; highlights: Highlight[]; wordLookup: Record<string, WordLookupEntry>; onWordTap: (word: string, target: HTMLElement) => void }) {
   const matches = highlights.filter((highlight) => highlight.passageId === passageId && highlight.paragraphIndex === paragraphIndex).sort((a, b) => a.start - b.start);
   const fragments: Array<{ text: string; color?: HighlightColor }> = [];
   let cursor = 0;
   matches.forEach((highlight) => { if (highlight.start > cursor) fragments.push({ text: paragraph.text.slice(cursor, highlight.start) }); fragments.push({ text: paragraph.text.slice(Math.max(cursor, highlight.start), highlight.end), color: highlight.color }); cursor = Math.max(cursor, highlight.end); });
   if (cursor < paragraph.text.length) fragments.push({ text: paragraph.text.slice(cursor) });
-  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.68] text-ink sm:leading-[1.86]"><span aria-hidden="true" className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span><span data-reading-paragraph-text>{fragments.map((fragment, index) => fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{fragment.text}</mark> : <span key={`${fragment.text}-${index}`}>{fragment.text}</span>)}</span></p>;
+  return <p data-reading-passage={passageId} data-reading-paragraph={paragraphIndex} className="relative pl-9 leading-[1.68] text-ink sm:leading-[1.86]"><span aria-hidden="true" className="absolute left-0 top-1.5 flex size-6 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{paragraph.label}</span><span data-reading-paragraph-text>{fragments.map((fragment, index) => {
+    const words = renderTappableWords(fragment.text, wordLookup, onWordTap, `${paragraphIndex}-${index}`);
+    return fragment.color ? <mark key={`${fragment.text}-${index}`} className={cn("rounded-sm px-0.5", HIGHLIGHT_STYLE[fragment.color])}>{words}</mark> : <span key={`${fragment.text}-${index}`}>{words}</span>;
+  })}</span></p>;
+}
+
+// Splits a text run on word boundaries so each real word can carry its own
+// tap handler, while non-word characters (spaces, punctuation) pass through
+// unchanged — the combined text content stays byte-identical to `text`,
+// which is what keeps the character-offset highlight/selection math correct.
+function renderTappableWords(text: string, wordLookup: Record<string, WordLookupEntry>, onWordTap: (word: string, target: HTMLElement) => void, keyPrefix: string) {
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let i = 0;
+  for (const match of text.matchAll(/[A-Za-z]+(?:'[A-Za-z]+)?/g)) {
+    const word = match[0];
+    const start = match.index ?? 0;
+    if (start > lastIndex) parts.push(text.slice(lastIndex, start));
+    const translatable = word.toLowerCase() in wordLookup;
+    parts.push(
+      <span
+        key={`${keyPrefix}-${i++}`}
+        onClick={translatable ? (event) => onWordTap(word, event.currentTarget) : undefined}
+        className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline" : undefined}
+      >
+        {word}
+      </span>
+    );
+    lastIndex = start + word.length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
+function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word: string; entry: WordLookupEntry; x: number; y: number }; onSave: () => void; onClose: () => void; t: Copy }) {
+  useEffect(() => {
+    const dismiss = () => onClose();
+    window.addEventListener("scroll", dismiss, true);
+    window.addEventListener("resize", dismiss);
+    return () => { window.removeEventListener("scroll", dismiss, true); window.removeEventListener("resize", dismiss); };
+  }, [onClose]);
+  const { entry } = tapped;
+  return (
+    <>
+      <div className="fixed inset-0 z-40" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-label={entry.headword}
+        className="fixed z-50 w-64 -translate-x-1/2 -translate-y-full rounded-lg border border-line bg-raised p-3 shadow-[3px_4px_0_rgba(84,37,15,0.2),0_16px_36px_rgba(84,37,15,0.16)]"
+        style={{ left: tapped.x, top: tapped.y }}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <p className="truncate text-base font-black text-ink">{entry.headword}</p>
+            <p className="text-[11px] font-bold uppercase text-ink-soft">{entry.pos}</p>
+          </div>
+          <button type="button" onClick={onClose} aria-label={t.exitTest} className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-ink-soft hover:bg-hover"><X className="size-3.5" /></button>
+        </div>
+        {entry.translation_uz && <p className="mt-2 text-sm font-bold text-brand-600 dark:text-brand-300">{entry.translation_uz}</p>}
+        {entry.translation_ru && <p className="text-xs text-ink-soft">{entry.translation_ru}</p>}
+        {entry.definition_en && <p className="mt-1.5 text-xs leading-5 text-ink-soft">{entry.definition_en}</p>}
+        <button type="button" onClick={onSave} className="mt-2.5 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-md bg-brand-600/8 text-xs font-black text-brand-700 dark:text-brand-200 hover:bg-brand-600/15">
+          <BookmarkCheck className="size-3.5" /> {t.saveWord}
+        </button>
+      </div>
+    </>
+  );
 }
 
 function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>, setSelectedRange: (range: SelectedRange | null) => void) {
@@ -864,7 +1011,7 @@ function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.Keybo
 function elementForNode(node: Node) { return node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement; }
 
 function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, onFlag, t }: { question: ReadingQuestion; answer: AnswerValue | undefined; flagged: boolean; setRef: (node: HTMLDivElement | null) => void; showGroup: boolean; onAnswer: (value: AnswerValue) => void; onFlag: () => void; t: Copy }) {
-  return <div ref={setRef} className="scroll-mt-4">{showGroup && <p className="mb-2 mt-5 text-xs font-black uppercase tracking-wide text-accent-500 first:mt-0 max-sm:mt-3">{question.group}</p>}<section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[0_8px_20px_rgba(34,65,58,0.04)] max-sm:p-3"><div className="flex items-start gap-3"><span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{question.number}</span><div className="min-w-0 flex-1"><p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>{question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}</div><button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-8 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}><Flag className={cn("size-4", flagged && "fill-current")} /></button></div><div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div></section></div>;
+  return <div ref={setRef} className="scroll-mt-4">{showGroup && <p className="mb-2 mt-5 text-xs font-black uppercase tracking-wide text-accent-500 first:mt-0 max-sm:mt-3">{question.group}</p>}<section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[2px_3px_0_rgba(84,37,15,0.08)] max-sm:p-3"><div className="flex items-start gap-3"><span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{question.number}</span><div className="min-w-0 flex-1"><p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>{question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}</div><button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}><Flag className={cn("size-4", flagged && "fill-current")} /></button></div><div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div></section></div>;
 }
 
 function QuestionInput({ question, value, onChange, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; t: Copy }) {
@@ -876,7 +1023,39 @@ function QuestionInput({ question, value, onChange, t }: { question: ReadingQues
 }
 
 function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, onClose, t }: { range: SelectedRange; onHighlight: (color: HighlightColor) => void; onRemove: () => void; onNote: () => void; onSaveWord: () => void; onClose: () => void; t: Copy }) {
-  return <div role="toolbar" aria-label={t.annotationTools} className="reading-selection-toolbar fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-50 flex items-center justify-center gap-1 rounded-lg border border-line bg-raised p-1.5 shadow-[0_16px_44px_rgba(15,35,31,0.24)] sm:inset-x-auto sm:bottom-auto sm:justify-start sm:left-[var(--selection-x)] sm:top-[var(--selection-y)] sm:max-w-[calc(100vw-1rem)] sm:-translate-x-1/2" style={{ "--selection-x": `${range.x}px`, "--selection-y": `${Math.max(8, range.y - 46)}px` } as React.CSSProperties}><span className="hidden max-w-24 truncate px-1 text-xs font-bold text-ink-soft sm:block">{range.text}</span>{(["yellow", "green", "blue", "pink"] as HighlightColor[]).map((color) => <button key={color} type="button" onClick={() => onHighlight(color)} className={cn("size-8 rounded-md border border-transparent transition-transform hover:scale-110", HIGHLIGHT_STYLE[color])} title={t.highlight.replace("{color}", color)}><Highlighter className="mx-auto size-3.5" /></button>)}<button type="button" onClick={onRemove} className="inline-flex size-8 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-danger" title={t.removeHighlight}><Eraser className="size-3.5" /></button><button type="button" onClick={onNote} className="inline-flex size-8 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-ink" title={t.addNote}><NotebookPen className="size-3.5" /></button><button type="button" onClick={onSaveWord} className="inline-flex size-8 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-brand-600" title={t.saveWord}><Bookmark className="size-3.5" /></button><button type="button" onClick={onClose} className="inline-flex size-8 items-center justify-center rounded-md text-ink-soft hover:bg-hover" title={t.close}><X className="size-3.5" /></button></div>;
+  return (
+    <div
+      role="toolbar"
+      aria-label={t.annotationTools}
+      className="reading-selection-toolbar fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-50 grid grid-cols-4 items-center justify-center gap-1.5 rounded-lg border border-line bg-raised p-2 shadow-[5px_7px_0_rgba(84,37,15,0.22),0_16px_36px_rgba(84,37,15,0.16)] sm:inset-x-auto sm:bottom-auto sm:flex sm:max-w-[calc(100vw-1rem)] sm:-translate-x-1/2 sm:justify-start sm:gap-1 sm:p-1.5 sm:left-[var(--selection-x)] sm:top-[var(--selection-y)]"
+      style={{ "--selection-x": `${range.x}px`, "--selection-y": `${Math.max(8, range.y - 46)}px` } as React.CSSProperties}
+    >
+      <span className="hidden max-w-24 truncate px-1 text-xs font-bold text-ink-soft sm:block">{range.text}</span>
+      {(["yellow", "green", "blue", "pink"] as HighlightColor[]).map((color) => (
+        <button
+          key={color}
+          type="button"
+          onClick={() => onHighlight(color)}
+          className={cn("size-11 rounded-md border border-transparent transition-transform hover:scale-105", HIGHLIGHT_STYLE[color])}
+          title={t.highlight.replace("{color}", color)}
+        >
+          <Highlighter className="mx-auto size-4" />
+        </button>
+      ))}
+      <button type="button" onClick={onRemove} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-danger" title={t.removeHighlight}>
+        <Eraser className="size-4" />
+      </button>
+      <button type="button" onClick={onNote} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-ink" title={t.addNote}>
+        <NotebookPen className="size-4" />
+      </button>
+      <button type="button" onClick={onSaveWord} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-brand-600" title={t.saveWord}>
+        <Bookmark className="size-4" />
+      </button>
+      <button type="button" onClick={onClose} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover" title={t.close}>
+        <X className="size-4" />
+      </button>
+    </div>
+  );
 }
 
 function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, setNoteDraft, onClose, onSaveNote, onDeleteNote, onUpdateVocabulary, onDeleteVocabulary, t }: { drawer: Drawer; notes: PassageNote[]; vocabulary: SavedVocabulary[]; selectedRange: SelectedRange | null; noteDraft: string; setNoteDraft: (text: string) => void; onClose: () => void; onSaveNote: () => void; onDeleteNote: (id: string) => void; onUpdateVocabulary: (id: string, patch: Partial<SavedVocabulary>) => void; onDeleteVocabulary: (id: string) => void; t: Copy }) {
@@ -941,7 +1120,7 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
               {notes.length ? <div className="mt-4 space-y-3">{notes.map((note) => <article key={note.id} className="rounded-lg border border-line bg-card/70 p-4"><p className="text-sm font-bold italic text-ink">“{note.quote}”</p><p className="mt-2 text-sm leading-6 text-ink-soft">{note.body}</p><button type="button" onClick={() => onDeleteNote(note.id)} className="mt-3 inline-flex min-h-9 items-center gap-1.5 text-xs font-black text-danger"><Trash2 className="size-3.5" /> Delete</button></article>)}</div> : <EmptyDrawer icon={NotebookPen} title={t.notesEmpty} text={t.notesHint} />}
             </>
           ) : vocabulary.length ? (
-            <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-500" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 border-l-2 border-brand-400/35 pl-3 text-xs leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder={t.personalNote} className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? t.learned : t.markLearned}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger"><Trash2 className="size-3.5" /></button></div></article>)}</div>
+            <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-500" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 text-xs italic leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder={t.personalNote} className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? t.learned : t.markLearned}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger"><Trash2 className="size-3.5" /></button></div></article>)}</div>
           ) : <EmptyDrawer icon={Bookmark} title={t.vocabularyEmpty} text={t.vocabularyHint} />}
         </div>
         <div className="shrink-0 border-t border-line bg-raised px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:hidden">
@@ -961,5 +1140,5 @@ function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm, 
 function ReadingResultScreen({ test, result, answers, onLibrary, onRetry, onReview, onNext, t }: { test: ReadingPracticeTest; result: TestResult; answers: Record<string, AnswerValue>; onLibrary: () => void; onRetry: () => void; onReview: () => void; onNext: () => void; t: Copy }) {
   const questions = allReadingQuestions(test);
   const band = bandGuidance(result.score, result.total, test.track, t);
-  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> {t.testComplete}</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">{t.bandApproximate}</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
+  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> {t.testComplete}</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">{t.bandApproximate}</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
 }

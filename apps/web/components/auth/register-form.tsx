@@ -109,7 +109,7 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
         {auth.haveAccount}{" "}
         <Link
           href={`/${lang}/auth/login`}
-          className="font-semibold text-auth-ink underline-offset-4 transition-colors hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-auth-ink underline-offset-4 transition-colors hover:underline"
         >
           {auth.loginButton}
         </Link>

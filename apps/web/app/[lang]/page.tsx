@@ -12,7 +12,6 @@ import {
   Volume2,
   type LucideIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -27,10 +26,10 @@ import { fetchCatalogMeta } from "@/lib/vocab";
 import { getDictionary, hasLocale } from "./dictionaries";
 
 const LEVELS = [
-  { slug: "a1", level: "A1", tone: "bg-[#9a9668]" },
+  { slug: "a1", level: "A1", tone: "bg-brand-400" },
   { slug: "a2", level: "A2", tone: "bg-brand-600" },
-  { slug: "b1", level: "B1", tone: "bg-[#327f8d]" },
-  { slug: "b2", level: "B2", tone: "bg-[#3d6264]" },
+  { slug: "b1", level: "B1", tone: "bg-accent-500" },
+  { slug: "b2", level: "B2", tone: "bg-brand-800" },
 ] as const;
 
 export default async function LandingPage({
@@ -158,21 +157,12 @@ export default async function LandingPage({
           </Reveal>
 
           <Reveal delay={0.08}>
-            <div className="relative min-h-[520px] overflow-hidden rounded-[22px] bg-brand-950 p-7 text-white shadow-[0_24px_70px_rgba(7,58,53,0.22)]">
-              <Image
-                src="/images/vocora-uzbek-student-hero.webp"
-                alt=""
-                fill
-                sizes="(max-width: 1279px) calc(100vw - 40px), 480px"
-                className="object-cover object-[72%_center] opacity-24 mix-blend-luminosity"
-              />
-              <div className="absolute inset-0 bg-linear-to-r from-brand-950 via-brand-950/94 to-brand-900/42" />
-              <div
-                aria-hidden
-                className="absolute inset-0 opacity-10 [background-image:linear-gradient(60deg,transparent_46%,rgba(255,255,255,.45)_48%,transparent_50%)] [background-size:26px_26px]"
-              />
+            <div className="relative min-h-[520px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]">
+              <div aria-hidden className="absolute -right-20 -top-16 size-80 rounded-full border-[28px] border-accent-400/55" />
+              <div aria-hidden className="absolute -bottom-24 -left-16 size-64 bg-brand-500/80 rotate-12" />
+              <p aria-hidden className="absolute right-6 top-8 font-display text-[7rem] leading-none tracking-wide text-[#f3e6cb]/10">IELTS</p>
               <div className="relative z-10 flex h-full flex-col">
-                <span className="inline-flex w-fit items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3 py-1.5 text-[11px] font-black uppercase text-white/72">
+                <span className="print-label inline-flex w-fit items-center gap-2 border-[#f3e6cb]/45 bg-[#f3e6cb]/10 text-[#f3e6cb]">
                   <GraduationCap className="size-3.5" aria-hidden />
                   IELTS
                 </span>
@@ -186,7 +176,7 @@ export default async function LandingPage({
                     const Icon = icons[index] ?? Star;
                     return (
                       <p key={feature} className="flex items-center gap-3">
-                        <span className="flex size-8 items-center justify-center rounded-lg border border-white/12 bg-white/8">
+                        <span className="flex size-8 items-center justify-center rounded-md border border-white/20 bg-white/8">
                           <Icon className="size-4 text-accent-300" aria-hidden />
                         </span>
                         {feature}
@@ -195,7 +185,7 @@ export default async function LandingPage({
                   })}
                 </div>
                 <Link href={`/${lang}/ielts`} className="mt-auto pt-8">
-                  <Button className="bg-[#faf7ef] text-brand-950 hover:bg-white" variant="secondary">
+                  <Button className="border-[#24130c] bg-[#f3e6cb] text-brand-950 hover:bg-[#fff8ea]" variant="secondary">
                     {copy.openIelts}
                     <ArrowRight className="size-4" aria-hidden />
                   </Button>
@@ -328,7 +318,7 @@ const homeCopy: Record<
       title: "Ingliz tili shu yerdan boshlanadi",
       subtitle:
         "O'zbek tilidagi izohlar, aqlli takrorlash va IELTS uchun amaliy mashqlar — bir joyda, har kuni.",
-      heroImageAlt: "Yashillik orasida ingliz tilini o'rganayotgan talaba",
+      heroImageAlt: "Kofe va kitob bilan ingliz tilini o'rganayotgan Vocora mushugi",
       pillars: ["So'z boyligi", "Grammatika", "Talaffuz", "IELTS"],
       shelfTitle: "To'liq ingliz tili yo'li",
       shelfBody: "A1 dan C2 gacha — har bir daraja o'z lug'ati va mashqlari bilan.",
@@ -378,7 +368,7 @@ const homeCopy: Record<
       title: "Английский начинается здесь",
       subtitle:
         "Объяснения на узбекском, умное повторение и практика для IELTS — в одном месте, каждый день.",
-      heroImageAlt: "Студент изучает английский в окружении зелени",
+      heroImageAlt: "Кот Vocora изучает английский с кофе и книгой",
       pillars: ["Словарь", "Грамматика", "Произношение", "IELTS"],
       shelfTitle: "Полный путь в английском",
       shelfBody: "От A1 до C2 — у каждого уровня свой словарь и свои упражнения.",
@@ -428,7 +418,7 @@ const homeCopy: Record<
       title: "English starts right here",
       subtitle:
         "Uzbek explanations, spaced repetition and hands-on IELTS practice — in one place, every day.",
-      heroImageAlt: "A student studying English surrounded by greenery",
+      heroImageAlt: "The Vocora cat studying English with coffee and a book",
       pillars: ["Vocabulary", "Grammar", "Pronunciation", "IELTS"],
       shelfTitle: "The complete English path",
       shelfBody: "A1 through C2 — every level with its own words and drills.",

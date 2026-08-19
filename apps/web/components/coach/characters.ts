@@ -11,9 +11,9 @@ export interface CharacterTheme {
 
 export const CHARACTER_THEMES: Record<CharacterKey, CharacterTheme> = {
   gordon: {
-    gradient: "from-slate-700 to-slate-900",
-    accent: "ring-slate-500",
-    bubble: "bg-slate-100 dark:bg-slate-800/60",
+    gradient: "from-brand-700 to-brand-950",
+    accent: "ring-brand-500",
+    bubble: "bg-sand-100 dark:bg-brand-900/60",
   },
   mochi: {
     gradient: "from-accent-300 to-brand-500",
@@ -21,9 +21,9 @@ export const CHARACTER_THEMES: Record<CharacterKey, CharacterTheme> = {
     bubble: "bg-brand-50 dark:bg-brand-950/45",
   },
   alex: {
-    gradient: "from-emerald-400 to-teal-500",
-    accent: "ring-emerald-400",
-    bubble: "bg-emerald-50 dark:bg-emerald-950/30",
+    gradient: "from-brand-400 to-accent-500",
+    accent: "ring-brand-400",
+    bubble: "bg-brand-50 dark:bg-brand-950/30",
   },
   examiner: {
     gradient: "from-brand-500 to-brand-800",

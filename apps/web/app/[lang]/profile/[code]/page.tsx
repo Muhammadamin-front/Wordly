@@ -17,7 +17,7 @@ export default async function ProfilePage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <PublicProfileView code={code} social={dict.social} />
+      <PublicProfileView code={code} social={dict.social} gam={dict.gam} />
     </>
   );
 }

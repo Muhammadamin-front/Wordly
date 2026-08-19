@@ -88,7 +88,7 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
       <p className="mt-7 text-center">
         <Link
           href={`/${lang}/auth/forgot-password`}
-          className="text-sm font-semibold text-auth-primary underline-offset-4 transition-colors hover:underline dark:text-brand-300"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-auth-primary underline-offset-4 transition-colors hover:underline dark:text-brand-300"
         >
           {auth.forgotLink}
         </Link>
@@ -98,7 +98,7 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
         {auth.noAccount}{" "}
         <Link
           href={`/${lang}/auth/register`}
-          className="font-semibold text-auth-ink underline-offset-4 transition-colors hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-auth-ink underline-offset-4 transition-colors hover:underline"
         >
           {auth.registerButton}
         </Link>

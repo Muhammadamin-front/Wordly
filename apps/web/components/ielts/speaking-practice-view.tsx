@@ -586,7 +586,7 @@ function Part2Timer({
         <div
           className="grid size-36 place-items-center rounded-full"
           style={{
-            background: `conic-gradient(#1b7f6f ${Math.round(ratio * 360)}deg, rgba(28, 55, 49, 0.14) 0deg)`,
+            background: `conic-gradient(#467878 ${Math.round(ratio * 360)}deg, rgba(84, 37, 15, 0.16) 0deg)`,
           }}
         >
           <div className="grid size-28 place-items-center rounded-full bg-raised text-center">

@@ -148,6 +148,37 @@ export async function fetchCatalogMeta(): Promise<CatalogMeta> {
   return response.json();
 }
 
+export interface WordLookupEntry {
+  headword: string;
+  pos: string;
+  slug: string;
+  translation_uz: string | null;
+  translation_ru: string | null;
+  definition_en: string | null;
+}
+
+/**
+ * Tap-to-translate while reading: one call per passage, not per tap.
+ * Best-effort — a network failure just means that passage's taps show no
+ * translation yet, not a crash, so failures resolve to {} rather than throw.
+ */
+export async function lookupWords(headwords: string[]): Promise<Record<string, WordLookupEntry>> {
+  const unique = Array.from(new Set(headwords.map((word) => word.toLowerCase()))).slice(0, 300);
+  if (unique.length === 0) return {};
+  try {
+    const response = await fetch(`${API_URL}/api/v1/words/lookup`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ headwords: unique }),
+    });
+    if (!response.ok) return {};
+    const data = (await response.json()) as { entries: Record<string, WordLookupEntry> };
+    return data.entries;
+  } catch {
+    return {};
+  }
+}
+
 export async function fetchWord(slug: string): Promise<Word | null> {
   const response = await fetch(`${API_URL}/api/v1/words/${encodeURIComponent(slug)}`, {
     cache: "no-store",

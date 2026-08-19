@@ -1,42 +1,52 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Bebas Neue";
+  src: url("/fonts/bebas-neue-latin-400.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/fonts/manrope-latin-400.ttf") format("truetype");
+  font-display: swap;
+  font-weight: 400 800;
+}
+
 /* Theme variants use the root data attribute so the preference can be restored before hydration. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
-  /* Vocora — grass green from the landing field, ivory paper, warm brass. */
-  --color-brand-50: #f1f8ee;
-  --color-brand-100: #ddf0d6;
-  --color-brand-200: #bce3ae;
-  --color-brand-300: #92d081;
-  --color-brand-400: #67b951;
-  --color-brand-500: #489d34;
-  --color-brand-600: #2f7d28;
-  --color-brand-700: #266621;
-  --color-brand-800: #1f521c;
-  --color-brand-900: #1a4419;
-  --color-brand-950: #0c260d;
+  /* Vocora — paper, espresso, and fired-clay accents. */
+  --color-brand-50: #fff8ea;
+  --color-brand-100: #f7e8cc;
+  --color-brand-200: #e8c99a;
+  --color-brand-300: #d69c63;
+  --color-brand-400: #c86a3b;
+  --color-brand-500: #b94e28;
+  --color-brand-600: #a83a25;
+  --color-brand-700: #7e2d1c;
+  --color-brand-800: #54250f;
+  --color-brand-900: #382015;
+  --color-brand-950: #24130c;
 
-  --color-accent-300: #e4c47a;
-  --color-accent-400: #d2a84f;
-  --color-accent-500: #b8892f;
-  --color-accent-600: #8e681f;
+  --color-accent-300: #a1c2bd;
+  --color-accent-400: #6c9390;
+  --color-accent-500: #467878;
+  --color-accent-600: #315d5d;
 
-  --color-sand-50: #fbfaf6;
-  --color-sand-100: #f4f0e7;
-  --color-sand-200: #e8e0d1;
+  --color-sand-50: #faf1dd;
+  --color-sand-100: #f3e6cb;
+  --color-sand-200: #e6d0ae;
 
   --color-success: #16a34a;
   --color-danger: #dc2626;
   --color-warning: #d97706;
-  --color-info: #0f766e;
+  --color-info: #467878;
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-  /* Display serif for the auth headings. System stack: the artifact CSP and
-     our own build both block remote font files, and a silent fallback to the
-     body sans would flatten the whole treatment. */
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
-    ui-serif, Georgia, serif;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
 
   --radius-xl2: 1.5rem;
 
@@ -121,117 +131,94 @@
   }
 }
 
-/* Premium daylight surfaces: cool ivory, emerald ink, and warm brass highlights. */
+/* Shared paper, espresso, rust, and teal tokens. */
 :root {
-  --font-manrope: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
-  --surface-page: #eef5ea;
-  --surface-card: rgb(255 255 255 / 0.88);
-  --surface-raised: rgb(255 255 255 / 0.98);
-  --border-subtle: rgb(15 42 23 / 0.12);
-  --text-primary: #0f2a17;
-  --text-secondary: #56695c;
-  --text-inverse: #ffffff;
-  --semantic-primary: #2f7d28;
-  --semantic-primary-hover: #266621;
-  --semantic-hover: rgb(15 42 23 / 0.06);
-  --semantic-selected: rgb(47 125 40 / 0.12);
-  --semantic-disabled: rgb(86 105 92 / 0.42);
-  --semantic-focus: #b8892f;
-
-  /* Home hero — a grass-green field carrying one white card. Its own palette:
-     the app's brand green is a deeper teal and reads muddy at this saturation. */
-  --home-field-top: #62b544;
-  --home-field-bottom: #43902d;
-  --home-card: #ffffff;
-  --home-card-soft: #f6f9f4;
-  --home-ink: #0f2a17;
-  --home-muted: #63776a;
-  --home-accent: #2f7d28;
-  --home-accent-hover: #276c21;
-  --home-accent-soft: #4fae44;
-  --home-line: rgb(15 42 23 / 0.10);
-  --home-card-shadow: 0 32px 90px rgb(12 46 20 / 0.28), 0 4px 12px rgb(12 46 20 / 0.12);
-  --home-nav-scrim: rgb(255 255 255 / 0.86);
-  /* The landing card's recipe — green-tinted, real offset, soft blur — scaled
-     down for surfaces that repeat, so a list of cards does not read as heroes. */
-  --shadow-card:
-    0 2px 4px rgb(12 46 20 / 0.06),
-    0 16px 44px rgb(12 46 20 / 0.13),
-    inset 0 1px 0 rgb(255 255 255 / 0.9);
-  --shadow-raised:
-    0 4px 12px rgb(12 46 20 / 0.1),
-    0 28px 74px rgb(12 46 20 / 0.2),
-    inset 0 1px 0 rgb(255 255 255 / 0.85);
-
-  /* Auth screens. The split card is its own small palette: pale paper against
-     the paper-cut foliage, so it does not inherit the app's tinted surfaces. */
-  --auth-page: #dfe4dc;
-  --auth-sheet: #f6f6f3;
-  --auth-ink: #16231c;
-  --auth-muted: #63736a;
-  --auth-field: #ffffff;
-  --auth-field-line: rgb(22 35 28 / 0.22);
-  --auth-primary: #33513f;
-  --auth-primary-hover: #294232;
-  --auth-card-shadow: 0 40px 110px rgb(15 32 24 / 0.26), 0 4px 14px rgb(15 32 24 / 0.08);
-  /* The floating card on small screens sits directly on the foliage, so it is
-     frosted rather than opaque and the leaves read through it. */
-  --auth-glass: rgb(252 253 251 / 0.68);
-  --auth-glass-line: rgb(255 255 255 / 0.58);
+  --font-manrope: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --surface-page: #f3e6cb;
+  --surface-card: #faf1dd;
+  --surface-raised: #fff8ea;
+  --border-subtle: rgb(84 37 15 / 0.38);
+  --text-primary: #24130c;
+  --text-secondary: #6c4935;
+  --text-inverse: #fff8ea;
+  --semantic-primary: #b94e28;
+  --semantic-primary-hover: #8f351e;
+  --semantic-hover: rgb(84 37 15 / 0.07);
+  --semantic-selected: rgb(185 78 40 / 0.14);
+  --semantic-disabled: rgb(108 73 53 / 0.42);
+  --semantic-focus: #467878;
+  --home-field-top: #f3e6cb;
+  --home-field-bottom: #e6d0ae;
+  --home-card: #24130c;
+  --home-card-soft: #382015;
+  --home-ink: #fff8ea;
+  --home-muted: #e6caa8;
+  --home-accent: #c75b31;
+  --home-accent-hover: #e27b48;
+  --home-accent-soft: #6c9390;
+  --home-line: rgb(255 248 234 / 0.2);
+  --home-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.88), 0 28px 48px rgb(84 37 15 / 0.2);
+  --home-nav-scrim: rgb(36 19 12 / 0.88);
+  --shadow-card: 5px 7px 0 rgb(84 37 15 / 0.2), 0 16px 32px rgb(84 37 15 / 0.09);
+  --shadow-raised: 8px 10px 0 rgb(84 37 15 / 0.3), 0 24px 40px rgb(84 37 15 / 0.14);
+  --auth-page: #f3e6cb;
+  --auth-sheet: #faf1dd;
+  --auth-ink: #24130c;
+  --auth-muted: #6c4935;
+  --auth-field: #fff8ea;
+  --auth-field-line: rgb(84 37 15 / 0.42);
+  --auth-primary: #b94e28;
+  --auth-primary-hover: #8f351e;
+  --auth-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.44), 0 30px 60px rgb(84 37 15 / 0.16);
+  --auth-glass: rgb(255 248 234 / 0.78);
+  --auth-glass-line: rgb(84 37 15 / 0.34);
   --auth-glass-shadow:
-    0 30px 80px rgb(10 26 18 / 0.34),
-    inset 0 1px 0 rgb(255 255 255 / 0.6);
+    8px 10px 0 rgb(84 37 15 / 0.24),
+    0 24px 48px rgb(84 37 15 / 0.18);
 }
 
 [data-theme="dark"] {
-  --surface-page: #0b1a10;
-  --home-field-top: #1d5c2b;
-  --home-field-bottom: #0d3418;
-  --home-card: #0d221a;
-  --home-card-soft: #122c22;
-  --home-ink: #f2f8ef;
-  --home-muted: #9fb6a5;
-  --home-accent: #57b94c;
-  --home-accent-hover: #6fcc63;
-  --home-accent-soft: #7ad06d;
-  --home-line: rgb(255 255 255 / 0.12);
-  --home-card-shadow: 0 32px 90px rgb(0 0 0 / 0.55), 0 4px 12px rgb(0 0 0 / 0.35);
-  --home-nav-scrim: rgb(13 34 26 / 0.9);
-  --surface-card: rgb(18 41 28 / 0.84);
-  --surface-raised: rgb(23 53 34 / 0.95);
-  --border-subtle: rgb(255 255 255 / 0.12);
-  --text-primary: #f2f8ef;
-  --text-secondary: #9fb6a5;
-  --text-inverse: #06130f;
-  --semantic-primary: #67b951;
-  --semantic-primary-hover: #92d081;
-  --semantic-hover: rgb(255 255 255 / 0.075);
-  --semantic-selected: rgb(98 214 188 / 0.16);
-  --semantic-disabled: rgb(174 189 183 / 0.4);
-  --semantic-focus: #e4c47a;
-  --auth-page: #050f0b;
-  --auth-sheet: #0e1a15;
-  --auth-ink: #eef3ee;
-  --auth-muted: #9aaba1;
-  --auth-field: rgb(255 255 255 / 0.045);
-  --auth-field-line: rgb(255 255 255 / 0.16);
-  --auth-primary: #4f7d63;
-  --auth-primary-hover: #5e9273;
-  --auth-card-shadow: 0 40px 120px rgb(0 0 0 / 0.6);
-  --auth-glass: rgb(14 26 21 / 0.62);
-  --auth-glass-line: rgb(255 255 255 / 0.14);
+  --surface-page: #24130c;
+  --home-field-top: #24130c;
+  --home-field-bottom: #160b07;
+  --home-card: #f3e6cb;
+  --home-card-soft: #fff8ea;
+  --home-ink: #24130c;
+  --home-muted: #6c4935;
+  --home-accent: #a83a25;
+  --home-accent-hover: #7e2d1c;
+  --home-accent-soft: #467878;
+  --home-line: rgb(84 37 15 / 0.2);
+  --home-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 28px 48px rgb(0 0 0 / 0.35);
+  --home-nav-scrim: rgb(36 19 12 / 0.9);
+  --surface-card: #382015;
+  --surface-raised: #472717;
+  --border-subtle: rgb(250 241 221 / 0.2);
+  --text-primary: #fff1d4;
+  --text-secondary: #dfc5a2;
+  --text-inverse: #24130c;
+  --semantic-primary: #e17a47;
+  --semantic-primary-hover: #f29a64;
+  --semantic-hover: rgb(255 241 212 / 0.08);
+  --semantic-selected: rgb(108 147 144 / 0.24);
+  --semantic-disabled: rgb(223 197 162 / 0.42);
+  --semantic-focus: #a1c2bd;
+  --auth-page: #24130c;
+  --auth-sheet: #382015;
+  --auth-ink: #fff1d4;
+  --auth-muted: #dfc5a2;
+  --auth-field: #472717;
+  --auth-field-line: rgb(250 241 221 / 0.2);
+  --auth-primary: #e17a47;
+  --auth-primary-hover: #f29a64;
+  --auth-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 30px 60px rgb(0 0 0 / 0.35);
+  --auth-glass: rgb(71 39 23 / 0.82);
+  --auth-glass-line: rgb(250 241 221 / 0.2);
   --auth-glass-shadow:
-    0 30px 80px rgb(0 0 0 / 0.55),
-    inset 0 1px 0 rgb(255 255 255 / 0.09);
-  --shadow-card:
-    0 2px 4px rgb(0 0 0 / 0.24),
-    0 18px 52px rgb(2 14 6 / 0.42),
-    inset 0 1px 0 rgb(255 255 255 / 0.08);
-  --shadow-raised:
-    0 4px 12px rgb(0 0 0 / 0.3),
-    0 30px 82px rgb(2 14 6 / 0.5),
-    inset 0 1px 0 rgb(255 255 255 / 0.1);
+    10px 12px 0 rgb(0 0 0 / 0.4),
+    0 28px 56px rgb(0 0 0 / 0.32);
+  --shadow-card: 5px 7px 0 rgb(0 0 0 / 0.26), 0 16px 32px rgb(0 0 0 / 0.2);
+  --shadow-raised: 8px 10px 0 rgb(0 0 0 / 0.38), 0 24px 40px rgb(0 0 0 / 0.28);
 }
 
 html[data-theme="light"] {
@@ -422,30 +409,30 @@ body::after {
 
 body::before {
   background:
-    linear-gradient(112deg, rgb(255 255 255 / 0.76), transparent 38%, rgb(224 240 232 / 0.42)),
-    linear-gradient(145deg, #faf9f3 0%, #f0f5ef 48%, #f7f2e8 100%);
+    linear-gradient(112deg, rgb(255 248 234 / 0.76), transparent 38%, rgb(230 208 174 / 0.42)),
+    linear-gradient(145deg, #faf1dd 0%, #f3e6cb 48%, #ead4ae 100%);
 }
 
 [data-theme="dark"] body::before {
   background:
-    linear-gradient(120deg, rgb(23 107 92 / 0.12), transparent 42%),
-    linear-gradient(135deg, #06130f, #0b211b 58%, #0d1916);
+    linear-gradient(120deg, rgb(185 78 40 / 0.12), transparent 42%),
+    linear-gradient(135deg, #24130c, #160b07 58%, #352012);
 }
 
 body::after {
   z-index: -1;
   background:
-    radial-gradient(circle at 16% 12%, rgb(23 107 92 / 0.10), transparent 28%),
-    radial-gradient(circle at 82% 18%, rgb(184 137 47 / 0.09), transparent 24%),
-    radial-gradient(circle at 44% 92%, rgb(40 135 115 / 0.08), transparent 30%);
+    radial-gradient(circle at 16% 12%, rgb(185 78 40 / 0.10), transparent 28%),
+    radial-gradient(circle at 82% 18%, rgb(214 156 99 / 0.09), transparent 24%),
+    radial-gradient(circle at 44% 92%, rgb(108 147 144 / 0.08), transparent 30%);
   mask-image: linear-gradient(to bottom, black, transparent 88%);
   opacity: 0.86;
 }
 
 [data-theme="dark"] body::after {
   background:
-    radial-gradient(circle at 18% 10%, rgb(76 167 143 / 0.14), transparent 30%),
-    radial-gradient(circle at 84% 20%, rgb(210 168 79 / 0.10), transparent 26%),
+    radial-gradient(circle at 18% 10%, rgb(185 78 40 / 0.14), transparent 30%),
+    radial-gradient(circle at 84% 20%, rgb(214 156 99 / 0.10), transparent 26%),
     radial-gradient(circle at 48% 92%, rgb(255 255 255 / 0.055), transparent 34%);
   opacity: 0.72;
 }
@@ -545,14 +532,14 @@ body::after {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 22% 18%, rgb(103 140 116 / 0.34), transparent 42%),
-    radial-gradient(circle at 82% 84%, rgb(58 92 71 / 0.32), transparent 46%);
+    radial-gradient(circle at 22% 18%, rgb(185 78 40 / 0.22), transparent 42%),
+    radial-gradient(circle at 82% 84%, rgb(70 120 120 / 0.16), transparent 46%);
 }
 
 [data-theme="dark"] .auth-page-glow {
   background:
-    radial-gradient(circle at 22% 18%, rgb(48 92 70 / 0.3), transparent 44%),
-    radial-gradient(circle at 82% 84%, rgb(20 48 36 / 0.5), transparent 48%);
+    radial-gradient(circle at 22% 18%, rgb(168 58 37 / 0.26), transparent 44%),
+    radial-gradient(circle at 82% 84%, rgb(70 120 120 / 0.22), transparent 48%);
 }
 
 /* Focus visibility for keyboard users. */
@@ -564,14 +551,14 @@ body::after {
 /* Shared premium surfaces. */
 .glass {
   background:
-    linear-gradient(180deg, rgb(255 255 253 / 0.95), rgb(248 251 246 / 0.8)),
+    linear-gradient(180deg, rgb(255 248 234 / 0.95), rgb(250 241 221 / 0.8)),
     color-mix(in srgb, var(--surface-raised) 86%, transparent);
   backdrop-filter: blur(16px) saturate(1.1);
   -webkit-backdrop-filter: blur(16px) saturate(1.1);
   border: 1px solid var(--border-subtle);
   box-shadow:
     0 1px 0 rgb(255 255 255 / 0.9) inset,
-    0 14px 42px rgb(29 70 60 / 0.09);
+    0 14px 42px rgb(84 37 15 / 0.09);
 }
 
 [data-theme="dark"] .glass {
@@ -588,7 +575,7 @@ body::after {
   transform-origin: center;
   will-change: auto;
   background:
-    linear-gradient(145deg, rgb(255 255 253 / 0.88), rgb(247 251 246 / 0.62) 62%, transparent),
+    linear-gradient(145deg, rgb(255 248 234 / 0.88), rgb(250 241 221 / 0.62) 62%, transparent),
     var(--surface-card);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-card);
@@ -759,11 +746,11 @@ body::after {
   justify-content: center;
   border: 1px solid var(--border-subtle);
   background:
-    linear-gradient(145deg, rgb(255 255 255 / 0.98), rgb(244 249 244 / 0.72)),
+    linear-gradient(145deg, rgb(255 248 234 / 0.98), rgb(250 241 221 / 0.72)),
     color-mix(in srgb, var(--surface-raised) 88%, transparent);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.72),
-    0 12px 36px rgb(24 63 57 / 0.12);
+    0 12px 36px rgb(84 37 15 / 0.12);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -774,7 +761,7 @@ body::after {
     color-mix(in srgb, var(--surface-raised) 82%, transparent);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.22),
-    0 16px 48px rgb(24 63 57 / 0.12);
+    0 16px 48px rgb(0 0 0 / 0.22);
 }
 
 html.theme-switching *,
@@ -841,4 +828,246 @@ html.theme-switching *::after {
   height: 5rem;
   background: linear-gradient(to bottom, transparent, var(--surface-page));
   pointer-events: none;
+}
+
+/* Vocora's paper-led editorial world. Shared primitives intentionally carry
+   this treatment so learning flows inherit it without changing their logic. */
+:root {
+  --font-manrope: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --surface-page: #f3e6cb;
+  --surface-card: #faf1dd;
+  --surface-raised: #fff8ea;
+  --border-subtle: rgb(84 37 15 / 0.38);
+  --text-primary: #24130c;
+  --text-secondary: #6c4935;
+  --text-inverse: #fff8ea;
+  --semantic-primary: #b94e28;
+  --semantic-primary-hover: #8f351e;
+  --semantic-hover: rgb(84 37 15 / 0.07);
+  --semantic-selected: rgb(185 78 40 / 0.14);
+  --semantic-disabled: rgb(108 73 53 / 0.42);
+  --semantic-focus: #467878;
+  --home-field-top: #f3e6cb;
+  --home-field-bottom: #e6d0ae;
+  --home-card: #24130c;
+  --home-card-soft: #382015;
+  --home-ink: #fff8ea;
+  --home-muted: #e6caa8;
+  --home-accent: #c75b31;
+  --home-accent-hover: #e27b48;
+  --home-accent-soft: #6c9390;
+  --home-line: rgb(255 248 234 / 0.2);
+  --home-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.88), 0 28px 48px rgb(84 37 15 / 0.2);
+  --home-nav-scrim: rgb(36 19 12 / 0.88);
+  --shadow-card: 5px 7px 0 rgb(84 37 15 / 0.2), 0 16px 32px rgb(84 37 15 / 0.09);
+  --shadow-raised: 8px 10px 0 rgb(84 37 15 / 0.3), 0 24px 40px rgb(84 37 15 / 0.14);
+  --auth-page: #f3e6cb;
+  --auth-sheet: #faf1dd;
+  --auth-ink: #24130c;
+  --auth-muted: #6c4935;
+  --auth-field: #fff8ea;
+  --auth-field-line: rgb(84 37 15 / 0.42);
+  --auth-primary: #b94e28;
+  --auth-primary-hover: #8f351e;
+  --auth-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.44), 0 30px 60px rgb(84 37 15 / 0.16);
+}
+
+[data-theme="dark"] {
+  --surface-page: #24130c;
+  --surface-card: #382015;
+  --surface-raised: #472717;
+  --border-subtle: rgb(250 241 221 / 0.2);
+  --text-primary: #fff1d4;
+  --text-secondary: #dfc5a2;
+  --text-inverse: #24130c;
+  --semantic-primary: #e17a47;
+  --semantic-primary-hover: #f29a64;
+  --semantic-hover: rgb(255 241 212 / 0.08);
+  --semantic-selected: rgb(108 147 144 / 0.24);
+  --semantic-disabled: rgb(223 197 162 / 0.42);
+  --semantic-focus: #a1c2bd;
+  --home-field-top: #24130c;
+  --home-field-bottom: #160b07;
+  --home-card: #f3e6cb;
+  --home-card-soft: #fff8ea;
+  --home-ink: #24130c;
+  --home-muted: #6c4935;
+  --home-accent: #a83a25;
+  --home-accent-hover: #7e2d1c;
+  --home-accent-soft: #467878;
+  --home-line: rgb(84 37 15 / 0.2);
+  --home-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 28px 48px rgb(0 0 0 / 0.35);
+}
+
+.type-display,
+.type-h1,
+.type-h2,
+.type-h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.015em;
+  line-height: 0.92;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 12% 6%, rgb(255 248 234 / 0.7), transparent 22%),
+    linear-gradient(135deg, #f8edda 0%, #f3e6cb 56%, #ead4ae 100%);
+}
+
+body::after {
+  background:
+    radial-gradient(circle at 88% 12%, rgb(70 120 120 / 0.12), transparent 24%),
+    radial-gradient(circle at 10% 82%, rgb(185 78 40 / 0.1), transparent 26%);
+  opacity: 0.72;
+}
+
+[data-theme="dark"] body::before {
+  background: linear-gradient(135deg, #24130c, #160b07 65%, #352012);
+}
+
+.glass,
+.surface-panel,
+.premium-card,
+.icon-tile {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.glass {
+  background: var(--surface-raised);
+  border: 2px solid var(--border-subtle);
+  box-shadow: 4px 5px 0 rgb(84 37 15 / 0.2);
+}
+
+.premium-card,
+.surface-panel {
+  background: var(--surface-card);
+  border: 2px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.premium-card::before,
+.premium-card::after,
+.surface-panel::before {
+  display: none;
+}
+
+.premium-card:hover {
+  border-color: var(--semantic-primary);
+  box-shadow: var(--shadow-raised);
+}
+
+.icon-tile {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 3px 4px 0 rgb(84 37 15 / 0.16);
+}
+
+.home-field {
+  background:
+    radial-gradient(circle at 92% 8%, rgb(70 120 120 / 0.16), transparent 20%),
+    radial-gradient(circle at 6% 94%, rgb(185 78 40 / 0.13), transparent 24%),
+    linear-gradient(160deg, var(--home-field-top), var(--home-field-bottom));
+}
+
+.home-field::after {
+  height: 7rem;
+  background: linear-gradient(to bottom, transparent, var(--surface-page));
+}
+
+.editorial-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.012em;
+  line-height: 0.87;
+}
+
+/* Route headings inherit the editorial display face unless a surface has
+   deliberately selected another type family (for example Securify's Readex
+   composition). This keeps every route inside the same visual system. */
+main h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0.012em;
+  line-height: 0.92;
+}
+
+.print-label {
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  padding: 0.42rem 0.5rem;
+  text-transform: uppercase;
+}
+
+/* A brief paper glint makes primary actions feel printed and tactile, while
+   retaining the existing rust/espresso depth. It is limited to deliberate
+   action controls rather than every clickable element in the app. */
+.tactile-action {
+  position: relative;
+  isolation: isolate;
+}
+
+.tactile-action::before {
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  inset-block: -30%;
+  left: -44%;
+  width: 38%;
+  background: linear-gradient(90deg, transparent, rgb(255 248 234 / 0.26), transparent);
+  content: "";
+  transform: skewX(-16deg);
+  transition: transform 480ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tactile-action:not(:disabled):hover::before {
+    transform: translateX(400%) skewX(-16deg);
+  }
+
+  .premium-card {
+    transition-duration: 240ms;
+  }
+
+  .premium-card::after {
+    display: block;
+    background: linear-gradient(108deg, transparent 36%, rgb(185 78 40 / 0.12) 49%, rgb(255 248 234 / 0.24) 53%, transparent 68%);
+    opacity: 0;
+    transform: translateX(-105%);
+    transition:
+      opacity 160ms ease,
+      transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .premium-card:hover {
+    --card-lift: -4px;
+    --card-scale: 1.008;
+    border-color: color-mix(in srgb, var(--semantic-primary) 72%, var(--border-subtle));
+    box-shadow: 9px 12px 0 rgb(84 37 15 / 0.26), 0 26px 42px rgb(84 37 15 / 0.14);
+  }
+
+  [data-theme="dark"] .premium-card:hover {
+    box-shadow: 9px 12px 0 rgb(0 0 0 / 0.4), 0 26px 42px rgb(0 0 0 / 0.3);
+  }
+
+  .premium-card:hover::after {
+    opacity: 1;
+    transform: translateX(105%);
+  }
+}
+
+.premium-card:focus-within {
+  border-color: color-mix(in srgb, var(--semantic-focus) 66%, var(--border-subtle));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tactile-action::before,
+  .premium-card::after {
+    display: none;
+  }
 }

@@ -71,14 +71,14 @@ export function PlacementTest({
 
   if (!started) {
     return (
-      <div className="relative overflow-hidden rounded-lg border border-brand-300/70 bg-brand-950 px-5 py-6 text-white shadow-[0_24px_60px_rgba(7,58,53,0.18)] sm:px-7 sm:py-8">
-        <div className="absolute inset-y-0 right-0 w-2/5 opacity-35 [background-image:radial-gradient(circle_at_65%_30%,rgba(98,214,181,0.5),transparent_42%),linear-gradient(135deg,transparent_35%,rgba(255,255,255,0.08)_35%,rgba(255,255,255,0.08)_36%,transparent_36%)]" />
+      <div className="relative overflow-hidden rounded-[16px] border-2 border-brand-800 bg-brand-950 px-5 py-6 text-white shadow-[6px_8px_0_rgba(84,37,15,0.5),0_24px_60px_rgba(84,37,15,0.2)] sm:px-7 sm:py-8">
+        <div aria-hidden className="absolute inset-y-0 right-0 w-2/5 opacity-35 [background-image:radial-gradient(circle_at_65%_30%,rgba(108,147,144,0.62),transparent_42%),radial-gradient(circle_at_82%_82%,rgba(200,138,85,0.38),transparent_38%)]" />
         <div className="relative max-w-xl">
           <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase text-accent-300">
             <Gauge className="size-4" />
             {copy.placementEyebrow}
           </span>
-          <h3 className="mt-3 text-xl font-black text-white sm:text-2xl">
+          <h3 className="mt-3 font-display text-3xl tracking-wide text-white sm:text-4xl">
             {copy.placementIntroTitle}
           </h3>
           <p className="mt-2 text-sm leading-6 text-brand-100/80">
@@ -111,7 +111,7 @@ export function PlacementTest({
           {copy.placementResultTitle}
         </div>
         <div className="mt-5 flex flex-col gap-5 sm:flex-row sm:items-center">
-          <div className="flex size-24 shrink-0 items-center justify-center rounded-lg bg-brand-900 text-4xl font-black text-white shadow-[0_18px_44px_rgba(7,58,53,0.22)]">
+          <div className="flex size-24 shrink-0 items-center justify-center rounded-md bg-brand-900 font-display text-5xl tracking-wide text-white shadow-[3px_4px_0_rgb(84,37,15,0.5)]">
             {result.level}
           </div>
           <div>

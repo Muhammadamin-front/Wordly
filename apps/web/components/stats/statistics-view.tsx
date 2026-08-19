@@ -169,8 +169,8 @@ export function StatisticsView({
             <div className="mt-3 flex gap-0.5 overflow-hidden rounded-full">
               {(
                 [
-                  ["new", stats.cards.new, "bg-slate-400"],
-                  ["learning", stats.cards.learning, "bg-amber-500"],
+                  ["new", stats.cards.new, "bg-[#c88a55]"],
+                  ["learning", stats.cards.learning, "bg-brand-400"],
                   ["review", stats.cards.review, "bg-brand-500"],
                   ["mastered", stats.cards.mastered, "bg-success"],
                 ] as const
@@ -184,8 +184,8 @@ export function StatisticsView({
               ))}
             </div>
             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
-              <Legend color="bg-slate-400" label={`${t.new} ${stats.cards.new}`} />
-              <Legend color="bg-amber-500" label={`${t.learning} ${stats.cards.learning}`} />
+              <Legend color="bg-[#c88a55]" label={`${t.new} ${stats.cards.new}`} />
+              <Legend color="bg-brand-400" label={`${t.learning} ${stats.cards.learning}`} />
               <Legend color="bg-brand-500" label={`${t.review} ${stats.cards.review}`} />
               <Legend color="bg-success" label={`${t.mastered} ${stats.cards.mastered}`} />
             </div>
@@ -304,8 +304,8 @@ export function StatisticsView({
 
 function Tile({ label, value, accent }: { label: string; value: string; accent: string }) {
   return (
-    <div className="rounded-xl2 border border-line bg-card p-4 text-center">
-      <p className={cn("text-2xl font-extrabold", accent)}>{value}</p>
+    <div className="rounded-[14px] border border-line bg-card p-4 text-center shadow-[2px_3px_0_rgb(84,37,15,0.12)]">
+      <p className={cn("font-display text-4xl tracking-wide", accent)}>{value}</p>
       <p className="mt-0.5 text-xs text-ink-soft">{label}</p>
     </div>
   );

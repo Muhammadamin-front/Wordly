@@ -325,11 +325,11 @@ function RoadmapPreview({
   return (
     <div
       className={cn(
-        "mt-7 overflow-hidden rounded-[24px] border border-brand-300/45 bg-[linear-gradient(145deg,rgba(23,107,92,0.12),rgba(210,168,79,0.08))] shadow-[0_20px_55px_rgba(7,58,53,0.10)]",
+        "mt-7 overflow-hidden rounded-[16px] border-2 border-line bg-[linear-gradient(145deg,rgba(70,120,120,0.12),rgba(200,138,85,0.1))] shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)]",
         compact && "mt-5"
       )}
     >
-      <div className="border-b border-line/70 bg-card/58 p-4 backdrop-blur-xl sm:p-5">
+      <div className="border-b border-line/70 bg-card/58 p-4 sm:p-5">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wide text-brand-700 dark:text-brand-200">
@@ -345,21 +345,21 @@ function RoadmapPreview({
                 .replace("{minutes}", String(minutes))}
             </p>
           </div>
-          <div className="grid min-w-[180px] grid-cols-3 gap-2 rounded-2xl border border-line/70 bg-raised/72 p-2 text-center shadow-inner shadow-brand-950/5">
+          <div className="grid min-w-[180px] grid-cols-3 gap-2 rounded-[10px] border border-line/70 bg-raised p-2 text-center shadow-[2px_3px_0_rgb(84,37,15,0.1)]">
             <Metric label={copy.roadmapLevelLabel} value={level} />
             <Metric label={copy.roadmapTimeLabel} value={`${minutes}`} />
             <Metric label={copy.roadmapGoalLabel} value={goalLabel} small />
           </div>
         </div>
-        <p className="mt-4 rounded-2xl border border-line/70 bg-raised/58 px-3 py-2 text-xs font-bold leading-5 text-ink-soft">
+        <p className="mt-4 rounded-md border border-line/70 bg-raised px-3 py-2 text-xs font-bold leading-5 text-ink-soft">
           {copy.roadmapInterestsLabel}: <span className="text-ink">{selectedInterests}</span>
         </p>
       </div>
 
       <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5">
         {items.map(({ icon: Icon, title, body }, index) => (
-          <div key={title} className="flex gap-3 rounded-2xl border border-line/70 bg-card/62 p-4 backdrop-blur-xl">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand-900 text-sm font-black text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)]">
+          <div key={title} className="flex gap-3 rounded-md border border-line/70 bg-card/62 p-4">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-brand-900 text-sm font-black text-white shadow-[2px_3px_0_rgb(84,37,15,0.35)]">
               {index + 1}
             </span>
             <div>
@@ -433,7 +433,7 @@ function OptionButton({
         "relative flex min-h-24 w-full flex-col items-start justify-center rounded-lg border p-4 text-left transition-all duration-200 hover:-translate-y-0.5",
         compact && "min-h-20",
         selected
-          ? "border-brand-500 bg-brand-600/10 shadow-[0_12px_30px_rgba(40,135,115,0.12)]"
+          ? "border-brand-500 bg-brand-600/10 shadow-[3px_4px_0_rgba(84,37,15,0.16)]"
           : "border-line bg-card/55 hover:border-brand-300 hover:bg-raised"
       )}
     >

@@ -11,9 +11,9 @@ import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const SECTIONS = [
   { key: "listening", icon: Headphones, accent: "from-brand-600/24 via-accent-400/10 to-transparent" },
-  { key: "reading", icon: BookOpen, accent: "from-emerald-500/20 via-brand-400/10 to-transparent" },
+  { key: "reading", icon: BookOpen, accent: "from-accent-500/20 via-brand-400/10 to-transparent" },
   { key: "writing", icon: PenLine, accent: "from-accent-500/20 via-brand-400/10 to-transparent" },
-  { key: "speaking", icon: Mic2, accent: "from-orange-500/20 via-accent-400/10 to-transparent" },
+  { key: "speaking", icon: Mic2, accent: "from-brand-500/20 via-accent-400/10 to-transparent" },
   { key: "grammar", icon: Puzzle, accent: "from-brand-700/24 via-brand-400/10 to-transparent" },
 ] satisfies Array<{
   key: keyof Pick<Dictionary["skills"], "listening" | "reading" | "writing" | "speaking" | "grammar">;
@@ -36,7 +36,7 @@ export function SkillsHub({ lang, skills }: { lang: string; skills: Dictionary["
           <Sparkles className="size-4" aria-hidden />
           Skill lab
         </span>
-        <h1 className="mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-ink sm:text-5xl">
+        <h1 className="mt-4 max-w-3xl font-display text-5xl tracking-wide text-ink sm:text-6xl">
           {skills.title}
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-soft sm:text-base">

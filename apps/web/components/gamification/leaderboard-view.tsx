@@ -123,9 +123,9 @@ export function LeaderboardView({
                   <span
                     className={cn(
                       "w-6 text-center text-sm font-extrabold",
-                      i === 0 && "text-amber-500",
-                      i === 1 && "text-slate-400",
-                      i === 2 && "text-orange-700",
+                      i === 0 && "text-brand-600",
+                      i === 1 && "text-accent-500",
+                      i === 2 && "text-brand-800",
                       i > 2 && "text-ink-soft"
                     )}
                   >

@@ -113,12 +113,13 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
-      <section className="surface-panel rounded-lg p-6 text-center sm:p-8">
-        <span className="mx-auto inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+      <section className="surface-panel relative overflow-hidden rounded-[18px] p-6 text-center sm:p-8">
+        <span aria-hidden className="absolute -right-8 -top-12 font-display text-[12rem] leading-none tracking-wide text-brand-600/7">VOCORA</span>
+        <span className="print-label relative mx-auto inline-flex items-center gap-2 border-accent-500 bg-accent-400/10 text-accent-600">
           <Crown className="size-4" aria-hidden />
           {t.title}
         </span>
-        <h1 className="mx-auto mt-5 max-w-3xl text-3xl font-black tracking-tight text-ink sm:text-5xl">
+        <h1 className="type-h1 relative mx-auto mt-5 max-w-3xl text-ink">
           {t.honestTitle}
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
@@ -147,7 +148,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
           [t.freeIncludes, t.freeIncludesList],
           [t.premiumAdds, t.premiumAddsList],
         ].map(([title, body]) => (
-          <div key={title} className="premium-card rounded-lg p-5">
+          <div key={title} className="premium-card rounded-[14px] p-5">
             <p className="flex items-center gap-2 text-sm font-black text-ink">
               <CheckCircle2 className="size-5 text-accent-500" aria-hidden />
               {title}
@@ -170,18 +171,18 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
             <div
               key={plan.code}
               className={cn(
-                "relative flex flex-col rounded-xl2 border bg-card p-5",
-                popular ? "border-brand-400 shadow-lg" : "border-line"
+                "relative flex flex-col rounded-[16px] border-2 bg-card p-5 shadow-[3px_4px_0_rgb(84,37,15,0.14)]",
+                popular ? "border-brand-500 bg-brand-50 shadow-[6px_7px_0_#54250f]" : "border-line"
               )}
             >
               {popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3 py-0.5 text-[11px] font-bold text-white">
+                <span className="print-label absolute -top-3 left-1/2 -translate-x-1/2 border-brand-950 bg-brand-600 text-white shadow-[2px_2px_0_#54250f]">
                   {t.mostPopular}
                 </span>
               )}
-              <h2 className="font-bold text-ink">{planName(plan.code, t)}</h2>
+              <h2 className="font-display text-3xl tracking-wide text-ink">{planName(plan.code, t)}</h2>
               <p className="mt-2">
-                <span className="text-2xl font-extrabold text-ink">
+                <span className="font-display text-4xl tracking-wide text-ink">
                   {plan.price_som === 0 ? "0" : formatSom(plan.price_som)}
                 </span>
                 <span className="text-xs text-ink-soft">
@@ -194,7 +195,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                 {t[FEATURE_KEY[plan.code]]}
               </p>
               {plan.code === "family" && !paymentStatus.family_plan_available && (
-                <p className="mt-3 rounded-lg border border-line bg-line/25 px-3 py-2 text-xs font-bold text-ink-soft">
+                <p className="mt-3 rounded-md border border-line bg-line/25 px-3 py-2 text-xs font-bold text-ink-soft">
                   {t.familyUnavailable}
                 </p>
               )}
@@ -271,7 +272,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         })}
       </div>
 
-      <div className="mt-5 flex items-start gap-3 rounded-lg border border-line bg-card/70 p-4 text-sm leading-6 text-ink-soft">
+      <div className="mt-5 flex items-start gap-3 rounded-[12px] border border-line bg-card p-4 text-sm leading-6 text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)]">
         <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden />
         <p>{t.paymentGate}</p>
       </div>

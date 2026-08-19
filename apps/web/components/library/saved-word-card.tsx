@@ -40,7 +40,7 @@ export function SavedWordCard({
             onClick={() => speak(word.headword)}
             aria-label={labels.listen}
             title={labels.listen}
-            className="flex size-9 items-center justify-center rounded-full border border-line/70 bg-raised/90 text-ink-soft shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:text-brand-600 dark:hover:text-brand-300"
+            className="flex size-11 items-center justify-center rounded-md border border-line/70 bg-raised text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all hover:-translate-y-0.5 hover:text-brand-600 dark:hover:text-brand-300"
           >
             <Volume2 className="size-4" />
           </button>
@@ -51,7 +51,7 @@ export function SavedWordCard({
           {word && (
             <Link
               href={`/${lang}/words/${word.slug}`}
-              className="flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg bg-brand-600 px-3 text-sm font-bold text-white shadow-lg shadow-brand-600/20 transition-all hover:-translate-y-0.5 hover:bg-brand-500"
+              className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-md border border-brand-950 bg-brand-600 px-3 text-sm font-bold text-white shadow-[2px_3px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500"
             >
               <span className="truncate">{labels.viewDetails}</span>
               <ArrowUpRight className="size-4 shrink-0" />
@@ -73,7 +73,7 @@ export function SavedWordCard({
           <div className="pr-12">
             <div className="flex flex-wrap items-center gap-2">
               {word && (
-                <span className="rounded-md bg-brand-600/10 px-2 py-1 text-[11px] font-black text-brand-600 dark:text-brand-300">
+                <span className="print-label border-brand-600 bg-brand-600/10 px-2 py-1 text-brand-600 dark:text-brand-300">
                   {word.cefr_level}
                 </span>
               )}

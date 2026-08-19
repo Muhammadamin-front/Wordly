@@ -6,7 +6,7 @@
  *  is hidden from assistive technology.
  *
  *  Construction: six paper layers whose right edges are wavy vertical cuts,
- *  painted back-to-front from deep forest to near-white, each casting a soft
+ *  painted back-to-front from deep espresso to near-cream, each casting a soft
  *  shadow onto the layer beneath. Palm fronds and monstera leaves are then laid
  *  over the dark side, as though cut from the same paper.
  */
@@ -14,30 +14,30 @@
 const LAYERS = [
   // Painted back to front: the widest, darkest sheet first. The pale sheets are
   // deliberately narrow — the cut edges belong near the seam with the form, and
-  // deep forest carries the rest of the panel.
-  { fill: "#14261C", edge: "M0,0 H600 V1000 H0 Z" },
+  // deep espresso carries the rest of the panel.
+  { fill: "#24130C", edge: "M0,0 H600 V1000 H0 Z" },
   {
-    fill: "#1E3527",
+    fill: "#382015",
     edge: "M0,0 H300 C316,150 250,250 280,390 C312,540 240,650 272,790 C296,896 250,952 262,1000 H0 Z",
   },
   {
-    fill: "#2C4A38",
+    fill: "#54250F",
     edge: "M0,0 H238 C256,140 190,246 220,382 C252,520 180,640 212,780 C236,884 190,944 204,1000 H0 Z",
   },
   {
-    fill: "#5E7A69",
+    fill: "#7E2D1C",
     edge: "M0,0 H182 C202,132 132,242 162,376 C194,512 122,632 154,772 C178,876 132,940 148,1000 H0 Z",
   },
   {
-    fill: "#AFBBB0",
+    fill: "#C88A55",
     edge: "M0,0 H128 C150,124 80,238 110,370 C142,504 70,624 102,764 C126,868 80,936 98,1000 H0 Z",
   },
   {
-    fill: "#DFE3DC",
+    fill: "#E6D0AE",
     edge: "M0,0 H78 C100,118 30,234 60,364 C92,496 20,618 52,758 C76,862 30,932 50,1000 H0 Z",
   },
   {
-    fill: "#F6F6F3",
+    fill: "#FAF1DD",
     edge: "M0,0 H34 C58,112 -12,230 20,358 C52,488 -20,612 12,752 C36,856 -8,928 14,1000 H0 Z",
   },
 ] as const;
@@ -174,14 +174,14 @@ export function PaperCutLeaves({
     >
       <defs>
         <filter id={lift} x="-30%" y="-10%" width="160%" height="130%">
-          <feDropShadow dx="-10" dy="0" stdDeviation="14" floodColor="#0d1b14" floodOpacity="0.28" />
+          <feDropShadow dx="-10" dy="0" stdDeviation="14" floodColor="#24130c" floodOpacity="0.32" />
         </filter>
         <filter id={leafLift} x="-40%" y="-40%" width="190%" height="190%">
-          <feDropShadow dx="-6" dy="10" stdDeviation="12" floodColor="#08130d" floodOpacity="0.38" />
+          <feDropShadow dx="-6" dy="10" stdDeviation="12" floodColor="#24130c" floodOpacity="0.42" />
         </filter>
         <linearGradient id={depth} x1="0" y1="0" x2="1" y2="0.4">
-          <stop offset="0%" stopColor="#0b1710" stopOpacity="0" />
-          <stop offset="100%" stopColor="#0b1710" stopOpacity="0.38" />
+          <stop offset="0%" stopColor="#24130c" stopOpacity="0" />
+          <stop offset="100%" stopColor="#24130c" stopOpacity="0.42" />
         </linearGradient>
       </defs>
 
@@ -200,22 +200,22 @@ export function PaperCutLeaves({
           its depth; the drop shadow does the rest. */}
       <g filter={`url(#${leafLift})`}>
         <g transform="translate(612 300) rotate(163)">
-          <Monstera id={`${ns}-monstera-1`} size={196} fill="#2B4736" />
+          <Monstera id={`${ns}-monstera-1`} size={196} fill="#D69C63" />
         </g>
         <g transform="translate(648 560) rotate(199)">
-          <Monstera id={`${ns}-monstera-2`} size={232} fill="#223B2C" />
+          <Monstera id={`${ns}-monstera-2`} size={232} fill="#B94E28" />
         </g>
         <g transform="translate(566 690) rotate(168)">
-          <Monstera id={`${ns}-monstera-3`} size={168} fill="#375A44" />
+          <Monstera id={`${ns}-monstera-3`} size={168} fill="#7E2D1C" />
         </g>
         <g transform="translate(676 800) rotate(177)">
-          <Frond fill="#2E4C39" length={392} reach={66} blades={17} />
+          <Frond fill="#D69C63" length={392} reach={66} blades={17} />
         </g>
         <g transform="translate(690 946) rotate(205)">
-          <Frond fill="#23402F" length={352} reach={58} blades={15} />
+          <Frond fill="#B94E28" length={352} reach={58} blades={15} />
         </g>
         <g transform="translate(596 1046) rotate(231)">
-          <Frond fill="#1A3123" length={286} reach={48} blades={13} />
+          <Frond fill="#7E2D1C" length={286} reach={48} blades={13} />
         </g>
       </g>
 

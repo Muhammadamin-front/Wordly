@@ -49,7 +49,7 @@ export function StoryGame({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-card/70 shadow-[0_24px_70px_rgba(7,58,53,0.12)] backdrop-blur-xl">
+    <div className="overflow-hidden rounded-lg border border-line bg-card/70 shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)]">
       <div className="relative overflow-hidden border-b border-line bg-brand-950 px-5 py-6 text-white sm:px-7">
         <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_20%_20%,rgba(76,167,143,.55),transparent_32%),radial-gradient(circle_at_85%_0%,rgba(210,168,79,.4),transparent_28%)]" />
         <div className="relative flex items-center justify-between gap-5">

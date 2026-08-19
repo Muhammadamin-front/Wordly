@@ -42,7 +42,7 @@ export function ChoiceGame({
           </div>
           <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-line">
             <div
-              className="h-full rounded-full bg-linear-to-r from-red-500 to-red-700 transition-all duration-500"
+              className="h-full rounded-full bg-linear-to-r from-danger to-danger/70 transition-all duration-500"
               style={{ width: `${Math.max(0, 100 - (hits / items.length) * 100)}%` }}
             />
           </div>

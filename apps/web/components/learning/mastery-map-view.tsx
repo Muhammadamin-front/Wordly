@@ -25,17 +25,17 @@ import { cn } from "@/lib/utils";
 type StageKey = "new" | "learning" | "strong" | "mastered";
 
 const LEVEL_STYLE: Record<MasteryLevel["level"], { badge: string; glow: string }> = {
-  A1: { badge: "bg-emerald-500/14 text-emerald-700 dark:text-emerald-300", glow: "from-emerald-500/18" },
-  A2: { badge: "bg-teal-500/14 text-teal-700 dark:text-teal-300", glow: "from-teal-500/18" },
-  B1: { badge: "bg-cyan-500/14 text-cyan-700 dark:text-cyan-300", glow: "from-cyan-500/18" },
-  B2: { badge: "bg-blue-500/14 text-blue-700 dark:text-blue-300", glow: "from-blue-500/18" },
-  C1: { badge: "bg-amber-500/14 text-amber-700 dark:text-amber-300", glow: "from-amber-500/18" },
-  C2: { badge: "bg-rose-500/14 text-rose-700 dark:text-rose-300", glow: "from-rose-500/18" },
+  A1: { badge: "bg-brand-500/14 text-brand-700 dark:text-brand-300", glow: "from-brand-500/18" },
+  A2: { badge: "bg-accent-500/14 text-accent-600 dark:text-accent-300", glow: "from-accent-500/18" },
+  B1: { badge: "bg-sand-200/70 text-brand-800 dark:bg-brand-500/20 dark:text-brand-200", glow: "from-sand-200/70" },
+  B2: { badge: "bg-brand-700/14 text-brand-800 dark:text-brand-200", glow: "from-brand-700/18" },
+  C1: { badge: "bg-brand-400/14 text-brand-700 dark:text-brand-200", glow: "from-brand-400/18" },
+  C2: { badge: "bg-brand-800/14 text-brand-800 dark:text-brand-200", glow: "from-brand-800/18" },
 };
 
 const STAGES: { key: StageKey; icon: LucideIcon; dot: string; bar: string }[] = [
   { key: "new", icon: CircleDot, dot: "bg-ink/25", bar: "bg-ink/16 dark:bg-white/18" },
-  { key: "learning", icon: BookOpen, dot: "bg-amber-500", bar: "bg-amber-500" },
+  { key: "learning", icon: BookOpen, dot: "bg-accent-500", bar: "bg-accent-500" },
   { key: "strong", icon: Brain, dot: "bg-brand-500", bar: "bg-brand-500" },
   { key: "mastered", icon: CheckCircle2, dot: "bg-success", bar: "bg-success" },
 ];
@@ -113,7 +113,7 @@ export function MasteryMapView({
               <Map className="size-4" aria-hidden />
               {t.eyebrow}
             </p>
-            <h1 className="mt-3 text-balance text-3xl font-black tracking-tight text-ink sm:text-5xl">
+            <h1 className="mt-3 text-balance font-display text-4xl tracking-wide text-ink sm:text-6xl">
               {t.title}
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
@@ -150,7 +150,7 @@ export function MasteryMapView({
       <section className="mt-10" aria-labelledby="mastery-map-title">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 id="mastery-map-title" className="text-2xl font-black text-ink sm:text-3xl">
+            <h2 id="mastery-map-title" className="font-display text-3xl tracking-wide text-ink sm:text-4xl">
               {t.mapTitle}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-ink-soft">{t.mapSubtitle}</p>

@@ -126,10 +126,10 @@ export function DashboardView({
 
   return (
     <main className="app-container page-stack flex-1">
-      <section className="surface-panel rounded-[28px] p-4 sm:p-6 lg:p-8">
+      <section className="surface-panel rounded-[18px] p-4 sm:p-6 lg:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
           <div className="min-w-0">
-            <p className="type-label inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-accent-600 dark:text-accent-300">
+            <p className="print-label inline-flex items-center gap-2 border-accent-400 bg-accent-400/10 text-accent-600 dark:text-accent-300">
               <Sparkles className="size-4" aria-hidden />
               {copy.commandEyebrow}
             </p>
@@ -146,7 +146,7 @@ export function DashboardView({
               </Alert>
             )}
 
-            <div className="premium-card light-sweep mt-6 rounded-[24px] p-5 sm:p-6">
+            <div className="premium-card mt-6 rounded-[16px] p-5 sm:p-6">
               <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
                 <div>
                   <span className="icon-tile size-12 rounded-lg">
@@ -183,11 +183,11 @@ export function DashboardView({
           </div>
 
           <aside className="grid gap-4">
-            <div className="premium-card rounded-[24px] p-5">
+            <div className="premium-card rounded-[16px] p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="type-label text-ink-soft">{copy.goalTitle}</p>
-                  <p className="mt-1 text-2xl font-black text-ink">
+                  <p className="mt-1 font-display text-4xl tracking-wide text-ink">
                     {stats ? `${stats.reviews_today}/${stats.daily_goal}` : "—"}
                   </p>
                 </div>
@@ -212,7 +212,7 @@ export function DashboardView({
                       className={
                         "rounded-md border px-2.5 py-1 text-xs font-black transition-all " +
                         (stats.daily_goal === goal
-                          ? "border-brand-400 bg-brand-600 text-white shadow-[0_10px_30px_rgba(40,135,115,0.22)]"
+                          ? "border-brand-950 bg-brand-600 text-white shadow-[2px_3px_0_#54250f]"
                           : "border-line text-ink-soft hover:-translate-y-0.5 hover:bg-card hover:text-ink")
                       }
                     >
@@ -228,7 +228,7 @@ export function DashboardView({
                 icon={Flame}
                 label={gam.streak}
                 value={stats?.current_streak ?? "—"}
-                tone="text-orange-600 dark:text-orange-300"
+                tone="text-brand-600 dark:text-brand-300"
               />
               <SideStat
                 icon={Trophy}
@@ -278,7 +278,7 @@ export function DashboardView({
 function CommandMetric({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
-      <p className="text-2xl font-black text-ink sm:text-3xl">{value}</p>
+      <p className="font-display text-4xl tracking-wide text-ink sm:text-5xl">{value}</p>
       <p className="mt-1 text-[11px] font-bold uppercase text-ink-soft">{label}</p>
     </div>
   );
@@ -296,9 +296,9 @@ function SideStat({
   tone: string;
 }) {
   return (
-    <div className="premium-card rounded-[20px] p-4">
+    <div className="premium-card rounded-[14px] p-4">
       <Icon className={`size-5 ${tone}`} aria-hidden />
-      <p className="mt-4 text-xl font-black text-ink">{value}</p>
+      <p className="mt-4 font-display text-3xl tracking-wide text-ink">{value}</p>
       <p className="mt-1 text-xs font-bold capitalize text-ink-soft">{label}</p>
     </div>
   );
@@ -316,7 +316,7 @@ function ContextCard({
   body: string;
 }) {
   return (
-    <Link href={href} className="premium-card group flex min-h-44 flex-col rounded-[24px] p-5">
+    <Link href={href} className="premium-card group flex min-h-44 flex-col rounded-[16px] p-5">
       <div className="flex items-start justify-between gap-4">
         <span className="icon-tile size-11 rounded-lg">
           <Icon className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />
@@ -324,7 +324,7 @@ function ContextCard({
         <ArrowRight className="size-5 text-ink-soft transition-transform group-hover:translate-x-1 group-hover:text-ink" aria-hidden />
       </div>
       <div className="mt-auto pt-8">
-        <h3 className="text-lg font-black text-ink">{title}</h3>
+        <h3 className="font-display text-3xl tracking-wide text-ink">{title}</h3>
         <p className="mt-2 text-sm leading-6 text-ink-soft">{body}</p>
       </div>
     </Link>

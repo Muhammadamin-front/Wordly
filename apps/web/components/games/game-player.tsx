@@ -112,15 +112,15 @@ interface SourceOption {
  *  level, or a corpus category. */
 const SOURCE_OPTIONS = (games: Dictionary["games"]): SourceOption[] => [
   { key: "mine", label: games.sourceMine, source: {}, accent: "border-brand-400 bg-brand-500/10 text-ink", icon: Layers3 },
-  { key: "A1", label: "A1", source: { level: "A1" }, accent: "border-green-400/50 text-green-600 dark:text-green-400", icon: BookOpen },
-  { key: "A2", label: "A2", source: { level: "A2" }, accent: "border-emerald-400/50 text-emerald-600 dark:text-emerald-400", icon: BookOpen },
+  { key: "A1", label: "A1", source: { level: "A1" }, accent: "border-brand-400/50 text-brand-600 dark:text-brand-300", icon: BookOpen },
+  { key: "A2", label: "A2", source: { level: "A2" }, accent: "border-accent-400/50 text-accent-700 dark:text-accent-300", icon: BookOpen },
   { key: "B1", label: "B1", source: { level: "B1" }, accent: "border-brand-400/50 text-brand-500 dark:text-brand-300", icon: BookOpen },
-  { key: "B2", label: "B2", source: { level: "B2" }, accent: "border-teal-400/50 text-teal-600 dark:text-teal-300", icon: BookOpen },
+  { key: "B2", label: "B2", source: { level: "B2" }, accent: "border-accent-400/50 text-accent-600 dark:text-accent-300", icon: BookOpen },
   { key: "C1", label: "C1", source: { level: "C1" }, accent: "border-accent-400/50 text-accent-600 dark:text-accent-300", icon: Sparkles },
-  { key: "C2", label: "C2", source: { level: "C2" }, accent: "border-emerald-300/50 text-emerald-700 dark:text-emerald-200", icon: Sparkles },
-  { key: "ielts", label: "IELTS", source: { category: "ielts" }, accent: "border-orange-400/50 text-orange-600 dark:text-orange-400", icon: GraduationCap },
-  { key: "phrasal", label: games.sourcePhrasal, source: { category: "phrasal" }, accent: "border-yellow-400/50 text-yellow-600 dark:text-yellow-400", icon: Link2 },
-  { key: "idioms", label: games.sourceIdioms, source: { category: "idioms" }, accent: "border-amber-500/50 text-amber-700 dark:text-amber-400", icon: MessageCircle },
+  { key: "C2", label: "C2", source: { level: "C2" }, accent: "border-brand-800/50 text-brand-800 dark:text-brand-200", icon: Sparkles },
+  { key: "ielts", label: "IELTS", source: { category: "ielts" }, accent: "border-brand-400/50 text-brand-600 dark:text-brand-300", icon: GraduationCap },
+  { key: "phrasal", label: games.sourcePhrasal, source: { category: "phrasal" }, accent: "border-sand-200 text-brand-700 dark:border-brand-400/50 dark:text-brand-200", icon: Link2 },
+  { key: "idioms", label: games.sourceIdioms, source: { category: "idioms" }, accent: "border-brand-700/50 text-brand-700 dark:text-brand-200", icon: MessageCircle },
 ];
 
 export function GamePlayer({
@@ -448,7 +448,7 @@ export function GamePlayer({
           </div>
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
             <motion.div
-              className="h-full rounded-full bg-linear-to-r from-brand-500 via-emerald-400 to-accent-400"
+              className="h-full rounded-full bg-linear-to-r from-brand-500 via-accent-400 to-brand-300"
               animate={{ width: `${total ? (Math.min(attempts, total) / total) * 100 : 0}%` }}
               transition={{ type: "spring", stiffness: 180, damping: 24 }}
             />

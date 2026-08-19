@@ -43,11 +43,12 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="surface-panel overflow-hidden rounded-[28px]"
+        className="surface-panel overflow-hidden rounded-[18px]"
       >
-        <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+        <div className="relative grid gap-8 overflow-hidden p-6 sm:p-8 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+          <span aria-hidden className="absolute -right-6 -top-10 font-display text-[11rem] leading-none tracking-wide text-brand-600/8">IELTS</span>
           <div>
-            <span className="type-label inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-accent-500">
+            <span className="print-label inline-flex items-center gap-2 border-accent-500 bg-accent-400/10 text-accent-600">
               <Sparkles className="size-4" aria-hidden />
               {t.eyebrow}
             </span>
@@ -59,33 +60,33 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href={`/${lang}/vocabulary?category=ielts`}>
-                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-primary px-5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(7,58,53,0.18)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-hover dark:text-brand-950">
+                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-brand-950 bg-primary px-5 text-sm font-bold text-white shadow-[3px_4px_0_#54250f] transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[5px_6px_0_#54250f] dark:text-brand-50">
                   {t.ieltsWords}
                   <ArrowRight className="size-4" aria-hidden />
                 </span>
               </Link>
               <Link href={`/${lang}/ielts/writing`}>
-                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line bg-raised/78 px-5 text-sm font-bold text-ink transition-all duration-200 hover:bg-hover hover:text-primary">
+                <span className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-line bg-raised px-5 text-sm font-bold text-ink shadow-[2px_3px_0_rgb(84,37,15,0.16)] transition-all duration-150 hover:-translate-y-0.5 hover:bg-hover hover:text-primary">
                   {t.writing}
                   <ArrowUpRight className="size-4" aria-hidden />
                 </span>
               </Link>
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-2 rounded-[22px] border border-line bg-card/50 p-2">
+          <div className="relative grid grid-cols-3 gap-2 rounded-[14px] border-2 border-line bg-card p-2 shadow-[4px_5px_0_rgb(84,37,15,0.16)]">
             {[
               ["600+", t.ieltsWords],
               ["120", t.topics],
               [String(vocabularyResources.length), t.resources],
             ].map(([value, label]) => (
-              <div key={label} className="rounded-[18px] bg-raised/70 p-3 text-center">
-                <p className="text-xl font-black text-ink sm:text-2xl">{value}</p>
+              <div key={label} className="rounded-[10px] bg-raised p-3 text-center">
+                <p className="font-display text-3xl tracking-wide text-ink sm:text-4xl">{value}</p>
                 <p className="type-caption mt-1 text-ink-soft">{label}</p>
               </div>
             ))}
           </div>
         </div>
-        <div className="border-t border-line bg-brand-600/6 px-6 py-3 dark:bg-brand-950/45 sm:px-8">
+        <div className="border-t border-line bg-brand-600/8 px-6 py-3 dark:bg-brand-950/45 sm:px-8">
           <p className="flex items-center gap-2 text-xs font-bold text-brand-800 dark:text-ink-soft">
             <LibraryBig className="size-4 text-accent-500" aria-hidden />
             {t.brandNote}
@@ -113,7 +114,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
               >
                 <Link
                   href={`/${lang}/ielts/${skill.key}`}
-                  className="group flex min-h-44 flex-col rounded-[22px] border border-line bg-card/58 p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400/45 hover:bg-raised/72"
+                  className="premium-card group flex min-h-44 flex-col rounded-[14px] p-5 transition-all duration-200"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="icon-tile size-12 rounded-lg text-brand-500">
@@ -124,7 +125,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
                   <div className="mt-auto pt-7">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="type-h3 text-ink">{t[skill.key]}</h3>
-                      <span className="rounded-md bg-accent-400/10 px-2 py-1 text-[10px] font-bold uppercase text-accent-500">
+                      <span className="print-label border-accent-500 bg-accent-400/10 px-2 py-1 text-[10px] text-accent-600">
                         {skill.count} {t[skill.countKey]}
                       </span>
                     </div>
@@ -154,7 +155,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
             <Link
               key={resource.slug}
               href={`/${lang}/ielts/resources/${resource.slug}`}
-              className="group flex items-center justify-between gap-4 rounded-[18px] border border-line bg-card/48 p-4 transition-all duration-200 hover:border-brand-400/45 hover:bg-raised/72"
+              className="group flex items-center justify-between gap-4 rounded-[12px] border border-line bg-card p-4 shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-raised"
             >
               <span>
                 <p className="type-caption text-accent-500">{resource.eyebrow}</p>

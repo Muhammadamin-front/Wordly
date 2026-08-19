@@ -73,7 +73,7 @@ export function WordFlipCard({
     visibility: hiddenWhen ? "hidden" : "visible",
   });
   const faceInnerClass =
-    "relative h-full w-full overflow-hidden rounded-lg border border-line/70 bg-card/94 shadow-[0_22px_64px_rgba(8,12,20,0.14)] backdrop-blur-xl";
+    "relative h-full w-full overflow-hidden rounded-xl border-2 border-line bg-card shadow-[5px_6px_0_rgb(84,37,15,0.18)]";
 
   return (
     <motion.article
@@ -116,7 +116,7 @@ export function WordFlipCard({
       >
         <section className={faceClass} style={faceStyle(flipped)} aria-hidden={flipped} inert={flipped}>
           <div className={faceInnerClass}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(40,135,115,0.16),transparent_34%),radial-gradient(circle_at_92%_2%,rgba(210,168,79,0.13),transparent_28%),linear-gradient(145deg,rgba(255,255,255,0.12),transparent_42%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_8%,rgba(70,120,120,0.16),transparent_34%),radial-gradient(circle_at_92%_2%,rgba(185,78,40,0.12),transparent_28%)]" />
             <button
               type="button"
               aria-label={frontLabel}
@@ -147,7 +147,7 @@ export function WordFlipCard({
           inert={!flipped}
         >
           <div className={faceInnerClass}>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_10%,rgba(210,168,79,0.16),transparent_34%),radial-gradient(circle_at_8%_92%,rgba(40,135,115,0.13),transparent_32%),linear-gradient(145deg,rgba(255,255,255,0.1),transparent_46%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_86%_10%,rgba(185,78,40,0.16),transparent_34%),radial-gradient(circle_at_8%_92%,rgba(70,120,120,0.13),transparent_32%)]" />
             <button
               type="button"
               aria-label={backLabel}

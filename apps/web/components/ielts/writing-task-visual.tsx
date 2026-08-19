@@ -1,6 +1,6 @@
 import type { WritingChartSeries, WritingTaskVisual as WritingTaskVisualData } from "@/lib/ielts";
 
-const COLORS = ["#0f766e", "#2563eb", "#db2777", "#d97706", "#7c3aed", "#0891b2"];
+const COLORS = ["#467878", "#B94E28", "#D69C63", "#6C9390", "#7E2D1C", "#A83A25"];
 
 type Props = { visual: WritingTaskVisualData };
 
@@ -234,10 +234,10 @@ function ProcessDiagram({ visual }: Props) {
 }
 
 const MAP_COLORS = {
-  water: { fill: "#bae6fd", stroke: "#0284c7" },
-  road: { fill: "#d1d5db", stroke: "#6b7280" },
-  building: { fill: "#fed7aa", stroke: "#c2410c" },
-  green: { fill: "#bbf7d0", stroke: "#15803d" },
+  water: { fill: "#C9DDDA", stroke: "#467878" },
+  road: { fill: "#E6D0AE", stroke: "#6C4935" },
+  building: { fill: "#E8C99A", stroke: "#B94E28" },
+  green: { fill: "#C3D1B8", stroke: "#5B735A" },
 };
 
 function MapPair({ visual }: Props) {
@@ -246,7 +246,7 @@ function MapPair({ visual }: Props) {
       {visual.maps?.map((map) => (
         <figure key={map.title} className="overflow-hidden rounded-xl border border-line bg-card/75 p-3">
           <figcaption className="mb-2 text-center text-xs font-black text-ink">{map.title}</figcaption>
-          <svg viewBox="0 0 100 100" className="w-full rounded-lg bg-amber-50" role="img" aria-label={`${visual.title}: ${map.title}`}>
+          <svg viewBox="0 0 100 100" className="w-full rounded-lg bg-sand-50" role="img" aria-label={`${visual.title}: ${map.title}`}>
             {map.features.map((feature) => {
               const colors = MAP_COLORS[feature.kind];
               return (
@@ -265,7 +265,7 @@ function MapPair({ visual }: Props) {
                     x={feature.x + feature.width / 2}
                     y={feature.y + feature.height / 2 + 1.5}
                     textAnchor="middle"
-                    className="fill-slate-800 text-[3.5px] font-bold"
+                    className="fill-brand-950 text-[3.5px] font-bold"
                   >
                     {feature.name}
                   </text>
@@ -303,7 +303,7 @@ function BarLineCharts({ visual }: Props) {
 
 export function WritingTaskVisual({ visual }: Props) {
   return (
-    <section className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/80 to-sky-50/70 p-4 dark:border-brand-900/40 dark:from-brand-950/25 dark:to-sky-950/15">
+    <section className="mt-5 overflow-hidden rounded-2xl border border-brand-100 bg-gradient-to-br from-brand-50/80 to-accent-50/70 p-4 dark:border-brand-900/40 dark:from-brand-950/25 dark:to-accent-950/15">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.16em] text-brand-700 dark:text-brand-300">Task visual</p>
