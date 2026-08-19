@@ -60,6 +60,41 @@ async def test_update_profile(client):
     assert bad.status_code == 422
 
 
+async def test_account_data_export_contains_generated_data(client):
+    data = await register_user(client)
+    headers = {"Authorization": "Bearer " + data["access_token"]}
+
+    deck = await client.post(
+        "/api/v1/decks", json={"name": "Mening so'zlarim"}, headers=headers
+    )
+    assert deck.status_code == 201
+    deck_id = deck.json()["id"]
+
+    card = await client.post(
+        "/api/v1/cards",
+        json={"front_text": "hello", "back_text": "salom", "deck_id": deck_id},
+        headers=headers,
+    )
+    assert card.status_code == 201
+
+    response = await client.get("/api/v1/users/me/export", headers=headers)
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/json")
+    assert "attachment" in response.headers["content-disposition"]
+
+    export = response.json()
+    assert export["account"]["email"] == "dilnoza@example.uz"
+    assert export["profile"]["display_name"]
+    assert len(export["decks"]) == 1
+    assert export["decks"][0]["name"] == "Mening so'zlarim"
+    assert len(export["cards"]) == 1
+    assert export["cards"][0]["front_text"] == "hello"
+    # Auth internals must never leak into a data export.
+    dumped = str(export)
+    assert "token" not in dumped.lower()
+    assert "password" not in dumped.lower()
+
+
 async def test_account_deletion_revokes_access_and_anonymizes_identity(client):
     data = await register_user(client)
     headers = {"Authorization": "Bearer " + data["access_token"]}
