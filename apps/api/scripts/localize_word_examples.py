@@ -1,9 +1,10 @@
-"""Backfill Uzbek translations for seeded vocabulary examples.
+"""Backfill Uzbek and Russian translations for seeded vocabulary examples.
 
 The source corpus already guarantees three English examples per word. Older
-batches, however, contain blank Uzbek translations for generated examples.
-This script fixes only those blanks, keeps existing reviewed translations, and
-writes a resumable CSV that `scripts.seed` imports idempotently.
+batches, however, contain blank Uzbek translations for generated examples,
+and Russian translations were never generated at all. This script fixes
+those gaps independently per language, keeps existing reviewed translations,
+and writes a resumable CSV that `scripts.seed` imports idempotently.
 
 Usage (from apps/api; no API keys are required):
 
@@ -20,7 +21,6 @@ import asyncio
 import csv
 import pathlib
 import sys
-from collections import defaultdict
 
 import httpx
 
@@ -33,6 +33,12 @@ OUTPUT = DATA_DIR / "examples_all_words_translated.csv"
 BATCH_SIZE = 8
 TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 AUTO_TRANSLATION_EXCLUDED_HEADWORDS = {"cheers"}
+# Figurative phrases need an editor or a context-aware model. A literal
+# machine translation can teach the wrong meaning, so never auto-fill them.
+AUTO_TRANSLATION_EXCLUDED_POS = {"idiom", "phrasal verb", "interjection"}
+LANGUAGES = ("uz", "ru")
+
+ExampleKey = tuple[str, str, str]  # (headword, pos, example_en) — all casefolded
 
 
 def clean(value: str) -> str:
@@ -48,6 +54,13 @@ def is_teaching_note(sentence: str) -> bool:
     )
 
 
+def is_auto_translatable(headword: str, pos: str) -> bool:
+    return (
+        pos.casefold() not in AUTO_TRANSLATION_EXCLUDED_POS
+        and headword.casefold() not in AUTO_TRANSLATION_EXCLUDED_HEADWORDS
+    )
+
+
 def corpus() -> dict[tuple[str, str], dict[str, str]]:
     rows: dict[tuple[str, str], dict[str, str]] = {}
     for filename in CORPUS_FILES:
@@ -57,21 +70,38 @@ def corpus() -> dict[tuple[str, str], dict[str, str]]:
     return rows
 
 
-def examples(words: dict[tuple[str, str], dict[str, str]]) -> list[dict[str, str]]:
-    # Existing translations always win; output only missing translations from the
-    # seed and extra-example files. A key includes sentence text to avoid duplicates.
-    seen: dict[tuple[str, str, str], dict[str, str]] = {}
-    for key, word in words.items():
-        sentence = clean(word.get("example_en", ""))
-        if sentence and not is_teaching_note(sentence):
-            seen[(key[0], key[1], sentence.casefold())] = {
+def examples(words: dict[tuple[str, str], dict[str, str]]) -> dict[ExampleKey, dict[str, str]]:
+    """Every real (non-teaching-note) example sentence anywhere in the
+    corpus, keyed by (headword, pos, example_en), carrying whatever
+    translations the corpus itself already has (blank if never written —
+    OUTPUT, this script's own delta file, is deliberately excluded here, so
+    this reflects only what the *rest* of the corpus already covers)."""
+    seen: dict[ExampleKey, dict[str, str]] = {}
+
+    def record(word: dict[str, str], sentence: str, example_uz: str, example_ru: str = "") -> None:
+        key = (word["headword"].casefold(), word["pos"].casefold(), sentence.casefold())
+        current = seen.get(key)
+        if current is None:
+            seen[key] = {
                 "headword": word["headword"],
                 "pos": word["pos"],
-                "definition_en": word["definition_en"],
                 "example_en": sentence,
-                "example_uz": clean(word.get("example_uz", "")),
+                "example_uz": example_uz,
+                "example_ru": example_ru,
             }
+        else:
+            if example_uz and not current["example_uz"]:
+                current["example_uz"] = example_uz
+            if example_ru and not current["example_ru"]:
+                current["example_ru"] = example_ru
+
+    for word in words.values():
+        sentence = clean(word.get("example_en", ""))
+        if sentence and not is_teaching_note(sentence):
+            record(word, sentence, clean(word.get("example_uz", "")))
     for filename in EXAMPLE_FILES:
+        if filename == OUTPUT.name:
+            continue
         path = DATA_DIR / filename
         if not path.exists():
             continue
@@ -81,48 +111,36 @@ def examples(words: dict[tuple[str, str], dict[str, str]]) -> list[dict[str, str
                 sentence = clean(row.get("example_en", ""))
                 if key not in words or not sentence or is_teaching_note(sentence):
                     continue
-                item_key = (key[0], key[1], sentence.casefold())
-                current = seen.get(item_key)
-                candidate = clean(row.get("example_uz", ""))
-                if current is None:
-                    word = words[key]
-                    seen[item_key] = {
-                        "headword": word["headword"],
-                        "pos": word["pos"],
-                        "definition_en": word["definition_en"],
-                        "example_en": sentence,
-                        "example_uz": candidate,
-                    }
-                elif candidate and not current["example_uz"]:
-                    current["example_uz"] = candidate
-    # Figurative phrases need an editor or a context-aware model. A literal
-    # machine translation can teach the wrong meaning, so never auto-fill them.
-    return [
-        item
-        for item in seen.values()
-        if (
-            not item["example_uz"]
-            and item["pos"].casefold() not in {"idiom", "phrasal verb", "interjection"}
-            and item["headword"].casefold() not in AUTO_TRANSLATION_EXCLUDED_HEADWORDS
-        )
-    ]
+                record(
+                    words[key],
+                    sentence,
+                    clean(row.get("example_uz", "")),
+                    clean(row.get("example_ru", "")),
+                )
+    return seen
 
 
-def load_completed() -> dict[tuple[str, str, str], str]:
+def load_completed() -> dict[ExampleKey, dict[str, str]]:
+    """This script's own prior contributions — the delta this file owns."""
     if not OUTPUT.exists():
         return {}
-    completed = {}
+    completed: dict[ExampleKey, dict[str, str]] = {}
     with OUTPUT.open(encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
-            value = clean(row.get("example_uz", ""))
-            if value:
-                completed[(row["headword"].casefold(), row["pos"].casefold(), clean(row["example_en"]).casefold())] = value
+            key = (row["headword"].casefold(), row["pos"].casefold(), clean(row["example_en"]).casefold())
+            completed[key] = {
+                "headword": row["headword"],
+                "pos": row["pos"],
+                "example_en": clean(row["example_en"]),
+                "uz": clean(row.get("example_uz", "")),
+                "ru": clean(row.get("example_ru", "")),
+            }
     return completed
 
 
-async def translate_sentence(client: httpx.AsyncClient, sentence: str) -> str:
+async def translate_sentence(client: httpx.AsyncClient, sentence: str, target: str) -> str:
     """Translate one public learning sentence without a key or paid provider."""
-    params = {"client": "gtx", "sl": "en", "tl": "uz", "dt": "t", "q": sentence}
+    params = {"client": "gtx", "sl": "en", "tl": target, "dt": "t", "q": sentence}
     for attempt in range(3):
         try:
             response = await client.get(TRANSLATE_URL, params=params, timeout=20.0)
@@ -138,79 +156,95 @@ async def translate_sentence(client: httpx.AsyncClient, sentence: str) -> str:
     return ""
 
 
-async def translate_batch(items: list[dict[str, str]], client: httpx.AsyncClient) -> dict[int, str]:
-    translations = await asyncio.gather(
-        *(translate_sentence(client, item["example_en"]) for item in items)
+async def translate_batch(
+    jobs: list[tuple[int, str]], sentences: dict[int, str], client: httpx.AsyncClient
+) -> dict[int, str]:
+    """jobs: list of (row_index, target_lang) still missing a translation."""
+    results = await asyncio.gather(
+        *(translate_sentence(client, sentences[index], target) for index, target in jobs)
     )
-    return {index: value for index, value in enumerate(translations) if value}
+    return {job: value for job, value in zip(jobs, results) if value}
 
 
-def write_rows(rows: list[dict[str, str]]) -> None:
+def write_rows(rows: dict[ExampleKey, dict[str, str]]) -> None:
     with OUTPUT.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.DictWriter(
             handle, fieldnames=["headword", "pos", "example_en", "example_uz", "example_ru"]
         )
         writer.writeheader()
-        writer.writerows(rows)
+        for (headword, pos, example_en), row in rows.items():
+            writer.writerow(
+                {
+                    "headword": row["headword"],
+                    "pos": row["pos"],
+                    "example_en": row["example_en"],
+                    "example_uz": row.get("uz", ""),
+                    "example_ru": row.get("ru", ""),
+                }
+            )
 
 
 async def run(limit: int | None) -> None:
     words = corpus()
-    pending = examples(words)
-    complete = load_completed()
-    complete = {
-        key: value
-        for key, value in complete.items()
-        if words.get((key[0], key[1]), {}).get("pos", "").casefold()
-        not in {"idiom", "phrasal verb", "interjection"}
-        and key[0] not in AUTO_TRANSLATION_EXCLUDED_HEADWORDS
+    corpus_examples = examples(words)  # rest-of-corpus state, excludes OUTPUT
+    output_rows = load_completed()  # this delta file's own prior contributions
+
+    candidates = {
+        key: item
+        for key, item in corpus_examples.items()
+        if is_auto_translatable(item["headword"], item["pos"])
     }
-    pending = [
-        row
-        for row in pending
-        if (row["headword"].casefold(), row["pos"].casefold(), row["example_en"].casefold()) not in complete
-    ]
+    pending: list[tuple[ExampleKey, str]] = []
+    for key, item in candidates.items():
+        owned = output_rows.get(key, {})
+        for lang in LANGUAGES:
+            has_it = bool(item.get(f"example_{lang}") or owned.get(lang))
+            if not has_it:
+                pending.append((key, lang))
     if limit is not None:
         pending = pending[:limit]
-    output = [
-        {
-            "headword": headword,
-            "pos": pos,
-            "example_en": example_en,
-            "example_uz": example_uz,
-            "example_ru": "",
-        }
-        for (headword, pos, example_en), example_uz in complete.items()
-    ]
-    print(f"missing Uzbek example translations: {len(pending)}")
+
+    print(
+        f"missing translations to fill: {len(pending)} "
+        f"({len(candidates)} auto-translatable examples, {len(LANGUAGES)} languages)"
+    )
+    sentences = {i: candidates[key]["example_en"] for i, (key, _lang) in enumerate(pending)}
+    jobs = [(i, lang) for i, (_key, lang) in enumerate(pending)]
+
+    def ensure_owned(key: ExampleKey) -> dict[str, str]:
+        if key not in output_rows:
+            headword, pos, example_en = key
+            item = candidates[key]
+            output_rows[key] = {
+                "headword": item["headword"],
+                "pos": item["pos"],
+                "example_en": item["example_en"],
+                "uz": "",
+                "ru": "",
+            }
+        return output_rows[key]
+
     async with httpx.AsyncClient(headers={"User-Agent": "Vocora-content/1.0"}) as client:
-        for start in range(0, len(pending), BATCH_SIZE):
-            batch = pending[start : start + BATCH_SIZE]
-            translated = await translate_batch(batch, client)
-            for index, item in enumerate(batch):
-                value = translated.get(index)
-                if not value:
-                    continue
-                output.append(
-                    {
-                        "headword": item["headword"],
-                        "pos": item["pos"],
-                        "example_en": item["example_en"],
-                        "example_uz": value,
-                        "example_ru": "",
-                    }
-                )
-            write_rows(output)
-            done = min(start + len(batch), len(pending))
-            print(f"translated {done}/{len(pending)}; saved {len(output)} rows")
+        for start in range(0, len(jobs), BATCH_SIZE):
+            batch = jobs[start : start + BATCH_SIZE]
+            translated = await translate_batch(batch, sentences, client)
+            for job, value in translated.items():
+                index, lang = job
+                key, _lang = pending[index]
+                ensure_owned(key)[lang] = value
+            write_rows(output_rows)
+            done = min(start + len(batch), len(jobs))
+            print(f"translated {done}/{len(jobs)}")
             await asyncio.sleep(1.2)
+
+    write_rows(output_rows)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--limit", type=int, help="translate at most this many missing examples")
-    group.add_argument("--all", action="store_true", help="translate every missing example")
+    group.add_argument("--limit", type=int, help="translate at most this many missing (example, language) pairs")
+    group.add_argument("--all", action="store_true", help="translate every missing translation")
     args = parser.parse_args()
     if args.limit is not None and args.limit < 1:
         raise SystemExit("--limit must be positive")

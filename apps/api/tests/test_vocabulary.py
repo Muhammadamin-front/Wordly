@@ -136,6 +136,33 @@ async def test_search_matches_headword_and_translations(client):
     assert (await client.get("/api/v1/words", params={"level": "B2"})).json()["total"] == 0
 
 
+async def test_word_lookup_matches_published_headwords_case_insensitively(client):
+    headers = await make_admin(client)
+    await client.post("/api/v1/admin/words", json=WORD_PAYLOAD, headers=headers)
+    draft = {**WORD_PAYLOAD, "headword": "banana", "status": "draft"}
+    await client.post("/api/v1/admin/words", json=draft, headers=headers)
+
+    response = await client.post(
+        "/api/v1/words/lookup",
+        json={"headwords": ["APPLE", "banana", "not-a-real-word"]},
+    )
+    assert response.status_code == 200
+    entries = response.json()["entries"]
+    # Case-insensitive match, keyed by the lowercased headword.
+    assert entries["apple"]["translation_uz"] == "olma"
+    assert entries["apple"]["translation_ru"] == "яблоко"
+    assert entries["apple"]["definition_en"] == "A round fruit with red or green skin."
+    # Draft (unpublished) and unknown words are simply absent, not null entries.
+    assert "banana" not in entries
+    assert "not-a-real-word" not in entries
+
+
+async def test_word_lookup_rejects_empty_and_oversized_batches(client):
+    assert (await client.post("/api/v1/words/lookup", json={"headwords": []})).status_code == 422
+    too_many = {"headwords": [f"word{i}" for i in range(301)]}
+    assert (await client.post("/api/v1/words/lookup", json=too_many)).status_code == 422
+
+
 async def test_update_replaces_senses_and_publish_workflow(client):
     headers = await make_admin(client)
     created = await client.post(

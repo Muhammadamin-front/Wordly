@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import require_content_manager
 from app.core.cache import cached_response
 from app.core.config import get_settings
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.vocabulary import Category, Word
 from app.models.expression import Expression
@@ -19,6 +20,9 @@ from app.schemas.vocabulary import (
     ImportReport,
     WordCreate,
     WordListItem,
+    WordLookupEntry,
+    WordLookupRequest,
+    WordLookupResponse,
     WordOut,
     WordPage,
     WordUpdate,
@@ -104,6 +108,39 @@ async def browse_words(
 
     key = "words:{}:{}:{}:{}:{}".format(page, page_size, level or "", category or "", q or "")
     return await cached_response(request, key, get_settings().CACHE_TTL_WORDS, produce)
+
+
+@router.post(
+    "/words/lookup",
+    response_model=WordLookupResponse,
+    dependencies=[Depends(rate_limit("default"))],
+)
+async def lookup_words(payload: WordLookupRequest, db: AsyncSession = Depends(get_db)):
+    """Tap-to-translate while reading: one request per passage, not per tap."""
+    normalized = sorted({w.strip().lower() for w in payload.headwords if w.strip()})
+    if not normalized:
+        return WordLookupResponse(entries={})
+
+    rows = await db.scalars(
+        select(Word)
+        .where(Word.status == "published", func.lower(Word.headword).in_(normalized))
+        .order_by(Word.frequency_rank.asc().nulls_last())
+    )
+    entries: dict[str, WordLookupEntry] = {}
+    for word in rows.unique():
+        key = word.headword.lower()
+        if key in entries:
+            continue  # a headword can have several pos entries; keep the most frequent
+        sense = word.senses[0] if word.senses else None
+        entries[key] = WordLookupEntry(
+            headword=word.headword,
+            pos=word.pos,
+            slug=word.slug,
+            translation_uz=sense.translation_uz if sense else None,
+            translation_ru=sense.translation_ru if sense else None,
+            definition_en=sense.definition_en if sense else None,
+        )
+    return WordLookupResponse(entries=entries)
 
 
 @router.get("/words/{slug}", response_model=WordOut)

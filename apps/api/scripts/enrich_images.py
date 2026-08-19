@@ -9,9 +9,16 @@ Idempotent: only touches published words whose image_url is empty, so re-runs
 cost zero credits for already-enriched words. Stores the Google thumbnail URL
 (encrypted-tbn*.gstatic.com) — small, stable, hotlink-friendly. Each word
 costs one Serper credit; the free tier has 2500.
+
+Besides writing to the DB this script is run against, results are appended to
+scripts/data/word_images.csv — the same file `scripts.seed` reads to backfill
+image_url without re-spending credits, and the deployable artifact: a local
+run's results ship to production by committing this CSV, not by pointing the
+script at a production DATABASE_URL.
 """
 import argparse
 import asyncio
+import csv
 import pathlib
 import sys
 
@@ -27,6 +34,26 @@ from app.db.session import get_session_factory  # noqa: E402
 from app.models.vocabulary import Category, Word  # noqa: E402
 
 SERPER_IMAGES_URL = "https://google.serper.dev/images"
+CSV_PATH = pathlib.Path(__file__).parent / "data" / "word_images.csv"
+
+
+def load_csv_coverage() -> set[tuple[str, str]]:
+    if not CSV_PATH.exists():
+        return set()
+    with CSV_PATH.open(encoding="utf-8", newline="") as handle:
+        return {
+            (row["headword"].casefold().strip(), row["pos"].casefold().strip())
+            for row in csv.DictReader(handle)
+        }
+
+
+def append_csv_rows(rows: list[tuple[str, str, str]]) -> None:
+    is_new = not CSV_PATH.exists()
+    with CSV_PATH.open("a", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        if is_new:
+            writer.writerow(["headword", "pos", "image_url"])
+        writer.writerows(rows)
 
 
 async def fetch_image(client: httpx.AsyncClient, api_key: str, query: str) -> Optional[str]:
@@ -70,22 +97,33 @@ async def main() -> None:
             query = query.join(Category, Word.category_id == Category.id).where(
                 Category.slug == args.category
             )
-        words = list((await db.scalars(query)).unique())
+        already_in_csv = load_csv_coverage()
+        words = [
+            w for w in (await db.scalars(query)).unique()
+            if (w.headword.casefold(), w.pos.casefold()) not in already_in_csv
+        ]
         print("{} words to enrich".format(len(words)))
 
         done = failed = 0
+        new_rows: list[tuple[str, str, str]] = []
         async with httpx.AsyncClient(timeout=20.0) as client:
             for i, word in enumerate(words, start=1):
                 thumb = await fetch_image(client, settings.SERPER_API_KEY, word.headword)
                 if thumb:
                     word.image_url = thumb
+                    new_rows.append((word.headword, word.pos, thumb))
                     done += 1
                 else:
                     failed += 1
                 if i % 20 == 0:
                     await db.commit()
+                    if new_rows:
+                        append_csv_rows(new_rows)
+                        new_rows = []
                     print("  {}/{} (ok {}, failed {})".format(i, len(words), done, failed))
         await db.commit()
+        if new_rows:
+            append_csv_rows(new_rows)
         print("done: {} enriched, {} failed".format(done, failed))
 
 

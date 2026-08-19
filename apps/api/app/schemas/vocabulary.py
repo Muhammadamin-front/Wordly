@@ -159,3 +159,24 @@ class ImportReport(BaseModel):
     created: int
     updated: int
     errors: List[str]
+
+
+class WordLookupRequest(BaseModel):
+    # Tap-to-translate while reading: the client sends every distinct word on
+    # screen once per passage, not once per tap.
+    headwords: List[str] = Field(min_length=1, max_length=300)
+
+
+class WordLookupEntry(BaseModel):
+    headword: str
+    pos: str
+    translation_uz: Optional[str] = None
+    translation_ru: Optional[str] = None
+    definition_en: Optional[str] = None
+    slug: str
+
+
+class WordLookupResponse(BaseModel):
+    # Keyed by the lowercased headword that was looked up; words with no
+    # corpus match are simply absent rather than returned as null entries.
+    entries: Dict[str, WordLookupEntry]
