@@ -35,6 +35,13 @@ CLICK_SERVICE_ID=...
 CLICK_MERCHANT_ID=...
 CLICK_SECRET_KEY=...
 PAYMENTS_SANDBOX=false
+# Error tracking (Sentry). Unset on either service = errors stay in logs only.
+SENTRY_DSN=...                             # api — Project Settings -> Client Keys
+NEXT_PUBLIC_SENTRY_DSN=...                 # web — separate Sentry project; baked into the browser bundle at build
+# Optional, web build-time only: enables production source maps.
+SENTRY_ORG=...
+SENTRY_PROJECT=...
+SENTRY_AUTH_TOKEN=...
 ```
 
 Notes that will bite you if skipped:
@@ -88,6 +95,11 @@ Terminate TLS in front (Caddy, nginx, or a cloud LB) and route:
 
 ## 4. Health & observability
 
+- Sentry captures unhandled exceptions on both services when `SENTRY_DSN` (api)
+  and `NEXT_PUBLIC_SENTRY_DSN` (web) are set — use two separate Sentry projects,
+  not one DSN for both. Request bodies, cookies, and auth headers are scrubbed
+  before an event leaves the process; see `apps/api/app/core/observability.py`
+  and `apps/web/instrumentation.ts`.
 - `GET /health` — liveness (cheap, no dependencies).
 - `GET /health/detail` — readiness: DB ping, version, uptime, and whether the
   cache/rate-limit backend is `redis` (it must be, in production) — this is the

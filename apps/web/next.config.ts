@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Self-contained server bundle for the Docker image (see Dockerfile).
@@ -55,4 +56,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Source-map upload only runs once SENTRY_ORG/SENTRY_PROJECT are set (a later
+// step — create the project, then set these plus SENTRY_AUTH_TOKEN in CI).
+// Without them this wrapper is a no-op passthrough of nextConfig.
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+});
