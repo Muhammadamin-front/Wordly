@@ -23,6 +23,7 @@ os.environ["CLICK_SERVICE_ID"] = ""
 os.environ["CLICK_MERCHANT_ID"] = ""
 os.environ["CLICK_SECRET_KEY"] = ""
 os.environ["PAYMENTS_SANDBOX"] = "true"
+os.environ["SENTRY_DSN"] = ""
 
 import pytest
 from httpx import ASGITransport, AsyncClient

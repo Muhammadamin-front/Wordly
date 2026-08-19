@@ -207,6 +207,23 @@ export const authApi = {
     }),
 };
 
+/** Downloads everything the account has generated as one JSON file. */
+export async function exportAccountData(): Promise<void> {
+  const token = getAccessToken();
+  const response = await fetch(`${API_URL}/api/v1/users/me/export`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    credentials: "include",
+  });
+  if (!response.ok) throw new Error("export failed");
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = "vocora-export.json";
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 export interface OnboardingInput {
   cefr_level: Profile["cefr_level"];
   learning_goal: Profile["learning_goal"];
