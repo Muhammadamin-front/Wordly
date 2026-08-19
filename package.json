@@ -5,6 +5,11 @@
   "workspaces": [
     "apps/web"
   ],
+  "overrides": {
+    "@sentry/nextjs": {
+      "next": "^16.3.0"
+    }
+  },
   "scripts": {
     "dev:web": "npm run dev --workspace web",
     "build:web": "npm run build --workspace web",
