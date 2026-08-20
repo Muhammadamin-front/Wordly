@@ -74,6 +74,7 @@ export default async function LandingPage({
         navLinks={heroNav}
         signIn={nav.login}
         signUp={nav.register}
+        dashboard={nav.dashboard}
       />
 
       <main className="flex-1 px-3 pb-8 sm:px-5">

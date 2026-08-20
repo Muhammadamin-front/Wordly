@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { HeroCta } from "@/components/site/hero-cta";
+import { HeroNavAuth } from "@/components/site/hero-nav-auth";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
@@ -41,6 +42,7 @@ export function HomeHero({
   navLinks,
   signIn,
   signUp,
+  dashboard,
 }: {
   lang: string;
   copy: HomeHeroCopy;
@@ -49,6 +51,7 @@ export function HomeHero({
   navLinks: { href: string; label: string }[];
   signIn: string;
   signUp: string;
+  dashboard: string;
 }) {
   return (
     <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-7 sm:px-8 sm:py-12">
@@ -69,18 +72,7 @@ export function HomeHero({
             <div className="flex shrink-0 items-center gap-2">
               <ThemeToggle lang={lang as Locale} />
               <LocaleSwitcher current={lang as Locale} tone="dark" />
-              <Link
-                href={`/${lang}/auth/login`}
-                className="inline-flex min-h-10 items-center px-2 text-sm font-bold text-home-muted transition-colors hover:text-home-ink"
-              >
-                {signIn}
-              </Link>
-              <Link
-                href={`/${lang}/auth/register`}
-                className="inline-flex min-h-10 min-w-36 items-center justify-center rounded-md border border-[#f3e6cb]/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
-              >
-                {signUp}
-              </Link>
+              <HeroNavAuth lang={lang} signIn={signIn} signUp={signUp} dashboard={dashboard} />
               <Link
                 href={`/${lang}/vocabulary`}
                 aria-label={copy.search}
