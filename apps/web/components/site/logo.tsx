@@ -9,7 +9,7 @@ export function Logo({
 }: {
   lang: string;
   className?: string;
-  tone?: "default" | "inverse";
+  tone?: "default" | "inverse" | "home";
 }) {
   return (
     <Link
@@ -49,7 +49,8 @@ export function Logo({
       <span
         className={cn(
           "logo-text text-[21px] font-extrabold text-brand-950 dark:text-ink",
-          tone === "inverse" && "!text-white"
+          tone === "inverse" && "text-white!",
+          tone === "home" && "text-home-ink!"
         )}
       >
         Vocora

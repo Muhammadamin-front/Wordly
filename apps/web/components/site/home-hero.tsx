@@ -58,7 +58,7 @@ export function HomeHero({
             aria-label={copy.menu}
             className="relative z-10 hidden items-center justify-between gap-4 border-b border-home-line px-8 py-5 lg:flex"
           >
-            <Logo lang={lang} className="shrink-0 text-lg text-home-ink" />
+            <Logo lang={lang} className="shrink-0 text-lg" tone="home" />
             <div className="flex items-center gap-7 text-[0.78rem] font-black uppercase tracking-[0.06em] text-home-ink">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href} className="transition-opacity hover:opacity-65">
@@ -68,7 +68,7 @@ export function HomeHero({
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <ThemeToggle lang={lang as Locale} />
-              <LocaleSwitcher current={lang as Locale} />
+              <LocaleSwitcher current={lang as Locale} tone="dark" />
               <Link
                 href={`/${lang}/auth/login`}
                 className="inline-flex min-h-10 items-center px-2 text-sm font-bold text-home-muted transition-colors hover:text-home-ink"
@@ -77,7 +77,7 @@ export function HomeHero({
               </Link>
               <Link
                 href={`/${lang}/auth/register`}
-                className="inline-flex min-h-10 items-center rounded-md border border-[#f3e6cb]/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
+                className="inline-flex min-h-10 min-w-36 items-center justify-center rounded-md border border-[#f3e6cb]/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
               >
                 {signUp}
               </Link>
