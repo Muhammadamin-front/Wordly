@@ -240,6 +240,14 @@ async def main() -> None:
         await db.commit()
         print("reading passages: created {}, updated {}".format(created, updated))
 
+    # Expression Library — a separate table from the word corpus above, with
+    # its own idempotent importer (manages its own session). Called here too
+    # so a fresh seed never leaves it empty: this step used to be a
+    # manually-run script that was easy to forget after a deploy.
+    from scripts import import_expressions  # noqa: E402
+
+    await import_expressions.main()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
