@@ -77,7 +77,7 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "depth-scene group relative flex min-h-[268px] flex-col overflow-hidden rounded-[16px] border-2 border-[#24130c] bg-brand-950 p-3 text-white shadow-[5px_7px_0_rgba(84,37,15,0.55)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(84,37,15,0.6)] sm:min-h-75 sm:rounded-[18px] sm:p-5",
+        "depth-scene group relative flex h-full min-h-[268px] flex-col overflow-hidden rounded-[16px] border-2 border-[#24130c] bg-brand-950 p-3 text-white shadow-[5px_7px_0_rgba(84,37,15,0.55)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(84,37,15,0.6)] sm:min-h-75 sm:rounded-[18px] sm:p-5",
         locked ? "grayscale-[0.35] opacity-75" : ""
       )}
     >
