@@ -98,6 +98,7 @@ CORPUS_FILES = [
     "phrasal_idioms_7.csv",
     "reading_passage_words.csv",
     "word_families_1.csv",
+    "word_families_2.csv",
 ]
 
 
