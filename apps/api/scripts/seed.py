@@ -100,6 +100,7 @@ CORPUS_FILES = [
     "word_families_1.csv",
     "word_families_2.csv",
     "word_families_3.csv",
+    "word_families_4.csv",
 ]
 
 
