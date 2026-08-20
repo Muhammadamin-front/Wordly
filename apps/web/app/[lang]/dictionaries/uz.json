@@ -76,6 +76,7 @@
     "telegramButton": "Telegram orqali davom etish",
     "socialDivider": "yoki quyidagilar orqali",
     "socialLoading": "Ulanmoqda...",
+    "googleUnavailable": "Google orqali kirish hozircha ishlamayapti. Boshqa usuldan foydalaning yoki keyinroq urinib ko'ring.",
     "forgotLink": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
     "haveAccount": "Hisobingiz bormi?",

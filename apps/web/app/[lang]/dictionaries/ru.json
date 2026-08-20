@@ -76,6 +76,7 @@
     "telegramButton": "Продолжить с Telegram",
     "socialDivider": "или продолжить с",
     "socialLoading": "Подключение...",
+    "googleUnavailable": "Вход через Google сейчас не работает. Используйте другой способ или попробуйте позже.",
     "forgotLink": "Забыли пароль?",
     "noAccount": "Нет аккаунта?",
     "haveAccount": "Уже есть аккаунт?",

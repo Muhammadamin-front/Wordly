@@ -294,9 +294,16 @@ function MobileSidebar({
               variant="ghost"
               size="sm"
               fullWidth
-              onClick={() => {
+              onClick={async () => {
                 onClose();
-                void logout();
+                // Was fire-and-forget (`void logout()`): `user` stayed
+                // briefly stale after a tap, so navigating to the login
+                // page quickly enough hit its own "already signed in"
+                // redirect and bounced straight back in — no credentials
+                // entered, looked like Login silently re-authenticated the
+                // old session. Awaiting means `user` is really cleared
+                // before this tap can lead anywhere else.
+                await logout();
               }}
             >
               {nav.logout}
