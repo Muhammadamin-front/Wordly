@@ -76,6 +76,7 @@
     "telegramButton": "Continue with Telegram",
     "socialDivider": "or continue with",
     "socialLoading": "Connecting...",
+    "googleUnavailable": "Google sign-in isn't working right now. Try another method, or try again later.",
     "forgotLink": "Forgot password?",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",

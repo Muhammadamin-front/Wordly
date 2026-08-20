@@ -227,10 +227,26 @@ export function SocialLoginButtons({
                   : "hidden"
               }
             />
-            {(!googleReady || googleScriptFailed || googleLoading) && (
+            {googleScriptFailed && (
+              // Google's real button occupies this same tile once it loads, so
+              // this fallback needs its own hit target rather than sitting
+              // inertly under it — without one, a failed load (an unauthorized
+              // origin, the common case) left a tile that looked like a button
+              // but did nothing at all when tapped.
+              <button
+                type="button"
+                onClick={() => setError(auth.googleUnavailable)}
+                aria-label={auth.googleButton}
+                title={auth.googleButton}
+                className="absolute inset-0 grid place-items-center"
+              >
+                <GoogleMark />
+              </button>
+            )}
+            {(!googleReady || googleLoading) && !googleScriptFailed && (
               <span
                 className="absolute inset-0 grid place-items-center"
-                title={googleScriptFailed ? auth.googleButton : auth.socialLoading}
+                title={auth.socialLoading}
               >
                 <GoogleMark />
               </span>
