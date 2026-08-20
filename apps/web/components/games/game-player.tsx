@@ -311,7 +311,7 @@ export function GamePlayer({
   if (phase === "loading" || phase === "finishing") {
     return (
       <div className="mx-auto w-full max-w-lg py-10" aria-label={games.loading}>
-        <div className="surface-panel rounded-[24px] p-5 sm:p-7">
+        <div className="surface-panel rounded-3xl p-5 sm:p-7">
           <Skeleton className="mx-auto size-14 rounded-[20px]" />
           <Skeleton className="mx-auto mt-5 h-7 w-56 rounded-full" />
           <Skeleton className="mx-auto mt-3 h-4 w-72 max-w-full rounded-full" />

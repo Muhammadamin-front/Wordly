@@ -77,14 +77,14 @@ export function LevelCard({
       onPointerLeave={locked ? undefined : tilt.onPointerLeave}
       onPointerCancel={locked ? undefined : tilt.onPointerCancel}
       className={cn(
-        "depth-scene group relative flex h-full min-h-[268px] flex-col overflow-hidden rounded-[16px] border-2 border-[#24130c] bg-brand-950 p-3 text-white shadow-[5px_7px_0_rgba(84,37,15,0.55)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(84,37,15,0.6)] sm:min-h-75 sm:rounded-[18px] sm:p-5",
+        "depth-scene group relative flex h-full min-h-67 flex-col overflow-hidden rounded-2xl border-2 border-brand-950 bg-brand-950 p-3 text-white shadow-[5px_7px_0_rgba(84,37,15,0.55)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[8px_10px_0_rgba(84,37,15,0.6)] sm:min-h-75 sm:rounded-[18px] sm:p-5",
         locked ? "grayscale-[0.35] opacity-75" : ""
       )}
     >
       <div aria-hidden className="absolute inset-0 bg-[radial-gradient(circle_at_22%_16%,rgba(243,230,203,0.18),transparent_22%),radial-gradient(circle_at_78%_12%,rgba(185,78,40,0.18),transparent_24%)]" />
-      <div aria-hidden className="absolute -right-10 -top-8 h-36 w-28 rotate-12 border border-[#f3e6cb]/18 bg-[#b94e28]/18 sm:h-52 sm:w-40" />
-      <div aria-hidden className="absolute right-4 top-14 h-24 w-10 rotate-[18deg] border border-[#f3e6cb]/18 bg-[#d69c63]/20 sm:right-8 sm:h-36 sm:w-14" />
-      <div aria-hidden className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-[#24130c] via-[#24130c]/72 to-transparent" />
+      <div aria-hidden className="absolute -right-10 -top-8 h-36 w-28 rotate-12 border border-sand-100/18 bg-brand-500/18 sm:h-52 sm:w-40" />
+      <div aria-hidden className="absolute right-4 top-14 h-24 w-10 rotate-[18deg] border border-sand-100/18 bg-brand-300/20 sm:right-8 sm:h-36 sm:w-14" />
+      <div aria-hidden className="absolute bottom-0 left-0 right-0 h-1/2 bg-linear-to-t from-brand-950 via-brand-950/72 to-transparent" />
 
       <div className="relative z-20 flex items-start justify-between">
         <span className="flex items-center gap-2">

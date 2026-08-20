@@ -42,7 +42,7 @@ export function EmptyState({
   return (
     <section
       className={cn(
-        "surface-panel rounded-[24px] p-6 text-center sm:p-8",
+        "surface-panel rounded-3xl p-6 text-center sm:p-8",
         className
       )}
     >

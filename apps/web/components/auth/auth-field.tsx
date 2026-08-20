@@ -88,7 +88,7 @@ export function AuthSubmit({
       type="submit"
       disabled={loading}
       className={cn(
-        "tactile-action inline-flex h-[3.15rem] w-full items-center justify-center gap-2 overflow-hidden rounded-[10px] border-2 border-[#54250f] bg-auth-primary text-[0.95rem] font-semibold text-white shadow-[4px_5px_0_#54250f]",
+        "tactile-action inline-flex h-[3.15rem] w-full items-center justify-center gap-2 overflow-hidden rounded-[10px] border-2 border-brand-800 bg-auth-primary text-[0.95rem] font-semibold text-white shadow-[4px_5px_0_#54250f]",
         "transition-[transform,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-auth-primary-hover hover:shadow-[6px_7px_0_#54250f] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_3px_0_#54250f] motion-reduce:transition-none",
         "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/25",
         "disabled:cursor-not-allowed disabled:opacity-60"

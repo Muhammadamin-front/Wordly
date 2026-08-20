@@ -57,7 +57,7 @@ export function DeleteAccountView({ lang }: { lang: string }) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-5 py-16">
-      <div className="surface-panel rounded-[16px] p-6 sm:p-8">
+      <div className="surface-panel rounded-2xl p-6 sm:p-8">
         <Download className="size-8 text-ink-soft" aria-hidden />
         <h2 className="mt-5 font-display text-3xl tracking-wide text-ink">{text.exportTitle}</h2>
         <p className="mt-2 text-sm leading-6 text-ink-soft">{text.exportBody}</p>
@@ -65,7 +65,7 @@ export function DeleteAccountView({ lang }: { lang: string }) {
         <div className="mt-5"><Button variant="secondary" loading={exporting} onClick={download}>{text.exportAction}</Button></div>
       </div>
 
-      <div className="mt-6 rounded-[16px] border-2 border-danger/35 bg-raised p-6 shadow-[4px_5px_0_rgba(127,29,29,0.22)] sm:p-8">
+      <div className="mt-6 rounded-2xl border-2 border-danger/35 bg-raised p-6 shadow-[4px_5px_0_rgba(127,29,29,0.22)] sm:p-8">
         <AlertTriangle className="size-8 text-danger" aria-hidden />
         <h1 className="mt-5 font-display text-4xl tracking-wide text-ink">{text.title}</h1>
         <p className="mt-3 text-sm leading-6 text-ink-soft">{text.body}</p>

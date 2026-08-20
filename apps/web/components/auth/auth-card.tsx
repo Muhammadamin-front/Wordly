@@ -32,7 +32,7 @@ export function AuthCard({
           <div className="mb-6 flex justify-center">
             <Logo lang={lang} className="text-2xl" />
           </div>
-          <div className="surface-panel rounded-[16px] p-6 sm:p-8">
+          <div className="surface-panel rounded-2xl p-6 sm:p-8">
             <h1 className="font-display text-4xl tracking-wide text-ink">{title}</h1>
             <p className="mt-1 text-sm text-ink-soft">{subtitle}</p>
             <div className="mt-6">{children}</div>
@@ -50,7 +50,7 @@ export function AuthCard({
         <PaperCutLeaves className="size-full" crop="portrait" />
       </div>
 
-      <div className="relative z-10 flex w-full max-w-[1180px] justify-center px-6 py-12 sm:px-8 lg:block lg:px-0 lg:py-0">
+      <div className="relative z-10 flex w-full max-w-295 justify-center px-6 py-12 sm:px-8 lg:block lg:px-0 lg:py-0">
         <div className="grid w-full max-w-[25.5rem] overflow-hidden rounded-[18px] border-2 border-auth-line bg-auth-sheet shadow-auth-card lg:max-w-none lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:rounded-[22px]">
           <div className="relative hidden lg:order-last lg:block">
             <PaperCutLeaves className="absolute inset-0 size-full" />

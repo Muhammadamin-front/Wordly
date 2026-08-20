@@ -96,7 +96,7 @@ export function TodayView({
             <Skeleton className="h-64 rounded-[28px]" />
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {Array.from({ length: 4 }).map((_, index) => (
-                <Skeleton key={index} className="h-48 rounded-[24px]" />
+                <Skeleton key={index} className="h-48 rounded-3xl" />
               ))}
             </div>
           </section>

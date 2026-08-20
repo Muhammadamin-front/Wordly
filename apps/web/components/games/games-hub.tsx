@@ -53,7 +53,7 @@ const GAME_ACCENT: Record<GameType, string> = {
   memory: "from-brand-700/24 via-card to-accent-400/10",
   boss_battle: "from-brand-600/25 via-card to-[#c88a55]/12",
   hangman: "from-[#c88a55]/24 via-card to-brand-400/10",
-  spelling_bee: "from-[#e8c99a]/34 via-card to-accent-400/10",
+  spelling_bee: "from-brand-200/34 via-card to-accent-400/10",
   sentence_builder: "from-accent-400/20 via-card to-brand-400/10",
   word_search: "from-accent-500/22 via-card to-brand-400/10",
   crossword: "from-[#c88a55]/24 via-card to-brand-400/10",

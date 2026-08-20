@@ -171,7 +171,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
             <div
               key={plan.code}
               className={cn(
-                "relative flex flex-col rounded-[16px] border-2 bg-card p-5 shadow-[3px_4px_0_rgb(84,37,15,0.14)]",
+                "relative flex flex-col rounded-2xl border-2 bg-card p-5 shadow-[3px_4px_0_rgb(84,37,15,0.14)]",
                 popular ? "border-brand-500 bg-brand-50 shadow-[6px_7px_0_#54250f]" : "border-line"
               )}
             >
@@ -272,7 +272,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         })}
       </div>
 
-      <div className="mt-5 flex items-start gap-3 rounded-[12px] border border-line bg-card p-4 text-sm leading-6 text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)]">
+      <div className="mt-5 flex items-start gap-3 rounded-xl border border-line bg-card p-4 text-sm leading-6 text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)]">
         <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden />
         <p>{t.paymentGate}</p>
       </div>
