@@ -238,7 +238,7 @@ export function SocialLoginButtons({
                 onClick={() => setError(auth.googleUnavailable)}
                 aria-label={auth.googleButton}
                 title={auth.googleButton}
-                className="absolute inset-0 grid place-items-center"
+                className="absolute inset-0 grid cursor-pointer place-items-center"
               >
                 <GoogleMark />
               </button>
@@ -260,7 +260,7 @@ export function SocialLoginButtons({
             disabled={!appleReady || appleLoading}
             aria-label={auth.appleButton}
             title={auth.appleButton}
-            className="grid size-[3.4rem] place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
+            className="grid size-[3.4rem] cursor-pointer place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
           >
             {appleLoading ? (
               <span
@@ -278,7 +278,7 @@ export function SocialLoginButtons({
             onClick={handleGithubSignIn}
             aria-label={auth.githubButton}
             title={auth.githubButton}
-            className="grid size-[3.4rem] place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
+            className="grid size-[3.4rem] cursor-pointer place-items-center rounded-2xl border border-auth-line bg-auth-field text-auth-ink transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
           >
             <GithubMark />
           </button>
@@ -289,7 +289,7 @@ export function SocialLoginButtons({
             onClick={handleTelegramSignIn}
             aria-label={auth.telegramButton}
             title={auth.telegramButton}
-            className="grid size-[3.4rem] place-items-center overflow-hidden rounded-2xl border border-auth-line bg-auth-field transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
+            className="grid size-[3.4rem] cursor-pointer place-items-center overflow-hidden rounded-2xl border border-auth-line bg-auth-field transition-colors hover:border-auth-ink/34 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-auth-primary/20"
           >
             <TelegramMark />
           </button>
