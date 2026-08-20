@@ -92,7 +92,7 @@ export default function SecurifyPage() {
           data
         </h1>
 
-        <p className="absolute top-[46%] left-6 z-10 max-w-[240px] text-[15px] leading-snug text-white/90 md:left-10">
+        <p className="absolute top-[46%] left-6 z-10 max-w-60 text-[15px] leading-snug text-white/90 md:left-10">
           we can guarding your data with utmost care, empowering you with privacy everywhere
         </p>
 

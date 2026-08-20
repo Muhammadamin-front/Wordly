@@ -104,8 +104,8 @@ export function StatisticsView({
             <Skeleton key={index} className="h-24 rounded-[20px]" />
           ))}
         </section>
-        <Skeleton className="mt-6 h-44 rounded-[24px]" />
-        <Skeleton className="mt-4 h-36 rounded-[24px]" />
+        <Skeleton className="mt-6 h-44 rounded-3xl" />
+        <Skeleton className="mt-4 h-36 rounded-3xl" />
       </main>
     );
   }

@@ -71,7 +71,7 @@ export function PlacementTest({
 
   if (!started) {
     return (
-      <div className="relative overflow-hidden rounded-[16px] border-2 border-brand-800 bg-brand-950 px-5 py-6 text-white shadow-[6px_8px_0_rgba(84,37,15,0.5),0_24px_60px_rgba(84,37,15,0.2)] sm:px-7 sm:py-8">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-brand-800 bg-brand-950 px-5 py-6 text-white shadow-[6px_8px_0_rgba(84,37,15,0.5),0_24px_60px_rgba(84,37,15,0.2)] sm:px-7 sm:py-8">
         <div aria-hidden className="absolute inset-y-0 right-0 w-2/5 opacity-35 [background-image:radial-gradient(circle_at_65%_30%,rgba(108,147,144,0.62),transparent_42%),radial-gradient(circle_at_82%_82%,rgba(200,138,85,0.38),transparent_38%)]" />
         <div className="relative max-w-xl">
           <span className="inline-flex items-center gap-2 text-xs font-extrabold uppercase text-accent-300">

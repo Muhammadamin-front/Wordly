@@ -55,7 +55,7 @@ export function HomeHero({
 }) {
   return (
     <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-7 sm:px-8 sm:py-12">
-      <div className="relative w-full max-w-[1180px] overflow-hidden rounded-[22px] border-2 border-[#24130c] bg-home-card shadow-home-card sm:rounded-[26px]">
+      <div className="relative w-full max-w-295 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-home-card shadow-home-card sm:rounded-[26px]">
         <div className="relative isolate">
           <nav
             aria-label={copy.menu}
@@ -97,7 +97,7 @@ export function HomeHero({
                   guestLabel={ctaLabel}
                   userLabel={ctaContinueLabel}
                   variant="ghost"
-                  className="min-h-12 gap-2.5 whitespace-nowrap rounded-md border-2 border-[#f3e6cb]/30 bg-home-accent px-6 text-[0.82rem] font-black uppercase tracking-[0.06em] text-white shadow-[5px_6px_0_rgba(0,0,0,0.38)] hover:-translate-y-0.5 hover:bg-home-accent-hover hover:shadow-[7px_8px_0_rgba(0,0,0,0.38)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_3px_0_rgba(0,0,0,0.38)] max-[359px]:px-4"
+                  className="min-h-12 gap-2.5 whitespace-nowrap rounded-md border-2 border-sand-100/30 bg-home-accent px-6 text-[0.82rem] font-black uppercase tracking-[0.06em] text-white shadow-[5px_6px_0_rgba(0,0,0,0.38)] hover:-translate-y-0.5 hover:bg-home-accent-hover hover:shadow-[7px_8px_0_rgba(0,0,0,0.38)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[2px_3px_0_rgba(0,0,0,0.38)] max-[359px]:px-4"
                   icon={<ArrowRight className="order-last size-4" aria-hidden />}
                 />
               </div>
@@ -121,9 +121,9 @@ export function HomeHero({
             </div>
 
             <div className="relative mx-auto w-full max-w-[29rem]">
-              <span aria-hidden className="absolute -left-4 top-[17%] hidden size-16 rounded-full border border-[#f3e6cb]/28 bg-[#b94e28] lg:block" />
-              <span aria-hidden className="absolute -right-3 bottom-[12%] h-20 w-20 border border-[#f3e6cb]/22 bg-[#b94e28]" />
-              <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border-2 border-[#f3e6cb]/80 bg-[#54250f] p-2 shadow-[10px_11px_0_rgba(0,0,0,0.42)]">
+              <span aria-hidden className="absolute -left-4 top-[17%] hidden size-16 rounded-full border border-sand-100/28 bg-brand-500 lg:block" />
+              <span aria-hidden className="absolute -right-3 bottom-[12%] h-20 w-20 border border-sand-100/22 bg-brand-500" />
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border-2 border-sand-100/80 bg-brand-800 p-2 shadow-[10px_11px_0_rgba(0,0,0,0.42)]">
                 <Image
                   src="/images/vocora-cat-tutor-poster.png"
                   alt={copy.heroImageAlt}
@@ -132,13 +132,13 @@ export function HomeHero({
                   sizes="(max-width: 639px) calc(100vw - 4.5rem), (max-width: 1023px) 29rem, 38vw"
                   className="object-cover"
                 />
-                <span aria-hidden className="absolute inset-2 border border-[#f3e6cb]/42" />
-                <span className="print-label absolute left-5 top-5 bg-[#f3e6cb] text-[#24130c]">Vocora</span>
-                <span className="absolute bottom-5 right-5 max-w-[13ch] text-right font-display text-3xl leading-[0.82] tracking-wide text-[#fff8ea] drop-shadow-[0_2px_0_rgba(36,19,12,0.75)] sm:text-4xl">
+                <span aria-hidden className="absolute inset-2 border border-sand-100/42" />
+                <span className="print-label absolute left-5 top-5 bg-sand-100 text-brand-950">Vocora</span>
+                <span className="absolute bottom-5 right-5 max-w-[13ch] text-right font-display text-3xl leading-[0.82] tracking-wide text-brand-50 drop-shadow-[0_2px_0_rgba(36,19,12,0.75)] sm:text-4xl">
                   {copy.shelfTitle}
                 </span>
               </div>
-              <div className="absolute -left-4 bottom-8 hidden max-w-36 rotate-[-5deg] border-2 border-[#24130c] bg-[#f3e6cb] px-3 py-2 text-[#24130c] shadow-[4px_5px_0_rgba(0,0,0,0.35)] sm:block">
+              <div className="absolute -left-4 bottom-8 hidden max-w-36 rotate-[-5deg] border-2 border-brand-950 bg-sand-100 px-3 py-2 text-brand-950 shadow-[4px_5px_0_rgba(0,0,0,0.35)] sm:block">
                 <p className="text-[0.58rem] font-black uppercase tracking-[0.1em]">{copy.pillars[0]}</p>
                 <p className="mt-1 font-display text-3xl leading-none">A1–C2</p>
               </div>

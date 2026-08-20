@@ -217,7 +217,7 @@ function MobileSidebar({
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
       />
       <aside
-        className="surface-panel !absolute inset-y-0 left-0 flex w-[min(22rem,calc(100vw-1rem))] max-w-none animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
+        className="surface-panel absolute! inset-y-0 left-0 flex w-[min(22rem,calc(100vw-1rem))] max-w-none animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
       >
         <div className="flex min-h-16 shrink-0 items-center justify-between border-b border-line px-4 pt-[env(safe-area-inset-top)]">
           <Logo lang={lang} />
@@ -442,7 +442,7 @@ function DesktopNavGroup({
       <div
         aria-hidden
         className={cn(
-          "pointer-events-none !absolute left-0 top-full z-40 h-3 w-56",
+          "pointer-events-none absolute! left-0 top-full z-40 h-3 w-56",
           expanded && "pointer-events-auto"
         )}
       />
@@ -465,7 +465,7 @@ function DesktopNavGroup({
           }
         }}
         className={cn(
-          "surface-panel invisible pointer-events-none !absolute left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-raised backdrop-blur-2xl transition-all duration-200",
+          "surface-panel invisible pointer-events-none absolute! left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-raised backdrop-blur-2xl transition-all duration-200",
           expanded && "visible pointer-events-auto translate-y-0 opacity-100"
         )}
       >

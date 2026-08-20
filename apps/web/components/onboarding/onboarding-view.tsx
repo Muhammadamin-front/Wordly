@@ -133,7 +133,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
             </div>
           </aside>
 
-          <div className="flex min-h-[560px] flex-col p-5 sm:p-8 lg:p-10">
+          <div className="flex min-h-140 flex-col p-5 sm:p-8 lg:p-10">
             {error && <Alert tone="error" className="mb-5">{copy.error}</Alert>}
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -325,7 +325,7 @@ function RoadmapPreview({
   return (
     <div
       className={cn(
-        "mt-7 overflow-hidden rounded-[16px] border-2 border-line bg-[linear-gradient(145deg,rgba(70,120,120,0.12),rgba(200,138,85,0.1))] shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)]",
+        "mt-7 overflow-hidden rounded-2xl border-2 border-line bg-[linear-gradient(145deg,rgba(70,120,120,0.12),rgba(200,138,85,0.1))] shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)]",
         compact && "mt-5"
       )}
     >
@@ -345,7 +345,7 @@ function RoadmapPreview({
                 .replace("{minutes}", String(minutes))}
             </p>
           </div>
-          <div className="grid min-w-[180px] grid-cols-3 gap-2 rounded-[10px] border border-line/70 bg-raised p-2 text-center shadow-[2px_3px_0_rgb(84,37,15,0.1)]">
+          <div className="grid min-w-45 grid-cols-3 gap-2 rounded-[10px] border border-line/70 bg-raised p-2 text-center shadow-[2px_3px_0_rgb(84,37,15,0.1)]">
             <Metric label={copy.roadmapLevelLabel} value={level} />
             <Metric label={copy.roadmapTimeLabel} value={`${minutes}`} />
             <Metric label={copy.roadmapGoalLabel} value={goalLabel} small />

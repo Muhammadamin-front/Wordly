@@ -19,7 +19,7 @@ export function Logo({
     >
       <span
         aria-hidden
-        className="logo-mark relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border-2 border-[#24130c] bg-[#b94e28] shadow-[3px_4px_0_#54250f]"
+        className="logo-mark relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-[10px] border-2 border-brand-950 bg-brand-500 shadow-[3px_4px_0_#54250f]"
       >
         <span className="absolute inset-0 bg-[linear-gradient(145deg,#c86a3b_0%,#b94e28_56%,#7e2d1c_100%)]" />
         <svg

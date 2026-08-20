@@ -155,7 +155,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
             <Link
               key={resource.slug}
               href={`/${lang}/ielts/resources/${resource.slug}`}
-              className="group flex items-center justify-between gap-4 rounded-[12px] border border-line bg-card p-4 shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-raised"
+              className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-card p-4 shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-raised"
             >
               <span>
                 <p className="type-caption text-accent-500">{resource.eyebrow}</p>
