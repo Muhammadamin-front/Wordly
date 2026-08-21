@@ -1297,7 +1297,9 @@
     "spinnerAgain": "Крутить ещё",
     "spinnerSpinning": "Выбираем...",
     "spinnerOpenTopic": "Открыть тему",
-    "spinnerEmpty": "Для этой части вопросов не найдено."
+    "spinnerEmpty": "Для этой части вопросов не найдено.",
+    "spinnerSoundOn": "Включить звук",
+    "spinnerSoundOff": "Выключить звук"
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",

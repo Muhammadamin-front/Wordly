@@ -1297,7 +1297,9 @@
     "spinnerAgain": "Spin again",
     "spinnerSpinning": "Picking...",
     "spinnerOpenTopic": "Open topic",
-    "spinnerEmpty": "No questions found for this part."
+    "spinnerEmpty": "No questions found for this part.",
+    "spinnerSoundOn": "Turn sound on",
+    "spinnerSoundOff": "Turn sound off"
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",
