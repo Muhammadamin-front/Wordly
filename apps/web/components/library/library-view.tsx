@@ -171,7 +171,7 @@ export function LibraryView({
       <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
         <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
         <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
           {Array.from({ length: 8 }).map((_, i) => (
             <Skeleton key={i} className="aspect-4/5 rounded-2xl" />
           ))}
@@ -330,7 +330,7 @@ export function LibraryView({
           <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t.title}</h2>
         </div>
         <p className="mb-5 text-sm leading-6 text-ink-soft sm:mb-6">{t.subtitle}</p>
-        <div className="grid grid-cols-2 gap-3 min-[390px]:gap-4 sm:gap-5 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 min-[390px]:gap-4 sm:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
           {SHELVES.map((meta, i) => {
             const data = meta.soon ? undefined : shelves[meta.key];
             return (
@@ -362,7 +362,7 @@ export function LibraryView({
         </div>
         <p className="mt-1 text-sm text-ink-soft">{t.collectionsDesc}</p>
 
-        <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+        <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
           {decks.map((deck) => (
             <CollectionCard
               key={deck.id}
