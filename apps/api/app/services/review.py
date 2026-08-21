@@ -21,6 +21,9 @@ def card_state(card: Card) -> SrsState:
         repetitions=card.repetitions,
         lapses=card.lapses,
         due_at=card.due_at,
+        stability=card.stability,
+        difficulty=card.difficulty,
+        last_review=card.last_reviewed_at,
     )
 
 
@@ -32,6 +35,9 @@ def apply_state(card: Card, state: SrsState) -> None:
     card.repetitions = state.repetitions
     card.lapses = state.lapses
     card.due_at = state.due_at
+    card.stability = state.stability
+    card.difficulty = state.difficulty
+    card.last_reviewed_at = state.last_review
 
 
 async def record_review(
@@ -57,6 +63,10 @@ async def record_review(
             interval_after=after.interval_days,
             ease_before=before.ease_factor,
             ease_after=after.ease_factor,
+            stability_before=before.stability,
+            stability_after=after.stability,
+            difficulty_before=before.difficulty,
+            difficulty_after=after.difficulty,
             duration_ms=duration_ms,
         )
     )

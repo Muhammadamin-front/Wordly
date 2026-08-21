@@ -141,7 +141,7 @@ async def test_queue_and_review_cycle(client):
     assert queue["cards"] == []
     assert queue["learning_count"] == 1
 
-    # Second "good" graduates to review with a 1-day interval.
+    # Second "good" graduates to review (FSRS's own interval/rep count, not SM-2's).
     reviewed = await client.post(
         "/api/v1/review/{}".format(card_id),
         json={"rating": "good"},
@@ -149,8 +149,8 @@ async def test_queue_and_review_cycle(client):
     )
     body = reviewed.json()["card"]
     assert body["srs_state"] == "review"
-    assert body["interval_days"] == 1.0
-    assert body["repetitions"] == 1
+    assert body["interval_days"] == 4.0
+    assert body["repetitions"] == 2
 
 
 async def test_review_writes_append_only_log(client):
@@ -175,7 +175,7 @@ async def test_review_writes_append_only_log(client):
     assert len(logs) == 1
     assert logs[0].rating == "easy"
     assert logs[0].state_before == "new"
-    assert logs[0].interval_after == 4.0  # easy graduation
+    assert logs[0].interval_after == 15.0  # easy graduation, straight to review under FSRS
     assert logs[0].duration_ms is None
 
 
