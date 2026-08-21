@@ -8,6 +8,14 @@
     "cancel": "Bekor qilish",
     "or": "yoki"
   },
+  "routeStates": {
+    "errorTitle": "Nimadir xato ketdi",
+    "errorBody": "Xatolik yuz berdi. Qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
+    "notFoundTitle": "Sahifa topilmadi",
+    "notFoundBody": "Siz qidirayotgan sahifa mavjud emas yoki ko'chirilgan.",
+    "goHome": "Bosh sahifaga qaytish"
+  },
   "nav": {
     "features": "Imkoniyatlar",
     "pricing": "Narxlar",

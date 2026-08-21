@@ -5,6 +5,12 @@ import { withSentryConfig } from "@sentry/nextjs";
 const nextConfig: NextConfig = {
   // Self-contained server bundle for the Docker image (see Dockerfile).
   output: "standalone",
+  experimental: {
+    // The only layout is app/[lang]/layout.tsx (a top-level dynamic
+    // segment), so there's no shared root layout to compose a 404 from —
+    // this is the documented case global-not-found.tsx exists for.
+    globalNotFound: true,
+  },
   // Monorepo root, so standalone tracing resolves workspace-hoisted deps and
   // the multi-lockfile inference warning goes away. next build runs from
   // apps/web (npm workspace scripts and the Dockerfile both do), so cwd is
