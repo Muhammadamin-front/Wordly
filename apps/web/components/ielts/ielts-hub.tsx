@@ -101,7 +101,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
             <h2 className="type-h2 mt-1 text-ink">{t.skillsTitle}</h2>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
             const content = ieltsSkillContent(lang, skill.key);
@@ -129,7 +129,7 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
                         {skill.count} {t[skill.countKey]}
                       </span>
                     </div>
-                    <p className="type-body-small mt-2 max-w-lg text-ink-soft">
+                    <p className="type-body mt-2 max-w-lg text-ink-soft">
                       {content.description}
                     </p>
                   </div>
