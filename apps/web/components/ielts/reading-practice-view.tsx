@@ -13,16 +13,17 @@ import {
   Flag,
   Highlighter,
   LibraryBig,
+  ListChecks,
   Maximize2,
   Minimize2,
   NotebookPen,
   Pause,
+  PenLine,
   Play,
   RotateCcw,
   Save,
   SearchCheck,
   Send,
-  Target,
   Trash2,
   X,
 } from "lucide-react";
@@ -40,6 +41,7 @@ import {
   type ReadingParagraph,
   type ReadingPracticeTest,
   type ReadingQuestion,
+  type ReadingQuestionKind,
   type ReadingQuestionTypeGuideId,
 } from "@/lib/reading-practice";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -247,6 +249,34 @@ function bandGuidance(
 
 function countQuestions(test: ReadingPracticeTest) {
   return allReadingQuestions(test).length;
+}
+
+/** Every question kind reduces to one of two exam tasks: pick the right
+ *  option, or produce the missing word. Two restrained, meaningful tones
+ *  (not one badge colour per kind) let a learner recognise "this block needs
+ *  writing, not just clicking" at a glance without turning the sheet into a
+ *  pill-colour chart. */
+const PRODUCE_KINDS = new Set<ReadingQuestionKind>([
+  "sentence-completion",
+  "summary-completion",
+  "table-completion",
+  "form-completion",
+  "diagram-labelling",
+  "short-answer",
+]);
+
+function questionKindTone(kind: ReadingQuestionKind) {
+  return PRODUCE_KINDS.has(kind)
+    ? {
+        icon: PenLine,
+        badge: "border-accent-400/25 bg-accent-400/10 text-accent-500",
+        chip: "border-accent-400/25 bg-accent-400/10 text-accent-500",
+      }
+    : {
+        icon: ListChecks,
+        badge: "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200",
+        chip: "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200",
+      };
 }
 
 type Copy = Dictionary["readingPractice"];
@@ -503,12 +533,17 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {READING_QUESTION_TYPE_GUIDES.map((guide) => {
             const questionCount = getQuestionsForReadingQuestionType(guide.id).length;
+            const tone = questionKindTone(guide.id);
+            const ToneIcon = tone.icon;
             return (
               <article key={guide.id} className="rounded-lg border border-line bg-card/80 p-5 shadow-[3px_4px_0_rgba(84,37,15,0.1)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[5px_6px_0_rgba(84,37,15,0.16)]">
-                <div className="flex items-start justify-between gap-3"><span className="icon-tile size-10 text-brand-600 dark:text-brand-300"><Target className="size-4" /></span><span className="rounded-full bg-brand-600/8 px-2.5 py-1 text-[11px] font-black text-brand-700 dark:text-brand-200">{questionCount} questions</span></div>
+                <div className="flex items-start justify-between gap-3">
+                  <span className={cn("icon-tile size-10", tone.chip)}><ToneIcon className="size-4" /></span>
+                  <span className={cn("rounded-md border px-2.5 py-1 text-[11px] font-black", tone.badge)}>{questionCount} questions</span>
+                </div>
                 <h3 className="mt-5 text-xl font-black leading-tight text-ink">{guide.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{guide.description}</p>
-                <p className="mt-4 border-l-2 border-accent-400 pl-3 text-xs font-bold leading-5 text-ink-soft">{guide.strategy[0]}</p>
+                <p className="mt-4 rounded-md bg-accent-400/8 px-3 py-2 text-xs font-bold leading-5 text-ink-soft">{guide.strategy[0]}</p>
                 <button type="button" onClick={() => onQuestionType(guide.id)} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-black text-white transition-all hover:-translate-y-0.5 hover:bg-primary-hover dark:text-brand-950">Practice this type <ChevronRight className="size-4" /></button>
               </article>
             );
@@ -1016,7 +1051,31 @@ function captureTextSelection(event: React.MouseEvent<HTMLElement> | React.Keybo
 function elementForNode(node: Node) { return node.nodeType === Node.ELEMENT_NODE ? (node as Element) : node.parentElement; }
 
 function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, onFlag, t }: { question: ReadingQuestion; answer: AnswerValue | undefined; flagged: boolean; setRef: (node: HTMLDivElement | null) => void; showGroup: boolean; onAnswer: (value: AnswerValue) => void; onFlag: () => void; t: Copy }) {
-  return <div ref={setRef} className="scroll-mt-4">{showGroup && <p className="mb-2 mt-5 text-xs font-black uppercase tracking-wide text-accent-500 first:mt-0 max-sm:mt-3">{question.group}</p>}<section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[2px_3px_0_rgba(84,37,15,0.08)] max-sm:p-3"><div className="flex items-start gap-3"><span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-brand-600/10 text-xs font-black text-brand-700 dark:text-brand-200">{question.number}</span><div className="min-w-0 flex-1"><p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>{question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}</div><button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}><Flag className={cn("size-4", flagged && "fill-current")} /></button></div><div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div></section></div>;
+  const tone = questionKindTone(question.kind);
+  const ToneIcon = tone.icon;
+  return (
+    <div ref={setRef} className="scroll-mt-4">
+      {showGroup && (
+        <span className={cn("mb-2 mt-5 inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-black uppercase tracking-wide first:mt-0 max-sm:mt-3", tone.badge)}>
+          <ToneIcon className="size-3.5" aria-hidden />
+          {question.group}
+        </span>
+      )}
+      <section className="rounded-lg border border-line bg-raised/78 p-4 shadow-[2px_3px_0_rgba(84,37,15,0.08)] max-sm:p-3">
+        <div className="flex items-start gap-3">
+          <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", tone.chip)}>{question.number}</span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>
+            {question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}
+          </div>
+          <button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}>
+            <Flag className={cn("size-4", flagged && "fill-current")} />
+          </button>
+        </div>
+        <div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div>
+      </section>
+    </div>
+  );
 }
 
 function QuestionInput({ question, value, onChange, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; t: Copy }) {
