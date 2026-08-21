@@ -109,6 +109,10 @@ CORPUS_FILES = [
     "shelf_toefl.csv",
     "shelf_sat.csv",
     "shelf_business.csv",
+    "shelf_toefl_2.csv",
+    "shelf_sat_2.csv",
+    "shelf_business_2.csv",
+    "feelings_batch1.csv",
 ]
 
 
