@@ -117,6 +117,9 @@ class Settings(BaseSettings):
     # Word pronunciations are single words, disk-cached after first synthesis,
     # so browsing a vocabulary list shouldn't hit a wall. Generous limit.
     RATE_LIMIT_TTS: str = "120/60"
+    # /tts/word needs no sign-in, so this is the only cost control on an
+    # anonymous caller — deliberately tighter than the signed-in limit.
+    RATE_LIMIT_TTS_GUEST: str = "20/60"
 
     @property
     def tts_enabled(self) -> bool:
@@ -168,6 +171,7 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "10/60"
     RATE_LIMIT_REGISTER: str = "5/60"
     RATE_LIMIT_FORGOT_PASSWORD: str = "3/60"
+    RATE_LIMIT_RESEND_VERIFICATION: str = "3/60"
     RATE_LIMIT_AI: str = "20/60"  # AI calls are expensive (tokens + latency)
     RATE_LIMIT_GAMES: str = "90/60"  # a session + rapid answers
     RATE_LIMIT_SOCIAL: str = "30/60"  # friend requests / profile lookups

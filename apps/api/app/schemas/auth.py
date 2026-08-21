@@ -45,6 +45,10 @@ class ForgotPasswordRequest(BaseModel):
     email: EmailStr
 
 
+class ResendVerificationRequest(BaseModel):
+    email: EmailStr
+
+
 class ResetPasswordRequest(BaseModel):
     token: str = Field(min_length=10)
     new_password: str = Field(min_length=8, max_length=128)
@@ -85,6 +89,14 @@ class TokenPair(BaseModel):
     token_type: str = "bearer"
     expires_in: int
     user: UserOut
+    # Browser clients receive refresh tokens only in the scoped httpOnly cookie.
+    # Native clients identify themselves with X-Client: mobile and need this
+    # value to persist their session in platform secure storage instead.
+    refresh_token: Optional[str] = None
+
+
+class RefreshRequest(BaseModel):
+    refresh_token: Optional[str] = Field(default=None, min_length=1)
 
 
 class MessageOut(BaseModel):

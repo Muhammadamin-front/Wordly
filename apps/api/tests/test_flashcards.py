@@ -85,11 +85,36 @@ async def test_add_by_level_bulk(client):
         "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": 10}, headers=headers
     )
     assert result.json()["added"] == 2  # only the two A1 words
+    assert result.json()["already_added"] == 0  # nothing owned before this call
 
     again = await client.post(
         "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": 10}, headers=headers
     )
     assert again.json()["added"] == 0  # idempotent
+    assert again.json()["already_added"] == 2  # both A1 words are now owned
+
+
+async def test_add_by_level_already_added_ignores_words_left_by_the_limit(client):
+    """Regression test: `already_added` must count the user's own matching
+    cards. Deriving it from `total_available - added` instead counted every
+    word left unadded because of the `limit` cap as "already added" — with
+    5 A1 words and limit=2, the old formula reported 3 already added on a
+    completely fresh account."""
+    for i in range(5):
+        await seed_word(client, headword=f"a1word{i}")
+    headers = await learner(client)
+
+    first = await client.post(
+        "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": 2}, headers=headers
+    )
+    assert first.json()["added"] == 2
+    assert first.json()["already_added"] == 0
+
+    second = await client.post(
+        "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": 2}, headers=headers
+    )
+    assert second.json()["added"] == 2
+    assert second.json()["already_added"] == 2
 
 
 async def test_queue_and_review_cycle(client):
