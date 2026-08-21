@@ -1297,7 +1297,9 @@
     "spinnerAgain": "Yana aylantirish",
     "spinnerSpinning": "Tanlanmoqda...",
     "spinnerOpenTopic": "Mavzuni ochish",
-    "spinnerEmpty": "Bu qism uchun savol topilmadi."
+    "spinnerEmpty": "Bu qism uchun savol topilmadi.",
+    "spinnerSoundOn": "Tovushni yoqish",
+    "spinnerSoundOff": "Tovushni o'chirish"
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",
