@@ -592,5 +592,181 @@
         "answer_index": 1
       }
     ]
+  },
+  {
+    "slug": "the-silent-signals-of-trees-c1",
+    "cefr_level": "C1",
+    "title_en": "The Silent Signals of Trees",
+    "body_en": "For centuries, a forest was pictured as a loose collection of individual trees, each competing separately for light, water and space. Research over the past three decades has complicated this picture considerably. Beneath the visible canopy, the roots of most forest trees are connected to thread-like fungal filaments known as mycorrhizae, which extend the reach of a root system far beyond what the tree could achieve alone. In exchange for sugars produced through photosynthesis, the fungus supplies the tree with water and mineral nutrients drawn from a much larger volume of soil. Crucially, a single fungal network rarely serves only one tree; instead it often links dozens of trees, sometimes of different species, into a shared underground web.\n\nThis network appears to do more than transport nutrients. Some studies suggest that trees connected by the same fungal web can pass warning signals to one another. When a tree is attacked by insects, nearby trees linked through the network sometimes begin producing defensive chemicals before the insects reach them, as though they had been alerted in advance. Older, larger trees — sometimes informally called \"hub\" trees because of how many smaller trees connect through them — appear to play an outsized role in these exchanges, in some cases channelling surplus sugars toward struggling seedlings growing in their shade. Whether this amounts to genuine cooperation, or is simply an incidental side effect of a system that evolved for other reasons, remains a matter of debate among biologists.\n\nSkeptics of the more dramatic claims point out that a forest is still, in many respects, a competitive environment: trees fight for the same light and the same soil nutrients, and a fungus has its own interests, which do not always align neatly with any single tree's welfare. A fungal network might move resources toward whichever tree offers it the best return, not out of any collective plan. Even so, few researchers now dispute that the network exists and that it measurably affects how trees grow, defend themselves and, at times, die together during drought or disease.\n\nThe practical implications of this research are only beginning to be explored. Forestry practices that once focused on planting rows of a single, fast-growing species are being reconsidered in places where mixed, connected stands appear more resilient to pests and changing rainfall patterns. Removing a small number of old hub trees during logging, once considered a minor loss, may in fact disrupt a network that many younger trees depend on. Some conservationists now argue that protecting a handful of the oldest, best-connected trees in a forest could do more for its long-term health than planting a much larger number of new saplings elsewhere.\n\nNone of this suggests that trees possess anything like consciousness or intention in the way animals do. But it does suggest that a forest behaves less like a collection of separate individuals and more like a single, loosely coordinated system, in which information as well as nutrients flow along paths that remain, for the most part, hidden beneath the soil.",
+    "summary_uz": "Daraxtlar ildizlari orqali bog'langan zamburug' tarmoqlari (mikoriza) yordamida bir-biriga suv, oziq moddalar va hatto xavf haqida signal uzatishi mumkin. Eng katta va eski daraxtlar (\"hub\" daraxtlar) bu tarmoqda alohida muhim rol o'ynaydi, ammo bu haqiqiy hamkorlikmi yoki tasodifiy natijami — olimlar hali bahslashmoqda.",
+    "questions": [
+      {
+        "prompt_en": "According to the passage, how many trees does a single fungal network typically connect?",
+        "options": ["Exactly one", "Usually dozens of trees, sometimes across species", "Only trees of the same species", "None — each tree has its own separate network"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What have some studies observed about trees connected to a tree under insect attack?",
+        "options": ["They immediately die from the same insects", "They sometimes begin producing defensive chemicals before the insects reach them", "They disconnect from the network to protect themselves", "They stop producing sugars for the fungus"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "How do biologists currently regard the idea that the fungal network represents deliberate cooperation?",
+        "options": ["It is universally accepted as fact", "It remains a matter of debate", "It has been completely disproven", "It has never been studied"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What is a 'hub' tree, as described in the passage?",
+        "options": ["A tree species that is resistant to insects", "An older, larger tree through which many smaller trees connect", "A tree planted specifically for logging", "A young seedling growing in shade"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "According to skeptics mentioned in the passage, why might a fungal network move resources toward a particular tree?",
+        "options": ["Because the fungus follows a collective plan", "Because that tree is the oldest in the forest", "Because it benefits the fungus's own interests", "Because younger trees always receive priority"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "According to the final two paragraphs, what practical change is being considered in forestry?",
+        "options": ["Increasing the use of fast-growing single-species rows", "Protecting a small number of old, well-connected trees", "Removing all fungal networks before planting", "Reducing the total number of trees per hectare"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "In paragraph 3, the word 'skeptics' most nearly means",
+        "options": ["people who strongly support an idea", "people who doubt or question a claim", "scientists who study fungi specifically", "trees that resist disease"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "cities-built-on-water-c1",
+    "cefr_level": "C1",
+    "title_en": "Cities Built on Water",
+    "body_en": "Long before modern engineering made large-scale water management routine, several ancient civilisations built cities whose survival depended on an intimate, carefully maintained relationship with water. Three examples — Venice in northern Italy, Angkor in present-day Cambodia, and Tenochtitlan in the Valley of Mexico — illustrate strikingly different solutions to the same underlying challenge: how to make a wet, unstable landscape support a dense urban population.\n\nVenice was built on a cluster of low, marshy islands in a tidal lagoon, a location chosen less for comfort than for safety from raiders who could not easily cross open water. Its builders drove thousands of wooden piles deep into the soft mud beneath the lagoon, creating stable platforms on which stone buildings could stand for centuries. The city's canals were never simply decorative; they functioned as its principal streets, and the rise and fall of the tide helped flush waste out toward the open sea. Maintaining this balance required constant vigilance. Silt carried in by rivers threatened to fill the lagoon and turn it into solid marshland, so authorities diverted several rivers away from the lagoon over the centuries specifically to protect the delicate hydrological balance the city depended on.\n\nAngkor, the capital of the Khmer Empire, faced almost the opposite problem: a climate with a long dry season followed by intense monsoon rains. Its engineers built an immense network of reservoirs, called barays, along with canals and embankments, to capture monsoon water and release it gradually throughout the year. This system supported rice agriculture on a scale sufficient to feed a population that some estimates place in the hundreds of thousands, remarkable for a pre-industrial city. Recent surveys using airborne laser mapping have revealed that Angkor's urban area, once thought to be limited to its famous temple complexes, in fact sprawled across a low-density landscape of canals, ponds and agricultural plots far larger than earlier researchers had assumed. Some historians now believe that gradual damage to this water system, worsened by unusually erratic weather, contributed to the city's eventual decline.\n\nTenochtitlan, the Aztec capital, took yet another approach. Founded on an island in Lake Texcoco, the city expanded using chinampas — narrow artificial islands built up from layers of lake mud and vegetation, separated by narrow canals that also served as transport routes. Causeways with removable wooden bridge sections connected the city to the lakeshore, allowing it to be sealed off in times of conflict. To protect the city's freshwater supply from the lake's saltier sections, engineers built a long dike that separated fresh and brackish water, an undertaking that required coordinating labour on a citywide scale.\n\nWhat unites these three cities is not any single technique but a shared recognition that water could not simply be pushed aside; it had to be actively managed, often at enormous and continuous cost in labour. When that management failed or was abandoned — through conquest, changing climate, or the simple accumulation of small deferred repairs — the consequences for these cities were severe. Their engineering achievements remain a reminder that urban infrastructure is rarely a one-time construction project but an ongoing negotiation with the surrounding environment.",
+    "summary_uz": "Venetsiya, Angkor va Tenochtitlan — uchta qadimiy shahar suv bilan murakkab munosabatga asoslangan holda qurilgan: Venetsiya kanallar va yog'och ustunlar, Angkor monsun suvini saqlovchi rezervuarlar, Tenochtitlan esa ko'l loyidan yasalgan sun'iy orollar (chinampalar) yordamida rivojlangan. Ushbu suv tizimlari e'tiborsiz qolganda shaharlar og'ir oqibatlarga duch kelgan.",
+    "questions": [
+      {
+        "prompt_en": "Why was Venice's lagoon location originally chosen, according to the passage?",
+        "options": ["For the comfort of its early residents", "For safety from raiders who could not easily cross open water", "Because the soil was ideal for farming", "Because it was close to a major river"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did authorities divert several rivers away from the Venetian lagoon over the centuries?",
+        "options": ["To create new farmland", "To prevent silt from filling the lagoon", "To supply the city with drinking water", "To punish rival trading cities"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What did airborne laser mapping reveal about Angkor's urban area?",
+        "options": ["It was limited strictly to the temple complexes", "It was far larger than earlier researchers had assumed", "It contained no agricultural land", "It was smaller than previously believed"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What was the main purpose of Angkor's barays?",
+        "options": ["To defend the city from invaders", "To store monsoon water for gradual release", "To transport stone for temple construction", "To separate fresh and salt water"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What were chinampas?",
+        "options": ["Wooden bridges connecting causeways", "Reservoirs used to store monsoon rainfall", "Artificial islands built from lake mud and vegetation", "Underground canals beneath Tenochtitlan"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "According to the passage, what technology helped researchers revise their understanding of Angkor's size?",
+        "options": ["Underwater sonar mapping", "Airborne laser mapping", "Satellite weather tracking", "Carbon dating of pottery"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What is the writer's main conclusion in the final paragraph?",
+        "options": ["Ancient water systems were mostly ineffective", "Urban water management requires continuous effort, not a single fix", "Venice was better engineered than Angkor or Tenochtitlan", "Modern cities no longer face these challenges"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "the-science-of-sleep-c1",
+    "cefr_level": "C1",
+    "title_en": "The Science of Sleep",
+    "body_en": "For most of the twentieth century, sleep was treated by scientists as a passive state, little more than the switching-off of a tired brain. That view has changed substantially. Modern sleep research portrays sleep as an actively managed process, organised into distinct stages that each appear to serve different biological functions, and increasingly linked to outcomes as varied as memory, immune function and emotional regulation.\n\nA typical night's sleep cycles repeatedly through several stages, broadly divided into non-REM and REM (rapid eye movement) sleep. Non-REM sleep itself deepens in stages, culminating in what is often called slow-wave or deep sleep, during which brain activity slows markedly and the body is at its most difficult to wake. REM sleep, by contrast, is associated with vivid dreaming and a pattern of brain activity that in some respects resembles wakefulness, even though the body's major muscles are temporarily paralysed. Each cycle through these stages lasts roughly ninety minutes, and a full night typically includes four to six cycles, with the proportion of deep sleep concentrated earlier in the night and REM sleep becoming more prominent toward morning.\n\nUnderlying this nightly pattern is an internal timekeeping system known as the circadian rhythm, a roughly 24-hour cycle generated by a small region of the brain that responds strongly to light. Exposure to daylight, particularly in the morning, helps keep this internal clock aligned with the external day; artificial light in the evening, especially the blue-toned light emitted by many screens, can delay it, pushing the body's natural readiness for sleep later than is convenient for school or work schedules. This mismatch between an individual's internal clock and externally imposed schedules is thought to be widespread, particularly among adolescents, whose circadian rhythms tend to shift later during the teenage years even as school start times remain early.\n\nThe consequences of insufficient or poor-quality sleep extend well beyond simple tiredness. During deep sleep, the brain appears to consolidate newly formed memories, transferring information from short-term to more durable long-term storage; students who sleep poorly after studying tend to retain less of what they learned than those who sleep well. Sleep deprivation has also been linked to impaired judgement and slower reaction times, effects that in some studies were comparable to those caused by alcohol consumption. Longer-term, chronic short sleep has been associated with increased risk of several health conditions, including weakened immune response and disruptions to the hormones that regulate appetite, which may partly explain observed links between poor sleep and weight gain.\n\nDespite this growing body of evidence, sleep remains, in many societies, treated as a flexible resource to be reduced whenever other demands increase — a reputation reinforced by cultures that praise long working hours over adequate rest. Sleep researchers increasingly argue that this attitude misunderstands what sleep actually does: not a period of inactivity to be minimised, but an active process on which many other functions, from learning to physical health, quietly depend.",
+    "summary_uz": "Uyqu passiv holat emas, balki xotira, immunitet va hissiyotga ta'sir qiluvchi faol jarayon. Sirkadian ritm yorug'likka sezgir bo'lib, kechqurun ekran yorug'ligi uni kechiktirishi mumkin. Yetarli bo'lmagan uyqu xotira, reaksiya tezligi va sog'liqqa salbiy ta'sir qiladi.",
+    "questions": [
+      {
+        "prompt_en": "How did scientists generally view sleep for most of the twentieth century?",
+        "options": ["As an actively managed process", "As a passive state, little more than the brain switching off", "As identical to being awake", "As primarily a memory-consolidation process"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "During which stage of sleep does vivid dreaming most commonly occur?",
+        "options": ["Deep or slow-wave sleep", "REM sleep", "The first ten minutes of any sleep cycle", "The transition between cycles"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "According to the passage, whose circadian rhythms tend to shift later during the teenage years?",
+        "options": ["Young children", "Adolescents", "Adults over forty", "Shift workers"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "According to the passage, what typically happens with blue-toned light exposure in the evening?",
+        "options": ["It helps the body fall asleep earlier", "It can delay the body's internal clock", "It has no effect on circadian rhythm", "It only affects adolescents"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What role does deep sleep appear to play, according to the passage?",
+        "options": ["Consolidating memories into long-term storage", "Producing vivid dreams", "Paralysing the body's major muscles", "Shortening the sleep cycle"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "According to the passage, sleep deprivation's effect on judgement and reaction time has been compared to which other cause?",
+        "options": ["Caffeine consumption", "Alcohol consumption", "Extreme exercise", "Jet lag"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "In the final paragraph, the phrase 'a flexible resource to be reduced' suggests that sleep is often",
+        "options": ["protected as a top priority", "treated as something that can be cut when needed", "scientifically impossible to measure", "increasing in most societies"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "reclaiming-the-night-sky-c1",
+    "cefr_level": "C1",
+    "title_en": "Reclaiming the Night Sky",
+    "body_en": "A century ago, most people on Earth could step outside after dark and see thousands of stars, along with the faint band of the Milky Way stretching across the sky. Today, largely because of artificial lighting, a majority of the world's population lives under skies bright enough to hide all but the brightest stars. This phenomenon, known as light pollution, has quietly become one of the most widespread forms of environmental change on the planet, yet it receives far less public attention than pollution of air or water.\n\nLight pollution takes several forms. Skyglow is the diffuse brightening of the night sky caused by artificial light scattering off particles and moisture in the atmosphere, and it can be seen from many kilometres beyond a city's edge. Glare from poorly shielded lights can be dangerous as well as unpleasant, temporarily reducing a driver's ability to see the road. Light trespass occurs when light spills beyond the area it is meant to illuminate, for instance into a neighbour's bedroom window. Unlike many pollutants, artificial light at night does not accumulate or persist once its source is switched off, which means that, in principle, light pollution is one of the more immediately reversible forms of environmental damage.\n\nThe ecological consequences of constant artificial light are increasingly well documented. Sea turtle hatchlings, which instinctively move toward the brightest visible horizon after emerging from their nests, can be fatally misled by coastal lighting away from the sea. Migratory birds that navigate partly by starlight can become disoriented around brightly lit buildings, sometimes colliding with windows in large numbers during migration season. Many nocturnal insects are drawn to artificial lights and can die from exhaustion or predation as a result, a pattern some researchers believe is contributing to broader declines in insect populations, with knock-on effects for the birds and other animals that depend on insects for food. Even some trees have shown altered seasonal patterns of budding and leaf loss when situated near strong artificial lighting.\n\nThe response to these findings has grown into an international movement, loosely organised around the idea of \"dark sky\" preservation. Certified dark sky parks and reserves now exist on several continents, protected through a combination of shielded lighting, reduced brightness, and warmer-toned bulbs that scatter less strongly into the atmosphere than the harsh blue-white light common in older streetlamps. Some cities have experimented with reducing street lighting after midnight in low-traffic areas, or dimming lights automatically when no pedestrians or vehicles are detected. Advocates argue that most everyday lighting could be made both more effective and less wasteful simply by directing it downward, toward the surfaces people actually need illuminated, rather than allowing it to spread sideways and upward into the sky.\n\nUnlike climate change or plastic pollution, addressing light pollution requires no new technology and comparatively modest investment; much of the necessary equipment, from shielded fixtures to timers and dimmers, is already inexpensive and widely available. What has been missing, dark sky advocates suggest, is not capability but awareness: many people have simply never seen a truly dark sky and so do not recognise what has been lost. For a growing number of astronomers, ecologists and residents of over-lit cities, restoring at least some darkness to the night is now considered not a return to the past but a practical and achievable form of environmental repair.",
+    "summary_uz": "Sun'iy yorug'lik tufayli dunyo aholisining ko'pchiligi endi yulduzli osmonni ko'ra olmaydi. Bu nur ifloslanishi dengiz toshbaqalari, ko'chib yuruvchi qushlar va hasharotlarga zarar yetkazadi, ammo boshqa ifloslanish turlaridan farqli o'laroq, uni nisbatan oson va arzon tuzatish mumkin — asosiy yetishmayotgan narsa bu ogohlik, texnologiya emas.",
+    "questions": [
+      {
+        "prompt_en": "According to the passage, what can most of the world's population no longer see because of artificial light?",
+        "options": ["The moon", "All but the brightest stars", "Any part of the night sky at all", "The sun during the day"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why does the passage describe light pollution as comparatively reversible?",
+        "options": ["It never occurs in large cities", "It does not persist once its source is switched off", "Governments have already banned it everywhere", "It only affects rural areas"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why can coastal lighting be fatal to sea turtle hatchlings, according to the passage?",
+        "options": ["They instinctively move toward the brightest visible horizon", "They cannot see in darkness at all", "They mistake streetlights for predators", "They are drawn only to red light"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What is 'skyglow', according to the passage?",
+        "options": ["Light spilling into a neighbour's window", "The diffuse brightening of the sky from scattered artificial light", "A type of streetlamp bulb", "Glare that blinds drivers directly"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "According to the passage, why are migratory birds affected by artificial light?",
+        "options": ["They navigate partly by starlight and become disoriented near bright buildings", "They cannot see food at night", "Artificial light changes their breeding season only", "They avoid all lit areas completely"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What solution do advocates suggest for making everyday lighting more effective?",
+        "options": ["Banning outdoor lighting entirely", "Directing light downward toward surfaces that need it", "Replacing all bulbs with brighter versions", "Increasing skyglow near cities"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What is the writer's overall argument in the final paragraph?",
+        "options": ["Restoring dark skies is technically impossible", "The main obstacle is awareness, not technology or cost", "Only astronomers benefit from dark skies", "Climate change is a bigger priority than light pollution"],
+        "answer_index": 1
+      }
+    ]
   }
 ]
