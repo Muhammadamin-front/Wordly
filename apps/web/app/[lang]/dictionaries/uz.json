@@ -1290,7 +1290,14 @@
     "phrasesExtending": "Kengaytirish",
     "phrasesConcluding": "Yakunlash",
     "tips": "Speaking maslahatlari",
-    "mistakes": "Keng tarqalgan xatolar"
+    "mistakes": "Keng tarqalgan xatolar",
+    "spinnerTitle": "Tasodifiy savol",
+    "spinnerHint": "Imtihondagidek — savolni oldindan bilmaysiz. Aylantiring va darhol javob berishga urining.",
+    "spinnerButton": "Aylantirish",
+    "spinnerAgain": "Yana aylantirish",
+    "spinnerSpinning": "Tanlanmoqda...",
+    "spinnerOpenTopic": "Mavzuni ochish",
+    "spinnerEmpty": "Bu qism uchun savol topilmadi."
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",
@@ -1392,5 +1399,12 @@
     "passageOfTotal": "{index}/{total}-matn",
     "notesCount": "{count} ta izoh",
     "savedWordsCount": "{count} ta saqlangan so'z"
+  },
+  "pwaInstall": {
+    "title": "Vocora'ni o'rnating",
+    "body": "Ilova sifatida o'rnating — tezroq ochiladi va internetsiz ham ishlaydi.",
+    "install": "O'rnatish",
+    "dismiss": "Hozir emas",
+    "close": "Yopish"
   }
 }

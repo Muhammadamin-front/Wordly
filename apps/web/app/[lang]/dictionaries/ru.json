@@ -1290,7 +1290,14 @@
     "phrasesExtending": "Развитие",
     "phrasesConcluding": "Завершение",
     "tips": "Советы по Speaking",
-    "mistakes": "Частые ошибки"
+    "mistakes": "Частые ошибки",
+    "spinnerTitle": "Случайный вопрос",
+    "spinnerHint": "Как на экзамене — вопрос заранее неизвестен. Крутите и попробуйте ответить сразу.",
+    "spinnerButton": "Крутить",
+    "spinnerAgain": "Крутить ещё",
+    "spinnerSpinning": "Выбираем...",
+    "spinnerOpenTopic": "Открыть тему",
+    "spinnerEmpty": "Для этой части вопросов не найдено."
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",
@@ -1392,5 +1399,12 @@
     "passageOfTotal": "Текст {index} из {total}",
     "notesCount": "Заметок: {count}",
     "savedWordsCount": "Сохранённых слов: {count}"
+  },
+  "pwaInstall": {
+    "title": "Установите Vocora",
+    "body": "Установите как приложение — открывается быстрее и работает без интернета.",
+    "install": "Установить",
+    "dismiss": "Не сейчас",
+    "close": "Закрыть"
   }
 }

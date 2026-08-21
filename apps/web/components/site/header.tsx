@@ -10,6 +10,7 @@ import {
   Gamepad2,
   GraduationCap,
   LibraryBig,
+  LogOut,
   Map,
   Menu,
   Sparkles,
@@ -84,7 +85,7 @@ function isActive(pathname: string, lang: string, href: string): boolean {
 }
 
 export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
-  const { user, ready } = useAuth();
+  const { user, ready, logout } = useAuth();
   const pathname = usePathname() ?? "";
   const [open, setOpen] = useState(false);
 
@@ -161,7 +162,21 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <div className="hidden sm:block">
             <LocaleSwitcher current={lang} />
           </div>
-          {authed ? null : (
+          {authed ? (
+            // Desktop had no way to sign out at all — the only logout lived in
+            // the mobile drawer, which never opens at lg and above.
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden lg:inline-flex"
+              onClick={async () => {
+                await logout();
+              }}
+            >
+              <LogOut className="size-4" aria-hidden />
+              {nav.logout}
+            </Button>
+          ) : (
             <>
               <Link href={`/${lang}/auth/login`} className="hidden sm:block">
                 <Button variant="ghost" size="sm">

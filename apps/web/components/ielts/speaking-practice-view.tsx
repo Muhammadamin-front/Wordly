@@ -13,12 +13,13 @@ import {
   Pause,
   Play,
   RotateCcw,
+  Shuffle,
   Sparkles,
   Square,
   Target,
   Timer,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -169,6 +170,14 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
         </div>
       </div>
 
+      <QuestionSpinner
+        key={activePart}
+        part={activePart}
+        topics={topics}
+        onOpenTopic={setSelected}
+        t={t}
+      />
+
       <section className="mt-5 grid gap-3">
         {topics.map((topic) => (
           <TopicCard
@@ -182,6 +191,141 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
         ))}
       </section>
     </main>
+  );
+}
+
+interface SpinnerPick {
+  topic: SpeakingTopic;
+  question: string;
+}
+
+/** Draws a random exam question for the active part.
+ *
+ *  The point is the surprise: in the real test you never see the question
+ *  before you have to answer it, and browsing a tidy list of topics quietly
+ *  removes that pressure. Spinning restores it.
+ */
+function QuestionSpinner({
+  part,
+  topics,
+  onOpenTopic,
+  t,
+}: {
+  part: SpeakingPart;
+  topics: SpeakingTopic[];
+  onOpenTopic: (topic: SpeakingTopic) => void;
+  t: Copy;
+}) {
+  const pool = useMemo(
+    () =>
+      topics.flatMap((topic) =>
+        topic.questions.map((question) => ({ topic, question }))
+      ),
+    [topics]
+  );
+
+  const [pick, setPick] = useState<SpinnerPick | null>(null);
+  const [spinning, setSpinning] = useState(false);
+
+  // Every timer this component starts, so a spin still in flight cannot write
+  // state after the part changes or the view unmounts.
+  const timers = useRef<number[]>([]);
+  useEffect(
+    () => () => {
+      timers.current.forEach(window.clearTimeout);
+      timers.current = [];
+    },
+    []
+  );
+
+  function spin() {
+    if (spinning || pool.length === 0) return;
+    const draw = () => pool[Math.floor(Math.random() * pool.length)];
+
+    // Someone who asked for less motion gets the result, not the theatre.
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setPick(draw());
+      return;
+    }
+
+    setSpinning(true);
+    // Flick through candidates and ease off, so the draw reads as a spin
+    // rather than a value that simply appears.
+    let delay = 60;
+    let elapsed = 0;
+    const step = () => {
+      setPick(draw());
+      elapsed += delay;
+      delay = Math.round(delay * 1.28);
+      if (elapsed < 1400) {
+        timers.current.push(window.setTimeout(step, delay));
+      } else {
+        setSpinning(false);
+      }
+    };
+    step();
+  }
+
+  if (pool.length === 0) {
+    return (
+      <section className="mt-5 rounded-lg border border-line bg-card/70 p-5">
+        <p className="text-sm text-ink-soft">{t.spinnerEmpty}</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="surface-panel mt-5 overflow-hidden rounded-lg p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand-400/25 bg-brand-600/8 px-3 py-1.5 text-xs font-black uppercase text-brand-700 dark:text-brand-200">
+            <Shuffle className="size-4" aria-hidden />
+            {t.spinnerTitle}
+          </span>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-ink-soft">{t.spinnerHint}</p>
+        </div>
+        <Button onClick={spin} disabled={spinning} className="shrink-0">
+          <Shuffle
+            className={cn("size-4", spinning && "animate-spin")}
+            aria-hidden
+          />
+          {spinning ? t.spinnerSpinning : pick ? t.spinnerAgain : t.spinnerButton}
+        </Button>
+      </div>
+
+      {pick && (
+        <div
+          aria-live="polite"
+          className="mt-5 rounded-lg border border-line bg-raised/70 p-4 sm:p-5"
+        >
+          <p className="text-[11px] font-black uppercase tracking-wide text-ink-soft">
+            {part.replace("part", "Part ")} · {pick.topic.title}
+          </p>
+          <p
+            className={cn(
+              "mt-2 text-lg font-bold leading-7 text-ink transition-opacity sm:text-xl",
+              spinning && "opacity-60"
+            )}
+          >
+            {pick.question}
+          </p>
+          {!spinning && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="mt-3"
+              onClick={() => onOpenTopic(pick.topic)}
+            >
+              {t.spinnerOpenTopic}
+              <ArrowRight className="size-4" aria-hidden />
+            </Button>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 
