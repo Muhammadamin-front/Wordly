@@ -80,6 +80,8 @@ export function SocialLoginButtons({
   const googleContainer = useRef<HTMLDivElement>(null);
   const [googleReady, setGoogleReady] = useState(false);
   const [googleScriptFailed, setGoogleScriptFailed] = useState(false);
+  // True once Google's own button has really rendered into the tile.
+  const [googleSettled, setGoogleSettled] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [appleReady, setAppleReady] = useState(false);
   const [appleLoading, setAppleLoading] = useState(false);
@@ -140,18 +142,37 @@ export function SocialLoginButtons({
     }
 
     // If the script loaded but produced nothing usable, fall back to our own
-    // mark rather than leaving an empty tile. On a misconfigured or
-    // unauthorised JavaScript origin, Google's SDK still builds a
-    // full-size, correctly positioned button shell (so measuring that
-    // wrapper always looks fine) — only the "G" mark inside it collapses to
-    // 0x0, because the origin-gated styling that would size it never
-    // arrives. Measure the mark itself, not the shell around it.
-    const check = window.setTimeout(() => {
+    // mark rather than leaving an empty tile.
+    //
+    // Google renders the button two different ways, and telling them apart is
+    // the whole job here:
+    //
+    //   working origin      -> a cross-origin <iframe>, no mark in the light DOM
+    //   unauthorised origin -> a light-DOM button shell whose "G" mark is 0x0,
+    //                          because the origin-gated styling never arrives
+    //
+    // So a light-DOM mark is the failure signature, not the success one: if we
+    // can see a mark, it has to be a real size, and if we cannot see one at all
+    // Google used the iframe and a sized container is as much as we can check.
+    // Measuring only the mark hid working iframe buttons; measuring only the
+    // container accepted the collapsed shell. Check whichever one is present.
+    //
+    // Poll rather than sampling once: on a slow connection the iframe takes a
+    // while, and a single early snapshot reads that as failure.
+    const started = Date.now();
+    const poll = window.setInterval(() => {
+      const expired = Date.now() - started > 6000;
       const mark = container.querySelector("svg, img");
-      const rect = mark?.getBoundingClientRect();
-      if (!rect || rect.width < 8 || rect.height < 8) setGoogleScriptFailed(true);
-    }, 1500);
-    return () => window.clearTimeout(check);
+      const box = (mark ?? container).getBoundingClientRect();
+      if (box.width >= 8 && box.height >= 8 && (mark || container.childElementCount > 0)) {
+        window.clearInterval(poll);
+        setGoogleSettled(true);
+      } else if (expired) {
+        window.clearInterval(poll);
+        setGoogleScriptFailed(true);
+      }
+    }, 250);
+    return () => window.clearInterval(poll);
   }, [googleReady, handleGoogleCredential, lang]);
 
   function initializeApple() {
@@ -243,9 +264,11 @@ export function SocialLoginButtons({
                 <GoogleMark />
               </button>
             )}
-            {(!googleReady || googleLoading) && !googleScriptFailed && (
+            {(!googleSettled || googleLoading) && !googleScriptFailed && (
+              // Covers the tile until Google's own button has actually painted,
+              // so the learner never sees an empty square while it loads.
               <span
-                className="absolute inset-0 grid place-items-center"
+                className="absolute inset-0 grid place-items-center bg-auth-field"
                 title={auth.socialLoading}
               >
                 <GoogleMark />
@@ -310,6 +333,7 @@ export function SocialLoginButtons({
           strategy="afterInteractive"
           onReady={() => {
             setGoogleScriptFailed(false);
+            setGoogleSettled(false);
             setGoogleReady(true);
           }}
           onError={() => {

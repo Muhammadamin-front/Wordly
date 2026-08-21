@@ -5,6 +5,7 @@ import "../globals.css";
 
 import { AuthProvider } from "@/components/auth/auth-provider";
 import { AnalyticsProvider } from "@/components/site/analytics-provider";
+import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
@@ -94,6 +95,7 @@ export default async function RootLayout({
 }) {
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
+  const layoutDict = await getDictionary(lang);
 
   // No data-theme attribute here on purpose: the inline script below sets it
   // before paint, and React leaves an attribute it does not render alone.
@@ -112,6 +114,7 @@ export default async function RootLayout({
             {children}
           </AuthProvider>
           <PwaRegister />
+          <PwaInstallPrompt t={layoutDict.pwaInstall} />
         </ThemeProvider>
       </body>
     </html>

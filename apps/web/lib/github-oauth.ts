@@ -27,6 +27,12 @@ export function startGithubSignIn(clientId: string, lang: string): void {
     redirect_uri: githubRedirectUri(),
     scope: "read:user user:email",
     state: `${nonce}::${lang}`,
+    // Without this GitHub reuses its own still-active session and bounces
+    // straight back with a code, so someone who just signed out of Vocora is
+    // silently returned to the same account with no way to pick another one.
+    // Documented as: "Forces the account picker to appear if set to
+    // select_account."
+    prompt: "select_account",
   });
   window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`;
 }

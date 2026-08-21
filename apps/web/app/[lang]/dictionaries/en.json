@@ -1290,7 +1290,14 @@
     "phrasesExtending": "Extending",
     "phrasesConcluding": "Concluding",
     "tips": "Speaking tips",
-    "mistakes": "Common mistakes"
+    "mistakes": "Common mistakes",
+    "spinnerTitle": "Random question",
+    "spinnerHint": "Just like the exam — you do not see the question in advance. Spin it and try answering straight away.",
+    "spinnerButton": "Spin",
+    "spinnerAgain": "Spin again",
+    "spinnerSpinning": "Picking...",
+    "spinnerOpenTopic": "Open topic",
+    "spinnerEmpty": "No questions found for this part."
   },
   "readingPractice": {
     "eyebrow": "IELTS Reading",
@@ -1392,5 +1399,12 @@
     "passageOfTotal": "Passage {index} of {total}",
     "notesCount": "{count} notes",
     "savedWordsCount": "{count} saved words"
+  },
+  "pwaInstall": {
+    "title": "Install Vocora",
+    "body": "Install it as an app — it opens faster and works offline.",
+    "install": "Install",
+    "dismiss": "Not now",
+    "close": "Close"
   }
 }
