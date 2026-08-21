@@ -113,6 +113,8 @@ CORPUS_FILES = [
     "shelf_sat_2.csv",
     "shelf_business_2.csv",
     "feelings_batch1.csv",
+    "feelings_batch2.csv",
+    "c2_advanced_batch1.csv",
 ]
 
 
