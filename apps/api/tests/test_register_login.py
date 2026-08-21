@@ -84,3 +84,48 @@ async def test_email_verification_flow(client):
     # Single use.
     again = await client.post("/api/v1/auth/verify-email", json={"token": token})
     assert again.status_code == 400
+
+
+async def test_resend_verification_issues_a_new_working_token(client):
+    await register_user(client)
+    first_outbox_len = len(ConsoleEmailer.outbox)
+
+    resend = await client.post(
+        "/api/v1/auth/resend-verification", json={"email": REGISTER_PAYLOAD["email"]}
+    )
+    assert resend.status_code == 200
+    assert len(ConsoleEmailer.outbox) == first_outbox_len + 1
+
+    token = extract_token_from_outbox("verify-email")
+    verify = await client.post("/api/v1/auth/verify-email", json={"token": token})
+    assert verify.status_code == 200
+
+
+async def test_resend_verification_does_not_reveal_account_existence(client):
+    await register_user(client)
+    before = len(ConsoleEmailer.outbox)
+
+    unknown = await client.post(
+        "/api/v1/auth/resend-verification", json={"email": "nobody@example.uz"}
+    )
+    assert unknown.status_code == 200
+    assert unknown.json() == (
+        await client.post(
+            "/api/v1/auth/resend-verification", json={"email": REGISTER_PAYLOAD["email"]}
+        )
+    ).json()
+    # Only the real, unverified account triggers a new email.
+    assert len(ConsoleEmailer.outbox) == before + 1
+
+
+async def test_resend_verification_is_a_no_op_once_verified(client):
+    await register_user(client)
+    token = extract_token_from_outbox("verify-email")
+    await client.post("/api/v1/auth/verify-email", json={"token": token})
+    before = len(ConsoleEmailer.outbox)
+
+    resend = await client.post(
+        "/api/v1/auth/resend-verification", json={"email": REGISTER_PAYLOAD["email"]}
+    )
+    assert resend.status_code == 200
+    assert len(ConsoleEmailer.outbox) == before  # already verified, nothing sent

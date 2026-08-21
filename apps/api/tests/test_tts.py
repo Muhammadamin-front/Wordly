@@ -4,11 +4,21 @@ import pytest
 from app.core.config import get_settings
 from app.services import tts
 from tests.conftest import register_user
+from tests.test_vocabulary import WORD_PAYLOAD, make_admin
 
 
 async def auth_headers(client) -> dict:
     data = await register_user(client, email="speaker@words.uz")
     return {"Authorization": "Bearer " + data["access_token"]}
+
+
+async def seed_word(client, **overrides) -> dict:
+    admin_headers = await make_admin(client)
+    response = await client.post(
+        "/api/v1/admin/words", json={**WORD_PAYLOAD, **overrides}, headers=admin_headers
+    )
+    assert response.status_code == 201, response.text
+    return response.json()
 
 
 async def test_tts_requires_auth(client):
@@ -45,6 +55,46 @@ async def test_tts_rejects_overlong_text(client, monkeypatch):
     headers = await auth_headers(client)
     response = await client.get("/api/v1/tts?text=" + "a" * 300, headers=headers)
     assert response.status_code == 422
+
+
+async def test_tts_word_503_when_not_configured(client):
+    # No Authorization header anywhere in this test — that's the point.
+    response = await client.get("/api/v1/tts/word?headword=facilitate")
+    assert response.status_code == 503
+
+
+async def test_tts_word_needs_no_auth_but_only_covers_published_words(client, monkeypatch):
+    settings = get_settings()
+    monkeypatch.setattr(settings, "ELEVENLABS_API_KEY", "test-key")
+
+    async def fake_synthesize(text):
+        return b"ID3fake-mp3-bytes"
+
+    monkeypatch.setattr(tts, "synthesize", fake_synthesize)
+    await seed_word(client, headword="facilitate")
+    found = await client.get("/api/v1/tts/word?headword=facilitate")
+    assert found.status_code == 200
+    assert "public" in found.headers["cache-control"]
+
+    made_up = await client.get("/api/v1/tts/word?headword=zzz-not-a-real-word")
+    assert made_up.status_code == 404
+
+
+async def test_tts_word_cannot_be_used_for_arbitrary_text(client, monkeypatch):
+    """The guest endpoint must reject anything that isn't a real published
+    headword — otherwise it's an anonymous, unrate-limited-by-account proxy
+    onto a paid synthesis provider."""
+    settings = get_settings()
+    monkeypatch.setattr(settings, "ELEVENLABS_API_KEY", "test-key")
+
+    async def fail_if_called(text):
+        raise AssertionError("synthesize() must not run for an unknown headword")
+
+    monkeypatch.setattr(tts, "synthesize", fail_if_called)
+    response = await client.get(
+        "/api/v1/tts/word?headword=this is not a single published headword"
+    )
+    assert response.status_code == 404
 
 
 async def test_synthesize_hits_network_once_then_disk(tmp_path, monkeypatch):

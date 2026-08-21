@@ -21,6 +21,8 @@ from app.schemas.auth import (
     LoginRequest,
     MessageOut,
     RegisterRequest,
+    RefreshRequest,
+    ResendVerificationRequest,
     ResetPasswordRequest,
     TelegramLoginRequest,
     TokenPair,
@@ -66,11 +68,15 @@ async def build_token_pair(
     )
     await db.commit()
     set_refresh_cookie(response, refresh, settings)
-    return TokenPair(
+    pair = TokenPair(
         access_token=create_access_token(user.id),
+        token_type="bearer",
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
+    if request.headers.get("X-Client", "").strip().lower() == "mobile":
+        pair.refresh_token = refresh
+    return pair
 
 
 def localized_auth_link(settings: Settings, locale: str, page: str, token: str) -> str:
@@ -90,6 +96,7 @@ def verification_email_body(
 @router.post(
     "/register",
     response_model=TokenPair,
+    response_model_exclude_unset=True,
     status_code=status.HTTP_201_CREATED,
     dependencies=[Depends(rate_limit("register"))],
 )
@@ -138,7 +145,12 @@ async def register(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/login", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/login",
+    response_model=TokenPair,
+    response_model_exclude_unset=True,
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def login(
     payload: LoginRequest,
     request: Request,
@@ -159,7 +171,12 @@ async def login(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/google", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/google",
+    response_model=TokenPair,
+    response_model_exclude_unset=True,
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def google_login(
     payload: GoogleLoginRequest,
     request: Request,
@@ -194,7 +211,12 @@ async def google_login(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/apple", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/apple",
+    response_model=TokenPair,
+    response_model_exclude_unset=True,
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def apple_login(
     payload: AppleLoginRequest,
     request: Request,
@@ -232,7 +254,12 @@ async def apple_login(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/github", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/github",
+    response_model=TokenPair,
+    response_model_exclude_unset=True,
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def github_login(
     payload: GithubLoginRequest,
     request: Request,
@@ -272,7 +299,12 @@ async def github_login(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/telegram", response_model=TokenPair, dependencies=[Depends(rate_limit("login"))])
+@router.post(
+    "/telegram",
+    response_model=TokenPair,
+    response_model_exclude_unset=True,
+    dependencies=[Depends(rate_limit("login"))],
+)
 async def telegram_login(
     payload: TelegramLoginRequest,
     request: Request,
@@ -313,15 +345,16 @@ async def telegram_login(
     return await build_token_pair(db, user, request, response)
 
 
-@router.post("/refresh", response_model=TokenPair)
+@router.post("/refresh", response_model=TokenPair, response_model_exclude_unset=True)
 async def refresh(
     request: Request,
     response: Response,
+    payload: RefreshRequest,
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
-    raw = refresh_token_from_cookie(request)
+    raw = refresh_token_from_cookie(request) or payload.refresh_token
     if not raw:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
     rotated = await auth_service.rotate_refresh_token(
@@ -335,22 +368,27 @@ async def refresh(
     user, new_refresh = rotated
     await db.commit()
     set_refresh_cookie(response, new_refresh, settings)
-    return TokenPair(
+    pair = TokenPair(
         access_token=create_access_token(user.id),
+        token_type="bearer",
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
+    if request.headers.get("X-Client", "").strip().lower() == "mobile":
+        pair.refresh_token = new_refresh
+    return pair
 
 
 @router.post("/logout", response_model=MessageOut)
 async def logout(
     request: Request,
     response: Response,
+    payload: RefreshRequest,
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
-    raw = refresh_token_from_cookie(request)
+    raw = refresh_token_from_cookie(request) or payload.refresh_token
     if raw:
         await auth_service.revoke_refresh_token(db, raw)
         await db.commit()
@@ -378,6 +416,43 @@ async def verify_email(payload: VerifyEmailRequest, db: AsyncSession = Depends(g
     except EmailDeliveryError:
         pass
     return MessageOut(message="Email verified")
+
+
+@router.post(
+    "/resend-verification",
+    response_model=MessageOut,
+    dependencies=[Depends(rate_limit("resend_verification"))],
+)
+async def resend_verification(
+    payload: ResendVerificationRequest,
+    db: AsyncSession = Depends(get_db),
+    emailer: Emailer = Depends(get_emailer),
+):
+    settings = get_settings()
+    user = await db.scalar(
+        select(User).where(User.email == payload.email.lower(), User.is_active.is_(True))
+    )
+    if user is not None and user.email_verified_at is None:
+        verify_token = await auth_service.create_one_time_token(
+            db, user, "verify_email", settings.EMAIL_TOKEN_TTL_SECONDS
+        )
+        try:
+            await emailer.send(
+                to=user.email,
+                subject="Vocora — hisobni tasdiqlash / Verify your account",
+                body=verification_email_body(
+                    user.profile.display_name, user.profile.ui_locale, verify_token, settings
+                ),
+            )
+        except EmailDeliveryError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Verification email is temporarily unavailable. Please try again shortly.",
+            ) from exc
+        await db.commit()
+    # Identical response whether the account exists, is already verified, or
+    # never existed at all: no account enumeration (matches /forgot-password).
+    return MessageOut(message="If that email needs verification, a new link has been sent")
 
 
 @router.post(

@@ -255,6 +255,22 @@ async def add_cards_by_level(
             detail="Provide cefr_level or category_slug",
         )
     already = select(Card.word_id).where(Card.user_id == user.id, Card.word_id.isnot(None))
+
+    # Count the user's own matching cards before insert. Deriving this from
+    # `total_available - added` instead (the previous approach) counts every
+    # word left over after the `limit` cap as "already added", so a first
+    # 20-word batch out of an 800-word level reported ~780 already added.
+    already_added_query = select(func.count(Word.id)).where(
+        Word.status == "published", Word.id.in_(already)
+    )
+    if payload.cefr_level is not None:
+        already_added_query = already_added_query.where(Word.cefr_level == payload.cefr_level)
+    if payload.category_slug:
+        already_added_query = already_added_query.join(
+            Category, Word.category_id == Category.id
+        ).where(Category.slug == payload.category_slug)
+    already_added = (await db.scalar(already_added_query)) or 0
+
     query = (
         select(Word.id)
         .where(Word.status == "published", Word.id.not_in(already))
@@ -272,16 +288,7 @@ async def add_cards_by_level(
         db.add(Card(user_id=user.id, word_id=word_id))
     await db.commit()
 
-    availability = select(func.count(Word.id)).where(Word.status == "published")
-    if payload.cefr_level is not None:
-        availability = availability.where(Word.cefr_level == payload.cefr_level)
-    if payload.category_slug:
-        availability = availability.join(
-            Category, Word.category_id == Category.id
-        ).where(Category.slug == payload.category_slug)
-    total_available = (await db.scalar(availability)) or 0
-    total_added_before = total_available - len(word_ids)
-    return AddByLevelResult(added=len(word_ids), already_added=max(0, total_added_before))
+    return AddByLevelResult(added=len(word_ids), already_added=already_added)
 
 
 @router.patch("/cards/{card_id}", response_model=CardOut)

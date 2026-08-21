@@ -8,6 +8,7 @@ os.environ.setdefault("DATABASE_URL", "sqlite+aiosqlite://")
 os.environ.setdefault("RATE_LIMIT_REGISTER", "100/60")
 os.environ.setdefault("RATE_LIMIT_LOGIN", "100/60")
 os.environ.setdefault("RATE_LIMIT_FORGOT_PASSWORD", "100/60")
+os.environ.setdefault("RATE_LIMIT_RESEND_VERIFICATION", "100/60")
 # Env vars beat the .env file, so real local keys never leak into tests.
 os.environ["ELEVENLABS_API_KEY"] = ""
 os.environ["GEMINI_API_KEY"] = ""
