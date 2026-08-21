@@ -25,6 +25,8 @@ export interface WheelPick {
  *  that is a hundred milliseconds long. */
 class TickPlayer {
   private ctx: AudioContext | null = null;
+  private master: GainNode | null = null;
+  private noise: AudioBuffer | null = null;
 
   arm(): void {
     if (this.ctx) {
@@ -39,29 +41,67 @@ class TickPlayer {
       this.ctx = new Ctor();
     } catch {
       this.ctx = null;
+      return;
     }
+    const master = this.ctx.createGain();
+    master.gain.value = 0.9;
+    master.connect(this.ctx.destination);
+    this.master = master;
+
+    // One short white-noise buffer, reused by every tick. A real ratchet click
+    // is broadband, not a pitch — an oscillator gives the 8-bit toy sound this
+    // used to have.
+    const frames = Math.floor(this.ctx.sampleRate * 0.05);
+    const buffer = this.ctx.createBuffer(1, frames, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < frames; i += 1) data[i] = Math.random() * 2 - 1;
+    this.noise = buffer;
   }
 
-  /** `strength` (0..1) tracks wheel speed, so the clicks soften as it slows. */
+  /** `strength` (0..1) tracks wheel speed: fast ticks are brighter and louder,
+   *  and darken as the wheel slows, the way a real wheel does. */
   tick(strength: number): void {
     const ctx = this.ctx;
-    if (!ctx || ctx.state === "closed") return;
+    const master = this.master;
+    const noise = this.noise;
+    if (!ctx || !master || !noise || ctx.state === "closed") return;
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(880 + 320 * strength, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.05 * strength + 0.008, now + 0.004);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.06);
+    const level = 0.35 + 0.65 * strength;
+
+    // Transient: a noise burst through a bandpass — this is the click itself.
+    const src = ctx.createBufferSource();
+    src.buffer = noise;
+    const band = ctx.createBiquadFilter();
+    band.type = "bandpass";
+    band.frequency.setValueAtTime(1500 + 1100 * strength, now);
+    band.Q.value = 1.1;
+    const clickGain = ctx.createGain();
+    clickGain.gain.setValueAtTime(0.0001, now);
+    clickGain.gain.exponentialRampToValueAtTime(0.085 * level, now + 0.002);
+    clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.028);
+    src.connect(band).connect(clickGain).connect(master);
+    src.start(now);
+    src.stop(now + 0.05);
+
+    // Body: a very short low sine under the transient, so the click has weight
+    // rather than sounding thin and plasticky.
+    const body = ctx.createOscillator();
+    const bodyGain = ctx.createGain();
+    body.type = "sine";
+    body.frequency.setValueAtTime(200 - 45 * (1 - strength), now);
+    bodyGain.gain.setValueAtTime(0.0001, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.05 * level, now + 0.003);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.042);
+    body.connect(bodyGain).connect(master);
+    body.start(now);
+    body.stop(now + 0.05);
   }
 
   close(): void {
     void this.ctx?.close().catch(() => {});
     this.ctx = null;
+    this.master = null;
+    this.noise = null;
   }
 }
 
