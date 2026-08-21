@@ -15,7 +15,7 @@ from app.models.vocabulary import CEFR_LEVELS, Category, Word
 router = APIRouter(prefix="/library", tags=["library"], dependencies=[Depends(get_current_user)])
 
 # Category shelves surfaced in the library alongside CEFR levels.
-CATEGORY_SHELVES = ("ielts", "phrasal", "idioms")
+CATEGORY_SHELVES = ("ielts", "phrasal", "idioms", "toefl", "sat", "business")
 
 
 class ShelfOut(BaseModel):
