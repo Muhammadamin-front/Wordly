@@ -456,11 +456,20 @@ body::after {
   }
 }
 
+:root {
+  /* Shared page-shell width: the navbar pill and every full-width page
+     container reference this so they can never drift out of alignment on
+     large screens. 80rem (the old value) left huge idle gutters past a
+     1440px viewport; this still bounds line-length/card-grid stretch on
+     ultrawide and 4K displays rather than going edge-to-edge. */
+  --app-container-width: 112.5rem;
+}
+
 .app-container {
   width: 100%;
-  max-width: 80rem;
+  max-width: var(--app-container-width);
   margin-inline: auto;
-  padding-inline: 1rem;
+  padding-inline: 1.25rem;
 }
 
 .page-stack {
@@ -474,10 +483,6 @@ body::after {
 }
 
 @media (min-width: 640px) {
-  .app-container {
-    padding-inline: 1.5rem;
-  }
-
   .page-stack {
     padding-block: 2.5rem;
   }

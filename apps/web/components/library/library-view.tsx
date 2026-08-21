@@ -201,7 +201,7 @@ export function LibraryView({
   };
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
+    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-3 py-6 sm:px-6 sm:py-10">
       {/* Hero with circular progress */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}

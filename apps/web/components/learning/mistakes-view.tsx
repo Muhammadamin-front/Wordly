@@ -52,7 +52,7 @@ export function MistakesView({
   const needsPractice = notebook.items.filter((item) => item.status === "needs_practice").length;
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7 lg:p-8">
         <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>

@@ -438,7 +438,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
   const completedFullTests = READING_FULL_TESTS.filter((fullTest) => history[fullTest.id]?.completed).length;
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <section className="surface-panel relative overflow-hidden rounded-lg p-6 sm:p-8 lg:p-10">
         <div className="absolute! -right-24 -top-28 size-72 rounded-full bg-brand-400/10 blur-3xl" aria-hidden />
         <div className="relative grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">

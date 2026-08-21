@@ -122,7 +122,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
   const pageCount = Math.max(1, Math.ceil(total / 24));
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7">
         <div className="flex items-end justify-between gap-3">
           <div>

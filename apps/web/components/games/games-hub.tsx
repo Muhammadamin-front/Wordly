@@ -79,7 +79,7 @@ export function GamesHub({
   }, [ready, user, router, lang]);
 
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel relative overflow-hidden rounded-[18px] p-5 sm:p-7">
         <span aria-hidden className="absolute -right-5 -top-6 font-display text-[10rem] leading-none tracking-wide text-brand-600/8">PLAY</span>
         <span className="icon-tile size-12 rounded-lg">
