@@ -511,7 +511,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
           </div>
           <span className="hidden text-sm font-semibold text-ink-soft sm:block">{t.fullMockMeta}</span>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {READING_FULL_TESTS.map((fullTest, index) => (
             <TestCard t={t}
               key={fullTest.id}
@@ -530,7 +530,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
           <h2 className="mt-1 text-2xl font-black text-ink">{t.targetedBody}</h2>
           <p className="mt-2 text-sm leading-6 text-ink-soft">Choose a format, follow its strategy, then get instant evidence-based feedback after every answer.</p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {READING_QUESTION_TYPE_GUIDES.map((guide) => {
             const questionCount = getQuestionsForReadingQuestionType(guide.id).length;
             const tone = questionKindTone(guide.id);

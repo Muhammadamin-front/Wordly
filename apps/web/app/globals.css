@@ -368,13 +368,16 @@ body {
 }
 
 .type-body {
-  font-size: 1rem;
+  /* Fixed 1rem read noticeably small once cards/containers grew on large
+     screens (--app-container-width); scales modestly and caps at 1024px
+     viewport rather than growing without bound. */
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
   font-weight: 500;
   line-height: 1.75;
 }
 
 .type-body-small {
-  font-size: 0.875rem;
+  font-size: clamp(0.875rem, 0.83rem + 0.25vw, 0.9375rem);
   font-weight: 500;
   line-height: 1.65;
 }

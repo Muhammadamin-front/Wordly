@@ -155,7 +155,7 @@ export default async function VocabularyPage({
             actionHref={`/${lang}/vocabulary`}
           />
         ) : (
-          <ul className="mt-4 grid grid-cols-2 gap-3 sm:gap-3 lg:grid-cols-3">
+          <ul className="mt-4 grid grid-cols-2 gap-3 sm:gap-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {words.items.map((word) => (
               <li key={word.id} className="h-full">
                 <VocabularyWordCard
