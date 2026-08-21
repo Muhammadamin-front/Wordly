@@ -64,6 +64,8 @@ class CardOut(BaseModel):
     repetitions: int
     lapses: int
     due_at: datetime
+    stability: float
+    difficulty: float
 
 
 class QueueOut(BaseModel):

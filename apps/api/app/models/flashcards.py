@@ -79,6 +79,12 @@ class Card(Base):
     repetitions: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     lapses: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     due_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    # FSRS memory model. ease_factor/repetitions above are SM-2 leftovers,
+    # kept (but frozen) so the column stays populated for any old code or
+    # chart that still reads it; FSRS's scheduler reads/writes these two.
+    stability: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    difficulty: Mapped[float] = mapped_column(Float, default=0.0, nullable=False)
+    last_reviewed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
@@ -110,6 +116,11 @@ class ReviewLog(Base):
     interval_after: Mapped[float] = mapped_column(Float, nullable=False)
     ease_before: Mapped[float] = mapped_column(Float, nullable=False)
     ease_after: Mapped[float] = mapped_column(Float, nullable=False)
+    # Nullable: rows logged before FSRS shipped have no value here.
+    stability_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    stability_after: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    difficulty_before: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    difficulty_after: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     duration_ms: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     reviewed_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
 
