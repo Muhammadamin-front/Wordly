@@ -55,6 +55,7 @@ EXAMPLE_FILES = [
     "examples_all_words_translated.csv",
     "examples_phrasal_idioms_6.csv",
     "examples_phrasal_idioms_7.csv",
+    "examples_idioms_uz.csv",
 ]
 
 CORPUS_FILES = [
