@@ -41,6 +41,9 @@ CATEGORIES = [
     ("ielts", "IELTS Academic", "IELTS so'zlari", "Слова IELTS", "🎓"),
     ("phrasal", "Phrasal Verbs", "Frazeologik fe'llar", "Фразовые глаголы", "🔗"),
     ("idioms", "Idioms", "Idiomalar", "Идиомы", "💬"),
+    ("toefl", "TOEFL", "TOEFL", "TOEFL", "🏛"),
+    ("sat", "SAT", "SAT", "SAT", "✏️"),
+    ("business", "Business English", "Biznes ingliz tili", "Деловой английский", "💼"),
 ]
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
@@ -103,6 +106,9 @@ CORPUS_FILES = [
     "word_families_2.csv",
     "word_families_3.csv",
     "word_families_4.csv",
+    "shelf_toefl.csv",
+    "shelf_sat.csv",
+    "shelf_business.csv",
 ]
 
 
