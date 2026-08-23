@@ -876,7 +876,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
           className="flex min-h-0 flex-1 flex-col sm:grid sm:min-h-[calc(100svh-12.5rem)] sm:grid-cols-[minmax(0,var(--reading-passage-width))_12px_minmax(0,1fr)]"
           style={{ "--reading-passage-width": `${panelRatio}%`, "--reading-sheet-height": `${sheetRatio}%` } as React.CSSProperties}
         >
-          <article className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-page p-4 sm:max-h-[calc(100vh-12.5rem)] sm:p-7" onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
+          <article className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-page p-4 sm:max-h-[calc(100dvh-12.5rem)] sm:p-7" onMouseUp={(event) => captureTextSelection(event, setSelectedRange)} onKeyUp={(event) => captureTextSelection(event, setSelectedRange)}>
             <p className="type-label text-brand-600 dark:text-brand-300 max-sm:hidden">{t.readingPassage}</p>
             <h1 className="text-lg font-black tracking-tight text-ink sm:mt-2 sm:text-3xl">{currentPassage.title}</h1>
             <p className="mt-1 text-sm italic text-ink-soft sm:mt-2">{currentPassage.subtitle}</p>
@@ -902,7 +902,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
           <aside
             id="reading-question-sheet"
             className={cn(
-              "min-w-0 overflow-y-auto bg-card/62 p-4 sm:max-h-[calc(100vh-12.5rem)] sm:p-5",
+              "min-w-0 overflow-y-auto bg-card/62 p-4 sm:max-h-[calc(100dvh-12.5rem)] sm:p-5",
               "max-sm:h-[var(--reading-sheet-height)] max-sm:shrink-0",
               !draggingSheet && "max-sm:transition-[height] max-sm:duration-200",
               !sheetOpen && "max-sm:overflow-hidden max-sm:p-0"

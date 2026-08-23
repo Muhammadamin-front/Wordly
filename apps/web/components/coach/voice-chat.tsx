@@ -278,7 +278,7 @@ export function VoiceChat({
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col">
+    <div className="flex h-[calc(100dvh-8rem)] flex-col">
       {/* Header */}
       <div className="flex items-center gap-3 border-b border-line pb-3">
         <button

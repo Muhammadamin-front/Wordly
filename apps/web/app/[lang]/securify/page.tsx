@@ -36,7 +36,7 @@ function SecurifyLogo() {
 export default function SecurifyPage() {
   return (
     <section
-      className={`${readexPro.className} relative h-screen w-full overflow-hidden bg-black text-white antialiased`}
+      className={`${readexPro.className} relative h-dvh w-full overflow-hidden bg-black text-white antialiased`}
     >
       <video
         aria-hidden="true"

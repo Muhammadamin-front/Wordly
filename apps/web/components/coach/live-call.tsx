@@ -71,7 +71,7 @@ export function LiveCall({
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-between py-6">
+    <div className="flex min-h-[calc(100dvh-8rem)] flex-col items-center justify-between py-6">
       {/* Header */}
       <div className="flex w-full items-center justify-between">
         <button

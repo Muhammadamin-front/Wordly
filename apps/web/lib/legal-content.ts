@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/locales";
+import type { Locale } from "./locales";
 
 type LegalPage = "privacy" | "terms" | "support";
 

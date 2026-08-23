@@ -376,7 +376,7 @@ export function ComprehensionTest({
               // learner scrolls the questions on the right (stacked on mobile).
               return (
                 <div className="gap-5 lg:grid lg:grid-cols-2 lg:items-start">
-                  <article className="max-h-80 overflow-y-auto rounded-2xl border border-line bg-card p-5 lg:sticky lg:top-4 lg:max-h-[calc(100vh-8rem)]">
+                  <article className="max-h-80 overflow-y-auto rounded-2xl border border-line bg-card p-5 lg:sticky lg:top-4 lg:max-h-[calc(100dvh-8rem)]">
                     <h2 className="mb-3 text-lg font-bold text-ink">{test.title}</h2>
                     <p className="whitespace-pre-line text-[15px] leading-7 text-ink">
                       {test.body}
