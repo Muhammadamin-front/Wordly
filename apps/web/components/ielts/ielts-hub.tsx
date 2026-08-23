@@ -6,11 +6,13 @@ import {
   ArrowUpRight,
   BookOpen,
   ChartNoAxesCombined,
+  Clock3,
   Headphones,
   LibraryBig,
   Mic2,
   PenLine,
   Sparkles,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +38,15 @@ const SKILLS: SkillCard[] = [
   { key: "listening", icon: Headphones, count: 8, countKey: "resources" },
 ];
 
-export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }) {
+export function IeltsHub({
+  lang,
+  t,
+  mockT,
+}: {
+  lang: string;
+  t: Dictionary["ieltsHub"];
+  mockT: Dictionary["ieltsMock"];
+}) {
   const vocabularyResources = ieltsVocabularyResources(lang);
   return (
     <main className="app-container page-stack flex-1">
@@ -94,7 +104,40 @@ export function IeltsHub({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] 
         </div>
       </motion.section>
 
-      <section className="mt-8">
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="mt-6"
+      >
+        <Link
+          href={`/${lang}/ielts/mock`}
+          className="group relative flex flex-col gap-5 overflow-hidden rounded-lg border border-brand-950/40 bg-[linear-gradient(135deg,#24130c,#54250f)] p-6 text-white shadow-[4px_5px_0_rgba(84,37,15,0.28)] transition-all hover:-translate-y-0.5 hover:shadow-[6px_7px_0_rgba(84,37,15,0.32)] dark:bg-[linear-gradient(135deg,#382015,#24130c)] sm:flex-row sm:items-center sm:justify-between sm:p-8"
+        >
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-xs font-black uppercase text-brand-100">
+              <Trophy className="size-4" aria-hidden />
+              {mockT.eyebrow}
+            </span>
+            <h2 className="mt-4 max-w-lg text-2xl font-black tracking-tight sm:text-3xl">
+              {mockT.title}
+            </h2>
+            <p className="mt-2 max-w-lg text-sm leading-6 text-brand-100/85">
+              {mockT.subtitle}
+            </p>
+            <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-brand-100">
+              <Clock3 className="size-3.5" aria-hidden />
+              {mockT.totalTime}
+            </p>
+          </div>
+          <span className="inline-flex min-h-13 shrink-0 items-center justify-center gap-2 rounded-md bg-white px-7 text-base font-black text-brand-900 transition-colors group-hover:bg-brand-50">
+            {mockT.startCta}
+            <ArrowUpRight className="size-4" aria-hidden />
+          </span>
+        </Link>
+      </motion.section>
+
+      <section className="mt-10">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
             <p className="type-label text-accent-500">{t.skillsKicker}</p>

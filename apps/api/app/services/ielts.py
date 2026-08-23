@@ -12,7 +12,7 @@ answer key.
 """
 import json
 from dataclasses import dataclass
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
 from sqlalchemy import select
@@ -581,7 +581,8 @@ class GradeResult:
 
 
 async def grade_test(
-    db: AsyncSession, user: User, test_id: UUID, submitted: List[int]
+    db: AsyncSession, user: User, test_id: UUID, submitted: List[int],
+    mock_session_id: Optional[UUID] = None,
 ) -> GradeResult:
     """Grade a submitted Reading/Listening test against the stored answer key."""
     test = await db.scalar(
@@ -607,7 +608,10 @@ async def grade_test(
     if payload.get("bank_id"):
         detail["bank_id"] = payload["bank_id"]  # marks the bank item as done
     db.add(
-        IeltsResult(user_id=user.id, skill=skill, band=band, detail=json.dumps(detail))
+        IeltsResult(
+            user_id=user.id, skill=skill, band=band, detail=json.dumps(detail),
+            mock_session_id=mock_session_id,
+        )
     )
     # One-shot content: drop the stored test after grading.
     await db.delete(test)
@@ -704,7 +708,7 @@ def _criterion(data: Any) -> Criterion:
 
 async def score_writing(
     db: AsyncSession, user: User, client: AiClient, task_type: str, prompt: str,
-    essay: str, lang: str = "en",
+    essay: str, lang: str = "en", mock_session_id: Optional[UUID] = None,
 ) -> WritingScore:
     """Professional Writing review: strict band scores per criterion, a full
     error list with corrections, strengths, and a band-8 model rewrite."""
@@ -734,7 +738,12 @@ async def score_writing(
 
     reward = await apply_skill_xp(db, user, XP_WRITING)
     band = _half_band(data.get("band_overall"))
-    db.add(IeltsResult(user_id=user.id, skill="writing", band=band, detail=data.get("feedback")))
+    db.add(
+        IeltsResult(
+            user_id=user.id, skill="writing", band=band, detail=data.get("feedback"),
+            mock_session_id=mock_session_id,
+        )
+    )
     errors = [
         WritingError(
             quote=str(e.get("quote", "")).strip(),

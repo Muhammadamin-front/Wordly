@@ -281,9 +281,29 @@ function questionKindTone(kind: ReadingQuestionKind) {
 
 type Copy = Dictionary["readingPractice"];
 
-export function ReadingPracticeView({ t }: { t: Copy }) {
-  const [screen, setScreen] = useState<Screen>("library");
-  const [selectedTestId, setSelectedTestId] = useState(READING_PRACTICE_TESTS[0].id);
+export function ReadingPracticeView({
+  t,
+  mockTestId,
+  onMockComplete,
+  onMockExit,
+  mockExitLabel,
+}: {
+  t: Copy;
+  /** Set by the IELTS Full Mock's Reading leg: skips the library, opens this
+   *  test's start screen directly, and reports the result up instead of
+   *  showing the built-in result screen (the mock renders its own). */
+  mockTestId?: string;
+  onMockComplete?: (result: { score: number; total: number; band: number; approximate: boolean }) => void;
+  /** Called instead of returning to the library when the learner backs out
+   *  of the start screen or exits mid-test while in mock mode. */
+  onMockExit?: () => void;
+  /** Overrides the back button's "Reading library" label while in mock
+   *  mode, where that button abandons the exam rather than opening a
+   *  library — the default label would otherwise promise the wrong thing. */
+  mockExitLabel?: string;
+}) {
+  const [screen, setScreen] = useState<Screen>(mockTestId ? "start" : "library");
+  const [selectedTestId, setSelectedTestId] = useState(mockTestId ?? READING_PRACTICE_TESTS[0].id);
   const [selectedQuestionType, setSelectedQuestionType] = useState<ReadingQuestionTypeGuideId>("matching-headings");
   const [studyMode, setStudyMode] = useState<StudyMode>("exam");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
@@ -296,6 +316,7 @@ export function ReadingPracticeView({ t }: { t: Copy }) {
   const [history, setHistory] = useState<TestHistory>({});
 
   const test = getReadingTest(selectedTestId);
+  const t2 = mockTestId && mockExitLabel ? { ...t, readingLibrary: mockExitLabel } : t;
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -346,8 +367,13 @@ export function ReadingPracticeView({ t }: { t: Copy }) {
         lastScore: score,
       },
     });
+    if (onMockComplete) {
+      const { band, approximate } = readingBand(score, questions.length, selected.track);
+      onMockComplete({ score, total: questions.length, band, approximate });
+      return;
+    }
     setScreen("result");
-  }, [answers, history, saveHistory, secondsLeft, selectedTestId, startedAt, studyMode]);
+  }, [answers, history, onMockComplete, saveHistory, secondsLeft, selectedTestId, startedAt, studyMode]);
 
   useEffect(() => {
     if (screen !== "test" || studyMode !== "exam" || isPaused) return;
@@ -374,7 +400,15 @@ export function ReadingPracticeView({ t }: { t: Copy }) {
   };
 
   if (screen === "start") {
-    return <ReadingStartScreen t={t} test={test} mode={studyMode} onBack={() => setScreen("library")} onStart={launchTest} />;
+    return (
+      <ReadingStartScreen
+        t={t2}
+        test={test}
+        mode={studyMode}
+        onBack={onMockExit ?? (() => setScreen("library"))}
+        onStart={launchTest}
+      />
+    );
   }
 
   if (screen === "question-types") {
@@ -383,7 +417,7 @@ export function ReadingPracticeView({ t }: { t: Copy }) {
 
   if (screen === "test") {
     return (
-      <ReadingWorkspace t={t}
+      <ReadingWorkspace t={t2}
         key={test.id}
         test={test}
         studyMode={studyMode}
@@ -405,7 +439,7 @@ export function ReadingPracticeView({ t }: { t: Copy }) {
         onPassageChange={setCurrentPassageIndex}
         onPause={() => setIsPaused((value) => !value)}
         onEnd={submitTest}
-        onExit={() => setScreen("library")}
+        onExit={onMockExit ?? (() => setScreen("library"))}
       />
     );
   }

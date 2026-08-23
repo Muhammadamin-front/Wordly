@@ -63,6 +63,9 @@ class GeneratedTestOut(BaseModel):
 class SubmitRequest(BaseModel):
     test_id: UUID
     answers: List[int]
+    # Set when this submission is one leg of an IELTS Full Mock exam, so the
+    # resulting IeltsResult row can be tied back to that session.
+    mock_session_id: Optional[UUID] = None
 
 
 class GradeOut(BaseModel):
@@ -81,6 +84,7 @@ class WritingScoreRequest(BaseModel):
     prompt: str = Field(min_length=10, max_length=1200)
     essay: str = Field(min_length=20, max_length=6000)
     lang: str = Field(default="en", pattern="^(uz|ru|en)$")  # feedback language
+    mock_session_id: Optional[UUID] = None
 
 
 class CriterionOut(BaseModel):

@@ -13,8 +13,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user, require_premium
 from app.core.rate_limit import rate_limit
 from app.db.session import get_db
+from app.models.ielts_mock import MOCK_SKILLS
 from app.models.user import User
-from app.schemas.ielts_mock import MockSessionCreate, MockSessionListItem, MockSessionOut
+from app.schemas.ielts_mock import (
+    LegCompleteRequest,
+    MockSessionCreate,
+    MockSessionListItem,
+    MockSessionOut,
+)
 from app.services import ielts_mock
 
 router = APIRouter(
@@ -67,5 +73,26 @@ async def abandon_session(
     if session.status != "in_progress":
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Session is not in progress")
     session = await ielts_mock.abandon_session(db, session)
+    await db.commit()
+    return session
+
+
+@router.post("/sessions/{session_id}/legs/{skill}/complete", response_model=MockSessionOut)
+async def complete_leg(
+    session_id: UUID,
+    skill: str,
+    payload: LegCompleteRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    if skill not in MOCK_SKILLS:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown skill")
+    session = await _owned_session(db, user, session_id)
+    try:
+        session = await ielts_mock.complete_leg(
+            db, session, skill, band=payload.band, detail=payload.detail
+        )
+    except ielts_mock.LegNotActive as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     await db.commit()
     return session

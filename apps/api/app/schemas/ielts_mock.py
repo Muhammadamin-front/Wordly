@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -7,6 +7,11 @@ from pydantic import BaseModel, Field
 
 class MockSessionCreate(BaseModel):
     track: str = Field(default="academic", pattern="^(academic|general)$")
+
+
+class LegCompleteRequest(BaseModel):
+    band: float = Field(ge=0.0, le=9.0)
+    detail: Optional[Dict[str, Any]] = None
 
 
 class MockLegOut(BaseModel):

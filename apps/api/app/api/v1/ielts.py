@@ -121,7 +121,7 @@ async def writing_score(
         db, user,
         lambda: ielts.score_writing(
             db, user, client, payload.task_type, payload.prompt, payload.essay,
-            lang=payload.lang,
+            lang=payload.lang, mock_session_id=payload.mock_session_id,
         ),
     )
     await db.commit()
@@ -157,7 +157,10 @@ async def _generate(kind: str, band: float, user: User, db: AsyncSession, client
 
 async def _submit(payload: SubmitRequest, user: User, db: AsyncSession):
     try:
-        result = await ielts.grade_test(db, user, payload.test_id, payload.answers)
+        result = await ielts.grade_test(
+            db, user, payload.test_id, payload.answers,
+            mock_session_id=payload.mock_session_id,
+        )
     except LookupError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Test not found or expired")
     await db.commit()

@@ -152,11 +152,20 @@ export function VoiceChat({
   session: initialSession,
   t,
   onExit,
+  onScored,
+  exitLabel,
 }: {
   character: Character;
   session: CoachSession;
   t: Coach;
   onExit: () => void;
+  /** Fires right after a successful IELTS score, with the resulting overall
+   *  band — lets an embedding flow (e.g. the Full Mock's Speaking leg) react
+   *  without re-fetching the session. */
+  onScored?: (band: number) => void;
+  /** Overrides the finished-state button's label (default: t.newSession) —
+   *  e.g. "Continue" when this chat is one leg of a larger flow. */
+  exitLabel?: string;
 }) {
   const [messages, setMessages] = useState<CoachMessage[]>(initialSession.messages);
   const [session, setSession] = useState(initialSession);
@@ -253,6 +262,7 @@ export function VoiceChat({
       const res = await coachApi.score(session.id);
       setReport(res.report);
       setSession((prev) => ({ ...prev, status: "done" }));
+      onScored?.(res.report.band_overall);
       if (res.reward.xp_gained > 0) {
         setXpToast(res.reward.xp_gained);
         window.setTimeout(() => setXpToast(null), 2200);
@@ -461,7 +471,7 @@ export function VoiceChat({
       ) : (
         <div className="border-t border-line pt-3">
           <Button fullWidth onClick={onExit}>
-            {t.newSession}
+            {exitLabel ?? t.newSession}
           </Button>
         </div>
       )}

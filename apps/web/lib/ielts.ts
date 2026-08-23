@@ -152,10 +152,10 @@ export const ieltsApi = {
   writingTasks: () =>
     apiFetch<Record<string, WritingTask[]>>("/ielts/writing/tasks", { auth: true }),
 
-  scoreWriting: (taskType: string, prompt: string, essay: string, lang = "en") =>
+  scoreWriting: (taskType: string, prompt: string, essay: string, lang = "en", mockSessionId?: string) =>
     apiFetch<WritingScore>("/ielts/writing/score", {
       method: "POST",
-      body: { task_type: taskType, prompt, essay, lang },
+      body: { task_type: taskType, prompt, essay, lang, mock_session_id: mockSessionId },
       auth: true,
     }),
 
@@ -166,10 +166,10 @@ export const ieltsApi = {
       auth: true,
     }),
 
-  submit: (kind: ComprehensionKind, testId: string, answers: number[]) =>
+  submit: (kind: ComprehensionKind, testId: string, answers: number[], mockSessionId?: string) =>
     apiFetch<GradeResult>(`/ielts/${kind}/submit`, {
       method: "POST",
-      body: { test_id: testId, answers },
+      body: { test_id: testId, answers, mock_session_id: mockSessionId },
       auth: true,
     }),
 };

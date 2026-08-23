@@ -2,6 +2,7 @@ import {
   ArrowRight,
   BookOpenText,
   BrainCircuit,
+  Clock3,
   Dumbbell,
   Globe2,
   GraduationCap,
@@ -314,6 +315,35 @@ export default async function LandingPage({
           </Reveal>
         </section>
 
+        <section className="mx-auto mt-5 max-w-370">
+          <Reveal>
+            <Link
+              href={`/${lang}/ielts/mock`}
+              className="group relative flex flex-col gap-6 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-6 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)] transition-transform hover:-translate-y-1 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+            >
+              <div aria-hidden className="absolute -right-16 -top-20 size-72 rounded-full border-24 border-accent-400/30" />
+              <div className="relative">
+                <span className="print-label inline-flex w-fit items-center gap-2 border-sand-100/45 bg-sand-100/10 text-sand-100">
+                  <Trophy className="size-3.5" aria-hidden />
+                  {copy.mockKicker}
+                </span>
+                <h2 className="mt-4 max-w-xl text-3xl font-black leading-tight sm:text-4xl">
+                  {copy.mockTitle}
+                </h2>
+                <p className="mt-3 max-w-lg text-sm leading-6 text-white/72">{copy.mockBody}</p>
+                <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-brand-100">
+                  <Clock3 className="size-3.5" aria-hidden />
+                  {copy.mockTime}
+                </p>
+              </div>
+              <span className="relative inline-flex min-h-13 shrink-0 items-center justify-center gap-2 rounded-md border border-brand-950 bg-sand-100 px-7 text-base font-black text-brand-950 transition-colors group-hover:bg-brand-50">
+                {copy.mockCta}
+                <ArrowRight className="size-4" aria-hidden />
+              </span>
+            </Link>
+          </Reveal>
+        </section>
+
         <section id="features" className="mx-auto mt-5 max-w-370">
           <Reveal>
             <div className="surface-panel grid gap-6 rounded-[22px] p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
@@ -421,6 +451,11 @@ const homeCopy: Record<
     skillListeningBody: string;
     skillSpeakingTitle: string;
     skillSpeakingBody: string;
+    mockKicker: string;
+    mockTitle: string;
+    mockBody: string;
+    mockCta: string;
+    mockTime: string;
     hero: HomeHeroCopy;
   }
 > = {
@@ -485,6 +520,12 @@ const homeCopy: Record<
     skillListeningBody: "Turli aksentlar va real imtihon formatidagi audio mashqlar.",
     skillSpeakingTitle: "Gapirish",
     skillSpeakingBody: "Part 1-3 mavzulari, native iboralar va AI orqali baholash.",
+    mockKicker: "To'liq sinov imtihoni",
+    mockTitle: "Haqiqiy imtihondek — 4 ta ko'nikma, bitta umumiy ball",
+    mockBody:
+      "Listening, Reading, Writing va Speaking'ni bitta o'tirishda, real vaqt bilan topshiring va imtihon kunidagidek yagona umumiy bandingizni oling.",
+    mockCta: "To'liq testni boshlash",
+    mockTime: "Taxminan 2 soat",
     hero: {
       eyebrow: "Aniq reja. Haqiqiy natija.",
       title: "Ingliz tili shu yerdan boshlanadi",
@@ -562,6 +603,12 @@ const homeCopy: Record<
     skillListeningBody: "Разные акценты и задания в формате настоящего экзамена.",
     skillSpeakingTitle: "Говорение",
     skillSpeakingBody: "Темы Part 1-3, живые фразы и оценка через AI.",
+    mockKicker: "Полный пробный экзамен",
+    mockTitle: "Как на настоящем экзамене — 4 навыка, один общий балл",
+    mockBody:
+      "Пройдите Listening, Reading, Writing и Speaking за один сеанс, с реальным таймингом, и получите единый общий балл, как в день экзамена.",
+    mockCta: "Начать полный тест",
+    mockTime: "Около 2 часов",
     hero: {
       eyebrow: "Чёткий план. Реальный результат.",
       title: "Английский начинается здесь",
@@ -639,6 +686,12 @@ const homeCopy: Record<
     skillListeningBody: "Different accents and real exam-format audio tasks.",
     skillSpeakingTitle: "Speaking",
     skillSpeakingBody: "Part 1-3 topics, natural phrases, and AI-powered scoring.",
+    mockKicker: "Full mock exam",
+    mockTitle: "Just like exam day — 4 skills, one overall band",
+    mockBody:
+      "Take Listening, Reading, Writing and Speaking in one sitting, with real timing, and get a single overall band the way the real exam scores you.",
+    mockCta: "Start full mock",
+    mockTime: "About 2 hours",
     hero: {
       eyebrow: "A clear plan. Real progress.",
       title: "English starts right here",
