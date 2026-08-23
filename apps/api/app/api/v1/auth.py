@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -40,6 +42,10 @@ from app.services.telegram_oauth import TelegramVerifier, get_telegram_verifier
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
+def is_mobile_client(request: Request) -> bool:
+    return request.headers.get("X-Client", "").strip().lower() == "mobile"
+
+
 def set_refresh_cookie(response: Response, token: str, settings: Settings) -> None:
     response.set_cookie(
         key=REFRESH_COOKIE_NAME,
@@ -74,7 +80,7 @@ async def build_token_pair(
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
-    if request.headers.get("X-Client", "").strip().lower() == "mobile":
+    if is_mobile_client(request):
         pair.refresh_token = refresh
     return pair
 
@@ -201,6 +207,7 @@ async def google_login(
             user.profile = Profile(
                 display_name=(identity.name or email.split("@")[0])[:80],
                 avatar_url=identity.picture,
+                ui_locale=payload.ui_locale,
             )
             db.add(user)
         await db.flush()
@@ -349,12 +356,14 @@ async def telegram_login(
 async def refresh(
     request: Request,
     response: Response,
-    payload: RefreshRequest,
+    payload: Optional[RefreshRequest] = None,
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
-    raw = refresh_token_from_cookie(request) or payload.refresh_token
+    raw = refresh_token_from_cookie(request) or (
+        payload.refresh_token if payload is not None and is_mobile_client(request) else None
+    )
     if not raw:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
     rotated = await auth_service.rotate_refresh_token(
@@ -374,7 +383,7 @@ async def refresh(
         expires_in=settings.ACCESS_TOKEN_TTL_SECONDS,
         user=UserOut.model_validate(user),
     )
-    if request.headers.get("X-Client", "").strip().lower() == "mobile":
+    if is_mobile_client(request):
         pair.refresh_token = new_refresh
     return pair
 
@@ -383,12 +392,14 @@ async def refresh(
 async def logout(
     request: Request,
     response: Response,
-    payload: RefreshRequest,
+    payload: Optional[RefreshRequest] = None,
     db: AsyncSession = Depends(get_db),
     _: None = Depends(require_trusted_origin),
 ):
     settings = get_settings()
-    raw = refresh_token_from_cookie(request) or payload.refresh_token
+    raw = refresh_token_from_cookie(request) or (
+        payload.refresh_token if payload is not None and is_mobile_client(request) else None
+    )
     if raw:
         await auth_service.revoke_refresh_token(db, raw)
         await db.commit()

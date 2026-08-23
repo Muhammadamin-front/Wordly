@@ -19,6 +19,7 @@ class LoginRequest(BaseModel):
 
 class GoogleLoginRequest(BaseModel):
     id_token: str = Field(min_length=10)
+    ui_locale: str = Field(default="uz", pattern="^(uz|ru|en)$")
 
 
 class AppleLoginRequest(BaseModel):
