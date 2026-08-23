@@ -171,11 +171,21 @@ export function GamePlayer({
       gamesApi
         .session(gameType, 10, chosen)
         .then((session) => {
+          const built = prepare(session.questions, gameType);
           setSessionId(session.session_id);
-          setPrepared(prepare(session.questions, gameType));
+          setPrepared(built);
           setDifficulty(session.difficulty);
           setRecentAccuracy(session.recent_accuracy);
-          setTotal(session.questions.length);
+          // Word search and crossword can place fewer words than were fetched
+          // (grid collisions, board-size caps) — score against what's actually
+          // on the board, or a flawless clear would show under 100%.
+          const playable =
+            gameType === "word_search"
+              ? built.wordSearch.targets.length
+              : gameType === "crossword"
+                ? built.crossword?.placements.length ?? session.questions.length
+                : session.questions.length;
+          setTotal(playable);
           setScore(0);
           setAttempts(0);
           setCombo(0);
@@ -523,7 +533,6 @@ export function GamePlayer({
           items={prepared.choice}
           isAudio={gameType === "audio_guess"}
           fill={gameType === "fill_blank"}
-          boss={gameType === "boss_battle"}
         />
       )}
     </div>

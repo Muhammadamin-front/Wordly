@@ -1,25 +1,23 @@
 "use client";
 
+import { Check, Volume2, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ShieldAlert, Volume2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import type { ChoiceItem, GameProps } from "@/components/games/game-player";
 import { speak } from "@/lib/games";
 import { cn } from "@/lib/utils";
 
-/** Speed Quiz, Fill the Blank, Listen & Guess, and Boss Battle — multiple-choice. */
+/** Speed Quiz, Fill the Blank, and Listen & Guess — multiple-choice. */
 export function ChoiceGame({
   items,
   games,
   isAudio,
   fill,
-  boss = false,
   onAnswer,
   onComplete,
-}: GameProps & { items: ChoiceItem[]; isAudio: boolean; fill: boolean; boss?: boolean }) {
+}: GameProps & { items: ChoiceItem[]; isAudio: boolean; fill: boolean }) {
   const [index, setIndex] = useState(0);
-  const [hits, setHits] = useState(0);
   const item = items[index];
 
   function resolve() {
@@ -29,25 +27,6 @@ export function ChoiceGame({
 
   return (
     <div>
-      {boss && (
-        <div className="mb-5 rounded-lg border border-danger/25 bg-danger/5 p-3">
-          <div className="flex items-center justify-between text-sm">
-            <motion.span
-              animate={hits ? { rotate: [0, -8, 8, 0], scale: [1, 0.9, 1] } : undefined}
-              className="flex size-9 items-center justify-center rounded-lg bg-danger/10 text-danger"
-            >
-              <ShieldAlert className="size-5" aria-hidden />
-            </motion.span>
-            <span className="text-xs font-bold text-danger">{games.bossHp}</span>
-          </div>
-          <div className="mt-1 h-3 w-full overflow-hidden rounded-full bg-line">
-            <div
-              className="h-full rounded-full bg-linear-to-r from-danger to-danger/70 transition-all duration-500"
-              style={{ width: `${Math.max(0, 100 - (hits / items.length) * 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
       <ChoiceQuestion
         key={index}
         item={item}
@@ -55,7 +34,6 @@ export function ChoiceGame({
         isAudio={isAudio}
         fill={fill}
         onResolved={(correct, durationMs, submitted) => {
-          if (correct && boss) setHits((h) => h + 1);
           onAnswer(item.question.card_id, correct, durationMs, submitted);
           window.setTimeout(resolve, 850);
         }}

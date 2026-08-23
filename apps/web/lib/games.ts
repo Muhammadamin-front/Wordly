@@ -8,7 +8,6 @@ export const GAME_TYPES = [
   "audio_guess",
   "typing_race",
   "memory",
-  "boss_battle",
   "hangman",
   "spelling_bee",
   "sentence_builder",

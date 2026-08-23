@@ -218,32 +218,31 @@ export function QuestionWheel({
     const reduced =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduced) {
-      // Land it immediately rather than staging four seconds of motion for
-      // someone who asked for less of it.
-      const step = 360 / next.length;
-      setRotation((r) => r - (((r % 360) + 360) % 360) - winner * step);
-      setPick({ topic: next[winner], question });
-      return;
-    }
+    // Reduced motion gets a single short turn rather than the full four-turn,
+    // 4.2s spin-up — still visibly animated (an instant jump to the result
+    // reads as broken, and this media query is often on by default on
+    // Android, not just a deliberate accessibility choice), just much less of it.
+    const turns = reduced ? 1 : 4;
+    const spinMs = reduced ? 500 : SPIN_MS;
 
-    if (soundRef.current) {
+    if (!reduced && soundRef.current) {
       player.current ??= new TickPlayer();
       player.current.arm(); // this call is inside the click, so audio may start
     }
+    const canVibrate = typeof navigator !== "undefined" && "vibrate" in navigator;
 
     const step = 360 / next.length;
     const from = rotation;
     // Land the winning wedge under the pointer, after a few full turns.
     const target =
-      from + 360 * 4 + (360 - (((from % 360) + 360) % 360)) - winner * step;
+      from + 360 * turns + (360 - (((from % 360) + 360) % 360)) - winner * step;
 
     const started = performance.now();
     let lastBoundary = Math.floor(from / step);
     let lastTickAt = 0;
 
     const run = (now: number) => {
-      const t = Math.min(1, (now - started) / SPIN_MS);
+      const t = Math.min(1, (now - started) / spinMs);
       const eased = easeOutQuart(t);
       const current = from + (target - from) * eased;
       setRotation(current);
@@ -252,8 +251,12 @@ export function QuestionWheel({
       if (boundary !== lastBoundary) {
         // Near the start the wheel crosses wedges faster than a click can be
         // heard, so rate-limit rather than firing a burst of overlapping tones.
-        if (soundRef.current && now - lastTickAt > 45) {
-          player.current?.tick(1 - eased);
+        if (now - lastTickAt > 45) {
+          if (!reduced && soundRef.current) player.current?.tick(1 - eased);
+          // Short, speed-tracking buzz — mirrors the tick sound so a phone in
+          // silent mode still feels the wheel land. No-op on iOS Safari and
+          // desktop, which don't implement the Vibration API.
+          if (canVibrate) navigator.vibrate(6 + 10 * (1 - eased));
           lastTickAt = now;
         }
         lastBoundary = boundary;
