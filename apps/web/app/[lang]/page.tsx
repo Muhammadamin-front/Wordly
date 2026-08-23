@@ -1,14 +1,22 @@
 import {
   ArrowRight,
+  BookOpenText,
   BrainCircuit,
+  Dumbbell,
+  Globe2,
   GraduationCap,
   Headphones,
   Languages,
   Mic2,
+  PenLine,
+  ListChecks,
+  RotateCcw,
   ShieldCheck,
   Star,
   Target,
+  TrendingUp,
   Trophy,
+  Users,
   Volume2,
   type LucideIcon,
 } from "lucide-react";
@@ -51,6 +59,29 @@ export default async function LandingPage({
     { icon: Volume2, title: landing.feature2Title, body: landing.feature2Body },
     { icon: Target, title: landing.feature3Title, body: landing.feature3Body },
     { icon: Trophy, title: landing.feature4Title, body: landing.feature4Body },
+  ];
+
+  const howItWorks: { icon: LucideIcon; title: string; body: string }[] = [
+    { icon: ListChecks, title: copy.step1Title, body: copy.step1Body },
+    { icon: RotateCcw, title: copy.step2Title, body: copy.step2Body },
+    { icon: Dumbbell, title: copy.step3Title, body: copy.step3Body },
+    { icon: TrendingUp, title: copy.step4Title, body: copy.step4Body },
+  ];
+
+  const ieltsSkills: { icon: LucideIcon; slug: string; title: string; body: string }[] = [
+    { icon: BookOpenText, slug: "reading", title: copy.skillReadingTitle, body: copy.skillReadingBody },
+    { icon: PenLine, slug: "writing", title: copy.skillWritingTitle, body: copy.skillWritingBody },
+    { icon: Headphones, slug: "listening", title: copy.skillListeningTitle, body: copy.skillListeningBody },
+    { icon: Mic2, slug: "speaking", title: copy.skillSpeakingTitle, body: copy.skillSpeakingBody },
+  ];
+
+  // Placeholder figures — swap for real analytics once usage tracking is
+  // wired up; kept round and modest rather than guessed-precise.
+  const statBand: { icon: LucideIcon; value: string; label: string }[] = [
+    { icon: Users, value: "10,000+", label: copy.statLearners },
+    { icon: BrainCircuit, value: "500,000+", label: copy.statWords },
+    { icon: Globe2, value: "50+", label: copy.statCountries },
+    { icon: Star, value: "4.9/5", label: copy.statRating },
   ];
 
   const heroNav = [
@@ -196,6 +227,93 @@ export default async function LandingPage({
           </Reveal>
         </section>
 
+        <section className="mx-auto mt-5 max-w-370">
+          <Reveal>
+            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
+              <p className="text-xs font-black uppercase text-brand-600">{copy.howKicker}</p>
+              <h2 className="mt-3 max-w-2xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
+                {copy.howTitle}
+              </h2>
+              <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {howItWorks.map((step, index) => (
+                  <Reveal delay={index * 0.05} key={step.title}>
+                    <div className="relative h-full rounded-xl border border-line/80 bg-raised/60 p-5">
+                      <span className="flex size-10 items-center justify-center rounded-lg bg-brand-900 text-sm font-black text-white shadow-[2px_3px_0_rgb(84,37,15,0.35)]">
+                        {index + 1}
+                      </span>
+                      <step.icon className="mt-4 size-5 text-brand-600 dark:text-brand-300" aria-hidden />
+                      <p className="mt-3 text-base font-black text-ink">{step.title}</p>
+                      <p className="mt-1.5 text-xs leading-5 text-ink-soft">{step.body}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        <section className="mx-auto mt-5 max-w-370">
+          <Reveal>
+            <div className="relative overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 px-6 py-8 text-white shadow-[9px_11px_0_rgba(84,37,15,0.35)] sm:px-8">
+              <div aria-hidden className="absolute -right-16 -top-20 size-72 rounded-full border-24 border-accent-400/30" />
+              <p className="relative text-center text-xs font-black uppercase tracking-wide text-brand-200">
+                {copy.statsKicker}
+              </p>
+              <div className="relative mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
+                {statBand.map((stat) => (
+                  <div key={stat.label} className="text-center">
+                    <stat.icon className="mx-auto size-5 text-accent-300" aria-hidden />
+                    <p className="mt-2 font-display text-4xl tracking-wide sm:text-5xl">{stat.value}</p>
+                    <p className="mt-1 text-xs font-bold text-brand-100/75">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        <section className="mx-auto mt-5 max-w-370">
+          <Reveal>
+            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase text-brand-600">{copy.ieltsSkillsKicker}</p>
+                  <h2 className="mt-3 max-w-2xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
+                    {copy.ieltsSkillsTitle}
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-soft">{copy.ieltsSkillsBody}</p>
+                </div>
+                <Link
+                  href={`/${lang}/ielts`}
+                  className="inline-flex shrink-0 items-center gap-2 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
+                >
+                  {copy.openIelts}
+                  <ArrowRight className="size-4" aria-hidden />
+                </Link>
+              </div>
+              <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {ieltsSkills.map((skill, index) => (
+                  <Reveal delay={index * 0.05} key={skill.slug}>
+                    <Link
+                      href={`/${lang}/ielts/${skill.slug}`}
+                      className="group flex h-full flex-col rounded-xl border border-line/80 bg-raised/60 p-5 transition-all hover:-translate-y-1 hover:border-brand-400/60"
+                    >
+                      <span className="flex size-10 items-center justify-center rounded-lg bg-accent-500/10 text-accent-600 dark:text-accent-300">
+                        <skill.icon className="size-5" aria-hidden />
+                      </span>
+                      <p className="mt-4 text-base font-black text-ink">{skill.title}</p>
+                      <p className="mt-1.5 text-xs leading-5 text-ink-soft">{skill.body}</p>
+                      <span className="mt-auto flex items-center gap-1.5 pt-4 text-xs font-black text-brand-800 dark:text-brand-200">
+                        <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
+                      </span>
+                    </Link>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
         <section id="features" className="mx-auto mt-5 max-w-370">
           <Reveal>
             <div className="surface-panel grid gap-6 rounded-[22px] p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
@@ -277,6 +395,32 @@ const homeCopy: Record<
     systemKicker: string;
     systemTitle: string;
     previewLevel: string;
+    howKicker: string;
+    howTitle: string;
+    step1Title: string;
+    step1Body: string;
+    step2Title: string;
+    step2Body: string;
+    step3Title: string;
+    step3Body: string;
+    step4Title: string;
+    step4Body: string;
+    statsKicker: string;
+    statLearners: string;
+    statWords: string;
+    statCountries: string;
+    statRating: string;
+    ieltsSkillsKicker: string;
+    ieltsSkillsTitle: string;
+    ieltsSkillsBody: string;
+    skillReadingTitle: string;
+    skillReadingBody: string;
+    skillWritingTitle: string;
+    skillWritingBody: string;
+    skillListeningTitle: string;
+    skillListeningBody: string;
+    skillSpeakingTitle: string;
+    skillSpeakingBody: string;
     hero: HomeHeroCopy;
   }
 > = {
@@ -314,6 +458,33 @@ const homeCopy: Record<
     systemKicker: "Bitta o'quv tizimi",
     systemTitle: "So'z yodlashdan ravon gapirishgacha hammasi bir joyda",
     previewLevel: "5 ta so'zni sinash",
+    howKicker: "Qanday ishlaydi",
+    howTitle: "To'rtta qadam — natijagacha",
+    step1Title: "So'z tanlang",
+    step1Body: "Darajangiz yoki qiziqishingizga mos so'zlarni tanlang — A1 dan C2 gacha.",
+    step2Title: "Aqlli takrorlang",
+    step2Body: "Har bir so'z aynan unutila boshlagan payt qaytib keladi — vaqtingizni behuda sarflamaysiz.",
+    step3Title: "Amaliyot qiling",
+    step3Body: "O'yinlar, grammatika mashqlari va IELTS topshiriqlari bilan bilimingizni mustahkamlang.",
+    step4Title: "Natijani ko'ring",
+    step4Body: "Kunlik seriya, statistika va yutuqlar bilan haqiqiy taraqqiyotingizni kuzating.",
+    statsKicker: "Vocora raqamlarda",
+    statLearners: "Faol o'quvchi",
+    statWords: "O'rganilgan so'z",
+    statCountries: "Davlat",
+    statRating: "Foydalanuvchi bahosi",
+    ieltsSkillsKicker: "IELTS tayyorgarlik",
+    ieltsSkillsTitle: "4 ta ko'nikma, bitta tizim",
+    ieltsSkillsBody:
+      "Reading, Writing, Listening va Speaking — har biri uchun band 7-9 model javoblar, strategiyalar va real imtihon uslubidagi mashqlar.",
+    skillReadingTitle: "O'qish",
+    skillReadingBody: "Academic va General matnlar, savol turlari bo'yicha strategiyalar.",
+    skillWritingTitle: "Yozish",
+    skillWritingBody: "Task 1 va Task 2 uchun model insholar va baholash mezonlari.",
+    skillListeningTitle: "Tinglash",
+    skillListeningBody: "Turli aksentlar va real imtihon formatidagi audio mashqlar.",
+    skillSpeakingTitle: "Gapirish",
+    skillSpeakingBody: "Part 1-3 mavzulari, native iboralar va AI orqali baholash.",
     hero: {
       eyebrow: "Aniq reja. Haqiqiy natija.",
       title: "Ingliz tili shu yerdan boshlanadi",
@@ -364,6 +535,33 @@ const homeCopy: Record<
     systemKicker: "Единая система обучения",
     systemTitle: "От запоминания слов до свободной речи в одном месте",
     previewLevel: "Попробовать 5 слов",
+    howKicker: "Как это работает",
+    howTitle: "Четыре шага до результата",
+    step1Title: "Выберите слова",
+    step1Body: "Подберите слова по своему уровню или интересам — от A1 до C2.",
+    step2Title: "Повторяйте с умом",
+    step2Body: "Каждое слово возвращается именно тогда, когда начинает забываться — никакого лишнего времени.",
+    step3Title: "Практикуйтесь",
+    step3Body: "Закрепляйте знания через игры, грамматику и задания IELTS.",
+    step4Title: "Смотрите результат",
+    step4Body: "Следите за реальным прогрессом через серии, статистику и достижения.",
+    statsKicker: "Vocora в цифрах",
+    statLearners: "Активных учеников",
+    statWords: "Изученных слов",
+    statCountries: "Стран",
+    statRating: "Оценка пользователей",
+    ieltsSkillsKicker: "Подготовка к IELTS",
+    ieltsSkillsTitle: "4 навыка — одна система",
+    ieltsSkillsBody:
+      "Reading, Writing, Listening и Speaking — модельные ответы Band 7-9, стратегии и задания в формате настоящего экзамена для каждого раздела.",
+    skillReadingTitle: "Чтение",
+    skillReadingBody: "Тексты Academic и General, стратегии по типам вопросов.",
+    skillWritingTitle: "Письмо",
+    skillWritingBody: "Модельные эссе для Task 1 и Task 2 с критериями оценки.",
+    skillListeningTitle: "Аудирование",
+    skillListeningBody: "Разные акценты и задания в формате настоящего экзамена.",
+    skillSpeakingTitle: "Говорение",
+    skillSpeakingBody: "Темы Part 1-3, живые фразы и оценка через AI.",
     hero: {
       eyebrow: "Чёткий план. Реальный результат.",
       title: "Английский начинается здесь",
@@ -414,6 +612,33 @@ const homeCopy: Record<
     systemKicker: "One learning system",
     systemTitle: "Everything from memorizing words to speaking fluently",
     previewLevel: "Try 5 words",
+    howKicker: "How it works",
+    howTitle: "Four steps to real progress",
+    step1Title: "Pick your words",
+    step1Body: "Choose words that match your level or interests — from A1 to C2.",
+    step2Title: "Review smartly",
+    step2Body: "Every word comes back right as you start to forget it — no wasted time.",
+    step3Title: "Practice it",
+    step3Body: "Reinforce what you learn through games, grammar drills, and IELTS tasks.",
+    step4Title: "See it add up",
+    step4Body: "Track real progress with daily streaks, stats, and achievements.",
+    statsKicker: "Vocora by the numbers",
+    statLearners: "Active learners",
+    statWords: "Words learned",
+    statCountries: "Countries",
+    statRating: "User rating",
+    ieltsSkillsKicker: "IELTS preparation",
+    ieltsSkillsTitle: "4 skills, one system",
+    ieltsSkillsBody:
+      "Reading, Writing, Listening, and Speaking — Band 7-9 model answers, strategies, and real exam-format practice for every section.",
+    skillReadingTitle: "Reading",
+    skillReadingBody: "Academic and General passages, strategies by question type.",
+    skillWritingTitle: "Writing",
+    skillWritingBody: "Model essays for Task 1 and Task 2 with scoring criteria.",
+    skillListeningTitle: "Listening",
+    skillListeningBody: "Different accents and real exam-format audio tasks.",
+    skillSpeakingTitle: "Speaking",
+    skillSpeakingBody: "Part 1-3 topics, natural phrases, and AI-powered scoring.",
     hero: {
       eyebrow: "A clear plan. Real progress.",
       title: "English starts right here",
