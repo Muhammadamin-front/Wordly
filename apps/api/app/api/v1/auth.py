@@ -61,7 +61,12 @@ def set_refresh_cookie(response: Response, token: str, settings: Settings) -> No
 
 def clear_refresh_cookie(response: Response, settings: Settings) -> None:
     response.delete_cookie(
-        key=REFRESH_COOKIE_NAME, domain=settings.COOKIE_DOMAIN, path="/api/v1/auth"
+        key=REFRESH_COOKIE_NAME,
+        domain=settings.COOKIE_DOMAIN,
+        path="/api/v1/auth",
+        httponly=True,
+        secure=settings.COOKIE_SECURE,
+        samesite="lax",
     )
 
 

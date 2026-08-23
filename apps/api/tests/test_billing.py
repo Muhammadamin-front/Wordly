@@ -121,7 +121,7 @@ async def test_billing_status_and_unconfigured_checkout(client):
     assert status_response.json() == {
         "checkout_enabled": False,
         "sandbox_enabled": True,
-        "providers": {"payme": False, "click": False},
+        "providers": {"payme": False, "click": False, "uzum": False},
         "family_plan_available": False,
     }
 
@@ -139,6 +139,189 @@ async def test_billing_status_and_unconfigured_checkout(client):
     async with db_session.get_session_factory()() as session:
         payment_count = await session.scalar(select(func.count(Payment.id)))
     assert payment_count == 0
+
+
+# --- Uzum Checkout ----------------------------------------------------------
+
+
+async def test_uzum_checkout_registers_hosted_page_and_reuses_idempotency(client, monkeypatch):
+    from app.services import uzum
+
+    settings = get_settings()
+    settings.UZUM_TERMINAL_ID = "terminal-1"
+    settings.UZUM_API_KEY = "api-key-1"
+    settings.UZUM_WEBHOOK_SECRET = "callback-token-which-is-long"
+    calls = []
+
+    async def fake_post(path, payload, language):
+        calls.append((path, payload, language))
+        return {"orderId": "uzum-order-1", "paymentRedirectUrl": "https://checkout.example.uz/pay/1"}
+
+    monkeypatch.setattr(uzum, "_post", fake_post)
+    key = "uzum-idempotency-key-000001"
+    try:
+        headers = await learner(client, email="uzum-buyer@words.uz")
+        first = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "uzum", "return_url": "/uz/billing"},
+            headers={**headers, "Idempotency-Key": key},
+        )
+        second = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "uzum", "return_url": "/uz/billing"},
+            headers={**headers, "Idempotency-Key": key},
+        )
+        assert first.status_code == second.status_code == 201
+        assert first.json()["order_id"] == second.json()["order_id"]
+        assert first.json()["checkout_url"] == "https://checkout.example.uz/pay/1"
+        assert len(calls) == 1
+        path, payload, language = calls[0]
+        assert path == "/payment/register"
+        assert payload["amount"] == 2_900_000
+        assert payload["orderNumber"] == first.json()["order_id"]
+        assert payload["paymentParams"] == {"operationType": "PAYMENT", "payType": "ONE_STEP", "force3ds": True}
+        assert language == "uz-UZ"
+    finally:
+        settings.UZUM_TERMINAL_ID = None
+        settings.UZUM_API_KEY = None
+        settings.UZUM_WEBHOOK_SECRET = None
+
+
+async def test_uzum_callback_verifies_remote_completion_before_granting(client, monkeypatch):
+    from app.services import uzum
+
+    settings = get_settings()
+    settings.UZUM_TERMINAL_ID = "terminal-1"
+    settings.UZUM_API_KEY = "api-key-1"
+    settings.UZUM_WEBHOOK_SECRET = "callback-token-which-is-long"
+    order_id = ""
+    verify_calls = 0
+
+    async def fake_post(path, payload, language):
+        nonlocal verify_calls
+        if path == "/payment/register":
+            return {"orderId": "uzum-order-2", "paymentRedirectUrl": "https://checkout.example.uz/pay/2"}
+        assert path == "/payment/getOrderStatus"
+        verify_calls += 1
+        assert payload == {"orderId": "uzum-order-2"}
+        return {
+            "orderId": "uzum-order-2",
+            "merchantOrderId": order_id,
+            "status": "COMPLETED",
+            "amount": 2_900_000,
+        }
+
+    monkeypatch.setattr(uzum, "_post", fake_post)
+    try:
+        headers = await learner(client, email="uzum-complete@words.uz")
+        checkout = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            headers=headers,
+        )
+        order_id = checkout.json()["order_id"]
+        callback = await client.post(
+            "/api/v1/payments/uzum/callback-token-which-is-long",
+            json={"orderId": "uzum-order-2", "orderNumber": order_id, "operationState": "SUCCESS"},
+        )
+        assert callback.status_code == 200
+        assert (await client.get("/api/v1/billing/subscription", headers=headers)).json()["provider"] == "uzum"
+
+        # Replayed gateway callbacks never add a second paid period.
+        repeated = await client.post(
+            "/api/v1/payments/uzum/callback-token-which-is-long",
+            json={"orderId": "uzum-order-2", "orderNumber": order_id, "operationState": "SUCCESS"},
+        )
+        assert repeated.status_code == 200
+        assert verify_calls == 2
+    finally:
+        settings.UZUM_TERMINAL_ID = None
+        settings.UZUM_API_KEY = None
+        settings.UZUM_WEBHOOK_SECRET = None
+
+
+async def test_uzum_declined_payment_never_grants_premium_even_with_success_callback(client, monkeypatch):
+    """A browser/callback claim is irrelevant when Uzum reports a declined card."""
+    from app.services import uzum
+
+    settings = get_settings()
+    settings.UZUM_TERMINAL_ID = "terminal-1"
+    settings.UZUM_API_KEY = "api-key-1"
+    settings.UZUM_WEBHOOK_SECRET = "callback-token-which-is-long"
+    order_id = ""
+
+    async def fake_post(path, payload, language):
+        if path == "/payment/register":
+            return {"orderId": "uzum-order-declined", "paymentRedirectUrl": "https://checkout.example.uz/pay/declined"}
+        assert path == "/payment/getOrderStatus"
+        return {
+            "orderId": "uzum-order-declined",
+            "merchantOrderId": order_id,
+            "status": "DECLINED",
+            "amount": 2_900_000,
+        }
+
+    monkeypatch.setattr(uzum, "_post", fake_post)
+    try:
+        headers = await learner(client, email="uzum-declined@words.uz")
+        checkout = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            headers=headers,
+        )
+        order_id = checkout.json()["order_id"]
+        callback = await client.post(
+            "/api/v1/payments/uzum/callback-token-which-is-long",
+            # This is deliberately a forged/optimistic callback state. The
+            # remote server-to-server status still decides entitlement.
+            json={"orderId": "uzum-order-declined", "orderNumber": order_id, "operationState": "SUCCESS"},
+        )
+        assert callback.status_code == 200
+        assert (await client.get("/api/v1/billing/subscription", headers=headers)).json()["is_premium"] is False
+    finally:
+        settings.UZUM_TERMINAL_ID = None
+        settings.UZUM_API_KEY = None
+        settings.UZUM_WEBHOOK_SECRET = None
+
+
+async def test_uzum_callback_rejects_amount_mismatch_without_granting(client, monkeypatch):
+    from app.services import uzum
+
+    settings = get_settings()
+    settings.UZUM_TERMINAL_ID = "terminal-1"
+    settings.UZUM_API_KEY = "api-key-1"
+    settings.UZUM_WEBHOOK_SECRET = "callback-token-which-is-long"
+    order_id = ""
+
+    async def fake_post(path, payload, language):
+        if path == "/payment/register":
+            return {"orderId": "uzum-order-3", "paymentRedirectUrl": "https://checkout.example.uz/pay/3"}
+        return {
+            "orderId": "uzum-order-3",
+            "merchantOrderId": order_id,
+            "status": "COMPLETED",
+            "amount": 100,
+        }
+
+    monkeypatch.setattr(uzum, "_post", fake_post)
+    try:
+        headers = await learner(client, email="uzum-amount@words.uz")
+        checkout = await client.post(
+            "/api/v1/billing/checkout",
+            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            headers=headers,
+        )
+        order_id = checkout.json()["order_id"]
+        callback = await client.post(
+            "/api/v1/payments/uzum/callback-token-which-is-long",
+            json={"orderId": "uzum-order-3", "orderNumber": order_id},
+        )
+        assert callback.status_code == 409
+        assert (await client.get("/api/v1/billing/subscription", headers=headers)).json()["is_premium"] is False
+    finally:
+        settings.UZUM_TERMINAL_ID = None
+        settings.UZUM_API_KEY = None
+        settings.UZUM_WEBHOOK_SECRET = None
 
 
 async def test_sandbox_is_always_disabled_in_production(client):

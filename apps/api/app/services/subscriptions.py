@@ -48,7 +48,12 @@ async def is_premium(db: AsyncSession, user: User) -> bool:
 
 
 async def grant(
-    db: AsyncSession, user_id: UUID, plan_code: str, provider: str, extra_days: int = 0
+    db: AsyncSession,
+    user_id: UUID,
+    plan_code: str,
+    provider: str,
+    extra_days: int = 0,
+    external_subscription_id: Optional[str] = None,
 ) -> Subscription:
     """Activate or extend a subscription. Extending stacks onto the remaining
     time so re-purchasing before expiry never loses days."""
@@ -67,6 +72,7 @@ async def grant(
             seats=plan.seats,
             started_at=now,
             expires_at=now + timedelta(days=days),
+            external_subscription_id=external_subscription_id,
         )
         db.add(sub)
     else:
@@ -78,6 +84,8 @@ async def grant(
         sub.cancelled_at = None
         sub.auto_renew = False
         sub.expires_at = base + timedelta(days=days)
+        if external_subscription_id is not None:
+            sub.external_subscription_id = external_subscription_id
     await db.flush()
     return sub
 

@@ -148,6 +148,12 @@ class Settings(BaseSettings):
     CLICK_MERCHANT_ID: Optional[str] = None
     CLICK_SECRET_KEY: Optional[str] = None
     CLICK_CHECKOUT_URL: str = "https://my.click.uz/services/pay"
+    # Uzum Checkout hosted payment form. These values are issued by Uzum Bank
+    # to a merchant; they never reach a browser or native app.
+    UZUM_TERMINAL_ID: Optional[str] = None
+    UZUM_API_KEY: Optional[str] = None
+    UZUM_WEBHOOK_SECRET: Optional[str] = None
+    UZUM_API_BASE_URL: str = "https://developer.uzumbank.uz/api/v1"
     # Dev/demo only: lets a user self-activate premium without a real gateway.
     PAYMENTS_SANDBOX: bool = True
     REFERRAL_REWARD_DAYS: int = 30
@@ -161,6 +167,12 @@ class Settings(BaseSettings):
         return bool(
             self.CLICK_SERVICE_ID and self.CLICK_MERCHANT_ID and self.CLICK_SECRET_KEY
         )
+
+    @property
+    def uzum_enabled(self) -> bool:
+        # The opaque callback token is part of the merchant callback URL. It
+        # prevents a random internet client from making us query an order.
+        return bool(self.UZUM_TERMINAL_ID and self.UZUM_API_KEY and self.UZUM_WEBHOOK_SECRET)
 
     @property
     def payment_sandbox_enabled(self) -> bool:

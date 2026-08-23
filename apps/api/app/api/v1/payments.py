@@ -22,7 +22,7 @@ from app.schemas.billing import (
     SandboxActivateRequest,
     SubscriptionOut,
 )
-from app.services import checkout, click, payme, referrals, subscriptions
+from app.services import checkout, click, payme, referrals, subscriptions, uzum
 from app.services.plans import SELLABLE_PLAN_CODES, get_plan, public_plans, som_to_tiyin
 
 # --- Gateway callbacks (called by Payme/Click servers, not the browser) -----
@@ -49,6 +49,14 @@ async def click_prepare(request: Request, db: AsyncSession = Depends(get_db)):
 async def click_complete(request: Request, db: AsyncSession = Depends(get_db)):
     form = dict((await request.form()))
     return await click.complete(db, {k: str(v) for k, v in form.items()})
+
+
+@gateway_router.post("/uzum/{webhook_secret}")
+async def uzum_callback(
+    webhook_secret: str, request: Request, db: AsyncSession = Depends(get_db)
+):
+    """Accept an Uzum notification only after a server-to-server status check."""
+    return await uzum.handle_callback(db, await request.json(), webhook_secret)
 
 
 # --- Authenticated billing surface (the app itself) -------------------------
@@ -90,6 +98,7 @@ async def billing_status():
     providers = {
         "payme": settings.payme_enabled,
         "click": settings.click_enabled,
+        "uzum": settings.uzum_enabled,
     }
     return BillingStatusOut(
         checkout_enabled=any(providers.values()),
@@ -130,9 +139,11 @@ async def create_checkout(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid plan")
 
     settings = get_settings()
-    provider_enabled = (
-        settings.payme_enabled if payload.provider == "payme" else settings.click_enabled
-    )
+    provider_enabled = {
+        "payme": settings.payme_enabled,
+        "click": settings.click_enabled,
+        "uzum": settings.uzum_enabled,
+    }[payload.provider]
     if not provider_enabled:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -154,11 +165,17 @@ async def create_checkout(
                     status_code=status.HTTP_409_CONFLICT,
                     detail="Idempotency key already belongs to a different checkout",
                 )
-            url = (
-                checkout.payme_url(str(existing.id), plan, return_url)
-                if existing.provider == "payme"
-                else checkout.click_url(str(existing.id), plan, return_url)
-            )
+            if existing.provider == "payme":
+                url = checkout.payme_url(str(existing.id), plan, return_url)
+            elif existing.provider == "click":
+                url = checkout.click_url(str(existing.id), plan, return_url)
+            elif existing.checkout_url:
+                url = existing.checkout_url
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail="Checkout registration is incomplete; start a new payment",
+                )
             return CheckoutOut(order_id=str(existing.id), checkout_url=url, amount_som=plan.price_som)
 
     order = Payment(
@@ -175,8 +192,28 @@ async def create_checkout(
 
     if payload.provider == "payme":
         url = checkout.payme_url(str(order.id), plan, return_url)
-    else:
+    elif payload.provider == "click":
         url = checkout.click_url(str(order.id), plan, return_url)
+    else:
+        try:
+            registration = await uzum.register_checkout(
+                order_id=str(order.id),
+                user_id=str(user.id),
+                plan=plan,
+                return_url=return_url,
+                locale=user.profile.ui_locale,
+            )
+        except uzum.UzumCheckoutError as exc:
+            order.status = "failed"
+            await db.commit()
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="Uzum Checkout is temporarily unavailable",
+            ) from exc
+        order.provider_txn_id = registration.order_id
+        order.checkout_url = registration.checkout_url
+        await db.commit()
+        url = registration.checkout_url
     return CheckoutOut(order_id=str(order.id), checkout_url=url, amount_som=plan.price_som)
 
 

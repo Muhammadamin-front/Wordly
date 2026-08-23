@@ -65,7 +65,9 @@ class FamilyMember(Base):
 class Payment(Base):
     """One payment order + its gateway transaction. `state` follows Payme's
     machine: 0 pending (order created), 1 created, 2 performed, -1/-2 cancelled.
-    Click reuses 0/1/2/-1. Amounts stored in tiyin for exactness."""
+    Click and Uzum use the same normalized states. Amounts are stored in tiyin
+    for exactness; hosted checkout URLs are server-generated and never contain
+    a card number or merchant secret."""
 
     __tablename__ = "payments"
     __table_args__ = (
@@ -87,6 +89,7 @@ class Payment(Base):
     idempotency_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     state: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     provider_txn_id: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
+    checkout_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
     create_time_ms: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     perform_time_ms: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)
     cancel_time_ms: Mapped[Optional[int]] = mapped_column(BigInteger, nullable=True)

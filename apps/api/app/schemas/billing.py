@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -36,7 +36,7 @@ class SubscriptionOut(BaseModel):
 
 class CheckoutRequest(BaseModel):
     plan_code: str = Field(min_length=1, max_length=24)
-    provider: str = Field(pattern="^(payme|click)$")
+    provider: Literal["payme", "click", "uzum"]
     return_url: Optional[str] = Field(default=None, max_length=500)
 
 
