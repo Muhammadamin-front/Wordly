@@ -118,6 +118,7 @@ CORPUS_FILES = [
     "phrasal_idioms_9.csv",
     "idioms_expressions_batch1.csv",
     "c2_advanced_batch2.csv",
+    "phrasal_idioms_10.csv",
 ]
 
 
