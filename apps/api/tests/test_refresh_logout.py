@@ -17,8 +17,8 @@ async def test_refresh_rotates_token(client):
 
 async def test_refresh_via_cookie(client):
     await register_user(client)
-    # register set the httpOnly cookie on the client jar; empty body should work
-    response = await client.post("/api/v1/auth/refresh", json={})
+    # Browser refresh remains cookie-only and does not need a request body.
+    response = await client.post("/api/v1/auth/refresh")
     assert response.status_code == 200
 
 
@@ -46,8 +46,11 @@ async def test_reused_rotated_token_revokes_all_sessions(client):
 
 
 async def test_refresh_token_in_request_body_is_ignored_without_mobile_session(client):
+    await register_user(client)
+    refresh = client.cookies.get("words_refresh")
+    assert refresh
     client.cookies.clear()
-    response = await client.post("/api/v1/auth/refresh", json={"refresh_token": "garbage"})
+    response = await client.post("/api/v1/auth/refresh", json={"refresh_token": refresh})
     assert response.status_code == 401
 
 
@@ -96,7 +99,7 @@ async def test_logout_revokes_refresh_token(client):
     refresh = client.cookies.get("words_refresh")
     assert refresh
 
-    out = await client.post("/api/v1/auth/logout", json={})
+    out = await client.post("/api/v1/auth/logout")
     assert out.status_code == 200
     assert client.cookies.get("words_refresh") is None
 

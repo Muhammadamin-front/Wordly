@@ -29,12 +29,17 @@ def use_verifier(identity: Optional[GoogleIdentity]) -> None:
 async def test_google_login_creates_verified_user(client):
     use_verifier(IDENTITY)
     try:
-        response = await client.post("/api/v1/auth/google", json={"id_token": "x" * 20})
+        response = await client.post(
+            "/api/v1/auth/google",
+            json={"id_token": "x" * 20, "ui_locale": "ru"},
+            headers={"X-Client": "mobile"},
+        )
         assert response.status_code == 200, response.text
         user = response.json()["user"]
         assert user["email"] == "jasur@example.uz"
         assert user["email_verified"] is True
         assert user["profile"]["display_name"] == "Jasur"
+        assert user["profile"]["ui_locale"] == "ru"
         assert user["profile"]["onboarding_completed"] is False
     finally:
         app.dependency_overrides.clear()
