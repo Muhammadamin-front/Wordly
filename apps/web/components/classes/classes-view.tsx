@@ -9,6 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { ApiError } from "@/lib/api";
+import { formatApiDate } from "@/lib/dates";
 import { studentApi, type StudentAssignment, type StudentClass } from "@/lib/teacher";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -114,7 +115,7 @@ export function ClassesView({ lang, t }: { lang: string; t: Dictionary["classes"
                   <div>
                     <p className="text-sm font-semibold text-ink">{a.assignment.title}</p>
                     <p className="text-xs text-ink-soft">
-                      {t.due}: {new Date(a.assignment.due_at).toLocaleDateString(lang)} ·{" "}
+                      {t.due}: {formatApiDate(a.assignment.due_at, lang) ?? "—"} ·{" "}
                       {a.reviews} {t.of} {a.assignment.target_reviews} {t.reviews}
                     </p>
                   </div>

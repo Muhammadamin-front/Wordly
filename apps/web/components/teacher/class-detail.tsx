@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { dateInputToDeadlineIso, formatApiDate } from "@/lib/dates";
 import { teacherApi, type ClassAnalytics } from "@/lib/teacher";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -50,11 +51,13 @@ export function ClassDetail({
     const title = String(form.get("title") ?? "").trim();
     const due = String(form.get("due_at") ?? "");
     if (!title || !due) return;
+    const dueAt = dateInputToDeadlineIso(due);
+    if (!dueAt) return;
     await teacherApi.createAssignment(classId, {
       title,
       instructions: String(form.get("instructions") ?? "") || undefined,
       target_reviews: Number(form.get("target_reviews")) || 20,
-      due_at: new Date(due).toISOString(),
+      due_at: dueAt,
     });
     (event.target as HTMLFormElement).reset();
     setReloadKey((n) => n + 1);
@@ -127,7 +130,7 @@ export function ClassDetail({
               <div>
                 <p className="font-bold text-ink">{a.assignment.title}</p>
                 <p className="text-xs text-ink-soft">
-                  {t.dueDate}: {new Date(a.assignment.due_at).toLocaleDateString(lang)} ·{" "}
+                  {t.dueDate}: {formatApiDate(a.assignment.due_at, lang) ?? "—"} ·{" "}
                   {a.assignment.target_reviews} {t.reviews}
                 </p>
               </div>
@@ -169,4 +172,3 @@ export function ClassDetail({
     </main>
   );
 }
-
