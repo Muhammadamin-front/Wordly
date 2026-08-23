@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.user import User
 from app.schemas.statistics import (
@@ -12,7 +13,10 @@ from app.schemas.statistics import (
 )
 from app.services import statistics as stats_service
 
-router = APIRouter(tags=["statistics"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    tags=["statistics"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
+)
 
 
 @router.get("/me/statistics", response_model=StatisticsOut)

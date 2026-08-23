@@ -97,6 +97,18 @@ def client_ip(connection: HTTPConnection) -> str:
     return str(addresses[0])
 
 
+async def ws_connect_allowed(
+    websocket: HTTPConnection, storage: RateLimitStorage, rule: str
+) -> bool:
+    """Per-IP throttle on the handshake itself — called right after
+    `accept()`, before any auth or per-action check, so a WS-handshake flood
+    against `/ws/quiz` or `/coach/sessions/{id}/live` can't consume unlimited
+    connection slots just to get rejected downstream."""
+    limit, window = parse_rule(rule)
+    allowed, _ = await storage.hit("ws_connect:{}".format(client_ip(websocket)), limit, window)
+    return allowed
+
+
 def rate_limit(scope: str, rule: Optional[str] = None):
     """Dependency factory: rate-limits by client IP within a named scope."""
 

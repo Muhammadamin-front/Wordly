@@ -1,11 +1,13 @@
 """Public browse API for the English Expression Library."""
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel
 from sqlalchemy import distinct, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import cached_response
+from app.core.config import get_settings
 from app.db.session import get_db
 from app.models.expression import Expression
 
@@ -136,21 +138,27 @@ def to_detail(expression: Expression, locale: str) -> ExpressionOut:
 
 
 @router.get("/meta", response_model=ExpressionMeta)
-async def expression_meta(db: AsyncSession = Depends(get_db)):
-    total = await db.scalar(select(func.count(Expression.id))) or 0
-    rows = await db.execute(
-        select(Expression.category, func.count(Expression.id))
-        .group_by(Expression.category)
-        .order_by(func.count(Expression.id).desc())
-    )
-    return ExpressionMeta(
-        total=total,
-        categories=[CategoryCount(category=c, count=n) for c, n in rows.all()],
+async def expression_meta(request: Request, db: AsyncSession = Depends(get_db)):
+    async def produce():
+        total = await db.scalar(select(func.count(Expression.id))) or 0
+        rows = await db.execute(
+            select(Expression.category, func.count(Expression.id))
+            .group_by(Expression.category)
+            .order_by(func.count(Expression.id).desc())
+        )
+        return ExpressionMeta(
+            total=total,
+            categories=[CategoryCount(category=c, count=n) for c, n in rows.all()],
+        )
+
+    return await cached_response(
+        request, "expressions-meta", get_settings().CACHE_TTL_CATEGORIES, produce
     )
 
 
 @router.get("", response_model=ExpressionPage)
 async def browse_expressions(
+    request: Request,
     page: int = Query(1, ge=1),
     page_size: int = Query(24, ge=1, le=100),
     cefr: Optional[str] = Query(None, pattern=CEFR_PATTERN),
@@ -159,47 +167,61 @@ async def browse_expressions(
     locale: str = Query("uz", pattern=LOCALE_PATTERN),
     db: AsyncSession = Depends(get_db),
 ):
-    conds = []
-    if cefr:
-        conds.append(Expression.cefr == cefr)
-    if category:
-        conds.append(Expression.category == category)
-    if q:
-        like = f"%{q.strip()}%"
-        translated = {
-            "uz": Expression.uzbek,
-            "ru": Expression.russian,
-            "en": Expression.usage,
-        }[locale]
-        conds.append(or_(Expression.expression.ilike(like), translated.ilike(like)))
+    async def produce():
+        conds = []
+        if cefr:
+            conds.append(Expression.cefr == cefr)
+        if category:
+            conds.append(Expression.category == category)
+        if q:
+            like = f"%{q.strip()}%"
+            translated = {
+                "uz": Expression.uzbek,
+                "ru": Expression.russian,
+                "en": Expression.usage,
+            }[locale]
+            conds.append(or_(Expression.expression.ilike(like), translated.ilike(like)))
 
-    base = select(Expression)
-    count_q = select(func.count(distinct(Expression.id)))
-    for c in conds:
-        base = base.where(c)
-        count_q = count_q.where(c)
+        base = select(Expression)
+        count_q = select(func.count(distinct(Expression.id)))
+        for c in conds:
+            base = base.where(c)
+            count_q = count_q.where(c)
 
-    total = await db.scalar(count_q) or 0
-    rows = await db.scalars(
-        base.order_by(Expression.category, Expression.cefr, Expression.expression)
-        .offset((page - 1) * page_size)
-        .limit(page_size)
+        total = await db.scalar(count_q) or 0
+        rows = await db.scalars(
+            base.order_by(Expression.category, Expression.cefr, Expression.expression)
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+        return ExpressionPage(
+            items=[to_list_item(e, locale) for e in rows],
+            total=total,
+            page=page,
+            page_size=page_size,
+        )
+
+    key = "expressions:{}:{}:{}:{}:{}:{}".format(
+        page, page_size, cefr or "", category or "", q or "", locale
     )
-    return ExpressionPage(
-        items=[to_list_item(e, locale) for e in rows],
-        total=total,
-        page=page,
-        page_size=page_size,
-    )
+    return await cached_response(request, key, get_settings().CACHE_TTL_WORDS, produce)
 
 
 @router.get("/{slug}", response_model=ExpressionOut)
 async def expression_detail(
+    request: Request,
     slug: str,
     locale: str = Query("uz", pattern=LOCALE_PATTERN),
     db: AsyncSession = Depends(get_db),
 ):
-    expr = await db.scalar(select(Expression).where(Expression.slug == slug))
-    if expr is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Expression not found")
-    return to_detail(expr, locale)
+    async def produce():
+        expr = await db.scalar(select(Expression).where(Expression.slug == slug))
+        if expr is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Expression not found"
+            )
+        return to_detail(expr, locale)
+
+    return await cached_response(
+        request, "expression:{}:{}".format(slug, locale), get_settings().CACHE_TTL_WORD_DETAIL, produce
+    )

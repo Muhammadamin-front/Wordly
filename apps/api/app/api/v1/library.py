@@ -7,12 +7,17 @@ from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.flashcards import Card
 from app.models.user import User
 from app.models.vocabulary import CEFR_LEVELS, Category, Word
 
-router = APIRouter(prefix="/library", tags=["library"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    prefix="/library",
+    tags=["library"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
+)
 
 # Category shelves surfaced in the library alongside CEFR levels.
 CATEGORY_SHELVES = ("ielts", "phrasal", "idioms", "toefl", "sat", "business")

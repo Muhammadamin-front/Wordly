@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.flashcards import Card, Deck, ReviewReceipt
 from app.models.user import User
@@ -34,7 +35,10 @@ from app.schemas.gamification import RewardOut
 from app.services.review import record_review
 from app.core.security import utcnow
 
-router = APIRouter(tags=["flashcards"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    tags=["flashcards"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
+)
 
 
 async def get_own_deck(db: AsyncSession, user: User, deck_id: UUID) -> Deck:

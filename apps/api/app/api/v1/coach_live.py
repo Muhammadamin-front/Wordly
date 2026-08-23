@@ -27,6 +27,7 @@ import websockets
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.core.config import get_settings
+from app.core.rate_limit import ws_connect_allowed
 from app.core.security import decode_access_token
 from app.services import coach_live
 from app.services.ai_client import AiError, get_ai_client
@@ -40,6 +41,14 @@ router = APIRouter(tags=["coach"])
 async def live_voice(websocket: WebSocket, session_id: str):
     await websocket.accept()
 
+    settings = get_settings()
+    if settings.RATE_LIMIT_ENABLED and not await ws_connect_allowed(
+        websocket, websocket.app.state.rate_limit_storage, settings.RATE_LIMIT_WS_CONNECT
+    ):
+        await websocket.send_json({"type": "error", "error": "rate_limited"})
+        await websocket.close()
+        return
+
     # --- Auth + preconditions ------------------------------------------------
     user_id = decode_access_token(websocket.query_params.get("token", ""))
     if user_id is None:
@@ -47,7 +56,6 @@ async def live_voice(websocket: WebSocket, session_id: str):
         await websocket.close()
         return
 
-    settings = get_settings()
     if not settings.deepgram_enabled:
         await websocket.send_json({"type": "error", "error": "stt_unavailable"})
         await websocket.close()

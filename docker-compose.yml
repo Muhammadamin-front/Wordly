@@ -70,7 +70,7 @@ services:
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0}
     ports:
       # Override with API_PORT if 8000 is taken on the host.
-      - "127.0.0.1:${API_PORT:-8000}:8000"
+      - "${API_BIND_HOST:-127.0.0.1}:${API_PORT:-8000}:8000"
     volumes:
       - tts_cache:/srv/api/tts_cache
     depends_on:

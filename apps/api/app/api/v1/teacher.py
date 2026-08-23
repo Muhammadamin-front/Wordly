@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.classroom import Assignment, ClassMembership, Classroom
 from app.models.user import User
@@ -21,7 +22,10 @@ from app.schemas.classroom import (
 )
 from app.services import classrooms
 
-router = APIRouter(tags=["classrooms"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    tags=["classrooms"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
+)
 
 
 async def _own_class(db: AsyncSession, teacher: User, class_id: UUID) -> Classroom:

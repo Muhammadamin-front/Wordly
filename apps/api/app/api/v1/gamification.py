@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.gamification import DailyActivity, LeagueEntry, UserAchievement
 from app.models.user import Profile, User
@@ -31,7 +32,10 @@ from app.services.leveling import (
     local_today,
 )
 
-router = APIRouter(tags=["gamification"], dependencies=[Depends(get_current_user)])
+router = APIRouter(
+    tags=["gamification"],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
+)
 
 
 @router.get("/me/daily-quests", response_model=DailyQuestsOut)
