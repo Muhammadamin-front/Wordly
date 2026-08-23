@@ -10,7 +10,7 @@ import {
   type ReactNode,
 } from "react";
 
-import { authApi, setAccessToken, type TokenPair, type User } from "@/lib/api";
+import { authApi, refreshSession, setAccessToken, type TokenPair, type User } from "@/lib/api";
 
 interface AuthState {
   user: User | null;
@@ -29,15 +29,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    authApi
-      .refresh()
+    // Goes through the same deduped refreshSession() as apiFetch's own
+    // 401-retry — both used to call /auth/refresh independently, racing to
+    // redeem the same single-use rotating refresh-token cookie. The loser
+    // wasn't just a wasted request: the backend treats a reused refresh
+    // token as theft and revokes every session for that user, so an
+    // unlucky race could silently sign a genuinely logged-in visitor out.
+    refreshSession()
       .then((pair) => {
-        if (cancelled) return;
-        setAccessToken(pair.access_token);
+        if (cancelled || !pair) return;
         setUser(pair.user);
-      })
-      .catch(() => {
-        // No valid session — that's a normal signed-out state.
       })
       .finally(() => {
         if (!cancelled) setReady(true);

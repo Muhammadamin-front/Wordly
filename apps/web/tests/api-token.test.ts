@@ -1,7 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { apiFetch, setAccessToken, waitForAccessToken } from "@/lib/api";
+import { apiFetch, refreshSession, setAccessToken, waitForAccessToken } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
+
+const json = (status: number, body: unknown) =>
+  new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
 describe("waitForAccessToken", () => {
   afterEach(() => {
@@ -79,5 +82,40 @@ describe("review requests", () => {
     expect((fetchMock.mock.calls[2][1] as RequestInit).headers).toMatchObject({
       Authorization: "Bearer fresh-token",
     });
+  });
+
+  // AuthProvider's silent-refresh-on-mount and apiFetch's own 401-retry used
+  // to each call POST /auth/refresh independently. The backend's refresh
+  // token is single-use and rotates on every redeem — reusing an
+  // already-rotated one is treated as theft and revokes every session for
+  // that user (apps/api/app/services/auth.py's rotate_refresh_token). Two
+  // unrelated in-flight refreshes racing for the same cookie meant the loser
+  // could silently sign out a genuinely logged-in visitor. refreshSession()
+  // is now the only path to that endpoint, shared by both callers.
+  it("dedupes a concurrent AuthProvider refresh against an unrelated 401 retry into one network call", async () => {
+    setAccessToken("stale-token");
+    let refreshRequests = 0;
+    const fetchMock = vi.fn().mockImplementation((input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes("/auth/refresh")) {
+        refreshRequests += 1;
+        return Promise.resolve(
+          json(200, { access_token: "fresh-token", token_type: "bearer", expires_in: 900, user: { id: "u1" } })
+        );
+      }
+      return Promise.resolve(json(401, { detail: "Expired" }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    // Simulates AuthProvider's mount-time refresh() firing at the same
+    // moment some other authenticated request 401s and triggers apiFetch's
+    // own internal retry — both wanting a fresh session simultaneously.
+    const [session] = await Promise.all([
+      refreshSession(),
+      apiFetch("/protected", { auth: true }).catch(() => null),
+    ]);
+
+    expect(refreshRequests).toBe(1);
+    expect(session?.access_token).toBe("fresh-token");
   });
 });

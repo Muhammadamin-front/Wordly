@@ -48,7 +48,7 @@ export class ApiError extends Error {
 // scoped to the API's auth path, so a page reload silently re-authenticates
 // via /auth/refresh.
 let accessToken: string | null = null;
-let tokenRefresh: Promise<string | null> | null = null;
+let sessionRefresh: Promise<TokenPair | null> | null = null;
 const accessTokenWaiters = new Set<(token: string | null) => void>();
 
 export function setAccessToken(token: string | null) {
@@ -80,9 +80,19 @@ export function waitForAccessToken(timeoutMs = 3000): Promise<string | null> {
   });
 }
 
-function refreshAccessToken(): Promise<string | null> {
-  if (tokenRefresh) return tokenRefresh;
-  tokenRefresh = fetch(`${API_URL}/api/v1/auth/refresh`, {
+/** The one place `/auth/refresh` is ever called. `AuthProvider`'s own
+ *  silent-refresh-on-mount and `apiFetch`'s 401-triggered retry used to hit
+ *  this endpoint independently — two unrelated in-flight requests racing to
+ *  redeem the same single-use, rotating refresh-token cookie. The backend
+ *  treats a reused (already-rotated) refresh token as theft and revokes
+ *  every session for that user (`rotate_refresh_token` in
+ *  apps/api/app/services/auth.py), so whichever of the two calls lost that
+ *  race didn't just fail quietly — it could log the user out of every tab
+ *  and device. Routing both call sites through this single deduped promise
+ *  means at most one refresh is ever in flight application-wide. */
+export function refreshSession(): Promise<TokenPair | null> {
+  if (sessionRefresh) return sessionRefresh;
+  sessionRefresh = fetch(`${API_URL}/api/v1/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
@@ -92,13 +102,13 @@ function refreshAccessToken(): Promise<string | null> {
       if (!response.ok) return null;
       const pair = (await response.json()) as TokenPair;
       setAccessToken(pair.access_token);
-      return pair.access_token;
+      return pair;
     })
     .catch(() => null)
     .finally(() => {
-      tokenRefresh = null;
+      sessionRefresh = null;
     });
-  return tokenRefresh;
+  return sessionRefresh;
 }
 
 export async function apiFetch<T>(
@@ -129,9 +139,9 @@ export async function apiFetch<T>(
   try {
     response = await request();
     if (response.status === 401 && options.auth) {
-      const freshToken = await refreshAccessToken();
-      if (freshToken) {
-        headers.Authorization = `Bearer ${freshToken}`;
+      const pair = await refreshSession();
+      if (pair) {
+        headers.Authorization = `Bearer ${pair.access_token}`;
         response = await request();
       }
     }
@@ -190,7 +200,7 @@ export const authApi = {
   telegram: (fields: Record<string, string>) =>
     apiFetch<TokenPair>("/auth/telegram", { method: "POST", body: fields }),
 
-  refresh: () => apiFetch<TokenPair>("/auth/refresh", { method: "POST", body: {} }),
+  refresh: refreshSession,
 
   logout: () => apiFetch<{ message: string }>("/auth/logout", { method: "POST", body: {} }),
 
