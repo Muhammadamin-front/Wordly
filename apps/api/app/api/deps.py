@@ -10,6 +10,7 @@ from app.core.config import get_settings
 from app.core.roles import ADMIN_ROLES, CONTENT_ROLES, SUPPORT_ROLES, SUPER_ADMIN
 from app.db.session import get_db
 from app.models.user import User
+from app.services import subscriptions
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -65,6 +66,20 @@ async def require_content_manager(user: User = Depends(get_current_user)) -> Use
 async def require_support(user: User = Depends(get_current_user)) -> User:
     if user.role not in SUPPORT_ROLES:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Support access required")
+    return user
+
+
+async def require_premium(
+    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+) -> User:
+    """First hard feature gate in the API — everywhere else `is_premium()` is
+    checked, it only raises the daily AI-action quota (app.services.ai_quota),
+    it never blocks a request outright."""
+    if not await subscriptions.is_premium(db, user):
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail="Premium subscription required",
+        )
     return user
 
 

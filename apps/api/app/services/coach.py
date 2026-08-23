@@ -29,6 +29,7 @@ from app.models.coach import (
 from app.models.user import User
 from app.services.ai_client import AiClient
 from app.services.gamification import RewardSummary, apply_skill_xp
+from app.services.ielts_scoring import half_band as _half_band
 
 # --- Rewards -----------------------------------------------------------------
 XP_PER_TURN = 6  # speaking practice counts as learning (apply_skill_xp)
@@ -349,14 +350,8 @@ _IELTS_SCHEMA = {
 }
 
 
-def _half_band(value: Any) -> float:
-    """Clamp to the IELTS 0–9 scale and round to the nearest half band."""
-    try:
-        band = float(value)
-    except (TypeError, ValueError):
-        band = 5.0
-    band = max(0.0, min(9.0, band))
-    return round(band * 2) / 2
+# _half_band now lives in app.services.ielts_scoring (shared with ielts.py
+# and the IELTS Mock).
 
 
 async def score_ielts(
