@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /** Short UI blips for the multiplayer flow — synthesized live with the Web
  *  Audio API, same approach as games/use-ambient-music.ts, so there is no
@@ -100,8 +100,31 @@ class SfxEngine {
 
 export function useSoundEffects() {
   const engineRef = useRef<SfxEngine | null>(null);
-  const [enabled, setEnabled] = useState(
-    () => typeof window === "undefined" || window.localStorage.getItem(STORAGE_KEY) !== "off"
+  // The server and the first browser render must agree. Reading localStorage
+  // in a state initializer renders a different tree when sound was disabled,
+  // which causes a hydration warning (and can leave controls stale).
+  const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    // Defer until after hydration. React intentionally rejects a synchronous
+    // setState in an effect here because it causes a cascading render.
+    const timer = window.setTimeout(() => {
+      try {
+        setEnabled(window.localStorage.getItem(STORAGE_KEY) !== "off");
+      } catch {
+        // Private-mode or blocked storage should not prevent a user from using
+        // the game; retain the accessible default.
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(
+    () => () => {
+      engineRef.current?.dispose();
+      engineRef.current = null;
+    },
+    []
   );
 
   const arm = useCallback(() => {

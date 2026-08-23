@@ -134,10 +134,23 @@ class AmbientEngine {
  *  browser requires a user gesture before audio may start). */
 export function useAmbientMusic(active: boolean) {
   const engineRef = useRef<AmbientEngine | null>(null);
-  // Safe on the client only; the toggle is never part of server-rendered HTML.
-  const [enabled, setEnabled] = useState(
-    () => typeof window === "undefined" || (window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_STORAGE_KEY)) !== "off"
-  );
+  // Do not read localStorage while React is producing server HTML: a stored
+  // "off" value used to make Safari/Chrome hydrate a different initial UI.
+  const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        setEnabled(
+          (window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem(LEGACY_STORAGE_KEY)) !== "off"
+        );
+      } catch {
+        // Storage can be unavailable in Safari private browsing. The default
+        // is safe because audio cannot begin until a user gesture arms it.
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const engine = (engineRef.current ??= new AmbientEngine());
@@ -160,7 +173,11 @@ export function useAmbientMusic(active: boolean) {
   const toggle = useCallback(() => {
     setEnabled((prev) => {
       const next = !prev;
-      window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
+      try {
+        window.localStorage.setItem(STORAGE_KEY, next ? "on" : "off");
+      } catch {
+        // Preserve the in-memory choice when Safari blocks persistent storage.
+      }
       return next;
     });
   }, []);
