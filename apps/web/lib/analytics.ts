@@ -12,6 +12,7 @@ export type AnalyticsEventName =
   | "signup_completed"
   | "login_completed"
   | "onboarding_completed"
+  | "onboarding_beginner_selected"
   | "lesson_started"
   | "lesson_completed"
   | "flashcard_reviewed"

@@ -97,6 +97,12 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
     setPlacementOpen(false);
   }
 
+  function chooseCompleteBeginner() {
+    setLevel("A1");
+    trackEvent("onboarding_beginner_selected", { locale: lang });
+    setStep(3);
+  }
+
   return (
     <section className="relative mx-auto flex min-h-[calc(100dvh-5.5rem)] w-full max-w-5xl items-center py-6 sm:py-10">
       <div className="surface-panel w-full overflow-hidden rounded-lg border border-line/80 shadow-[0_30px_100px_rgba(16,59,50,0.12)]">
@@ -172,6 +178,32 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                       />
                     ) : (
                       <>
+                        {!placementLevel && (
+                          <>
+                            <button
+                              type="button"
+                              onClick={chooseCompleteBeginner}
+                              className="flex w-full items-center gap-3 rounded-lg border-2 border-brand-500 bg-brand-600/10 p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-600/15"
+                            >
+                              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-lg">
+                                🌱
+                              </span>
+                              <span>
+                                <strong className="block text-base font-extrabold text-ink">
+                                  {copy.beginnerCta}
+                                </strong>
+                                <span className="mt-0.5 block text-xs leading-5 text-ink-soft">
+                                  {copy.beginnerCtaBody}
+                                </span>
+                              </span>
+                            </button>
+                            <div className="my-5 flex items-center gap-3 text-xs font-bold uppercase tracking-wide text-ink-soft">
+                              <span className="h-px flex-1 bg-line" />
+                              {copy.beginnerCtaDivider}
+                              <span className="h-px flex-1 bg-line" />
+                            </div>
+                          </>
+                        )}
                         {placementLevel && (
                           <div className="mb-5 flex items-center gap-3 rounded-lg border border-brand-300/70 bg-brand-600/8 p-4">
                             <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand-900 text-sm font-black text-white">

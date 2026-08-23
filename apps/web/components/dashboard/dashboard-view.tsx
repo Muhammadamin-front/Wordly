@@ -4,9 +4,11 @@ import {
   ArrowRight,
   CircleAlert,
   Flame,
+  Gamepad2,
   GraduationCap,
   LibraryBig,
   Map,
+  PenLine,
   Route,
   Sparkles,
   Target,
@@ -52,6 +54,10 @@ type DashboardCopy = {
   progressBody: string;
   mistakesTitle: string;
   mistakesBody: string;
+  grammarTitle: string;
+  grammarBody: string;
+  gamesTitle: string;
+  gamesBody: string;
   level: string;
 };
 
@@ -269,6 +275,18 @@ export function DashboardView({
             title={copy.progressTitle}
             body={copy.progressBody}
           />
+          <ContextCard
+            href={`/${lang}/grammar`}
+            icon={PenLine}
+            title={copy.grammarTitle}
+            body={copy.grammarBody}
+          />
+          <ContextCard
+            href={`/${lang}/games`}
+            icon={Gamepad2}
+            title={copy.gamesTitle}
+            body={copy.gamesBody}
+          />
         </div>
       </section>
     </main>
@@ -357,6 +375,10 @@ function dashboardCopy(lang: string): DashboardCopy {
       progressBody: "Посмотрите, какие слова стали сильными и какие требуют повторения.",
       mistakesTitle: "Слабые слова",
       mistakesBody: "Сначала восстановите слова, в которых недавно ошибались.",
+      grammarTitle: "Грамматика",
+      grammarBody: "Уроки и упражнения по правилам — от базовых времён до сложных тем.",
+      gamesTitle: "Упражнения",
+      gamesBody: "Игры и мини-задания, которые закрепляют слова на практике.",
       level: "Ур.",
     };
   }
@@ -385,6 +407,10 @@ function dashboardCopy(lang: string): DashboardCopy {
       progressBody: "See which words are strong, mastered, or ready for another review.",
       mistakesTitle: "Weak words",
       mistakesBody: "Repair the words you recently missed before adding more.",
+      grammarTitle: "Grammar",
+      grammarBody: "Lessons and exercises on the rules — from basic tenses to trickier topics.",
+      gamesTitle: "Exercises",
+      gamesBody: "Games and quick drills that make new words stick through practice.",
       level: "Lv.",
     };
   }
@@ -412,6 +438,10 @@ function dashboardCopy(lang: string): DashboardCopy {
     progressBody: "Qaysi so'zlar mustahkam, o'zlashtirilgan yoki qayta ko'rilishi kerakligini ko'ring.",
     mistakesTitle: "Zaif so'zlar",
     mistakesBody: "Yangi so'z qo'shishdan oldin yaqinda adashgan so'zlarni tuzating.",
+    grammarTitle: "Grammatika",
+    grammarBody: "Qoidalar bo'yicha darslar va mashqlar — asosiy zamonlardan murakkab mavzulargacha.",
+    gamesTitle: "Mashqlar",
+    gamesBody: "So'zlarni amalda mustahkamlaydigan o'yinlar va qisqa topshiriqlar.",
     level: "Lv.",
   };
 }
