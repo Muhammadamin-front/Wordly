@@ -24,17 +24,17 @@ Vocora combines Duolingo's motivation, Anki's spaced-repetition discipline, and 
 
 ## Operating Context
 
-The product is a web-first learning platform with Uzbek as the default UI language and English/Russian localization. Learners use it on mobile and desktop, often in short daily sessions and sometimes on weak connectivity. Teachers may use it to assign word lists and track class progress.
+The product is an adaptive, multi-client learning platform with Uzbek as the default UI language and English/Russian localization. Learners use the Next.js web app on desktop or in a browser and the native Expo app on iOS and Android, often in short daily sessions and sometimes on weak connectivity. Both clients use the same FastAPI API, accounts, learning progress, roles, and authored learning content. Teachers may use either client to assign word lists and track class progress.
 
-Production is deployed under the Vocora brand on the vocora.uz domain through a Cloudflare-connected Ubuntu server. The repository contains a Next.js web app, FastAPI API, PostgreSQL/Redis Docker setup, CI, local payment adapters, SRS, gamification, games, IELTS resources, teacher tools, and admin tooling.
+Production is deployed under the Vocora brand on the vocora.uz domain through a Cloudflare-connected Ubuntu server. The repository contains a Next.js web app, Expo native mobile app, FastAPI API, PostgreSQL/Redis Docker setup, CI, local payment adapters, SRS, gamification, games, IELTS resources, teacher tools, and admin tooling.
 
 ## Capabilities and Constraints
 
-Confirmed capabilities include localized auth, onboarding level placement, CEFR vocabulary library, word detail cards, custom decks, SRS reviews, mastery mapping, grammar lessons, IELTS resource hub, games, statistics, gamification, teacher/admin tools, local payments, and Docker-based production parity.
+Confirmed capabilities include localized auth, onboarding level placement, CEFR vocabulary library, word detail cards, custom decks, SRS reviews, mastery mapping, grammar lessons, IELTS resource hub, games, statistics, gamification, community, AI Coach, teacher tools, local payments, and Docker-based production parity. The native client has first-class mobile screens for learner and teacher capabilities; operational admin work remains a desktop-web workflow.
 
 The current product direction avoids expensive AI-dependent IELTS speaking or writing correction as a core requirement. Educational static content, curated examples, expression libraries, and vocabulary-focused learning should remain the reliable foundation.
 
-Open decisions: native mobile apps, full AI band scoring, offline-first behavior, marketplace content, and broader Central Asian localization are future roadmap items rather than current launch requirements.
+Open decisions: full offline-first behavior, push notifications, document/CSV import on mobile, marketplace content, deeper AI band scoring, and broader Central Asian localization are future roadmap items rather than current launch requirements.
 
 ## Brand Commitments
 
@@ -52,7 +52,7 @@ Repository README describes Vocora as "Duolingo's fun + Anki's science + Quizlet
 
 Product specification in `docs/02-product-spec.md` documents the original mission for Uzbek learners, local pricing, CEFR/IELTS learning paths, teacher distribution, SRS, games, and trust principles. Product audit in `docs/PRODUCT_AUDIT_2026-07-31.md` confirms the vocabulary-first launch recommendation and current technical evidence.
 
-Existing visual implementation lives in `apps/web`, with shared site components, Tailwind v4 globals, localized dictionaries, auth screens, landing page, learning flows, and game surfaces.
+Existing visual implementation lives in `apps/web` and `apps/mobile`. The web app supplies shared authored grammar, IELTS, support, privacy, and terms content; the native app applies the same warm editorial system with touch-safe interactions, safe-area navigation, and native authentication.
 
 ## Product Principles
 
