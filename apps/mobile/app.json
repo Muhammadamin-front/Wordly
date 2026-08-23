@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Vocora",
+    "slug": "vocora",
+    "scheme": "vocora",
+    "version": "1.0.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/images/app-icon.png",
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F3E6CB"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "uz.vocora.mobile",
+      "buildNumber": "1",
+      "usesAppleSignIn": true
+    },
+    "android": {
+      "package": "uz.vocora.mobile",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#F3E6CB"
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/vocora-mark.png"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c35c76dd-027a-47d9-a1f6-c2e9c7ec1669"
+      }
+    },
+    "owner": "madaminjon18s-team"
+  }
+}
