@@ -176,7 +176,15 @@ class Settings(BaseSettings):
     RATE_LIMIT_GAMES: str = "90/60"  # a session + rapid answers
     RATE_LIMIT_SOCIAL: str = "30/60"  # friend requests / profile lookups
     RATE_LIMIT_MULTIPLAYER: str = "20/60"  # room creation
+    RATE_LIMIT_WS_CONNECT: str = "20/60"  # handshake attempts, per IP — before any auth/action
     RATE_LIMIT_DEFAULT: str = "120/60"
+    # Grace window a disconnected multiplayer player has to reconnect (same
+    # user_id, idempotent `join`) before they're actually removed and, if
+    # they were host, the role transfers to the next player.
+    MULTIPLAYER_RECONNECT_GRACE_SECONDS: int = 25
+    # Absolute cap on a room's Redis TTL — well past any real game's length,
+    # just a backstop against an abandoned room lingering forever.
+    MULTIPLAYER_ROOM_TTL_SECONDS: int = 2 * 60 * 60
     # Comma-separated IPs/CIDRs of reverse proxies allowed to supply
     # X-Forwarded-For. Empty means forwarded headers are never trusted.
     TRUSTED_PROXY_CIDRS: str = ""

@@ -22,7 +22,6 @@ GAME_TYPES = (
     "audio_guess",
     "typing_race",
     "memory",
-    "boss_battle",
     "hangman",
     "spelling_bee",
     "sentence_builder",
@@ -36,7 +35,7 @@ GAME_TYPES = (
 
 # Games that show translation options need distractor translations; games that
 # ask for the English word need distractor headwords.
-ANSWER_IS_TRANSLATION = {"word_match", "speed_quiz", "audio_guess", "memory", "boss_battle"}
+ANSWER_IS_TRANSLATION = {"word_match", "speed_quiz", "audio_guess", "memory"}
 BOARD_GAMES = {"word_match", "memory", "word_search"}
 MIN_CARDS = 4
 DEFAULT_COUNT = 10
@@ -245,7 +244,7 @@ def _expected_answer(card: Card, game_type: str) -> Optional[str]:
     the grader always agree."""
     if not (card.word and card.word.senses):
         return None
-    if game_type in ("word_match", "memory", "speed_quiz", "boss_battle", "audio_guess"):
+    if game_type in ("word_match", "memory", "speed_quiz", "audio_guess"):
         return _card_translation(card)
     if game_type in ("sentence_builder", "listening"):
         return _first_example(card)
@@ -300,11 +299,19 @@ async def build_public_quiz(db: AsyncSession, cefr_level: str, count: int) -> Li
     for word in words:
         if not word.senses:
             continue
-        answer = word.senses[0].translation_uz
+        sense = word.senses[0]
+        answer = sense.translation_uz
         options = [answer] + random.sample(pool, min(3, len(pool)))
         random.shuffle(options)
+        example = sense.examples[0].text_en if sense.examples else None
         questions.append(
-            {"prompt": word.headword, "options": options, "answer_index": options.index(answer)}
+            {
+                "prompt": word.headword,
+                "options": options,
+                "answer_index": options.index(answer),
+                "category": "vocab",
+                "explanation": {"translation_uz": answer, "example_en": example},
+            }
         )
     return questions
 
@@ -320,8 +327,16 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
 
     async def fetch(level_filter: bool) -> List:
         query = (
-            select(WordRelation.relation_type, Word.headword, WordRelation.related_text)
+            select(
+                WordRelation.relation_type,
+                Word.headword,
+                WordRelation.related_text,
+                WordSense.translation_uz,
+            )
             .join(Word, Word.id == WordRelation.word_id)
+            .outerjoin(
+                WordSense, (WordSense.word_id == Word.id) & (WordSense.sense_order == 1)
+            )
             .where(
                 Word.status == "published",
                 WordRelation.relation_type.in_(("synonym", "antonym")),
@@ -344,7 +359,7 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
     # question "≈ big" used to be able to offer "huge" as a wrong option, and
     # two players answering correctly could disagree.
     related_by_word = {}
-    for relation_type, headword, related_text in rows:
+    for relation_type, headword, related_text, _translation in rows:
         answers_by_type[relation_type].add(related_text.lower())
         related_by_word.setdefault((relation_type, headword.lower()), set()).add(
             related_text.lower()
@@ -352,7 +367,7 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
 
     questions = []
     seen_prompts = set()
-    for relation_type, headword, related_text in rows:
+    for relation_type, headword, related_text, translation_uz in rows:
         if len(questions) >= count:
             break
         symbol = "≈" if relation_type == "synonym" else "≠"
@@ -368,20 +383,41 @@ async def build_pairs_quiz(db: AsyncSession, cefr_level: str, count: int) -> Lis
         # casing keeps the odd one out from being obvious.
         options = [related_text.lower()] + random.sample(pool, 3)
         random.shuffle(options)
+        relation_label = "synonym" if relation_type == "synonym" else "antonym"
+        explanation = (
+            {"translation_uz": "{} ({})".format(translation_uz, relation_label)}
+            if translation_uz
+            else None
+        )
         questions.append(
             {
                 "prompt": prompt,
                 "options": options,
                 "answer_index": options.index(related_text.lower()),
+                "category": "pairs",
+                "explanation": explanation,
             }
         )
     return questions if len(questions) >= MIN_CARDS else []
 
 
+def _grammar_quiz(cefr_level: str, count: int) -> List[dict]:
+    """Wraps the bare {prompt, options, answer_index} grammar bank with the
+    same category/explanation shape the other builders return. Grammar-mode
+    questions ship without a teaching explanation for now — app.services.
+    grammar has no explanation-capable content yet; authoring short rule
+    notes for the whole bank is a separate future content task."""
+    questions = grammar_questions(cefr_level, count)
+    for q in questions:
+        q.setdefault("category", "grammar")
+        q.setdefault("explanation", None)
+    return questions
+
+
 async def build_quiz(db: AsyncSession, mode: str, cefr_level: str, count: int) -> List[dict]:
     """Multiplayer question source for one round, by category."""
     if mode == "grammar":
-        return grammar_questions(cefr_level, count)
+        return _grammar_quiz(cefr_level, count)
     if mode == "pairs":
         return await build_pairs_quiz(db, cefr_level, count)
     if mode == "mixed":
@@ -390,7 +426,7 @@ async def build_quiz(db: AsyncSession, mode: str, cefr_level: str, count: int) -
         # whole source by chance). Each source is capped at ~1/3 of the round.
         per_part = max(2, count // 3)
         buckets = [
-            grammar_questions(cefr_level, per_part),
+            _grammar_quiz(cefr_level, per_part),
             await build_pairs_quiz(db, cefr_level, per_part),
             await build_public_quiz(db, cefr_level, count),
         ]
@@ -484,7 +520,7 @@ async def build_session(
             )
         elif game_type in ("word_match", "memory", "word_search"):
             questions.append(GameQuestion(card.id, headword, translation, []))
-        else:  # speed_quiz, boss_battle
+        else:  # speed_quiz
             questions.append(GameQuestion(card.id, headword, translation, sample_distractors()))
 
     return questions, len(usable)

@@ -36,6 +36,9 @@ from app.core.rate_limit import MemoryStorage
 from app.db.base import Base
 from app.main import app
 from app.services.emailer import ConsoleEmailer
+from app.services.multiplayer_pubsub import MemoryPubSub
+from app.services.multiplayer_store import MemoryRoomStore
+from app.services.multiplayer_timers import MemoryPhaseLock
 
 
 # Tests default to in-memory SQLite. Point TEST_DATABASE_URL at Postgres
@@ -61,6 +64,9 @@ async def client() -> AsyncIterator[AsyncClient]:
     db_session._engine = engine
     db_session._session_factory = async_sessionmaker(engine, expire_on_commit=False)
     app.state.rate_limit_storage = MemoryStorage()
+    app.state.mp_store = MemoryRoomStore()
+    app.state.mp_pubsub = MemoryPubSub()
+    app.state.mp_lock = MemoryPhaseLock()
     ConsoleEmailer.outbox.clear()
 
     transport = ASGITransport(app=app)

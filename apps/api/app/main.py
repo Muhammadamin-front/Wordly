@@ -14,6 +14,9 @@ from app.core.config import get_settings
 from app.core.observability import capture_exception, init_sentry
 from app.core.rate_limit import MemoryStorage, RedisStorage, client_ip
 from app.db.session import get_session_factory, init_engine
+from app.services.multiplayer_pubsub import MemoryPubSub, RedisPubSub
+from app.services.multiplayer_store import MemoryRoomStore, RedisRoomStore
+from app.services.multiplayer_timers import MemoryPhaseLock, RedisPhaseLock
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("words.api")
@@ -38,10 +41,18 @@ async def lifespan(app: FastAPI):
     if settings.REDIS_URL:
         app.state.rate_limit_storage = RedisStorage(settings.REDIS_URL)
         app.state.cache = RedisCache(settings.REDIS_URL) if settings.CACHE_ENABLED else None
+        app.state.mp_store = RedisRoomStore(
+            settings.REDIS_URL, ttl_seconds=settings.MULTIPLAYER_ROOM_TTL_SECONDS
+        )
+        app.state.mp_pubsub = RedisPubSub(settings.REDIS_URL)
+        app.state.mp_lock = RedisPhaseLock(settings.REDIS_URL)
         app.state.backend = "redis"
     else:
         app.state.rate_limit_storage = MemoryStorage()
         app.state.cache = MemoryCache() if settings.CACHE_ENABLED else None
+        app.state.mp_store = MemoryRoomStore()
+        app.state.mp_pubsub = MemoryPubSub()
+        app.state.mp_lock = MemoryPhaseLock()
         app.state.backend = "memory"
     yield
 

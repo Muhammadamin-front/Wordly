@@ -41,7 +41,7 @@ async def card_submission(client, headers, card_id, game_type="speed_quiz"):
     page = (await client.get("/api/v1/cards", headers=headers)).json()
     card = next(c for c in page["items"] if c["id"] == card_id)
     sense = card["word"]["senses"][0]
-    if game_type in ("word_match", "memory", "speed_quiz", "boss_battle", "audio_guess"):
+    if game_type in ("word_match", "memory", "speed_quiz", "audio_guess"):
         return sense["translation_uz"]
     if game_type in ("sentence_builder", "listening"):
         return sense["examples"][0]["text_en"]

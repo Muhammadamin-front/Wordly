@@ -2,7 +2,7 @@
 import pytest
 
 import app.db.session as db_session
-from app.services.games import build_quiz
+from app.services.games import build_public_quiz, build_quiz
 from app.services.grammar import QUESTIONS, grammar_questions
 from app.services.multiplayer import Player, Room
 from tests.test_games import learner_with_cards  # seeds published corpus words
@@ -37,6 +37,23 @@ def test_grammar_unknown_level_falls_back():
     assert len(rounds) == 5
 
 
+async def test_grammar_quiz_ships_without_explanation(client):
+    async with db_session._session_factory() as db:
+        questions = await build_quiz(db, "grammar", "A2", count=5)
+    assert len(questions) == 5
+    assert all(q["category"] == "grammar" and q["explanation"] is None for q in questions)
+
+
+async def test_vocab_quiz_carries_translation_explanation(client):
+    await learner_with_cards(client, count=6)
+    async with db_session._session_factory() as db:
+        questions = await build_public_quiz(db, "A1", count=6)
+    assert len(questions) >= 4
+    for q in questions:
+        assert q["category"] == "vocab"
+        assert q["explanation"]["translation_uz"]
+
+
 # --- Pairs quiz --------------------------------------------------------------
 
 
@@ -68,6 +85,11 @@ async def test_pairs_quiz_from_relations(client):
         answer = q["options"][q["answer_index"]]
         expected_prefix = "same" if q["prompt"].startswith("≈") else "opposite"
         assert answer.startswith(expected_prefix)
+        assert q["category"] == "pairs"
+        # WORD_PAYLOAD's headwords carry a real sense, so the join should
+        # always resolve a translation for the reveal-screen explanation.
+        assert q["explanation"] is not None
+        assert "translation_uz" in q["explanation"]
 
 
 async def test_pairs_quiz_empty_without_relations(client):
@@ -98,8 +120,11 @@ def test_room_broadcasts_mode():
     host = uuid.uuid4()
     room = Room("TEST", host)
     room.add_player(Player(host, "Host"))
-    room.mode = "grammar"
-    room.start([{"prompt": "I ___ happy.", "options": ["am", "is"], "answer_index": 0}])
+    room.start(
+        [{"prompt": "I ___ happy.", "options": ["am", "is"], "answer_index": 0}], mode="grammar"
+    )
+    assert room.phase == "countdown"
+    room.force_advance()  # countdown -> first question
     question = room.current_question()
     assert question["mode"] == "grammar"
     assert "answer_index" not in question

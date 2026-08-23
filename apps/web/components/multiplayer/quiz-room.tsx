@@ -1,360 +1,405 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { AnswerReveal } from "@/components/multiplayer/answer-reveal";
+import { CountdownOverlay } from "@/components/multiplayer/countdown-overlay";
+import { LeaderboardPanel } from "@/components/multiplayer/leaderboard-panel";
+import { LobbyPanel } from "@/components/multiplayer/lobby-panel";
+import { PersonalSummary } from "@/components/multiplayer/personal-summary";
+import { Podium } from "@/components/multiplayer/podium";
+import { QuestionCard } from "@/components/multiplayer/question-card";
+import { ReviewMistakes } from "@/components/multiplayer/review-mistakes";
+import { SoundToggle } from "@/components/multiplayer/sound-toggle";
+import { useSoundEffects } from "@/components/multiplayer/use-sound-effects";
 import {
   openQuizSocket,
-  QUIZ_MODES,
+  recallRoomCode,
+  rememberRoomCode,
   sendAction,
+  type ClientAction,
+  type MultiplayerError,
   type QuizMode,
   type RoomPlayer,
-  type ScoreRow,
   type ServerMessage,
+  type TimerSeconds,
 } from "@/lib/multiplayer";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-const LEVELS = ["A1", "A2", "B1", "B2"] as const;
+type Phase =
+  | "menu"
+  | "connecting"
+  | "lobby"
+  | "countdown"
+  | "question"
+  | "question_result"
+  | "leaderboard"
+  | "finished";
 
-const MODE_ICONS: Record<QuizMode, string> = {
-  vocab: "📖",
-  grammar: "🧩",
-  pairs: "🔗",
-  mixed: "🎲",
+export interface State {
+  phase: Phase;
+  code: string | null;
+  hostId: string | null;
+  players: RoomPlayer[];
+  countdown: Extract<ServerMessage, { type: "countdown" }> | null;
+  question: Extract<ServerMessage, { type: "question" }> | null;
+  selected: number | null;
+  result: Extract<ServerMessage, { type: "question_result" }> | null;
+  leaderboard: Extract<ServerMessage, { type: "leaderboard" }> | null;
+  finished: Extract<ServerMessage, { type: "finished" }> | null;
+  error: MultiplayerError | null;
+  reviewOpen: boolean;
+}
+
+export const initialState: State = {
+  phase: "menu",
+  code: null,
+  hostId: null,
+  players: [],
+  countdown: null,
+  question: null,
+  selected: null,
+  result: null,
+  leaderboard: null,
+  finished: null,
+  error: null,
+  reviewOpen: false,
 };
 
-interface RoomState {
-  code: string;
-  host_id: string;
-  players: RoomPlayer[];
+export type Action = { source: "server"; message: ServerMessage } | { source: "local"; type: "select"; option: number } | { source: "local"; type: "connecting" } | { source: "local"; type: "reset" } | { source: "local"; type: "toggle_review" };
+
+export function reducer(state: State, action: Action): State {
+  if (action.source === "local") {
+    switch (action.type) {
+      case "connecting":
+        return { ...initialState, phase: "connecting" };
+      case "reset":
+        return initialState;
+      case "select":
+        return state.selected === null ? { ...state, selected: action.option } : state;
+      case "toggle_review":
+        return { ...state, reviewOpen: !state.reviewOpen };
+    }
+  }
+
+  const msg = action.message;
+  switch (msg.type) {
+    case "lobby":
+      return {
+        ...state,
+        phase: "lobby",
+        code: msg.code,
+        hostId: msg.host_id,
+        players: msg.players,
+        error: null,
+      };
+    case "countdown":
+      return { ...state, phase: "countdown", countdown: msg, error: null };
+    case "question":
+      return {
+        ...state,
+        phase: "question",
+        question: msg,
+        selected: null,
+        result: null,
+        leaderboard: null,
+        error: null,
+      };
+    case "question_result":
+      return { ...state, phase: "question_result", result: msg, error: null };
+    case "leaderboard":
+      return { ...state, phase: "leaderboard", leaderboard: msg, error: null };
+    case "finished":
+      return { ...state, phase: "finished", finished: msg, error: null };
+    case "host_changed":
+      return { ...state, hostId: msg.host_id };
+    case "player_status":
+      return {
+        ...state,
+        players: state.players.map((p) =>
+          p.user_id === msg.user_id ? { ...p, connected: msg.connected } : p
+        ),
+      };
+    case "error":
+      return { ...state, phase: state.phase === "connecting" ? "menu" : state.phase, error: msg.error };
+    default:
+      return state;
+  }
 }
-interface Question {
-  index: number;
-  total: number;
-  prompt: string;
-  options: string[];
-  mode?: QuizMode;
-}
-type Phase = "menu" | "connecting" | "lobby" | "question" | "reveal" | "finished";
 
 export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
   const { user, ready } = useAuth();
   const router = useRouter();
   const socketRef = useRef<WebSocket | null>(null);
-
-  const [phase, setPhase] = useState<Phase>("menu");
-  const [room, setRoom] = useState<RoomState | null>(null);
-  const [question, setQuestion] = useState<Question | null>(null);
-  const [answerIndex, setAnswerIndex] = useState<number | null>(null);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [scoreboard, setScoreboard] = useState<ScoreRow[]>([]);
-  const [joinCode, setJoinCode] = useState("");
-  const [level, setLevel] = useState<string>("A1");
-  const [mode, setMode] = useState<QuizMode>("vocab");
-  const [error, setError] = useState<string | null>(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const sound = useSoundEffects();
+  const attemptedResume = useRef(false);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
+  const withSocket = useCallback((then: (socket: WebSocket) => void) => {
+    const existing = socketRef.current;
+    if (existing && existing.readyState === WebSocket.OPEN) {
+      then(existing);
+      return;
+    }
+    dispatch({ source: "local", type: "connecting" });
+    const socket = openQuizSocket();
+    socketRef.current = socket;
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data) as ServerMessage;
+      dispatch({ source: "server", message });
+    };
+    socket.onopen = () => then(socket);
+    socket.onclose = () => {
+      socketRef.current = null;
+    };
+  }, []);
+
+  // Auto-resume a game that was live when the page was reloaded — the room
+  // code isn't secret (every player already sees it), so remembering it is
+  // enough; `join` is idempotent per user_id and does the rest.
+  useEffect(() => {
+    if (!ready || !user || attemptedResume.current) return;
+    attemptedResume.current = true;
+    const code = recallRoomCode();
+    if (code) withSocket((s) => sendAction(s, { action: "join", code }));
+  }, [ready, user, withSocket]);
+
+  useEffect(() => {
+    rememberRoomCode(state.code);
+  }, [state.code]);
+
+  useEffect(() => {
+    if (state.phase === "question_result" && state.result) {
+      const mine = state.result.results.find((r) => r.user_id === user?.id);
+      sound.play(mine?.correct ? "correct" : "wrong");
+    }
+  }, [state.phase, state.result, sound, user?.id]);
+
+  useEffect(() => {
+    if (state.phase === "leaderboard") sound.play("leaderboard");
+  }, [state.phase, sound]);
+
+  useEffect(() => {
+    if (state.phase === "finished") sound.play("winner");
+  }, [state.phase, sound]);
+
   useEffect(() => () => socketRef.current?.close(), []);
 
-  const handleMessage = useCallback((msg: ServerMessage) => {
-    setError(null);
-    switch (msg.type) {
-      case "created":
-      case "lobby":
-        setRoom({ code: msg.code, host_id: msg.host_id, players: msg.players });
-        setPhase("lobby");
-        break;
-      case "question":
-        setQuestion(msg);
-        setAnswerIndex(null);
-        setSelected(null);
-        setPhase("question");
-        break;
-      case "reveal":
-        setAnswerIndex(msg.answer_index);
-        setScoreboard(msg.scoreboard);
-        setPhase("reveal");
-        break;
-      case "finished":
-        setScoreboard(msg.scoreboard);
-        setPhase("finished");
-        break;
-      case "error":
-        setError(msg.error === "not_enough_words" ? mp.notEnoughWords : mp.roomCode);
-        break;
-    }
-  }, [mp]);
+  const act = useCallback((action: ClientAction) => {
+    if (socketRef.current) sendAction(socketRef.current, action);
+  }, []);
 
-  // Opens (or reuses) the socket, then runs `then` once it is ready to send.
-  const withSocket = useCallback(
-    (then: (socket: WebSocket) => void) => {
-      const existing = socketRef.current;
-      if (existing && existing.readyState === WebSocket.OPEN) {
-        then(existing);
-        return;
-      }
-      setPhase("connecting");
-      const socket = openQuizSocket();
-      socketRef.current = socket;
-      socket.onmessage = (event) => handleMessage(JSON.parse(event.data) as ServerMessage);
-      socket.onopen = () => then(socket);
-      socket.onclose = () => {
-        socketRef.current = null;
-      };
-    },
-    [handleMessage]
-  );
-
-  const create = () => withSocket((s) => sendAction(s, { action: "create" }));
-  const join = (event: FormEvent) => {
-    event.preventDefault();
-    const code = joinCode.trim().toUpperCase();
-    if (!code) return;
+  const create = () => {
+    sound.arm();
+    withSocket((s) => sendAction(s, { action: "create" }));
+  };
+  const join = (code: string) => {
+    sound.arm();
     withSocket((s) => sendAction(s, { action: "join", code }));
   };
-  const start = () => {
-    if (socketRef.current) sendAction(socketRef.current, { action: "start", level, mode });
-  };
+  const start = (level: string, mode: QuizMode, timerSeconds: TimerSeconds) =>
+    act({ action: "start", level, mode, timer_seconds: timerSeconds });
   const answer = (option: number) => {
-    if (!question || selected !== null || !socketRef.current) return;
-    setSelected(option);
-    sendAction(socketRef.current, { action: "answer", index: question.index, option });
+    if (!state.question || state.selected !== null) return;
+    dispatch({ source: "local", type: "select", option });
+    sound.play("select");
+    act({ action: "answer", index: state.question.index, option });
   };
-  const next = () => {
-    if (socketRef.current) sendAction(socketRef.current, { action: "next" });
-  };
+  const skip = () => act({ action: "skip" });
   const leave = () => {
+    if (socketRef.current) sendAction(socketRef.current, { action: "leave" });
     socketRef.current?.close();
     socketRef.current = null;
-    setRoom(null);
-    setQuestion(null);
-    setScoreboard([]);
-    setPhase("menu");
+    rememberRoomCode(null);
+    dispatch({ source: "local", type: "reset" });
   };
 
   if (!ready || !user) return null;
 
-  const isHost = room?.host_id === user.id;
+  const isHost = state.hostId === user.id;
+  const errorLabel = (code: MultiplayerError | null) =>
+    code
+      ? {
+          unauthorized: mp.errorUnauthorized,
+          rate_limited: mp.errorRateLimited,
+          room_not_found: mp.errorRoomNotFound,
+          already_started: mp.errorAlreadyStarted,
+          room_full: mp.errorRoomFull,
+          not_enough_words: mp.notEnoughWords,
+          forbidden: mp.errorForbidden,
+          round_closed: mp.errorRoundClosed,
+        }[code]
+      : null;
 
   return (
-    <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6">
-      <h1 className="text-3xl font-extrabold tracking-tight text-ink">{mp.title}</h1>
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink">{mp.title}</h1>
+        <SoundToggle enabled={sound.enabled} onToggle={sound.toggle} labels={{ on: mp.soundOn, off: mp.soundOff }} />
+      </div>
 
-      {error && (
+      {state.error && (
         <Alert tone="error" className="mt-4">
-          {error}
+          {errorLabel(state.error)}
         </Alert>
       )}
 
-      {/* --- Menu --- */}
-      {phase === "menu" && (
-        <div className="mt-6 space-y-6">
-          <Button fullWidth onClick={create}>
-            {mp.create}
-          </Button>
-          <div className="flex items-center gap-3 text-xs text-ink-soft">
-            <span className="h-px flex-1 bg-line" />
-            {mp.roomCode}
-            <span className="h-px flex-1 bg-line" />
-          </div>
-          <form onSubmit={join} className="flex gap-2">
-            <Input
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder={mp.roomCode}
-              maxLength={4}
-              className="text-center text-lg font-bold tracking-widest uppercase"
-            />
-            <Button type="submit" variant="secondary" disabled={!joinCode.trim()}>
-              {mp.join}
-            </Button>
-          </form>
-        </div>
+      {(state.phase === "menu" || state.phase === "connecting") && (
+        <LobbyMenu mp={mp} connecting={state.phase === "connecting"} onCreate={create} onJoin={join} />
       )}
 
-      {phase === "connecting" && (
-        <p className="mt-8 text-center text-sm text-ink-soft">{mp.connecting}</p>
+      {state.phase === "lobby" && state.code && (
+        <LobbyPanel
+          mp={mp}
+          code={state.code}
+          hostId={state.hostId ?? ""}
+          players={state.players}
+          isHost={isHost}
+          onStart={start}
+          onLeave={leave}
+        />
       )}
 
-      {/* --- Lobby --- */}
-      {phase === "lobby" && room && (
+      <AnimatePresence>
+        {state.phase === "countdown" && state.countdown && (
+          <CountdownOverlay endsAt={state.countdown.ends_at} serverNow={state.countdown.server_now} onTick={() => sound.play("tick")} />
+        )}
+      </AnimatePresence>
+
+      {(state.phase === "question" || state.phase === "question_result") && state.question && (
         <div className="mt-6">
-          <div className="rounded-xl2 border border-line bg-linear-to-br from-brand-500/10 to-transparent p-6 text-center">
-            <p className="text-sm text-ink-soft">{mp.shareRoom}</p>
-            <code className="mt-1 block text-4xl font-extrabold tracking-[0.3em] text-brand-600 dark:text-brand-300">
-              {room.code}
-            </code>
-          </div>
-
-          <p className="mt-6 text-sm font-bold uppercase tracking-wide text-ink-soft">
-            {mp.players} ({room.players.length})
-          </p>
-          <ul className="mt-3 space-y-2">
-            {room.players.map((p) => (
-              <li key={p.user_id} className="rounded-xl border border-line bg-card px-4 py-3 font-semibold text-ink">
-                {p.name}
-                {p.user_id === room.host_id && (
-                  <span className="ml-2 text-xs text-brand-600 dark:text-brand-300">👑</span>
-                )}
-              </li>
-            ))}
-          </ul>
-
-          {isHost ? (
-            <div className="mt-6">
-              <p className="text-center text-xs font-bold uppercase tracking-wide text-ink-soft">
-                {mp.category}
-              </p>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                {QUIZ_MODES.map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => setMode(m)}
-                    className={cn(
-                      "rounded-xl border-2 px-3 py-2.5 text-sm font-bold transition-colors",
-                      mode === m
-                        ? "border-brand-400 bg-brand-500/10 text-ink"
-                        : "border-line bg-card text-ink-soft hover:border-brand-400/50"
-                    )}
-                  >
-                    {MODE_ICONS[m]} {mp[`mode_${m}`]}
-                  </button>
-                ))}
-              </div>
-              <div className="mt-4 flex justify-center gap-2">
-                {LEVELS.map((l) => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => setLevel(l)}
-                    className={cn(
-                      "rounded-lg px-3 py-1.5 text-sm font-bold transition-colors",
-                      level === l ? "bg-brand-600 text-white" : "bg-card text-ink-soft hover:text-ink"
-                    )}
-                  >
-                    {l}
-                  </button>
-                ))}
-              </div>
-              <Button fullWidth className="mt-4" onClick={start}>
-                {mp.start}
-              </Button>
-              <p className="mt-2 text-center text-xs text-ink-soft">⚡ {mp.speedHint}</p>
-            </div>
-          ) : (
-            <p className="mt-6 text-center text-sm text-ink-soft">{mp.waiting}</p>
+          <QuestionCard
+            mp={mp}
+            question={state.question}
+            selected={state.selected}
+            revealed={state.phase === "question_result"}
+            revealAnswerIndex={state.result?.answer_index ?? null}
+            onAnswer={answer}
+          />
+          {state.phase === "question_result" && state.result && (
+            <AnswerReveal mp={mp} result={state.result} players={state.players} myUserId={user.id} />
           )}
-
-          <Button variant="ghost" size="sm" fullWidth className="mt-3" onClick={leave}>
-            ✕
-          </Button>
-        </div>
-      )}
-
-      {/* --- Question / Reveal --- */}
-      {(phase === "question" || phase === "reveal") && question && (
-        <div className="mt-6">
-          <p className="text-center text-xs font-bold uppercase tracking-wide text-ink-soft">
-            {question.mode && (
-              <span className="mr-2 rounded-full bg-brand-600/10 px-2 py-0.5 text-brand-600 dark:text-brand-300">
-                {MODE_ICONS[question.mode]} {mp[`mode_${question.mode}`]}
-              </span>
-            )}
-            {question.index + 1} / {question.total}
-          </p>
-          <div className="mt-3 rounded-xl2 border border-line bg-card p-8 text-center">
-            <p className="text-2xl font-extrabold text-ink">{question.prompt}</p>
-          </div>
-
-          <div className="mt-4 grid gap-3">
-            {question.options.map((opt, i) => {
-              const revealed = phase === "reveal";
-              const isAnswer = revealed && i === answerIndex;
-              const isWrongPick = revealed && i === selected && i !== answerIndex;
-              return (
-                <button
-                  key={opt}
-                  type="button"
-                  disabled={selected !== null || revealed}
-                  onClick={() => answer(i)}
-                  className={cn(
-                    "rounded-xl border-2 px-4 py-3 text-left font-semibold transition-colors",
-                    isAnswer && "border-success bg-success/10 text-success",
-                    isWrongPick && "border-danger bg-danger/10 text-danger",
-                    !isAnswer && !isWrongPick && i === selected && "border-brand-400 bg-brand-500/5 text-ink",
-                    !revealed && i !== selected && "border-line bg-card text-ink hover:border-brand-400",
-                    revealed && !isAnswer && !isWrongPick && "border-line bg-card text-ink-soft"
-                  )}
-                >
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-
-          {phase === "reveal" && (
-            <>
-              <ul className="mt-6 space-y-2">
-                {scoreboard.map((row) => (
-                  <li
-                    key={row.user_id}
-                    className={cn(
-                      "flex items-center gap-3 rounded-xl border px-4 py-2.5",
-                      row.user_id === user.id ? "border-brand-400 bg-brand-500/5" : "border-line bg-card"
-                    )}
-                  >
-                    <span className="w-5 text-center text-sm font-bold text-ink-soft">{row.rank}</span>
-                    <span className="flex-1 truncate font-semibold text-ink">{row.name}</span>
-                    <span className="text-sm font-bold text-brand-600 dark:text-brand-300">{row.score}</span>
-                  </li>
-                ))}
-              </ul>
-              {isHost && (
-                <Button fullWidth className="mt-4" onClick={next}>
-                  {mp.next}
-                </Button>
-              )}
-            </>
+          {isHost && (state.phase === "question" || state.phase === "question_result") && (
+            <HostSkip label={mp.hostSkip} onSkip={skip} />
           )}
         </div>
       )}
 
-      {/* --- Finished --- */}
-      {phase === "finished" && (
-        <div className="mt-8 text-center">
-          <p className="text-6xl" aria-hidden>
-            🏆
-          </p>
-          <h2 className="mt-3 text-2xl font-extrabold text-ink">{mp.finalScore}</h2>
-          <ul className="mt-6 space-y-2 text-left">
-            {scoreboard.map((row) => (
-              <li
-                key={row.user_id}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl border px-4 py-3",
-                  row.rank === 1 ? "border-brand-500/50 bg-brand-500/10" : "border-line bg-card"
-                )}
-              >
-                <span className="w-6 text-center text-lg">{row.rank === 1 ? "🥇" : row.rank === 2 ? "🥈" : row.rank === 3 ? "🥉" : row.rank}</span>
-                <span className="flex-1 truncate font-semibold text-ink">{row.name}</span>
-                <span className="font-bold text-brand-600 dark:text-brand-300">{row.score}</span>
-              </li>
-            ))}
-          </ul>
-          <Button className="mt-6" onClick={leave}>
-            {mp.playAgain}
-          </Button>
+      {state.phase === "leaderboard" && state.leaderboard && (
+        <div className="mt-6">
+          <LeaderboardPanel mp={mp} leaderboard={state.leaderboard} myUserId={user.id} />
+          {isHost && <HostSkip label={mp.hostSkip} onSkip={skip} />}
+        </div>
+      )}
+
+      {state.phase === "finished" && state.finished && (
+        <div className="mt-6 space-y-8">
+          <Podium mp={mp} board={state.finished.board} />
+          {state.finished.summaries[user.id] && (
+            <PersonalSummary mp={mp} summary={state.finished.summaries[user.id]} />
+          )}
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => dispatch({ source: "local", type: "toggle_review" })}
+              className="text-sm font-bold text-brand-600 underline-offset-4 hover:underline dark:text-brand-300"
+            >
+              {state.reviewOpen ? mp.hideMistakes : mp.reviewMistakes}
+            </button>
+          </div>
+          {state.reviewOpen && state.finished.review[user.id] && (
+            <ReviewMistakes mp={mp} items={state.finished.review[user.id]} />
+          )}
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={leave}
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-brand-950 bg-primary px-6 text-sm font-bold text-white shadow-[3px_4px_0_#54250f] transition-all hover:-translate-y-0.5"
+            >
+              {mp.playAgain}
+            </button>
+          </div>
         </div>
       )}
     </main>
+  );
+}
+
+function HostSkip({ label, onSkip }: { label: string; onSkip: () => void }) {
+  return (
+    <div className="mt-3 flex justify-center">
+      <button
+        type="button"
+        onClick={onSkip}
+        className="text-xs font-bold uppercase tracking-wide text-ink-soft transition-colors hover:text-ink"
+      >
+        {label} →
+      </button>
+    </div>
+  );
+}
+
+function LobbyMenu({
+  mp,
+  connecting,
+  onCreate,
+  onJoin,
+}: {
+  mp: Dictionary["mp"];
+  connecting: boolean;
+  onCreate: () => void;
+  onJoin: (code: string) => void;
+}) {
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const code = String(form.get("code") ?? "").trim().toUpperCase();
+    if (code) onJoin(code);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-6 space-y-6"
+    >
+      <button
+        type="button"
+        onClick={onCreate}
+        disabled={connecting}
+        className="flex min-h-14 w-full items-center justify-center rounded-md border border-brand-950 bg-primary text-base font-bold text-white shadow-[3px_4px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-primary-hover disabled:opacity-60"
+      >
+        {mp.create}
+      </button>
+      <div className="flex items-center gap-3 text-xs text-ink-soft">
+        <span className="h-px flex-1 bg-line" />
+        {mp.roomCode}
+        <span className="h-px flex-1 bg-line" />
+      </div>
+      <form onSubmit={submit} className="flex gap-2">
+        <input
+          name="code"
+          placeholder={mp.roomCode}
+          maxLength={4}
+          className="h-14 flex-1 rounded-md border border-line bg-card px-4 text-center text-lg font-bold uppercase tracking-widest text-ink outline-none focus:border-brand-400"
+        />
+        <button
+          type="submit"
+          disabled={connecting}
+          className="min-h-14 rounded-md border border-line bg-raised px-5 text-sm font-bold text-ink transition-all hover:-translate-y-0.5 disabled:opacity-60"
+        >
+          {mp.join}
+        </button>
+      </form>
+      {connecting && <p className="text-center text-sm text-ink-soft">{mp.connecting}</p>}
+    </motion.div>
   );
 }

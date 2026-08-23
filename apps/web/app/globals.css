@@ -45,6 +45,14 @@
   --color-warning: #d97706;
   --color-info: #467878;
 
+  /* Multiplayer quiz answer cards — four controlled, distinct accents (not
+     Kahoot's saturated primaries) tuned to sit inside Vocora's warm/muted
+     palette rather than clash with it. */
+  --color-quiz-orange: #c1652f;
+  --color-quiz-blue: #3d6690;
+  --color-quiz-green: #4f7a52;
+  --color-quiz-purple: #6d4f7a;
+
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
 

@@ -5,7 +5,7 @@ from tests.test_games import learner_with_cards
 
 @pytest.mark.parametrize(
     "game_type",
-    ["boss_battle", "hangman", "spelling_bee", "word_search", "crossword", "story_mode"],
+    ["hangman", "spelling_bee", "word_search", "crossword", "story_mode"],
 )
 async def test_new_games_build_sessions(client, game_type):
     headers, _ = await learner_with_cards(client, count=6)
@@ -25,12 +25,6 @@ async def test_crossword_uses_definition_without_revealing_answer(client):
         assert question["prompt"]
         assert question["answer"].lower() not in question["prompt"].lower()
         assert question["distractors"] == []
-
-
-async def test_boss_battle_has_options(client):
-    headers, _ = await learner_with_cards(client, count=6)
-    body = (await client.get("/api/v1/games/boss_battle", headers=headers)).json()
-    assert all(len(q["distractors"]) >= 1 for q in body["questions"])
 
 
 async def test_hangman_answer_is_headword(client):
