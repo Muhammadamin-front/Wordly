@@ -73,9 +73,19 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.cors_origins,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        # Credentialed CORS must never use wildcards. Keep this list aligned
+        # with the browser client instead of granting every future method or
+        # request header to every configured origin.
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            "Idempotency-Key",
+            "X-Client",
+            "X-Request-ID",
+        ],
         expose_headers=["X-Request-ID"],
+        max_age=600,
     )
 
     @app.middleware("http")

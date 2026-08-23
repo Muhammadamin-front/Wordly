@@ -25,6 +25,54 @@ async def test_refresh_cookie_is_httponly_and_scoped(client):
     assert "path=/api/v1/auth" in set_cookie
 
 
+async def test_cors_allows_only_configured_credentialed_origin(client):
+    settings = get_settings()
+    response = await client.options(
+        "/api/v1/auth/refresh",
+        headers={
+            "Origin": settings.FRONTEND_ORIGIN,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "authorization,content-type,idempotency-key",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == settings.FRONTEND_ORIGIN
+    assert response.headers["access-control-allow-credentials"] == "true"
+    assert "POST" in response.headers["access-control-allow-methods"]
+    assert "idempotency-key" in response.headers["access-control-allow-headers"].lower()
+
+    rejected = await client.options(
+        "/api/v1/auth/refresh",
+        headers={
+            "Origin": "https://untrusted.example",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert rejected.status_code == 400
+    assert "access-control-allow-origin" not in rejected.headers
+
+
+async def test_production_cookie_keeps_all_security_attributes(client):
+    settings = get_settings()
+    original = settings.COOKIE_SECURE
+    settings.COOKIE_SECURE = True
+    try:
+        response = await client.post(
+            "/api/v1/auth/register",
+            json={
+                "email": "secure-cookie@example.uz",
+                "password": "kuchli-parol-123",
+                "display_name": "Secure Cookie",
+            },
+        )
+        set_cookie = response.headers["set-cookie"].lower()
+        assert "httponly" in set_cookie
+        assert "secure" in set_cookie
+        assert "samesite=lax" in set_cookie
+    finally:
+        settings.COOKIE_SECURE = original
+
+
 async def test_login_rate_limit_returns_429(client):
     settings = get_settings()
     original = settings.RATE_LIMIT_LOGIN
