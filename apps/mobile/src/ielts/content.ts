@@ -1,58 +1,32 @@
 import type { Locale } from "@/i18n";
 
-import englishIelts from "./ielts-en.json";
-import localizedIelts from "./ielts-localized.json";
+import {
+  ieltsSkillContent,
+  ieltsVocabularyResources,
+  type IeltsResourceSection,
+  type IeltsSkill,
+  type IeltsSkillContent,
+  type VocabularyResource,
+} from "../../../web/lib/ielts-resources";
 
-export type IeltsSkill = "writing" | "reading" | "speaking" | "listening";
-
-export type IeltsGuideSection = {
-  id: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  steps?: string[];
-  example?: string;
-  vocabulary?: string[];
-  traps?: string[];
-};
-
-export type IeltsSkillContent = {
-  eyebrow: string;
-  title: string;
-  description: string;
-  stats: { value: string; label: string }[];
-  sections: IeltsGuideSection[];
-};
-
-export type IeltsVocabularyResource = {
-  slug: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  items?: { basic: string; advanced: string; example: string }[];
-  groups?: { title: string; note: string; items: { basic: string; advanced: string; example: string }[] }[];
-};
-
-type IeltsContent = {
-  skills: Record<IeltsSkill, IeltsSkillContent>;
-  resources: IeltsVocabularyResource[];
-};
+/**
+ * IELTS guides and vocabulary articles have one authored source: the web
+ * workspace. Native screens render this content with their own components,
+ * while every new web edit ships in the next mobile build without a manual
+ * copy step.
+ */
+export type { IeltsSkill, IeltsSkillContent };
+export type IeltsGuideSection = IeltsResourceSection;
+export type IeltsVocabularyResource = VocabularyResource;
 
 export const IELTS_SKILLS: IeltsSkill[] = ["writing", "reading", "speaking", "listening"];
 
-const localized = localizedIelts as unknown as Record<"uz" | "ru", IeltsContent>;
-const english = englishIelts as unknown as IeltsContent;
-
-function contentFor(locale: Locale): IeltsContent {
-  return locale === "uz" || locale === "ru" ? localized[locale] : english;
-}
-
 export function getIeltsSkill(locale: Locale, skill: IeltsSkill) {
-  return contentFor(locale).skills[skill];
+  return ieltsSkillContent(locale, skill);
 }
 
 export function getIeltsResources(locale: Locale) {
-  return contentFor(locale).resources;
+  return ieltsVocabularyResources(locale);
 }
 
 export function getIeltsResource(locale: Locale, slug: string) {

@@ -1,6 +1,6 @@
 # Vocora Mobile
 
-Expo mobile client for the same FastAPI backend as `apps/web`. It covers the launch-critical vocabulary loop: email/password, native Google and Apple sign-in, onboarding, CEFR/category library browsing, word detail, SRS review, custom decks, Today, profile settings, and in-app account deletion.
+Expo mobile client for the same FastAPI backend as `apps/web`. It provides native mobile equivalents for the launch vocabulary loop plus IELTS, grammar, games, expressions, community, achievements, AI Coach, classes/teacher tools, billing, support/legal pages, and public profiles. Operational admin and content management stay on the desktop web panel.
 
 ## Run
 
@@ -21,7 +21,7 @@ Create three OAuth clients in the same Google Cloud project:
 
 The API `GOOGLE_CLIENT_ID`, web `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, and mobile `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` must all contain the same **Web application** client ID. Save the iOS client ID in `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`. Create Android OAuth clients in Google Cloud for each signing SHA-1, but do not add their client IDs to the app: Google selects the matching Android client from the package name and signing certificate. OAuth client IDs are public identifiers; never put a Google client secret in the app.
 
-For local development, copy `.env.example` to `.env`. For cloud builds, save all four `EXPO_PUBLIC_*` values in the EAS `production` environment:
+For local development, copy `.env.example` to `.env`. For cloud builds, save these three `EXPO_PUBLIC_*` values in the EAS `production` environment:
 
 ```sh
 eas env:set --name EXPO_PUBLIC_API_URL --value https://vocora.uz --environment production --visibility plaintext
@@ -53,6 +53,14 @@ eas build --platform all --profile production
 
 Submit a successful build with `eas submit --platform ios --profile production` and `eas submit --platform android --profile production`. Test Google sign-in from a store-signed Android build because its SHA-1 differs from local and upload certificates.
 
+## Payments
+
+Payme, Click, and Uzum Checkout are hosted web payments. They can be shown by
+the web client, but native iOS and Android builds deliberately do not open an
+external card checkout. Store billing is a separate future integration; an
+existing Premium entitlement purchased on the web is shared with the mobile
+app after the learner signs in.
+
 ## API types
 
 With the API running:
@@ -69,4 +77,4 @@ The client identifies auth requests with `X-Client: mobile`, stores access and r
 
 ## Deliberately deferred
 
-Admin and teaching tools, billing, push notifications, and offline sync remain out of scope for this first mobile client. Friends, leaderboards, learning statistics, the mistake notebook, and daily quests are available as native mobile screens. Games, grammar, skills, classes, and billing remain accessible from the in-app menu through their production web flows.
+Push notifications, full offline sync, bulk CSV/document import, and mobile-native account-data export remain deferred. Admin and content-management workflows deliberately stay on desktop web. Teaching, billing, social, grammar, games, skills, IELTS, AI Coach, and support/legal product areas are native mobile screens and use the same production API and authored content as the web client.

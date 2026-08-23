@@ -21,7 +21,23 @@ type MenuItem = {
   matches?: (pathname: string) => boolean;
 };
 
-export const BOTTOM_NAV_HEIGHT = 78;
+// Keep all five primary destinations readable without sacrificing the 48 dp
+// Android touch target. The shared value is also used by Screen padding and
+// Expo Router's tab bar.
+export const BOTTOM_NAV_HEIGHT = 82;
+export const COMPACT_TAB_WIDTH = 360;
+
+const compactTabLabels = {
+  uz: { home: "Bosh", learn: "Dars", library: "Kartalar", ielts: "IELTS", progress: "Natija" },
+  ru: { home: "Главная", learn: "Учёба", library: "Карты", ielts: "IELTS", progress: "Прогресс" },
+  en: { home: "Home", learn: "Learn", library: "Cards", ielts: "IELTS", progress: "Progress" },
+} as const;
+
+export function primaryTabLabels(locale: Locale, compact: boolean) {
+  if (compact) return compactTabLabels[locale];
+  const t = copy[locale];
+  return { home: t.home, learn: t.learn, library: t.library, ielts: "IELTS", progress: t.progress };
+}
 
 const menuCopy = {
   uz: {
@@ -34,10 +50,15 @@ const menuCopy = {
     grammar: "Grammatika",
     skills: "Ko'nikmalar",
     statistics: "Statistika",
+    achievements: "Yutuqlar",
     leaderboard: "Reyting",
     friends: "Do'stlar",
     classes: "Sinflar",
+    teacher: "O'qituvchi",
     billing: "Tariflar",
+    info: "Yordam",
+    coach: "AI Coach",
+    multiplayer: "Multiplayer",
   },
   ru: {
     home: "Главная",
@@ -49,10 +70,15 @@ const menuCopy = {
     grammar: "Грамматика",
     skills: "Навыки",
     statistics: "Статистика",
+    achievements: "Достижения",
     leaderboard: "Рейтинг",
     friends: "Друзья",
     classes: "Классы",
+    teacher: "Преподаватель",
     billing: "Тарифы",
+    info: "Помощь",
+    coach: "AI Coach",
+    multiplayer: "Multiplayer",
   },
   en: {
     home: "Home",
@@ -64,10 +90,15 @@ const menuCopy = {
     grammar: "Grammar",
     skills: "Skills",
     statistics: "Statistics",
+    achievements: "Achievements",
     leaderboard: "Leaderboard",
     friends: "Friends",
     classes: "Classes",
+    teacher: "Teacher",
     billing: "Billing",
+    info: "Help",
+    coach: "AI Coach",
+    multiplayer: "Multiplayer",
   },
 } as const;
 
@@ -146,15 +177,19 @@ export function AppHeader() {
   const secondaryItems: MenuItem[] = [
     { key: "profile", href: "/(tabs)/profile", icon: "person-circle-outline", label: t.profile, matches: (path) => path.startsWith("/profile") },
     { key: "games", href: "/games" as Href, icon: "game-controller-outline", label: nav.practice, matches: (path) => path.startsWith("/games") },
-    { key: "grammar", href: "/skills/grammar" as Href, icon: "shapes-outline", label: nav.grammar, matches: (path) => path.startsWith("/skills/grammar") },
+    { key: "multiplayer", href: "/multiplayer" as Href, icon: "people-outline", label: nav.multiplayer, matches: (path) => path.startsWith("/multiplayer") },
+    { key: "coach", href: "/coach" as Href, icon: "chatbubbles-outline", label: nav.coach, matches: (path) => path.startsWith("/coach") },
+    { key: "grammar", href: "/grammar" as Href, icon: "shapes-outline", label: nav.grammar, matches: (path) => path.startsWith("/grammar") },
     { key: "skills", href: "/skills" as Href, icon: "book-outline", label: nav.skills, matches: (path) => path.startsWith("/skills") },
     { key: "statistics", href: "/statistics" as Href, icon: "bar-chart-outline", label: nav.statistics, matches: (path) => path.startsWith("/statistics") || path.startsWith("/mistakes") },
+    { key: "achievements", href: "/achievements" as Href, icon: "medal-outline", label: nav.achievements, matches: (path) => path.startsWith("/achievements") },
     { key: "leaderboard", href: "/community" as Href, icon: "trophy-outline", label: nav.leaderboard, matches: (path) => path.startsWith("/community") },
     { key: "friends", href: "/community" as Href, icon: "people-outline", label: nav.friends, matches: (path) => path.startsWith("/community") },
     { key: "classes", href: "/classes" as Href, icon: "people-circle-outline", label: nav.classes, matches: (path) => path.startsWith("/classes") },
+    { key: "teacher", href: "/teacher" as Href, icon: "school-outline", label: nav.teacher, matches: (path) => path.startsWith("/teacher") },
     { key: "billing", href: "/billing" as Href, icon: "card-outline", label: nav.billing, matches: (path) => path.startsWith("/billing") },
+    { key: "info", href: "/info" as Href, icon: "help-buoy-outline", label: nav.info, matches: (path) => path.startsWith("/info") },
   ];
-
   const selectItem = async (item: MenuItem) => {
     setOpen(false);
     if (item.href) {
@@ -288,15 +323,15 @@ export function AppBottomNav() {
   const { width } = useWindowDimensions();
   const { user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
-  const t = copy[locale];
+  const tab = primaryTabLabels(locale, width < COMPACT_TAB_WIDTH);
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const items: MenuItem[] = [
-    { key: "dashboard", href: "/(tabs)", icon: "home-outline", label: t.home, matches: (path) => path === "/" },
-    { key: "today", href: "/(tabs)/review", icon: "repeat-outline", label: t.learn, matches: (path) => path.startsWith("/review") },
-    { key: "decks", href: "/(tabs)/library", icon: "book-outline", label: t.library, matches: (path) => path.startsWith("/library") || path.startsWith("/words") },
-    { key: "ielts", href: "/(tabs)/ielts", icon: "school-outline", label: "IELTS", matches: (path) => path.startsWith("/ielts") || path.startsWith("/expressions") },
-    { key: "mastery", href: "/(tabs)/progress", icon: "map-outline", label: t.progress, matches: (path) => path.startsWith("/progress") },
+    { key: "dashboard", href: "/(tabs)", icon: "home-outline", label: tab.home, matches: (path) => path === "/" },
+    { key: "today", href: "/(tabs)/review", icon: "repeat-outline", label: tab.learn, matches: (path) => path.startsWith("/review") },
+    { key: "decks", href: "/(tabs)/library", icon: "book-outline", label: tab.library, matches: (path) => path.startsWith("/library") || path.startsWith("/words") },
+    { key: "ielts", href: "/(tabs)/ielts", icon: "school-outline", label: tab.ielts, matches: (path) => path.startsWith("/ielts") || path.startsWith("/expressions") },
+    { key: "mastery", href: "/(tabs)/progress", icon: "map-outline", label: tab.progress, matches: (path) => path.startsWith("/progress") },
   ];
 
   return (
@@ -341,9 +376,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 4, height: 5 },
     elevation: 8,
   },
-  bottomNavItem: { flex: 1, minWidth: 0, alignItems: "center", justifyContent: "center", gap: 3, marginHorizontal: 2, overflow: "hidden", borderRadius: 10 },
+  bottomNavItem: { flex: 1, minWidth: 0, minHeight: 66, alignItems: "center", justifyContent: "center", gap: 4, marginHorizontal: 2, borderRadius: 10 },
   bottomNavItemActive: { backgroundColor: colors.brand600 },
-  bottomNavLabel: { width: "100%", minWidth: 0, paddingHorizontal: 1, fontFamily: fonts.uiBold, fontSize: 9, lineHeight: 11, textAlign: "center", color: colors.muted },
+  bottomNavLabel: { width: "100%", minWidth: 0, paddingHorizontal: 1, fontFamily: fonts.uiBold, fontSize: 10, lineHeight: 13, textAlign: "center", color: colors.muted },
   bottomNavLabelActive: { color: colors.raised },
   headerSafe: { backgroundColor: colors.paper },
   headerBar: {
@@ -366,8 +401,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   iconButton: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     alignItems: "center",
     justifyContent: "center",
     borderWidth: 1,
@@ -380,7 +415,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 2, height: 2 },
     elevation: 1,
   },
-  brand: { minHeight: 44, flexDirection: "row", alignItems: "center", gap: 9, flexShrink: 1 },
+  brand: { minHeight: 48, flexDirection: "row", alignItems: "center", gap: 9, flexShrink: 1 },
   logoMark: { width: 34, height: 34, borderRadius: 10, shadowColor: colors.brown, shadowOpacity: 0.7, shadowRadius: 0, shadowOffset: { width: 3, height: 3 }, elevation: 3 },
   brandText: { fontFamily: fonts.uiBold, fontSize: 19, letterSpacing: -0.55, color: colors.ink },
   modalRoot: { flex: 1, flexDirection: "row" },
@@ -427,7 +462,7 @@ const styles = StyleSheet.create({
   drawerFooter: { gap: 10, padding: 14, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.raised },
   footerControls: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
   localeRow: { alignSelf: "flex-start", flexDirection: "row", overflow: "hidden", borderWidth: 1, borderColor: colors.line, borderRadius: 9 },
-  localeChip: { minWidth: 44, minHeight: 44, alignItems: "center", justifyContent: "center", backgroundColor: colors.cream },
+  localeChip: { minWidth: 48, minHeight: 48, alignItems: "center", justifyContent: "center", backgroundColor: colors.cream },
   localeChipActive: { backgroundColor: colors.brand600 },
   localeChipPressed: { opacity: 0.58 },
   localeText: { fontFamily: fonts.uiBold, fontSize: 11, color: colors.muted },

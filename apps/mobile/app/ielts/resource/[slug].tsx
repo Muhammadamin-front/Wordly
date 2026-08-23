@@ -25,7 +25,7 @@ export default function IeltsResourceScreen() {
     return <Redirect href="/(tabs)/ielts" />;
   }
 
-  const groups = resource.groups ?? [{ title: resource.title, note: resource.description, items: resource.items ?? [] }];
+  const groups = resource.groups;
 
   return (
     <Screen appHeader appFooter>
