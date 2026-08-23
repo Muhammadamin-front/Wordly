@@ -42,6 +42,13 @@ PAYME_MERCHANT_KEY=...
 CLICK_SERVICE_ID=...
 CLICK_MERCHANT_ID=...
 CLICK_SECRET_KEY=...
+# Uzum Checkout — supplied by Uzum after merchant onboarding.
+UZUM_TERMINAL_ID=...
+UZUM_API_KEY=...
+# Generate once: python3 -c "import secrets; print(secrets.token_urlsafe(48))"
+UZUM_WEBHOOK_SECRET=<paste-generated-output>
+# Keep this value unless Uzum gives the production merchant account a different base URL.
+UZUM_API_BASE_URL=https://developer.uzumbank.uz/api/v1
 PAYMENTS_SANDBOX=false
 # Error tracking (Sentry). Unset on either service = errors stay in logs only.
 SENTRY_DSN=...                             # api — Project Settings -> Client Keys
@@ -82,6 +89,15 @@ Notes that will bite you if skipped:
 - Checkout is exposed only for fully configured providers. Sandbox activation
   is always disabled in production, and the family plan is hidden until member
   management is implemented.
+- **Uzum Checkout setup:** in the Uzum merchant/Checkout panel set the callback
+  URL to `https://api.vocora.uz/api/v1/payments/uzum/<UZUM_WEBHOOK_SECRET>`.
+  The placeholder must be replaced with the same long random value saved in
+  `.env`. Do not place the terminal ID, API key, or webhook secret in a web,
+  mobile, or EAS environment variable. Card data stays on Uzum's hosted page;
+  Vocora verifies every callback by fetching the order status from Uzum before
+  enabling Premium. Only the verified `COMPLETED` result enables Premium;
+  `DECLINED`, pending, cancelled, refunded, or amount-mismatched orders never
+  unlock it.
 
 ## 2. Build & run
 

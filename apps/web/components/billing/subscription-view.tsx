@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { billingApi, type ReferralInfo, type Subscription } from "@/lib/billing";
+import { formatApiDate } from "@/lib/dates";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["billing"] }) {
@@ -43,7 +44,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
     );
   }
 
-  const expires = sub.expires_at ? new Date(sub.expires_at).toLocaleDateString(lang) : null;
+  const expires = formatApiDate(sub.expires_at, lang);
 
   return (
     <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6">

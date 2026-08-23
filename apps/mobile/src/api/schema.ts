@@ -1334,6 +1334,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ielts/mock/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sessions */
+        get: operations["list_sessions_api_v1_ielts_mock_sessions_get"];
+        put?: never;
+        /** Start Session */
+        post: operations["start_session_api_v1_ielts_mock_sessions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ielts/mock/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Session */
+        get: operations["get_session_api_v1_ielts_mock_sessions__session_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ielts/mock/sessions/{session_id}/abandon": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Abandon Session */
+        post: operations["abandon_session_api_v1_ielts_mock_sessions__session_id__abandon_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/billing/plans": {
         parameters: {
             query?: never;
@@ -1502,6 +1554,26 @@ export interface paths {
         put?: never;
         /** Click Complete */
         post: operations["click_complete_api_v1_payments_click_complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/uzum/{webhook_secret}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Uzum Callback
+         * @description Accept an Uzum notification only after a server-to-server status check.
+         */
+        post: operations["uzum_callback_api_v1_payments_uzum__webhook_secret__post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2546,18 +2618,12 @@ export interface components {
         };
         /** Body_admin_import_csv_api_v1_admin_words_import_post */
         Body_admin_import_csv_api_v1_admin_words_import_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** Body_import_deck_csv_api_v1_decks__deck_id__import_post */
         Body_import_deck_csv_api_v1_decks__deck_id__import_post: {
-            /**
-             * File
-             * Format: binary
-             */
+            /** File */
             file: string;
         };
         /** CardCreate */
@@ -2744,8 +2810,11 @@ export interface components {
         CheckoutRequest: {
             /** Plan Code */
             plan_code: string;
-            /** Provider */
-            provider: string;
+            /**
+             * Provider
+             * @enum {string}
+             */
+            provider: "payme" | "click" | "uzum";
             /** Return Url */
             return_url?: string | null;
         };
@@ -3532,6 +3601,84 @@ export interface components {
              * Format: uuid
              */
             word_id: string;
+        };
+        /** MockLegOut */
+        MockLegOut: {
+            /** Skill */
+            skill: string;
+            /** Status */
+            status: string;
+            /** Band */
+            band: number | null;
+            /** Started At */
+            started_at: string | null;
+            /** Completed At */
+            completed_at: string | null;
+        };
+        /** MockSessionCreate */
+        MockSessionCreate: {
+            /**
+             * Track
+             * @default academic
+             */
+            track: string;
+        };
+        /** MockSessionListItem */
+        MockSessionListItem: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Track */
+            track: string;
+            /** Status */
+            status: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /** Overall Band */
+            overall_band: number | null;
+        };
+        /** MockSessionOut */
+        MockSessionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Track */
+            track: string;
+            /** Status */
+            status: string;
+            /** Current Leg */
+            current_leg: string | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Finished At */
+            finished_at: string | null;
+            /** Overall Band */
+            overall_band: number | null;
+            /** Band Listening */
+            band_listening: number | null;
+            /** Band Reading */
+            band_reading: number | null;
+            /** Band Writing */
+            band_writing: number | null;
+            /** Band Speaking */
+            band_speaking: number | null;
+            /**
+             * Legs
+             * @default []
+             */
+            legs: components["schemas"]["MockLegOut"][];
         };
         /** OnboardingOut */
         OnboardingOut: {
@@ -7044,6 +7191,121 @@ export interface operations {
             };
         };
     };
+    list_sessions_api_v1_ielts_mock_sessions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MockSessionListItem"][];
+                };
+            };
+        };
+    };
+    start_session_api_v1_ielts_mock_sessions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MockSessionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MockSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_session_api_v1_ielts_mock_sessions__session_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MockSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    abandon_session_api_v1_ielts_mock_sessions__session_id__abandon_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MockSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     plans_api_v1_billing_plans_get: {
         parameters: {
             query?: never;
@@ -7279,6 +7541,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    uzum_callback_api_v1_payments_uzum__webhook_secret__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                webhook_secret: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

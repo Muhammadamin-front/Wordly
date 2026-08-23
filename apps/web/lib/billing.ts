@@ -23,12 +23,15 @@ export interface Checkout {
   amount_som: number;
 }
 
+export type PaymentProvider = "payme" | "click" | "uzum";
+
 export interface BillingStatus {
   checkout_enabled: boolean;
   sandbox_enabled: boolean;
   providers: {
     payme: boolean;
     click: boolean;
+    uzum: boolean;
   };
   family_plan_available: boolean;
 }
@@ -47,11 +50,12 @@ export const billingApi = {
 
   subscription: () => apiFetch<Subscription>("/billing/subscription", { auth: true }),
 
-  checkout: (planCode: string, provider: "payme" | "click", returnUrl: string) =>
+  checkout: (planCode: string, provider: PaymentProvider, returnUrl: string, idempotencyKey?: string) =>
     apiFetch<Checkout>("/billing/checkout", {
       method: "POST",
       body: { plan_code: planCode, provider, return_url: returnUrl },
       auth: true,
+      headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined,
     }),
 
   sandboxActivate: (planCode: string) =>

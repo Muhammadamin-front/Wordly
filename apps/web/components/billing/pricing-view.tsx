@@ -13,6 +13,7 @@ import {
   billingApi,
   formatSom,
   type BillingStatus,
+  type PaymentProvider,
   type Plan,
   type Subscription,
 } from "@/lib/billing";
@@ -71,7 +72,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     };
   }, [ready, user, reloadKey]);
 
-  async function pay(planCode: string, provider: "payme" | "click") {
+  async function pay(planCode: string, provider: PaymentProvider) {
     setBusy(true);
     setError(null);
     trackEvent("checkout_started", { locale: lang, plan_code: planCode, provider });
@@ -79,7 +80,8 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
       const result = await billingApi.checkout(
         planCode,
         provider,
-        `${window.location.origin}/${lang}/billing`
+        `${window.location.origin}/${lang}/billing`,
+        crypto.randomUUID()
       );
       window.location.assign(result.checkout_url);
     } catch (err) {
@@ -211,8 +213,8 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                       <div
                         className={cn(
                           "grid gap-2",
-                          paymentStatus.providers.payme && paymentStatus.providers.click
-                            ? "grid-cols-2"
+                          [paymentStatus.providers.payme, paymentStatus.providers.click, paymentStatus.providers.uzum].filter(Boolean).length > 1
+                            ? "sm:grid-cols-2"
                             : "grid-cols-1"
                         )}
                       >
@@ -233,6 +235,16 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                             onClick={() => void pay(plan.code, "click")}
                           >
                             {t.click}
+                          </Button>
+                        )}
+                        {paymentStatus.providers.uzum && (
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            loading={busy}
+                            onClick={() => void pay(plan.code, "uzum")}
+                          >
+                            Uzum Checkout
                           </Button>
                         )}
                       </div>
