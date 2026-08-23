@@ -8,7 +8,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.db.base import Base
-from app.models import ai, audit, billing, classroom, coach, expression, flashcards, ielts, gamification, multiplayer, reading, social, user, vocabulary  # noqa: F401  — register all model tables
+from app.models import ai, audit, billing, classroom, coach, expression, flashcards, ielts, ielts_mock, gamification, multiplayer, reading, social, user, vocabulary  # noqa: F401  — register all model tables
 
 config = context.config
 

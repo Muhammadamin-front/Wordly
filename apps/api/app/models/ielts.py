@@ -46,4 +46,11 @@ class IeltsResult(Base):
     skill: Mapped[str] = mapped_column(String(12), nullable=False)  # reading|writing|listening|speaking
     band: Mapped[float] = mapped_column(Float, nullable=False)
     detail: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # JSON feedback
+    # Set when this result is one leg of an IELTS Full Mock (models/ielts_mock.py)
+    # rather than standalone practice — lets the mock group its 4 results and
+    # lets the hub filter "mock attempts only" without touching best_bands()/
+    # recent_results(), which already read every IeltsResult regardless.
+    mock_session_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        Uuid, ForeignKey("ielts_mock_sessions.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)

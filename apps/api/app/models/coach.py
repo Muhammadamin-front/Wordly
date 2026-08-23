@@ -38,7 +38,10 @@ class CoachSession(Base):
         Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     character: Mapped[str] = mapped_column(String(20), nullable=False)  # gordon|mochi|alex|examiner
-    mode: Mapped[str] = mapped_column(String(10), default="chat", nullable=False)  # chat|ielts
+    # chat|ielts|ielts_full — ielts_full is the Full Mock's continuous Part
+    # 1->2->3 speaking leg (one session, advancing ielts_part in place) as
+    # opposed to standalone "ielts" sessions, which are always exactly one part.
+    mode: Mapped[str] = mapped_column(String(12), default="chat", nullable=False)
     ielts_part: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # 1|2|3
     topic: Mapped[Optional[str]] = mapped_column(String(160), nullable=True)
     status: Mapped[str] = mapped_column(String(10), default="active", nullable=False)  # active|done
