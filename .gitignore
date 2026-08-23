@@ -44,7 +44,11 @@ next-env.d.ts
 __pycache__/
 *.pyc
 .venv/
+.venv-check/
 *.db
+
+# editor
+.vscode/
 
 # workspace node_modules anywhere
 node_modules/
