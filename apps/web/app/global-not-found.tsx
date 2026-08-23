@@ -4,6 +4,7 @@
 // layout to compose a 404 from). Because of that bypass, this file imports
 // its own copy of the global stylesheet and cannot read the visitor's
 // locale — "/" is always a safe link, proxy.ts resolves it to the right one.
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -19,7 +20,16 @@ export default function GlobalNotFound() {
     <html lang="uz">
       <body>
         <main className="flex min-h-dvh w-full flex-col items-center justify-center bg-page px-5 py-20 text-center">
-          <p className="text-sm font-black uppercase tracking-[0.16em] text-brand-600">404</p>
+          <div className="relative size-28 overflow-hidden rounded-2xl border-2 border-line shadow-[4px_5px_0_rgba(0,0,0,0.15)] sm:size-32">
+            <Image
+              src="/images/vocora-cat-tutor-poster.png"
+              alt=""
+              fill
+              sizes="128px"
+              className="object-cover"
+            />
+          </div>
+          <p className="mt-6 text-sm font-black uppercase tracking-[0.16em] text-brand-600">404</p>
           <h1 className="mt-3 text-3xl font-black tracking-tight text-ink sm:text-4xl">
             Sahifa topilmadi
           </h1>

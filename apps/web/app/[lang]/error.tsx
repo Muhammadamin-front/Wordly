@@ -1,6 +1,7 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -10,9 +11,21 @@ import { Button } from "@/components/ui/button";
 // readable even if something in the data/rendering path that a full
 // dictionary fetch depends on is itself part of what broke.
 const COPY = {
-  uz: { title: "Nimadir xato ketdi", body: "Xatolik yuz berdi. Qayta urinib ko'ring.", retry: "Qayta urinish" },
-  ru: { title: "Что-то пошло не так", body: "Произошла ошибка. Попробуйте ещё раз.", retry: "Повторить" },
-  en: { title: "Something went wrong", body: "An error occurred. Please try again.", retry: "Try again" },
+  uz: {
+    title: "Texnik ishlar olib borilmoqda",
+    body: "Bu sahifada vaqtincha muammo yuzaga keldi. Bir necha daqiqadan so'ng qayta urinib ko'ring.",
+    retry: "Qayta urinish",
+  },
+  ru: {
+    title: "Ведутся технические работы",
+    body: "На этой странице временно возникла проблема. Попробуйте ещё раз через несколько минут.",
+    retry: "Повторить",
+  },
+  en: {
+    title: "We're doing a bit of maintenance",
+    body: "This page hit a temporary snag. Please try again in a few minutes.",
+    retry: "Try again",
+  },
 } as const;
 
 export default function Error({
@@ -32,7 +45,16 @@ export default function Error({
 
   return (
     <main className="mx-auto flex min-h-[60svh] w-full max-w-lg flex-col items-center justify-center px-5 py-20 text-center">
-      <h1 className="text-3xl font-black tracking-tight text-ink sm:text-4xl">{t.title}</h1>
+      <div className="relative size-28 overflow-hidden rounded-2xl border-2 border-line shadow-[4px_5px_0_rgba(0,0,0,0.15)] sm:size-32">
+        <Image
+          src="/images/vocora-cat-tutor-poster.png"
+          alt=""
+          fill
+          sizes="128px"
+          className="object-cover"
+        />
+      </div>
+      <h1 className="mt-6 text-3xl font-black tracking-tight text-ink sm:text-4xl">{t.title}</h1>
       <p className="mt-3 max-w-sm text-sm leading-6 text-ink-soft sm:text-base">{t.body}</p>
       <Button className="mt-7" onClick={() => retry()}>
         {t.retry}
