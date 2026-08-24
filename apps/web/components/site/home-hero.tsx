@@ -55,7 +55,7 @@ export function HomeHero({
 }) {
   return (
     <section className="home-field relative flex min-h-svh items-center justify-center px-4 py-7 sm:px-8 sm:py-12">
-      <div className="relative w-full max-w-295 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-home-card shadow-home-card sm:rounded-[26px]">
+      <div className="relative w-full max-w-370 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-home-card shadow-home-card sm:rounded-[26px]">
         <div className="relative isolate">
           <nav
             aria-label={copy.menu}
