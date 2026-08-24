@@ -44,6 +44,7 @@ CATEGORIES = [
     ("toefl", "TOEFL", "TOEFL", "TOEFL", "🏛"),
     ("sat", "SAT", "SAT", "SAT", "✏️"),
     ("business", "Business English", "Biznes ingliz tili", "Деловой английский", "💼"),
+    ("advanced", "Advanced Vocabulary", "Yuqori darajadagi so'zlar", "Продвинутая лексика", "🧠"),
 ]
 
 DATA_DIR = pathlib.Path(__file__).parent / "data"
@@ -118,6 +119,7 @@ CORPUS_FILES = [
     "phrasal_idioms_9.csv",
     "idioms_expressions_batch1.csv",
     "c2_advanced_batch2.csv",
+    "advanced_words_idioms_batch.csv",
     "phrasal_idioms_10.csv",
 ]
 
