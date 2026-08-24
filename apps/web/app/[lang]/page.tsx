@@ -1,44 +1,29 @@
 import {
   ArrowRight,
-  BookOpenText,
   BrainCircuit,
-  Clock3,
-  Dumbbell,
-  Globe2,
+  BookOpen,
+  Crown,
+  Gamepad2,
   GraduationCap,
-  Headphones,
-  Languages,
-  Mic2,
-  PenLine,
-  ListChecks,
-  RotateCcw,
+  MessageCircle,
   ShieldCheck,
-  Star,
-  Target,
-  TrendingUp,
-  Trophy,
-  Users,
-  Volume2,
-  type LucideIcon,
+  Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
-import { HomeHero, type HomeHeroCopy } from "@/components/site/home-hero";
 import { Reveal } from "@/components/site/reveal";
-import { Button } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
-import { getWordsLabel } from "@/lib/nav-labels";
 import { fetchCatalogMeta } from "@/lib/vocab";
 import { getDictionary, hasLocale } from "./dictionaries";
 
 const LEVELS = [
-  { slug: "a1", level: "A1", tone: "bg-brand-400" },
-  { slug: "a2", level: "A2", tone: "bg-brand-600" },
-  { slug: "b1", level: "B1", tone: "bg-accent-500" },
-  { slug: "b2", level: "B2", tone: "bg-brand-800" },
+  { slug: "a1", level: "A1", tone: "orange" },
+  { slug: "a2", level: "A2", tone: "rose" },
+  { slug: "b1", level: "B1", tone: "emerald" },
+  { slug: "b2", level: "B2", tone: "brown" },
 ] as const;
 
 export default async function LandingPage({
@@ -55,318 +40,57 @@ export default async function LandingPage({
   const copy = homeCopy[lang as Locale];
   const shelfLabels = library.shelves as Record<string, { name: string; desc: string }>;
 
-  const features: { icon: LucideIcon; title: string; body: string }[] = [
-    { icon: BrainCircuit, title: landing.feature1Title, body: landing.feature1Body },
-    { icon: Volume2, title: landing.feature2Title, body: landing.feature2Body },
-    { icon: Target, title: landing.feature3Title, body: landing.feature3Body },
-    { icon: Trophy, title: landing.feature4Title, body: landing.feature4Body },
-  ];
-
-  const howItWorks: { icon: LucideIcon; title: string; body: string }[] = [
-    { icon: ListChecks, title: copy.step1Title, body: copy.step1Body },
-    { icon: RotateCcw, title: copy.step2Title, body: copy.step2Body },
-    { icon: Dumbbell, title: copy.step3Title, body: copy.step3Body },
-    { icon: TrendingUp, title: copy.step4Title, body: copy.step4Body },
-  ];
-
-  const ieltsSkills: { icon: LucideIcon; slug: string; title: string; body: string }[] = [
-    { icon: BookOpenText, slug: "reading", title: copy.skillReadingTitle, body: copy.skillReadingBody },
-    { icon: PenLine, slug: "writing", title: copy.skillWritingTitle, body: copy.skillWritingBody },
-    { icon: Headphones, slug: "listening", title: copy.skillListeningTitle, body: copy.skillListeningBody },
-    { icon: Mic2, slug: "speaking", title: copy.skillSpeakingTitle, body: copy.skillSpeakingBody },
-  ];
-
-  // Placeholder figures — swap for real analytics once usage tracking is
-  // wired up; kept round and modest rather than guessed-precise.
-  const statBand: { icon: LucideIcon; value: string; label: string }[] = [
-    { icon: Users, value: "10,000+", label: copy.statLearners },
-    { icon: BrainCircuit, value: "500,000+", label: copy.statWords },
-    { icon: Globe2, value: "50+", label: copy.statCountries },
-    { icon: Star, value: "4.9/5", label: copy.statRating },
-  ];
-
-  const heroNav = [
-    { href: `/${lang}/vocabulary`, label: getWordsLabel(lang as Locale) },
-    { href: `/${lang}/grammar`, label: nav.grammar },
-    { href: `/${lang}/ielts`, label: nav.ielts },
-    { href: `/${lang}/pricing`, label: nav.pricing },
-  ];
-
   return (
     <>
-      <div className="lg:hidden">
-        <SiteHeader lang={lang as Locale} nav={nav} />
-      </div>
+      <SiteHeader lang={lang as Locale} nav={nav} />
 
-      <HomeHero
-        lang={lang}
-        copy={copy.hero}
-        ctaLabel={landing.heroCta}
-        ctaContinueLabel={landing.heroCtaContinue}
-        navLinks={heroNav}
-        signIn={nav.login}
-        signUp={nav.register}
-        dashboard={nav.dashboard}
-      />
-
-      <main className="flex-1 px-3 pb-8 sm:px-5">
-
-        <section className="mx-auto mt-5 grid max-w-370 gap-5 xl:grid-cols-[2.1fr_1fr]">
+      <main className="min-h-screen flex-1 bg-[#fff8ed] px-3 pb-10 pt-4 text-[#2a1811] dark:bg-[#081612] dark:text-white sm:px-5 lg:px-7">
+        <section className="mx-auto max-w-[1480px]">
           <Reveal>
-            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
-              <div className="grid gap-7 lg:grid-cols-[260px_1fr]">
-                <div className="flex flex-col">
-                  <p className="flex items-center gap-2 text-[11px] font-black uppercase text-ink-soft">
-                    <ShieldCheck className="size-4 text-brand-600" aria-hidden />
-                    {copy.pathKicker}
-                  </p>
-                  <h2 className="mt-5 text-3xl font-black leading-tight text-brand-950 dark:text-white">
-                    {copy.pathTitle}
-                  </h2>
-                  <p className="mt-4 text-sm leading-6 text-ink-soft">{copy.pathBody}</p>
-                  <Link
-                    href={`/${lang}/vocabulary`}
-                    className="mt-auto inline-flex items-center gap-2 pt-7 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
-                  >
-                    {copy.allLevels}
-                    <ArrowRight className="size-4" aria-hidden />
-                  </Link>
+            <HeroRail />
+          </Reveal>
+
+          <section className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1.92fr)_minmax(360px,1fr)]">
+            <Reveal>
+              <section className="relative overflow-hidden rounded-[28px] border border-[#ead8c4] bg-[linear-gradient(135deg,#fffdf9_0%,#fff6e9_100%)] p-6 shadow-[0_16px_35px_rgba(113,72,37,0.13)] sm:p-9 dark:border-white/10 dark:bg-[#10241e]">
+                <ArchBackdrop />
+                <div className="relative z-10 max-w-[500px]">
+                  <p className="inline-flex items-center gap-2 rounded-lg border border-[#edcda8] bg-[#fffaf2]/90 px-2.5 py-1.5 text-xs font-bold text-[#9a421e] dark:border-white/15 dark:bg-white/10 dark:text-[#ffc78e]"><ShieldCheck className="size-4" aria-hidden /> {copy.pathKicker}</p>
+                  <h1 className="mt-4 max-w-[520px] font-serif text-4xl font-medium leading-[1.08] tracking-[-0.045em] sm:text-5xl lg:text-[56px]">{copy.pathTitle}</h1>
+                  <p className="mt-4 max-w-[470px] text-sm leading-6 text-[#6f5141] sm:text-base dark:text-white/70">{copy.pathBody}</p>
+                  <Link href={`/${lang}/vocabulary`} className="mt-4 inline-flex items-center gap-3 text-sm font-bold text-[#bf4f22] transition hover:gap-4 dark:text-[#ffbb86]">{copy.allLevels}<ArrowRight className="size-4" aria-hidden /></Link>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="relative z-10 mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {LEVELS.map((item, index) => (
-                    <Reveal delay={index * 0.05} key={item.level}>
-                      <Link
-                        href={`/${lang}/preview/${item.slug}`}
-                        className="group flex h-full min-h-[258px] flex-col overflow-hidden rounded-xl border border-line/80 bg-raised/72 p-4 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <span
-                            className={`flex size-10 items-center justify-center rounded-full text-xs font-black text-white ${item.tone}`}
-                          >
-                            {item.level}
-                          </span>
-                          <ArchitecturalMotif tone={item.tone} />
-                        </div>
-                        <p className="mt-4 text-base font-black text-ink">
-                          {shelfLabels[item.slug].name.split("·").at(-1)?.trim()}
-                        </p>
-                        <p className="mt-2 line-clamp-2 text-xs leading-5 text-ink-soft">
-                          {shelfLabels[item.slug].desc}
-                        </p>
-                        <div className="mt-auto pt-5">
-                          {catalog && (
-                            <p className="mb-5 text-[11px] font-bold text-ink-soft">
-                              {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)} {library.words}
-                            </p>
-                          )}
-                          <p className="flex items-center justify-end gap-1.5 text-xs font-black text-brand-900 dark:text-brand-200">
-                            {copy.previewLevel}
-                            <ArrowRight className="size-3.5" aria-hidden />
-                          </p>
-                        </div>
-                      </Link>
-                    </Reveal>
+                    <LevelCard
+                      key={item.level}
+                      href={`/${lang}/preview/${item.slug}`}
+                      level={item.level}
+                      title={shelfLabels[item.slug]?.name.split("·").at(-1)?.trim() ?? item.level}
+                      description={shelfLabels[item.slug]?.desc ?? ""}
+                      words={catalog ? new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0) : "-"}
+                      wordsLabel={library.words}
+                      previewLabel={copy.previewLevel}
+                      tone={item.tone}
+                      delay={index}
+                    />
                   ))}
                 </div>
-              </div>
 
-              <div className="mt-7 grid gap-3 border-t border-line/70 pt-5 sm:grid-cols-2 lg:grid-cols-4">
-                {features.map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-500/10 text-accent-600 dark:text-accent-300">
-                      <feature.icon className="size-4" aria-hidden />
-                    </span>
-                    <div>
-                      <p className="text-xs font-black text-ink">{feature.title}</p>
-                      <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-ink-soft">
-                        {feature.body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
+                <LearningFeatures />
+              </section>
+            </Reveal>
 
-          <Reveal delay={0.08}>
-            <div className="relative min-h-130 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]">
-              <div aria-hidden className="absolute -right-20 -top-16 size-80 rounded-full border-[28px] border-accent-400/55" />
-              <div aria-hidden className="absolute -bottom-24 -left-16 size-64 bg-brand-500/80 rotate-12" />
-              <p aria-hidden className="absolute right-6 top-8 font-display text-[7rem] leading-none tracking-wide text-sand-100/10">IELTS</p>
-              <div className="relative z-10 flex h-full flex-col">
-                <span className="print-label inline-flex w-fit items-center gap-2 border-sand-100/45 bg-sand-100/10 text-sand-100">
-                  <GraduationCap className="size-3.5" aria-hidden />
-                  IELTS
-                </span>
-                <h2 className="mt-6 max-w-sm text-3xl font-black leading-tight">
-                  {copy.ieltsTitle}
-                </h2>
-                <p className="mt-4 max-w-sm text-sm leading-6 text-white/72">{copy.ieltsBody}</p>
-                <div className="mt-7 space-y-3 text-sm font-semibold text-white/88">
-                  {copy.ieltsFeatures.map((feature, index) => {
-                    const icons = [Mic2, Languages, Headphones, Star];
-                    const Icon = icons[index] ?? Star;
-                    return (
-                      <p key={feature} className="flex items-center gap-3">
-                        <span className="flex size-8 items-center justify-center rounded-md border border-white/20 bg-white/8">
-                          <Icon className="size-4 text-accent-300" aria-hidden />
-                        </span>
-                        {feature}
-                      </p>
-                    );
-                  })}
-                </div>
-                <Link href={`/${lang}/ielts`} className="mt-auto pt-8">
-                  <Button className="border-brand-950 bg-sand-100 text-brand-950 hover:bg-brand-50" variant="secondary">
-                    {copy.openIelts}
-                    <ArrowRight className="size-4" aria-hidden />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section className="mx-auto mt-5 max-w-370">
-          <Reveal>
-            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
-              <p className="text-xs font-black uppercase text-brand-600">{copy.howKicker}</p>
-              <h2 className="mt-3 max-w-2xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
-                {copy.howTitle}
-              </h2>
-              <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {howItWorks.map((step, index) => (
-                  <Reveal delay={index * 0.05} key={step.title}>
-                    <div className="relative h-full rounded-xl border border-line/80 bg-raised/60 p-5">
-                      <span className="flex size-10 items-center justify-center rounded-lg bg-brand-900 text-sm font-black text-white shadow-[2px_3px_0_rgb(84,37,15,0.35)]">
-                        {index + 1}
-                      </span>
-                      <step.icon className="mt-4 size-5 text-brand-600 dark:text-brand-300" aria-hidden />
-                      <p className="mt-3 text-base font-black text-ink">{step.title}</p>
-                      <p className="mt-1.5 text-xs leading-5 text-ink-soft">{step.body}</p>
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section className="mx-auto mt-5 max-w-370">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 px-6 py-8 text-white shadow-[9px_11px_0_rgba(84,37,15,0.35)] sm:px-8">
-              <div aria-hidden className="absolute -right-16 -top-20 size-72 rounded-full border-24 border-accent-400/30" />
-              <p className="relative text-center text-xs font-black uppercase tracking-wide text-brand-200">
-                {copy.statsKicker}
-              </p>
-              <div className="relative mt-6 grid grid-cols-2 gap-6 sm:grid-cols-4">
-                {statBand.map((stat) => (
-                  <div key={stat.label} className="text-center">
-                    <stat.icon className="mx-auto size-5 text-accent-300" aria-hidden />
-                    <p className="mt-2 font-display text-4xl tracking-wide sm:text-5xl">{stat.value}</p>
-                    <p className="mt-1 text-xs font-bold text-brand-100/75">{stat.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section className="mx-auto mt-5 max-w-370">
-          <Reveal>
-            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                  <p className="text-xs font-black uppercase text-brand-600">{copy.ieltsSkillsKicker}</p>
-                  <h2 className="mt-3 max-w-2xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
-                    {copy.ieltsSkillsTitle}
-                  </h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-6 text-ink-soft">{copy.ieltsSkillsBody}</p>
-                </div>
-                <Link
-                  href={`/${lang}/ielts`}
-                  className="inline-flex shrink-0 items-center gap-2 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
-                >
-                  {copy.openIelts}
-                  <ArrowRight className="size-4" aria-hidden />
-                </Link>
-              </div>
-              <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {ieltsSkills.map((skill, index) => (
-                  <Reveal delay={index * 0.05} key={skill.slug}>
-                    <Link
-                      href={`/${lang}/ielts/${skill.slug}`}
-                      className="group flex h-full flex-col rounded-xl border border-line/80 bg-raised/60 p-5 transition-all hover:-translate-y-1 hover:border-brand-400/60"
-                    >
-                      <span className="flex size-10 items-center justify-center rounded-lg bg-accent-500/10 text-accent-600 dark:text-accent-300">
-                        <skill.icon className="size-5" aria-hidden />
-                      </span>
-                      <p className="mt-4 text-base font-black text-ink">{skill.title}</p>
-                      <p className="mt-1.5 text-xs leading-5 text-ink-soft">{skill.body}</p>
-                      <span className="mt-auto flex items-center gap-1.5 pt-4 text-xs font-black text-brand-800 dark:text-brand-200">
-                        <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
-                      </span>
-                    </Link>
-                  </Reveal>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </section>
-
-        <section className="mx-auto mt-5 max-w-370">
-          <Reveal>
-            <Link
-              href={`/${lang}/ielts/mock`}
-              className="group relative flex flex-col gap-6 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-6 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)] transition-transform hover:-translate-y-1 sm:flex-row sm:items-center sm:justify-between sm:p-8"
-            >
-              <div aria-hidden className="absolute -right-16 -top-20 size-72 rounded-full border-24 border-accent-400/30" />
-              <div className="relative">
-                <span className="print-label inline-flex w-fit items-center gap-2 border-sand-100/45 bg-sand-100/10 text-sand-100">
-                  <Trophy className="size-3.5" aria-hidden />
-                  {copy.mockKicker}
-                </span>
-                <h2 className="mt-4 max-w-xl text-3xl font-black leading-tight sm:text-4xl">
-                  {copy.mockTitle}
-                </h2>
-                <p className="mt-3 max-w-lg text-sm leading-6 text-white/72">{copy.mockBody}</p>
-                <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-brand-100">
-                  <Clock3 className="size-3.5" aria-hidden />
-                  {copy.mockTime}
-                </p>
-              </div>
-              <span className="relative inline-flex min-h-13 shrink-0 items-center justify-center gap-2 rounded-md border border-brand-950 bg-sand-100 px-7 text-base font-black text-brand-950 transition-colors group-hover:bg-brand-50">
-                {copy.mockCta}
-                <ArrowRight className="size-4" aria-hidden />
-              </span>
-            </Link>
-          </Reveal>
-        </section>
-
-        <section id="features" className="mx-auto mt-5 max-w-370">
-          <Reveal>
-            <div className="surface-panel grid gap-6 rounded-[22px] p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-[1.2fr_0.8fr]">
-              <div>
-                <p className="text-xs font-black uppercase text-brand-600">{copy.systemKicker}</p>
-                <h2 className="mt-3 max-w-3xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
-                  {copy.systemTitle}
-                </h2>
-              </div>
-              <div className="flex items-center lg:justify-end">
-                <HeroCta
-                  guestLabel={landing.heroCta}
-                  lang={lang}
-                  userLabel={landing.heroCtaContinue}
-                />
-              </div>
-            </div>
-          </Reveal>
+            <Reveal delay={0.08}>
+              <IeltsPanel lang={lang} copy={copy} />
+            </Reveal>
+          </section>
         </section>
       </main>
 
       <footer className="mt-4 border-t border-line/70 py-7">
-        <div className="mx-auto flex max-w-370 flex-col items-center justify-between gap-3 px-5 text-sm text-ink-soft sm:flex-row">
+        <div className="mx-auto flex max-w-[1480px] flex-col items-center justify-between gap-3 px-5 text-sm text-ink-soft sm:flex-row">
           <span>
             © {new Date().getFullYear()} {common.appName}. {landing.footerRights}
           </span>
@@ -382,18 +106,102 @@ export default async function LandingPage({
 }
 
 
-function ArchitecturalMotif({ tone }: { tone: string }) {
+function LevelCard({
+  href,
+  level,
+  title,
+  description,
+  words,
+  wordsLabel,
+  previewLabel,
+  tone,
+  delay,
+}: {
+  href: string;
+  level: string;
+  title: string;
+  description: string;
+  words: string;
+  wordsLabel: string;
+  previewLabel: string;
+  tone: "orange" | "rose" | "emerald" | "brown";
+  delay: number;
+}) {
+  const styles = {
+    orange: {
+      badge: "bg-[#cf5e30]",
+      accent: "text-[#c94e26]",
+      border: "border-[#efcbb9] hover:border-[#de7146]",
+      arch: "border-[#e8c9b1] bg-[#f9ecdf]",
+      leaf: "bg-[#b26c3c]",
+    },
+    rose: {
+      badge: "bg-[#b8422a]",
+      accent: "text-[#ad3a27]",
+      border: "border-[#efd2c4] hover:border-[#db8062]",
+      arch: "border-[#e8bdaa] bg-[#fbe8df]",
+      leaf: "bg-[#b95c46]",
+    },
+    emerald: {
+      badge: "bg-[#3e7975]",
+      accent: "text-[#2e6864]",
+      border: "border-[#d3dfd9] hover:border-[#7da5a0]",
+      arch: "border-[#b9cbc6] bg-[#e8efeb]",
+      leaf: "bg-[#5f8e7b]",
+    },
+    brown: {
+      badge: "bg-[#65351d]",
+      accent: "text-[#60371e]",
+      border: "border-[#e8d6c1] hover:border-[#b88456]",
+      arch: "border-[#dec6aa] bg-[#f7ecdf]",
+      leaf: "bg-[#9b7047]",
+    },
+  }[tone];
+
   return (
-    <span
-      aria-hidden
-      className="relative h-20 w-12 overflow-hidden rounded-t-full border border-line/70 bg-sand-50/70"
-    >
-      <span className={`absolute inset-x-2 bottom-0 h-14 rounded-t-full opacity-18 ${tone}`} />
-      <span className="absolute inset-x-0 top-7 h-px rotate-45 bg-brand-900/18" />
-      <span className="absolute inset-x-0 top-7 h-px -rotate-45 bg-brand-900/18" />
-      <span className="absolute inset-x-2 bottom-2 h-8 rounded-t-full border border-brand-900/16" />
-    </span>
+    <Link href={href} className={`group relative min-h-[264px] overflow-hidden rounded-2xl border bg-[linear-gradient(145deg,#fffefa,#fff7ed)] p-4 shadow-[0_9px_19px_rgba(108,66,35,0.08)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_16px_28px_rgba(108,66,35,0.13)] dark:bg-[#14231e] ${styles.border}`}>
+      <span className={`relative z-10 flex size-11 items-center justify-center rounded-full text-base font-bold text-white shadow-[0_7px_16px_rgba(73,37,20,0.22)] ${styles.badge}`}>{level}</span>
+      <LevelArch styles={styles} delay={delay} />
+      <div className="relative z-10 mt-3 flex h-[154px] flex-col">
+        <h2 className="text-lg font-medium tracking-[-0.04em] text-[#332017] dark:text-white">{title}</h2>
+        <p className="mt-1 max-w-[140px] text-xs leading-5 text-[#765d4e] dark:text-white/62">{description}</p>
+        <p className={`mt-auto flex items-center gap-1.5 text-xs font-medium ${styles.accent}`}><BookOpen className="size-3.5" aria-hidden />{words} {wordsLabel}</p>
+      </div>
+      <span className={`relative z-10 mt-3 inline-flex w-full items-center justify-between rounded-lg border bg-white/65 px-3 py-2 text-xs font-semibold dark:bg-white/5 ${styles.border} ${styles.accent}`}>{previewLabel}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" aria-hidden /></span>
+    </Link>
   );
+}
+
+function LevelArch({ styles, delay }: { styles: { arch: string; leaf: string }; delay: number }) {
+  return <div aria-hidden className="pointer-events-none absolute right-2 top-5 h-[120px] w-[92px] opacity-90"><span className={`absolute bottom-0 left-1/2 h-[100px] w-[65px] -translate-x-1/2 rounded-t-[44px] border-[4px] shadow-[inset_0_0_0_9px_rgba(255,255,255,0.48)] ${styles.arch}`}><span className={`absolute bottom-0 left-1/2 h-11 w-3.5 -translate-x-1/2 rounded-t-full ${styles.leaf}`} /><span className={`absolute bottom-8 left-[16px] h-4 w-7 rotate-[-25deg] rounded-[100%_0_100%_0] ${styles.leaf}`} /><span className={`absolute bottom-[41px] left-[31px] h-4 w-7 rotate-[25deg] rounded-[0_100%_0_100%] ${styles.leaf}`} /></span><span className="absolute bottom-0 left-1/2 h-2.5 w-[88px] -translate-x-1/2 rounded-sm bg-[#c59e7f]/25" /><i className="absolute right-1 top-4 text-sm text-[#d69b64]/65">{delay % 2 ? "✦" : "·"}</i></div>;
+}
+
+function HeroRail() {
+  const tiles = [
+    { src: "/images/vocora-study-kitten.png", label: "SO‘Z BOYLIGI" },
+    { src: "/images/vocora-study-desk-hero.png", label: "GRAMMATIKA" },
+    { src: "/images/vocora-study-desk-hero.png", label: "IELTS" },
+  ];
+  return <section className="relative min-h-[162px] overflow-hidden rounded-[0_0_25px_25px] border border-[#45291b] bg-[#211109] px-5 py-4 shadow-[0_18px_32px_rgba(55,28,16,0.17)] sm:px-9 lg:flex lg:items-center lg:gap-7"><Image src="/images/vocora-study-desk-hero.png" alt="" fill priority sizes="1480px" className="pointer-events-none object-cover object-[71%_54%] opacity-55 mix-blend-screen" /><div aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,#211109_0%,rgba(33,17,9,0.92)_31%,rgba(33,17,9,0.66)_67%,rgba(33,17,9,0.9)_100%)]" /><div className="relative z-10 flex shrink-0 gap-2">{tiles.map((tile) => <div key={tile.label} className="w-[86px]"><div className="relative h-[86px] overflow-hidden rounded-xl border border-[#945422] bg-[#160b06]"><Image src={tile.src} alt="" fill sizes="86px" className={tile.label === "SO‘Z BOYLIGI" ? "object-cover object-center" : "object-cover object-[78%_80%]"} /></div><p className="mt-1 text-center text-[10px] font-bold text-[#f7ddbc]">{tile.label}</p></div>)}</div><div className="relative z-10 mt-5 flex items-center gap-4 lg:mt-0 lg:ml-1"><span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#7f4d2a] text-[#f7d2a0]"><ArrowRight className="size-5" /></span><p className="max-w-[355px] text-sm leading-6 text-[#f5e0c8]"><b className="block font-medium text-[#da8240]">TO‘LIQ INGLIZ TILI YO‘LI</b>A1 dan C2 gacha — har bir daraja o‘z lug‘ati va mashqlari bilan.</p></div><div className="relative z-10 mt-4 inline-flex items-center gap-3 rounded-xl border border-[#7f4d2a] bg-[#24120a]/75 px-4 py-3 text-xs text-[#f5dfc8] lg:mt-0 lg:ml-auto"><Sparkles className="size-6 text-[#d87d2f]" /><span><b className="block font-medium">O‘ZBEK TILIDA</b>IZOHLAR VA TARJIMALAR<br />ONA TILINGIZDA</span></div></section>;
+}
+
+function ArchBackdrop() {
+  return <div aria-hidden className="pointer-events-none absolute right-0 top-0 hidden h-[285px] w-[53%] overflow-hidden opacity-50 lg:block"><div className="absolute -right-8 bottom-0 h-[258px] w-[265px] rounded-t-[145px] border-[14px] border-[#f0dbc3] bg-[linear-gradient(135deg,rgba(255,255,255,0.9),rgba(248,220,190,0.58))] shadow-[inset_0_0_0_28px_rgba(255,250,241,0.56)]" /><div className="absolute bottom-0 right-[224px] h-[150px] w-[102px] rounded-t-[60px] border-[8px] border-[#ebd4bc] bg-[#fff9ef]/60" /><div className="absolute bottom-4 right-20 h-10 w-[320px] rounded-sm bg-[#e4c6a5]/36" /></div>;
+}
+
+function LearningFeatures() {
+  const items = [
+    { icon: BrainCircuit, title: "Ilmiy takrorlash (SRS)", text: "Yodda qolishi isbotlangan takrorlash tizimi." },
+    { icon: MessageCircle, title: "O‘zbekcha va ruscha izohlar", text: "So‘zlar ona tilingizda tushuntiriladi." },
+    { icon: ShieldCheck, title: "IELTS va CEFR yo‘nalishi", text: "A1 dan C2 gacha aniq reja." },
+    { icon: Gamepad2, title: "O‘yin, ammo bosimsiz", text: "Qiziqarli jarayon, erkin o‘rganish muhiti." },
+  ];
+  return <div className="relative z-10 mt-4 grid gap-2 rounded-2xl border border-[#ead8c4] bg-[#fffaf3]/75 p-3 sm:grid-cols-2 lg:grid-cols-4 dark:border-white/10 dark:bg-white/5">{items.map(({ icon: Icon, title, text }) => <div key={title} className="flex gap-2.5 px-1.5 py-2 lg:border-r lg:border-[#eddcca] lg:last:border-0 dark:lg:border-white/10"><span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#f8ead9] text-[#9d552a] dark:bg-white/10 dark:text-[#ffc38b]"><Icon className="size-4" /></span><p className="text-[11px] leading-4 text-[#806653] dark:text-white/60"><b className="block text-xs font-semibold text-[#4e3021] dark:text-white">{title}</b>{text}</p></div>)}</div>;
+}
+
+function IeltsPanel({ lang, copy }: { lang: string; copy: (typeof homeCopy)[Locale] }) {
+  const featureIcons = [Crown, MessageCircle, BookOpen, Sparkles];
+  return <section className="relative flex min-h-[560px] overflow-hidden rounded-[28px] border border-[#4d2b1b] bg-[#24130b] p-7 text-[#fff5e8] shadow-[0_18px_38px_rgba(65,30,13,0.2)] sm:p-9"><Image src="/images/vocora-study-desk-hero.png" alt="" fill sizes="(max-width: 1280px) 100vw, 490px" className="pointer-events-none object-cover object-[77%_32%] opacity-25 mix-blend-screen" /><div aria-hidden className="absolute -right-28 -top-24 size-[480px] rounded-full border border-[#d69048]/25" /><div aria-hidden className="absolute -right-10 -top-9 size-[320px] rounded-full border border-[#d69048]/22" /><div aria-hidden className="absolute bottom-0 left-0 h-32 w-[62%] bg-[#a64a22] [clip-path:polygon(0_28%,100%_100%,0_100%)]" /><div className="relative z-10 flex w-full flex-col"><p className="inline-flex w-fit items-center gap-2 rounded-lg border border-[#b8793d] bg-[#2b170d]/80 px-3 py-2 text-xs font-semibold text-[#f6d7ad]"><GraduationCap className="size-4" />IELTS</p><h2 className="mt-7 max-w-[440px] font-serif text-4xl leading-[1.1] tracking-[-0.045em] sm:text-[43px]">{copy.ieltsTitle}</h2><p className="mt-4 max-w-[430px] text-sm leading-6 text-[#f0daca]">{copy.ieltsBody}</p><div className="mt-7 space-y-2">{copy.ieltsFeatures.map((feature, index) => { const Icon = featureIcons[index] ?? Sparkles; return <div key={feature} className="flex items-center gap-3 rounded-lg border border-[#674122]/80 bg-[#28160d]/70 px-3 py-2.5 text-sm text-[#f6e4d0]"><span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[#714724] bg-[#3b210f] text-[#e2ad6b]"><Icon className="size-4" /></span>{feature}</div>; })}</div><Link href={`/${lang}/ielts`} className="mt-auto inline-flex items-center justify-center gap-3 rounded-xl border border-[#f1bf81] bg-[linear-gradient(135deg,#bc7439,#edb36d)] px-5 py-4 text-base font-medium text-white shadow-[0_8px_22px_rgba(0,0,0,0.2)] transition hover:brightness-110">{copy.openIelts}<ArrowRight className="size-5" /></Link></div></section>;
 }
 
 const homeCopy: Record<
@@ -425,38 +233,6 @@ const homeCopy: Record<
     systemKicker: string;
     systemTitle: string;
     previewLevel: string;
-    howKicker: string;
-    howTitle: string;
-    step1Title: string;
-    step1Body: string;
-    step2Title: string;
-    step2Body: string;
-    step3Title: string;
-    step3Body: string;
-    step4Title: string;
-    step4Body: string;
-    statsKicker: string;
-    statLearners: string;
-    statWords: string;
-    statCountries: string;
-    statRating: string;
-    ieltsSkillsKicker: string;
-    ieltsSkillsTitle: string;
-    ieltsSkillsBody: string;
-    skillReadingTitle: string;
-    skillReadingBody: string;
-    skillWritingTitle: string;
-    skillWritingBody: string;
-    skillListeningTitle: string;
-    skillListeningBody: string;
-    skillSpeakingTitle: string;
-    skillSpeakingBody: string;
-    mockKicker: string;
-    mockTitle: string;
-    mockBody: string;
-    mockCta: string;
-    mockTime: string;
-    hero: HomeHeroCopy;
   }
 > = {
   uz: {
@@ -493,54 +269,6 @@ const homeCopy: Record<
     systemKicker: "Bitta o'quv tizimi",
     systemTitle: "So'z yodlashdan ravon gapirishgacha hammasi bir joyda",
     previewLevel: "5 ta so'zni sinash",
-    howKicker: "Qanday ishlaydi",
-    howTitle: "To'rtta qadam — natijagacha",
-    step1Title: "So'z tanlang",
-    step1Body: "Darajangiz yoki qiziqishingizga mos so'zlarni tanlang — A1 dan C2 gacha.",
-    step2Title: "Aqlli takrorlang",
-    step2Body: "Har bir so'z aynan unutila boshlagan payt qaytib keladi — vaqtingizni behuda sarflamaysiz.",
-    step3Title: "Amaliyot qiling",
-    step3Body: "O'yinlar, grammatika mashqlari va IELTS topshiriqlari bilan bilimingizni mustahkamlang.",
-    step4Title: "Natijani ko'ring",
-    step4Body: "Kunlik seriya, statistika va yutuqlar bilan haqiqiy taraqqiyotingizni kuzating.",
-    statsKicker: "Vocora raqamlarda",
-    statLearners: "Faol o'quvchi",
-    statWords: "O'rganilgan so'z",
-    statCountries: "Davlat",
-    statRating: "Foydalanuvchi bahosi",
-    ieltsSkillsKicker: "IELTS tayyorgarlik",
-    ieltsSkillsTitle: "4 ta ko'nikma, bitta tizim",
-    ieltsSkillsBody:
-      "Reading, Writing, Listening va Speaking — har biri uchun band 7-9 model javoblar, strategiyalar va real imtihon uslubidagi mashqlar.",
-    skillReadingTitle: "O'qish",
-    skillReadingBody: "Academic va General matnlar, savol turlari bo'yicha strategiyalar.",
-    skillWritingTitle: "Yozish",
-    skillWritingBody: "Task 1 va Task 2 uchun model insholar va baholash mezonlari.",
-    skillListeningTitle: "Tinglash",
-    skillListeningBody: "Turli aksentlar va real imtihon formatidagi audio mashqlar.",
-    skillSpeakingTitle: "Gapirish",
-    skillSpeakingBody: "Part 1-3 mavzulari, native iboralar va AI orqali baholash.",
-    mockKicker: "To'liq sinov imtihoni",
-    mockTitle: "Haqiqiy imtihondek — 4 ta ko'nikma, bitta umumiy ball",
-    mockBody:
-      "Listening, Reading, Writing va Speaking'ni bitta o'tirishda, real vaqt bilan topshiring va imtihon kunidagidek yagona umumiy bandingizni oling.",
-    mockCta: "To'liq testni boshlash",
-    mockTime: "Taxminan 2 soat",
-    hero: {
-      eyebrow: "Aniq reja. Haqiqiy natija.",
-      title: "Ingliz tili shu yerdan boshlanadi",
-      subtitle:
-        "O'zbek tilidagi izohlar, aqlli takrorlash va IELTS uchun amaliy mashqlar — bir joyda, har kuni.",
-      heroImageAlt: "Kofe va kitob bilan ingliz tilini o'rganayotgan Vocora mushugi",
-      pillars: ["So'z boyligi", "Grammatika", "Talaffuz", "IELTS"],
-      shelfTitle: "To'liq ingliz tili yo'li",
-      shelfBody: "A1 dan C2 gacha — har bir daraja o'z lug'ati va mashqlari bilan.",
-      badgeTitle: "O'zbek tilida",
-      badgeBody: "Izohlar va tarjimalar ona tilingizda",
-      browseLevels: "Barcha darajalar",
-      search: "So'z qidirish",
-      menu: "Menyu",
-    },
   },
   ru: {
     eyebrow: "Каждый день — уверенный шаг к свободной речи",
@@ -576,54 +304,6 @@ const homeCopy: Record<
     systemKicker: "Единая система обучения",
     systemTitle: "От запоминания слов до свободной речи в одном месте",
     previewLevel: "Попробовать 5 слов",
-    howKicker: "Как это работает",
-    howTitle: "Четыре шага до результата",
-    step1Title: "Выберите слова",
-    step1Body: "Подберите слова по своему уровню или интересам — от A1 до C2.",
-    step2Title: "Повторяйте с умом",
-    step2Body: "Каждое слово возвращается именно тогда, когда начинает забываться — никакого лишнего времени.",
-    step3Title: "Практикуйтесь",
-    step3Body: "Закрепляйте знания через игры, грамматику и задания IELTS.",
-    step4Title: "Смотрите результат",
-    step4Body: "Следите за реальным прогрессом через серии, статистику и достижения.",
-    statsKicker: "Vocora в цифрах",
-    statLearners: "Активных учеников",
-    statWords: "Изученных слов",
-    statCountries: "Стран",
-    statRating: "Оценка пользователей",
-    ieltsSkillsKicker: "Подготовка к IELTS",
-    ieltsSkillsTitle: "4 навыка — одна система",
-    ieltsSkillsBody:
-      "Reading, Writing, Listening и Speaking — модельные ответы Band 7-9, стратегии и задания в формате настоящего экзамена для каждого раздела.",
-    skillReadingTitle: "Чтение",
-    skillReadingBody: "Тексты Academic и General, стратегии по типам вопросов.",
-    skillWritingTitle: "Письмо",
-    skillWritingBody: "Модельные эссе для Task 1 и Task 2 с критериями оценки.",
-    skillListeningTitle: "Аудирование",
-    skillListeningBody: "Разные акценты и задания в формате настоящего экзамена.",
-    skillSpeakingTitle: "Говорение",
-    skillSpeakingBody: "Темы Part 1-3, живые фразы и оценка через AI.",
-    mockKicker: "Полный пробный экзамен",
-    mockTitle: "Как на настоящем экзамене — 4 навыка, один общий балл",
-    mockBody:
-      "Пройдите Listening, Reading, Writing и Speaking за один сеанс, с реальным таймингом, и получите единый общий балл, как в день экзамена.",
-    mockCta: "Начать полный тест",
-    mockTime: "Около 2 часов",
-    hero: {
-      eyebrow: "Чёткий план. Реальный результат.",
-      title: "Английский начинается здесь",
-      subtitle:
-        "Объяснения на узбекском, умное повторение и практика для IELTS — в одном месте, каждый день.",
-      heroImageAlt: "Кот Vocora изучает английский с кофе и книгой",
-      pillars: ["Словарь", "Грамматика", "Произношение", "IELTS"],
-      shelfTitle: "Полный путь в английском",
-      shelfBody: "От A1 до C2 — у каждого уровня свой словарь и свои упражнения.",
-      badgeTitle: "На узбекском",
-      badgeBody: "Объяснения и переводы на родном языке",
-      browseLevels: "Все уровни",
-      search: "Поиск слова",
-      menu: "Меню",
-    },
   },
   en: {
     eyebrow: "A focused path to fluent English, every day",
@@ -659,53 +339,5 @@ const homeCopy: Record<
     systemKicker: "One learning system",
     systemTitle: "Everything from memorizing words to speaking fluently",
     previewLevel: "Try 5 words",
-    howKicker: "How it works",
-    howTitle: "Four steps to real progress",
-    step1Title: "Pick your words",
-    step1Body: "Choose words that match your level or interests — from A1 to C2.",
-    step2Title: "Review smartly",
-    step2Body: "Every word comes back right as you start to forget it — no wasted time.",
-    step3Title: "Practice it",
-    step3Body: "Reinforce what you learn through games, grammar drills, and IELTS tasks.",
-    step4Title: "See it add up",
-    step4Body: "Track real progress with daily streaks, stats, and achievements.",
-    statsKicker: "Vocora by the numbers",
-    statLearners: "Active learners",
-    statWords: "Words learned",
-    statCountries: "Countries",
-    statRating: "User rating",
-    ieltsSkillsKicker: "IELTS preparation",
-    ieltsSkillsTitle: "4 skills, one system",
-    ieltsSkillsBody:
-      "Reading, Writing, Listening, and Speaking — Band 7-9 model answers, strategies, and real exam-format practice for every section.",
-    skillReadingTitle: "Reading",
-    skillReadingBody: "Academic and General passages, strategies by question type.",
-    skillWritingTitle: "Writing",
-    skillWritingBody: "Model essays for Task 1 and Task 2 with scoring criteria.",
-    skillListeningTitle: "Listening",
-    skillListeningBody: "Different accents and real exam-format audio tasks.",
-    skillSpeakingTitle: "Speaking",
-    skillSpeakingBody: "Part 1-3 topics, natural phrases, and AI-powered scoring.",
-    mockKicker: "Full mock exam",
-    mockTitle: "Just like exam day — 4 skills, one overall band",
-    mockBody:
-      "Take Listening, Reading, Writing and Speaking in one sitting, with real timing, and get a single overall band the way the real exam scores you.",
-    mockCta: "Start full mock",
-    mockTime: "About 2 hours",
-    hero: {
-      eyebrow: "A clear plan. Real progress.",
-      title: "English starts right here",
-      subtitle:
-        "Uzbek explanations, spaced repetition and hands-on IELTS practice — in one place, every day.",
-      heroImageAlt: "The Vocora cat studying English with coffee and a book",
-      pillars: ["Vocabulary", "Grammar", "Pronunciation", "IELTS"],
-      shelfTitle: "The complete English path",
-      shelfBody: "A1 through C2 — every level with its own words and drills.",
-      badgeTitle: "In Uzbek",
-      badgeBody: "Explanations and translations in your first language",
-      browseLevels: "All levels",
-      search: "Search a word",
-      menu: "Menu",
-    },
   },
 };
