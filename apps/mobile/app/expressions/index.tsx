@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Speech from "expo-speech";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { ActivityIndicator, Modal, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
@@ -19,9 +19,11 @@ const copy = {
 } as const;
 
 export default function ExpressionsScreen() {
+  const routeParams = useLocalSearchParams<{ slug?: string | string[] }>();
   const { user, token } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = copy[locale];
+  const routeSlug = Array.isArray(routeParams.slug) ? routeParams.slug[0] : routeParams.slug;
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [cefr, setCefr] = useState<string | null>(null);
@@ -34,6 +36,10 @@ export default function ExpressionsScreen() {
     const timer = setTimeout(() => { setPage(1); setQuery(search.trim()); }, search ? 300 : 0);
     return () => clearTimeout(timer);
   }, [search]);
+
+  useEffect(() => {
+    if (routeSlug) setOpenSlug(routeSlug);
+  }, [routeSlug]);
 
   const meta = useQuery({ queryKey: ["expressions-meta"], queryFn: () => request<ExpressionMeta>("/expressions/meta") });
   const list = useQuery({

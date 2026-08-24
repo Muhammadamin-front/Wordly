@@ -600,14 +600,7 @@ function InteractiveParagraph({ passageId, paragraphIndex, text, highlights, onH
   }
   if (cursor < text.length) parts.push({ text: text.slice(cursor), start: cursor, end: text.length, word: false });
   const matching = highlights.filter((highlight) => highlight.passageId === passageId && highlight.paragraphIndex === paragraphIndex);
-  const expandToPhrase = (partIndex: number) => {
-    const wordIndexes = parts.map((part, index) => part.word ? index : -1).filter((index) => index >= 0);
-    const wordPosition = wordIndexes.indexOf(partIndex);
-    const firstPart = parts[wordIndexes[Math.max(0, wordPosition - 1)]];
-    const lastPart = parts[wordIndexes[Math.min(wordIndexes.length - 1, wordPosition + 1)]];
-    return { start: firstPart.start, end: lastPart.end, text: text.slice(firstPart.start, lastPart.end) };
-  };
-  return <Text selectable style={styles.paragraphText}>{parts.map((part, index) => { const highlight = matching.find((item) => item.start <= part.start && item.end >= part.end); return <Text key={`${part.start}-${index}`} onPress={part.word ? () => onWordPress(part.text) : undefined} onLongPress={part.word ? () => onHighlight({ passageId, paragraphIndex, ...expandToPhrase(index) }) : undefined} style={highlight ? { backgroundColor: highlightColors[highlight.color] } : undefined}>{part.text}</Text>; })}</Text>;
+  return <Text selectable style={styles.paragraphText}>{parts.map((part, index) => { const highlight = matching.find((item) => item.start <= part.start && item.end >= part.end); return <Text key={`${part.start}-${index}`} onPress={part.word ? () => onWordPress(part.text) : undefined} onLongPress={part.word ? () => onHighlight({ passageId, paragraphIndex, start: part.start, end: part.end, text: part.text }) : undefined} style={highlight ? { backgroundColor: highlightColors[highlight.color] } : undefined}>{part.text}</Text>; })}</Text>;
 }
 
 function hasAnswer(value: AnswerValue | undefined) {

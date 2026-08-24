@@ -1,11 +1,4 @@
 import type { Metadata } from "next";
-import { Readex_Pro } from "next/font/google";
-
-const readexPro = Readex_Pro({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
 
 const navigation = ["platform", "solutions", "company", "support"];
 
@@ -36,7 +29,7 @@ function SecurifyLogo() {
 export default function SecurifyPage() {
   return (
     <section
-      className={`${readexPro.className} relative h-dvh w-full overflow-hidden bg-black text-white antialiased`}
+      className="relative h-dvh w-full overflow-hidden bg-black font-sans text-white antialiased"
     >
       <video
         aria-hidden="true"

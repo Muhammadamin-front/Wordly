@@ -11,10 +11,10 @@
    ```sh
    cd apps/mobile
    eas login
-   eas env:set --name EXPO_PUBLIC_API_URL --value https://vocora.uz --environment production --visibility plaintext
-   eas env:set --name EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID --value YOUR_WEB_CLIENT_ID --environment production --visibility plaintext
-   eas env:set --name EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID --value YOUR_IOS_CLIENT_ID --environment production --visibility plaintext
-   eas env:pull --environment production
+   npx eas-cli@latest env:set --name EXPO_PUBLIC_API_URL --value https://api.vocora.uz --environment production --visibility plaintext
+   npx eas-cli@latest env:set --name EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID --value YOUR_WEB_CLIENT_ID --environment production --visibility plaintext
+   npx eas-cli@latest env:set --name EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID --value YOUR_IOS_CLIENT_ID --environment production --visibility plaintext
+   npx eas-cli@latest env:pull --environment production
    npm run check:release
    ```
 
@@ -25,14 +25,14 @@
 5. Build store binaries:
 
    ```sh
-   eas build --platform all --profile production
+   npx eas-cli@latest build --platform all --profile production
    ```
 
 6. Upload to TestFlight and Google Play internal testing:
 
    ```sh
-   eas submit --platform ios --profile production
-   eas submit --platform android --profile production
+   npx eas-cli@latest submit --platform ios --profile production
+   npx eas-cli@latest submit --platform android --profile production
    ```
 
 ## Day 2: release-candidate test matrix
@@ -45,6 +45,8 @@
 - Devices: smallest supported iPhone, current large iPhone, iPad portrait/landscape, small Android phone, and current Android phone.
 - Store-signed Google auth: test the Play-installed build, not only a local APK, because signing certificates differ.
 - Verify production API traffic uses HTTPS and never points to localhost or a LAN IP.
+- Verify push permission, the 20:00 local reminder, and token registration. Remote
+  push requires APNs credentials and an FCM v1 service-account key in EAS.
 
 ## Store listing links and declarations
 

@@ -112,6 +112,13 @@ class ProfileUpdate(BaseModel):
     bio: Optional[str] = Field(default=None, max_length=500)
 
 
+class PushTokenRegister(BaseModel):
+    provider: Literal["expo"] = "expo"
+    token: str = Field(min_length=20, max_length=512)
+    platform: Literal["ios", "android"]
+    app_version: Optional[str] = Field(default=None, max_length=40)
+
+
 class AccountDeletionRequest(BaseModel):
     """Deliberate confirmation for irreversible account deactivation."""
 

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
+    "validate:grammar": "vitest run tests/grammar.test.ts tests/grammar-translations.test.ts",
     "test:watch": "vitest"
   },
   "dependencies": {

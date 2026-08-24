@@ -49,23 +49,25 @@ export function VocabularyCard({
 
   return (
     <View style={styles.shadowWrap}>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`${word.headword}. ${flipped ? t.front : t.flip}`}
-        onPress={() => setFlipped((current) => !current)}
-        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
-      >
+      <View style={styles.card}>
         {flipped ? (
           <View style={styles.face}>
-            <Text numberOfLines={1} style={styles.backHeadword}>{word.headword}</Text>
-            <Text numberOfLines={2} style={styles.translation}>{primaryTranslation ?? word.pos}</Text>
-            {secondaryTranslation && secondaryTranslation !== primaryTranslation ? <Text numberOfLines={1} style={styles.secondaryTranslation}>{secondaryTranslation}</Text> : null}
-            {categoryName ? (
-              <View style={styles.categoryStamp}>
-                {category?.emoji ? <Text style={styles.categoryEmoji}>{category.emoji}</Text> : null}
-                <Text numberOfLines={1} style={styles.categoryText}>{categoryName}</Text>
-              </View>
-            ) : null}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`${word.headword}. ${t.front}`}
+              onPress={() => setFlipped(false)}
+              style={({ pressed }) => [styles.flipArea, pressed && styles.cardPressed]}
+            >
+              <Text numberOfLines={1} style={styles.backHeadword}>{word.headword}</Text>
+              <Text numberOfLines={2} style={styles.translation}>{primaryTranslation ?? word.pos}</Text>
+              {secondaryTranslation && secondaryTranslation !== primaryTranslation ? <Text numberOfLines={1} style={styles.secondaryTranslation}>{secondaryTranslation}</Text> : null}
+              {categoryName ? (
+                <View style={styles.categoryStamp}>
+                  {category?.emoji ? <Text style={styles.categoryEmoji}>{category.emoji}</Text> : null}
+                  <Text numberOfLines={1} style={styles.categoryText}>{categoryName}</Text>
+                </View>
+              ) : null}
+            </Pressable>
             <View style={styles.backActions}>
               <Pressable
                 accessibilityRole="button"
@@ -115,11 +117,18 @@ export function VocabularyCard({
                 style={({ pressed }) => [styles.audioButton, pressed && styles.detailPressed]}
               ><Ionicons name="volume-medium-outline" size={16} color={colors.ink} /></Pressable>
             </View>
-            <Text numberOfLines={1} style={styles.headword}>{word.headword}</Text>
-            {word.primary_example_en ? <Text numberOfLines={3} style={styles.example}>{word.primary_example_en}</Text> : <Text style={styles.example}>—</Text>}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`${word.headword}. ${t.flip}`}
+              onPress={() => setFlipped(true)}
+              style={({ pressed }) => [styles.flipArea, pressed && styles.cardPressed]}
+            >
+              <Text numberOfLines={1} style={styles.headword}>{word.headword}</Text>
+              {word.primary_example_en ? <Text numberOfLines={3} style={styles.example}>{word.primary_example_en}</Text> : <Text style={styles.example}>—</Text>}
+            </Pressable>
           </View>
         )}
-      </Pressable>
+      </View>
       <WordDetailSheet summary={word} locale={locale} visible={detailOpen} added={added} adding={adding} addError={addError} onAdd={onAdd} onClose={() => setDetailOpen(false)} />
     </View>
   );
@@ -144,21 +153,22 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: colors.line,
     borderRadius: 12,
-    backgroundColor: colors.cream,
+    backgroundColor: colors.brand200,
   },
   cardPressed: { transform: [{ translateX: 2 }, { translateY: 2 }], opacity: 0.9 },
   face: { flex: 1, padding: 9 },
+  flipArea: { flex: 1, minWidth: 0 },
   cardTop: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 5 },
   wordMeta: { minWidth: 0, flex: 1, flexDirection: "row", alignItems: "center", gap: 5 },
-  levelStamp: { minWidth: 31, minHeight: 26, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.brand600, borderRadius: 6, backgroundColor: "rgba(185,78,40,0.10)" },
+  levelStamp: { minWidth: 31, minHeight: 26, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.brand600, borderRadius: 6, backgroundColor: "rgba(185,78,40,0.12)" },
   levelText: { fontFamily: fonts.uiMedium, fontSize: 9, color: colors.brand600 },
-  pos: { minWidth: 0, flex: 1, fontFamily: fonts.uiBold, fontSize: 9, color: colors.muted },
-  audioButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.raised, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
+  pos: { minWidth: 0, flex: 1, fontFamily: fonts.uiBold, fontSize: 9, color: colors.rustDark },
+  audioButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
   headword: { marginTop: 13, fontFamily: fonts.display, fontSize: 23, lineHeight: 27, letterSpacing: 0.4, color: colors.ink, textTransform: "uppercase" },
-  example: { marginTop: "auto", paddingLeft: 6, borderLeftWidth: 1, borderLeftColor: colors.brand400, fontFamily: fonts.ui, fontSize: 9, lineHeight: 13, color: colors.muted },
-  backHeadword: { fontFamily: fonts.uiMedium, fontSize: 9, color: colors.muted, textTransform: "uppercase" },
+  example: { marginTop: "auto", paddingLeft: 6, borderLeftWidth: 1, borderLeftColor: colors.brand400, fontFamily: fonts.uiMedium, fontSize: 9, lineHeight: 13, color: colors.brown },
+  backHeadword: { fontFamily: fonts.uiMedium, fontSize: 9, color: colors.rustDark, textTransform: "uppercase" },
   translation: { marginTop: 5, fontFamily: fonts.display, fontSize: 24, lineHeight: 27, letterSpacing: 0.3, color: colors.ink, textTransform: "uppercase" },
-  secondaryTranslation: { marginTop: 2, fontFamily: fonts.uiMedium, fontSize: 9, color: colors.muted },
+  secondaryTranslation: { marginTop: 2, fontFamily: fonts.uiMedium, fontSize: 9, color: colors.brown },
   categoryStamp: { alignSelf: "flex-start", maxWidth: "100%", marginTop: "auto", minHeight: 26, flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 7, borderWidth: 1, borderColor: colors.teal, borderRadius: 6, backgroundColor: "rgba(70,120,120,0.10)" },
   categoryEmoji: { fontSize: 10 },
   categoryText: { flexShrink: 1, fontFamily: fonts.uiBold, fontSize: 8, letterSpacing: 0.45, color: colors.teal, textTransform: "uppercase" },
@@ -167,7 +177,7 @@ const styles = StyleSheet.create({
   deleteButton: { width: 34, height: 34, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 7, backgroundColor: "rgba(220,38,38,0.10)" },
   detailPressed: { transform: [{ translateX: 1 }, { translateY: 1 }] },
   detailText: { flexShrink: 1, fontFamily: fonts.uiBold, fontSize: 9, color: colors.raised },
-  addButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.raised, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
+  addButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
   addButtonDone: { borderColor: colors.gold500, backgroundColor: "rgba(70,120,120,0.14)" },
   addButtonError: { borderColor: "rgba(220,38,38,0.50)", backgroundColor: "rgba(220,38,38,0.08)" },
 });

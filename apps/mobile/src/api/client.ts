@@ -2,7 +2,7 @@ import { Platform } from "react-native";
 import type { components } from "./schema";
 
 const localApiUrl = Platform.select({ android: "http://10.0.2.2:8000", default: "http://127.0.0.1:8000" });
-export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? localApiUrl).replace(/\/$/, "");
+export const API_URL = (process.env.EXPO_PUBLIC_API_URL?.trim() ?? localApiUrl).replace(/\/$/, "");
 export type TokenPair = components["schemas"]["TokenPair"];
 export type User = components["schemas"]["UserOut"];
 export type Onboarding = components["schemas"]["OnboardingOut"];
@@ -26,6 +26,8 @@ export type Friend = components["schemas"]["FriendOut"];
 export type PendingFriend = components["schemas"]["PendingOut"];
 export type PublicProfile = components["schemas"]["PublicProfileOut"];
 export type IeltsOverview = components["schemas"]["app__schemas__ielts__OverviewOut"];
+export type IeltsMockSession = components["schemas"]["MockSessionOut"];
+export type IeltsMockSessionListItem = components["schemas"]["MockSessionListItem"];
 export type IeltsWritingTask = components["schemas"]["WritingTask"];
 export type IeltsWritingScore = components["schemas"]["WritingScoreOut"];
 export type IeltsGeneratedTest = components["schemas"]["GeneratedTestOut"];
@@ -57,6 +59,12 @@ export type CoachDashboard = components["schemas"]["DashboardOut"];
 export type CoachSession = components["schemas"]["SessionOut"];
 export type CoachTurn = components["schemas"]["TurnResponse"];
 export type CoachScore = components["schemas"]["ScoreResponse"];
+export type PushTokenRegister = {
+  provider: "expo";
+  token: string;
+  platform: "ios" | "android";
+  app_version?: string;
+};
 type LoginRequest = components["schemas"]["LoginRequest"];
 type RegisterRequest = components["schemas"]["RegisterRequest"];
 type GoogleLoginRequest = components["schemas"]["GoogleLoginRequest"];
@@ -99,11 +107,23 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     if (freshToken) response = await perform(freshToken);
   }
   if (!response.ok) {
-    const body = await response.json().catch(() => ({}));
+    const raw = await response.text().catch(() => "");
+    let body: { detail?: unknown } = {};
+    try {
+      body = raw ? JSON.parse(raw) as { detail?: unknown } : {};
+    } catch {
+      body = {};
+    }
+    const cloudflareCode = raw.match(/^error code:\s*(\d+)/i)?.[1];
+    const contentType = response.headers.get("content-type") ?? "";
     const detail = typeof body.detail === "string"
       ? body.detail
       : Array.isArray(body.detail) && typeof body.detail[0]?.msg === "string"
         ? body.detail[0].msg
+        : cloudflareCode
+          ? `Cloudflare error ${cloudflareCode}`
+          : contentType.includes("text/plain") && raw.trim().length > 0 && raw.trim().length <= 160
+            ? raw.trim()
         : "Something went wrong. Please try again.";
     throw new ApiError(response.status, detail);
   }
@@ -120,4 +140,8 @@ export const authApi = {
   logout: (refresh_token: NonNullable<RefreshRequest["refresh_token"]>) => request<{ message: string }>("/auth/logout", { method: "POST", body: { refresh_token }, headers: { "X-Client": "mobile" } }),
   me: (token: string) => request<User>("/auth/me", { token }),
   deleteAccount: (token: string) => request<{ message: string }>("/users/me/delete", { method: "POST", token, body: { confirmation: "DELETE" } satisfies AccountDeletionRequest }),
+};
+
+export const pushTokenApi = {
+  register: (body: PushTokenRegister, token: string) => request<{ message: string }>("/users/me/push-tokens", { method: "POST", token, body }),
 };

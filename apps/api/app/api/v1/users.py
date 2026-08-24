@@ -12,7 +12,7 @@ from app.db.session import get_db
 from app.models.billing import Payment, Referral, Subscription
 from app.models.flashcards import Card, Deck, ReviewLog
 from app.models.gamification import DailyActivity, GameRun, UserAchievement, UserStats
-from app.models.user import User
+from app.models.user import DevicePushToken, User
 from app.models.vocabulary import Word
 from app.schemas.auth import (
     AccountDeletionRequest,
@@ -20,6 +20,7 @@ from app.schemas.auth import (
     OnboardingOut,
     OnboardingRequest,
     ProfileUpdate,
+    PushTokenRegister,
     UserOut,
 )
 from app.services import auth as auth_service
@@ -47,6 +48,39 @@ async def update_profile(
     await db.commit()
     await db.refresh(user)
     return UserOut.model_validate(user)
+
+
+@router.post("/me/push-tokens", response_model=MessageOut)
+async def register_push_token(
+    payload: PushTokenRegister,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    existing = await db.scalar(
+        select(DevicePushToken).where(
+            DevicePushToken.provider == payload.provider,
+            DevicePushToken.token == payload.token,
+        )
+    )
+    now = utcnow()
+    if existing is None:
+        existing = DevicePushToken(
+            user_id=user.id,
+            provider=payload.provider,
+            platform=payload.platform,
+            token=payload.token,
+            app_version=payload.app_version,
+            last_seen_at=now,
+        )
+    else:
+        existing.user_id = user.id
+        existing.platform = payload.platform
+        existing.app_version = payload.app_version
+        existing.is_active = True
+        existing.last_seen_at = now
+    db.add(existing)
+    await db.commit()
+    return MessageOut(message="Push token saved")
 
 
 @router.get("/me/export", dependencies=[Depends(rate_limit("export"))])

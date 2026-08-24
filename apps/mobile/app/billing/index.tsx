@@ -8,6 +8,7 @@ import { Button, ErrorNote, Heading, Loader, Paper, Screen, Stamp } from "@/comp
 import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
+import { formatApiDate } from "@/utils/dates";
 
 const WEB_URL = (process.env.EXPO_PUBLIC_WEB_URL ?? "https://vocora.uz").replace(/\/$/, "");
 const labels = {
@@ -50,7 +51,7 @@ export default function Billing() {
 
 function SubscriptionCard({ locale, subscription, cancelling, onCancel }: { locale: Locale; subscription: Subscription; cancelling: boolean; onCancel: () => void }) {
   const t = labels[locale];
-  const expires = subscription.expires_at ? new Intl.DateTimeFormat(locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "long", year: "numeric" }).format(new Date(subscription.expires_at)) : null;
+  const expires = formatApiDate(subscription.expires_at, locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "long", year: "numeric" });
   return <Paper style={styles.active}><View style={styles.activeTop}><View><Text style={styles.activeTitle}>{t.active}</Text><Text style={styles.activePlan}>{subscription.plan_code}</Text></View><Ionicons name="checkmark-circle" size={27} color={colors.teal} /></View>{expires ? <Text style={styles.activeBody}>{t.expires}: {expires}</Text> : null}<Button variant="quiet" loading={cancelling} onPress={onCancel}>{t.cancel}</Button></Paper>;
 }
 

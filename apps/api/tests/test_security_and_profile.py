@@ -1,4 +1,6 @@
-from app.core.config import get_settings
+import pytest
+
+from app.core.config import Settings, get_settings
 from tests.conftest import register_user
 
 
@@ -71,6 +73,15 @@ async def test_production_cookie_keeps_all_security_attributes(client):
         assert "samesite=lax" in set_cookie
     finally:
         settings.COOKIE_SECURE = original
+
+
+def test_cors_origins_are_normalized_and_reject_wildcards():
+    settings = Settings(ENVIRONMENT="production", FRONTEND_ORIGIN="https://vocora.uz/")
+    assert settings.cors_origins == ["https://vocora.uz"]
+    settings.validate_cors_origins()
+
+    with pytest.raises(RuntimeError, match="exact scheme-and-host"):
+        Settings(ENVIRONMENT="production", FRONTEND_ORIGIN="*").validate_cors_origins()
 
 
 async def test_login_rate_limit_returns_429(client):

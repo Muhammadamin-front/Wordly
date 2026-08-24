@@ -26,7 +26,7 @@ from app.services import ielts_mock
 router = APIRouter(
     prefix="/ielts/mock",
     tags=["ielts-mock"],
-    dependencies=[Depends(get_current_user), Depends(require_premium), Depends(rate_limit("ai"))],
+    dependencies=[Depends(get_current_user), Depends(rate_limit("ai"))],
 )
 
 
@@ -37,7 +37,12 @@ async def _owned_session(db: AsyncSession, user: User, session_id: UUID):
     return session
 
 
-@router.post("/sessions", response_model=MockSessionOut, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/sessions",
+    response_model=MockSessionOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_premium)],
+)
 async def start_session(
     payload: MockSessionCreate,
     user: User = Depends(get_current_user),
@@ -65,7 +70,11 @@ async def get_session(
     return await _owned_session(db, user, session_id)
 
 
-@router.post("/sessions/{session_id}/abandon", response_model=MockSessionOut)
+@router.post(
+    "/sessions/{session_id}/abandon",
+    response_model=MockSessionOut,
+    dependencies=[Depends(require_premium)],
+)
 async def abandon_session(
     session_id: UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ):
@@ -77,7 +86,11 @@ async def abandon_session(
     return session
 
 
-@router.post("/sessions/{session_id}/legs/{skill}/complete", response_model=MockSessionOut)
+@router.post(
+    "/sessions/{session_id}/legs/{skill}/complete",
+    response_model=MockSessionOut,
+    dependencies=[Depends(require_premium)],
+)
 async def complete_leg(
     session_id: UUID,
     skill: str,

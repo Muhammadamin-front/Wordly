@@ -1262,7 +1262,7 @@
   },
   "grammar": {
     "title": "Grammar",
-    "subtitle": "The full path from zero to IELTS — every topic explained in depth",
+    "subtitle": "200 structured lessons from A1 to C1, with explanations, comparisons, and 3,000 practice tasks",
     "completed": "done",
     "done": "Done",
     "formula": "Formula",
@@ -1271,7 +1271,7 @@
     "quiz": "Practice quiz",
     "check": "Check answers",
     "passed": "Great! Lesson completed.",
-    "tryAgainHint": "Review the lesson and try again — you need 60%.",
+    "tryAgainHint": "Review the lesson and try again — you need at least 70%.",
     "retry": "Try again",
     "nextLesson": "Next lesson",
     "backToList": "All topics",

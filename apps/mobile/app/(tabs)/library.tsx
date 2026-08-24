@@ -4,7 +4,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
-import { ApiError, request, type Category, type Deck, type Queue, type ShelfOverview, type WordPage } from "@/api/client";
+import { ApiError, request, type Category, type Deck, type ExpressionListItem, type ExpressionMeta, type ExpressionPage, type Queue, type ShelfOverview, type WordPage } from "@/api/client";
 import { CircularProgress } from "@/components/library/circular-progress";
 import { CollectionCard } from "@/components/library/collection-card";
 import { ShelfCard } from "@/components/library/shelf-card";
@@ -19,9 +19,9 @@ const levels = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 const pageSize = 30;
 
 const labels = {
-  uz: { title: "So'z boyligi", subtitle: "CEFR darajalari bo'yicha inglizcha so'zlar — o'zbekcha va ruscha tarjimalari bilan", placeholder: "So'z yoki tarjima qidiring...", search: "Qidirish", allLevels: "Barcha darajalar", allTopics: "Barcha mavzular", found: "ta so'z topildi", empty: "Hech narsa topilmadi. Filtrlarni tozalab qayta urinib ko'ring.", clear: "Filtrlarni tozalash", more: "Yana yuklash", loadError: "So'zlarni yuklay olmadik", retry: "Qayta urinish" },
-  ru: { title: "Словарный запас", subtitle: "Английские слова по уровням CEFR — с узбекским и русским переводом", placeholder: "Найти слово или перевод...", search: "Поиск", allLevels: "Все уровни", allTopics: "Все темы", found: "слов найдено", empty: "Ничего не найдено. Очистите фильтры и попробуйте снова.", clear: "Очистить фильтры", more: "Загрузить ещё", loadError: "Не удалось загрузить слова", retry: "Повторить" },
-  en: { title: "Vocabulary", subtitle: "English words by CEFR level — with Uzbek and Russian translations", placeholder: "Search a word or translation...", search: "Search", allLevels: "All levels", allTopics: "All topics", found: "words found", empty: "Nothing found. Clear the filters and try again.", clear: "Clear filters", more: "Load more", loadError: "We couldn't load the words", retry: "Try again" },
+  uz: { title: "So'z boyligi", subtitle: "CEFR darajalari bo'yicha inglizcha so'zlar — o'zbekcha va ruscha tarjimalari bilan", placeholder: "So'z yoki tarjima qidiring...", search: "Qidirish", allLevels: "Barcha darajalar", allTopics: "Barcha mavzular", found: "ta so'z topildi", empty: "Hech narsa topilmadi. Filtrlarni tozalab qayta urinib ko'ring.", clear: "Filtrlarni tozalash", more: "Yana yuklash", loadError: "So'zlarni yuklay olmadik", retry: "Qayta urinish", expressionsTitle: "Expressions", expressionsSubtitle: "IELTS Speaking va Writing uchun native iboralar, tarjima va misollar bilan.", expressionsOpen: "Iboralarni ochish", expressionsCount: "ibora", expressionsError: "Iboralar preview’ini yuklab bo'lmadi." },
+  ru: { title: "Словарный запас", subtitle: "Английские слова по уровням CEFR — с узбекским и русским переводом", placeholder: "Найти слово или перевод...", search: "Поиск", allLevels: "Все уровни", allTopics: "Все темы", found: "слов найдено", empty: "Ничего не найдено. Очистите фильтры и попробуйте снова.", clear: "Очистить фильтры", more: "Загрузить ещё", loadError: "Не удалось загрузить слова", retry: "Повторить", expressionsTitle: "Expressions", expressionsSubtitle: "Фразы для IELTS Speaking и Writing с переводами и примерами.", expressionsOpen: "Открыть фразы", expressionsCount: "выражений", expressionsError: "Не удалось загрузить превью выражений." },
+  en: { title: "Vocabulary", subtitle: "English words by CEFR level — with Uzbek and Russian translations", placeholder: "Search a word or translation...", search: "Search", allLevels: "All levels", allTopics: "All topics", found: "words found", empty: "Nothing found. Clear the filters and try again.", clear: "Clear filters", more: "Load more", loadError: "We couldn't load the words", retry: "Try again", expressionsTitle: "Expressions", expressionsSubtitle: "Native IELTS Speaking and Writing phrases with translations and examples.", expressionsOpen: "Open expressions", expressionsCount: "expressions", expressionsError: "Expression preview could not be loaded." },
 } as const;
 
 export default function Library() {
@@ -66,6 +66,11 @@ export default function Library() {
   const overview = useQuery({ queryKey: ["library-overview"], queryFn: () => request<ShelfOverview>("/library/overview", { token }), enabled: Boolean(token) });
   const deckList = useQuery({ queryKey: ["decks"], queryFn: () => request<Deck[]>("/decks", { token }), enabled: Boolean(token) });
   const queue = useQuery({ queryKey: ["queue"], queryFn: () => request<Queue>("/review/queue", { token }), enabled: Boolean(token) });
+  const expressionMeta = useQuery({ queryKey: ["expressions-meta"], queryFn: () => request<ExpressionMeta>("/expressions/meta") });
+  const expressionsPreview = useQuery({
+    queryKey: ["library-expressions-preview", locale],
+    queryFn: () => request<ExpressionPage>(`/expressions?${new URLSearchParams({ page: "1", page_size: "6", locale }).toString()}`),
+  });
 
   const addCard = useMutation({
     mutationFn: (wordId: string) => request<{ id: string }>("/cards", { method: "POST", token, body: { word_id: wordId } }),
@@ -127,6 +132,7 @@ export default function Library() {
   const totalLearned = levels.reduce((sum, key) => sum + (shelfByKey[key]?.learned ?? 0), 0);
   const progressPercent = totalAdded > 0 ? Math.round((totalLearned / totalAdded) * 100) : 0;
   const dueTotal = (queue.data?.due_count ?? 0) + (queue.data?.new_count ?? 0);
+  const expressionTotal = expressionMeta.data?.total ?? expressionsPreview.data?.total;
   const submitDeck = () => {
     setDeckAttempted(true);
     createDeck.reset();
@@ -135,10 +141,11 @@ export default function Library() {
   const refresh = () => {
     void categories.refetch(); void words.refetch();
     void overview.refetch(); void deckList.refetch(); void queue.refetch();
+    void expressionMeta.refetch(); void expressionsPreview.refetch();
   };
 
   return (
-    <Screen appHeader refreshing={categories.isRefetching || words.isRefetching || overview.isRefetching || deckList.isRefetching || queue.isRefetching} onRefresh={refresh}>
+    <Screen appHeader refreshing={categories.isRefetching || words.isRefetching || overview.isRefetching || deckList.isRefetching || queue.isRefetching || expressionMeta.isRefetching || expressionsPreview.isRefetching} onRefresh={refresh}>
       {/* Hero */}
       <View style={styles.hero}>
         <View aria-hidden style={styles.heroRingA} />
@@ -192,6 +199,47 @@ export default function Library() {
           </View>
         </Pressable>
       ) : null}
+
+      {/* Expressions */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeaderRow}>
+          <View style={styles.sectionHeaderCopy}>
+            <Text style={styles.sectionTitle}>{t.expressionsTitle}</Text>
+            <Text style={styles.sectionSub}>{t.expressionsSubtitle}</Text>
+          </View>
+          <Pressable accessibilityRole="button" accessibilityLabel={t.expressionsOpen} onPress={() => router.push("/expressions")} style={({ pressed }) => [styles.openAllButton, pressed && styles.pressed]}>
+            <Text style={styles.openAllText}>{t.expressionsOpen}</Text>
+            <Ionicons name="arrow-forward" size={15} color={colors.brand600} />
+          </Pressable>
+        </View>
+
+        <Pressable accessibilityRole="button" accessibilityLabel={t.expressionsOpen} onPress={() => router.push("/expressions")} style={({ pressed }) => [styles.expressionHero, pressed && styles.pressed]}>
+          <View style={styles.expressionIcon}><Ionicons name="chatbubbles-outline" size={22} color={colors.raised} /></View>
+          <View style={styles.expressionHeroCopy}>
+            <Text style={styles.expressionHeroTitle}>{t.expressionsTitle}</Text>
+            <Text style={styles.expressionHeroSub}>{t.expressionsSubtitle}</Text>
+          </View>
+          <View style={styles.expressionCount}>
+            <Text style={styles.expressionCountValue}>{expressionTotal === undefined ? "…" : expressionTotal.toLocaleString(locale)}</Text>
+            <Text style={styles.expressionCountLabel}>{t.expressionsCount}</Text>
+          </View>
+        </Pressable>
+
+        {expressionsPreview.isError ? (
+          <View style={styles.expressionError}>
+            <Ionicons name="warning-outline" size={17} color={colors.rust} />
+            <Text style={styles.expressionErrorText}>{t.expressionsError}</Text>
+          </View>
+        ) : null}
+
+        {expressionsPreview.data?.items.length ? (
+          <View style={styles.expressionGrid}>
+            {expressionsPreview.data.items.map((item) => (
+              <ExpressionPreviewCard key={item.slug} item={item} onPress={() => router.push({ pathname: "/expressions", params: { slug: item.slug } })} />
+            ))}
+          </View>
+        ) : null}
+      </View>
 
       {/* Level shelves */}
       <View style={styles.section}>
@@ -321,6 +369,23 @@ function FilterChip({ label, active, onPress, quiet = false }: { label: string; 
   );
 }
 
+function ExpressionPreviewCard({ item, onPress }: { item: ExpressionListItem; onPress: () => void }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={item.expression} onPress={onPress} style={({ pressed }) => [styles.expressionCard, pressed && styles.pressed]}>
+      <View style={styles.expressionCardTop}>
+        <Text numberOfLines={2} style={styles.expressionText}>{item.expression}</Text>
+        <Text style={styles.expressionLevel}>{item.cefr}</Text>
+      </View>
+      <Text numberOfLines={2} style={styles.expressionTranslation}>{item.translation ?? item.uzbek ?? item.usage}</Text>
+      <View style={styles.expressionTags}>
+        <Text style={styles.expressionTag}>{item.category}</Text>
+        <Text style={styles.expressionTag}>IELTS {item.ielts_band}</Text>
+        <Text style={styles.expressionTag}>{item.formality}</Text>
+      </View>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   hero: { position: "relative", overflow: "hidden", borderWidth: 2, borderColor: colors.brand950, borderRadius: 20, backgroundColor: colors.brand950, padding: 18 },
   heroRingA: { position: "absolute", left: -60, top: -60, width: 180, height: 180, borderRadius: 90, borderWidth: 24, borderColor: "rgba(70,120,120,0.35)" },
@@ -345,8 +410,30 @@ const styles = StyleSheet.create({
   myCardsSub: { marginTop: 6, fontFamily: fonts.ui, fontSize: 11, color: "rgba(255,248,234,0.8)" },
   myCardsStrong: { fontFamily: fonts.uiBold, color: colors.raised },
   section: { gap: 10 },
+  sectionHeaderRow: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
+  sectionHeaderCopy: { flex: 1, minWidth: 0, gap: 6 },
   sectionTitle: { fontFamily: fonts.uiBold, fontSize: 19, color: colors.ink },
   sectionSub: { marginTop: -6, fontFamily: fonts.ui, fontSize: 12, color: colors.muted },
+  openAllButton: { minHeight: 34, flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, borderWidth: 1, borderColor: colors.line, borderRadius: 999, backgroundColor: colors.raised },
+  openAllText: { fontFamily: fonts.uiBold, fontSize: 10.5, color: colors.brand600 },
+  expressionHero: { minHeight: 88, flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderWidth: 2, borderColor: colors.brand950, borderRadius: 17, backgroundColor: colors.brand950 },
+  expressionIcon: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: colors.brand600 },
+  expressionHeroCopy: { flex: 1, minWidth: 0 },
+  expressionHeroTitle: { fontFamily: fonts.display, fontSize: 22, lineHeight: 24, color: colors.raised, textTransform: "uppercase" },
+  expressionHeroSub: { marginTop: 5, fontFamily: fonts.ui, fontSize: 11.5, lineHeight: 17, color: "rgba(255,248,234,0.78)" },
+  expressionCount: { minWidth: 76, alignItems: "center", padding: 8, borderWidth: 1, borderColor: "rgba(255,248,234,0.28)", borderRadius: 12, backgroundColor: "rgba(255,248,234,0.1)" },
+  expressionCountValue: { fontFamily: fonts.display, fontSize: 24, color: colors.gold300 },
+  expressionCountLabel: { fontFamily: fonts.uiBold, fontSize: 8.5, color: "rgba(255,248,234,0.72)", textTransform: "uppercase" },
+  expressionError: { flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 11, paddingVertical: 9, borderWidth: 1, borderColor: "rgba(185,78,40,0.22)", borderRadius: 11, backgroundColor: "rgba(185,78,40,0.08)" },
+  expressionErrorText: { flex: 1, fontFamily: fonts.uiMedium, fontSize: 12, color: colors.rustDark },
+  expressionGrid: { gap: 10 },
+  expressionCard: { width: "100%", minHeight: 132, gap: 10, padding: 14, borderWidth: 1.5, borderColor: colors.line, borderRadius: 14, backgroundColor: colors.raised, shadowColor: colors.brown, shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
+  expressionCardTop: { flexDirection: "row", alignItems: "center", gap: 10 },
+  expressionText: { flex: 1, fontFamily: fonts.uiBold, fontSize: 16, lineHeight: 21, color: colors.ink },
+  expressionLevel: { minWidth: 38, overflow: "hidden", borderWidth: 1, borderColor: colors.teal, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 5, textAlign: "center", fontFamily: fonts.uiBold, fontSize: 10.5, color: colors.teal, backgroundColor: "rgba(70,120,120,0.10)" },
+  expressionTranslation: { fontFamily: fonts.uiMedium, fontSize: 13, lineHeight: 20, color: colors.brown },
+  expressionTags: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: "auto" },
+  expressionTag: { paddingHorizontal: 8, paddingVertical: 5, borderRadius: 7, backgroundColor: "rgba(84,37,15,0.07)", fontFamily: fonts.uiBold, fontSize: 9.5, color: colors.rustDark },
   shelfGrid: { flexDirection: "row", flexWrap: "wrap", gap: 11 },
   createCard: { gap: 10, borderWidth: 1.5, borderColor: colors.line, borderRadius: 12, borderStyle: "dashed", padding: 14 },
   errorNote: { fontFamily: fonts.uiMedium, fontSize: 12, color: colors.danger },

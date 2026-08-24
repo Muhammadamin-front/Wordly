@@ -9,6 +9,7 @@ import { BackButton, Button, ErrorNote, Field, Heading, Loader, Paper, Screen } 
 import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
+import { dateInputToDeadlineIso, formatApiDate } from "@/utils/dates";
 
 const labels = {
   uz: { back: "O‘qituvchi paneli", load: "Sinf yuklanmoqda...", error: "Sinf ma’lumotlarini yuklab bo‘lmadi.", retry: "Qayta urinish", shareCode: "O‘quvchilar uchun join code", share: "Kod ulashish", shared: "Ulashish oynasi ochildi.", students: "O‘quvchilar", noStudents: "Hali bu sinfga hech kim qo‘shilmagan.", level: "Daraja", streak: "Seriya", reviews: "Takrorlash", assignments: "Topshiriqlar", noAssignments: "Hali topshiriq yo‘q.", completed: "bajardi", due: "Muddat", newAssignment: "Yangi topshiriq", title: "Topshiriq nomi", instructions: "Yo‘riqnoma (ixtiyoriy)", target: "Takrorlash soni", dueInput: "Muddat (YYYY-MM-DD)", assign: "Topshiriq berish", invalidDate: "Muddatni YYYY-MM-DD ko‘rinishida kiriting.", created: "Topshiriq berildi.", archive: "Sinfni arxivlash", archiveTitle: "Sinfni arxivlash?", archiveBody: "Sinf va uning ma’lumotlari o‘quvchilar uchun yopiladi.", cancel: "Bekor qilish", confirmArchive: "Arxivlash", archived: "Sinf arxivlandi." },
@@ -22,9 +23,7 @@ function dateForInput() {
 }
 
 function dueIso(value: string) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  const date = new Date(`${value}T23:59:59`);
-  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+  return dateInputToDeadlineIso(value);
 }
 
 export default function TeacherClassDetail() {
@@ -85,7 +84,7 @@ export default function TeacherClassDetail() {
 }
 
 function Section({ title, count }: { title: string; count: number }) { return <View style={styles.section}><Text style={styles.sectionTitle}>{title}</Text><Text style={styles.count}>{count}</Text></View>; }
-function formatDate(value: string, locale: Locale) { return new Intl.DateTimeFormat(locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value)); }
+function formatDate(value: string, locale: Locale) { return formatApiDate(value, locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short", year: "numeric" }) ?? "—"; }
 
 const styles = StyleSheet.create({
   codePanel: { alignItems: "center", gap: 9, paddingVertical: 20, backgroundColor: colors.brand100 }, codeLabel: { fontFamily: fonts.uiMedium, fontSize: 12, color: colors.muted }, joinCode: { fontFamily: fonts.uiBold, fontSize: 29, letterSpacing: 5, color: colors.rustDark },

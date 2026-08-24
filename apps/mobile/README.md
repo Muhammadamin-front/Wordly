@@ -75,6 +75,16 @@ This writes `openapi.json` and the generated `src/api/schema.ts`. Do not hand-ed
 
 The client identifies auth requests with `X-Client: mobile`, stores access and refresh tokens in `expo-secure-store`, and schedules refresh one minute before access-token expiry. The FastAPI response sends the refresh token only for that mobile header; browser clients keep using the scoped httpOnly cookie.
 
+## Notifications
+
+The mobile app uses `expo-notifications` for native notification permission, the
+Android `vocora-daily-review` channel, Expo push-token capture, and a local 20:00
+daily review reminder. The Expo push token is stored in `expo-secure-store` under
+`vocora.expoPushToken`; `NotificationBootstrap` syncs it to
+`POST /api/v1/users/me/push-tokens` after login. Remote push delivery still needs
+APNs credentials for iOS and an FCM v1 service-account key for Android configured
+in EAS before server-sent notifications can reach devices.
+
 ## Deliberately deferred
 
-Push notifications, full offline sync, bulk CSV/document import, and mobile-native account-data export remain deferred. Admin and content-management workflows deliberately stay on desktop web. Teaching, billing, social, grammar, games, skills, IELTS, AI Coach, and support/legal product areas are native mobile screens and use the same production API and authored content as the web client.
+Full offline sync, bulk CSV/document import, and mobile-native account-data export remain deferred. Admin and content-management workflows deliberately stay on desktop web. Teaching, billing, social, grammar, games, skills, IELTS, AI Coach, and support/legal product areas are native mobile screens and use the same production API and authored content as the web client.

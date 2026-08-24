@@ -22,6 +22,13 @@ async def test_free_user_cannot_start_a_mock_session(client):
     assert resp.status_code == 402
 
 
+async def test_free_user_can_read_their_mock_history(client):
+    headers = await learner(client, email="mock-history@words.uz")
+    resp = await client.get("/api/v1/ielts/mock/sessions", headers=headers)
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
 async def test_premium_user_starts_a_session_with_all_four_legs_pending_or_active(client):
     headers = await premium_learner(client)
     resp = await client.post("/api/v1/ielts/mock/sessions", json={}, headers=headers)

@@ -43,6 +43,25 @@ async def test_health_detail_reports_db_and_build(client):
     assert "uptime_seconds" in body
 
 
+async def test_health_detail_returns_503_when_database_is_unavailable(client, monkeypatch):
+    class BrokenContext:
+        async def __aenter__(self):
+            raise RuntimeError("database unavailable")
+
+        async def __aexit__(self, exc_type, exc, traceback):
+            return False
+
+    class BrokenFactory:
+        def __call__(self):
+            return BrokenContext()
+
+    monkeypatch.setattr("app.main.get_session_factory", lambda: BrokenFactory())
+    response = await client.get("/health/detail")
+    assert response.status_code == 503
+    assert response.json()["status"] == "degraded"
+    assert response.json()["database"] == "error"
+
+
 async def test_security_headers_present(client):
     resp = await client.get("/health")
     assert resp.headers["X-Content-Type-Options"] == "nosniff"

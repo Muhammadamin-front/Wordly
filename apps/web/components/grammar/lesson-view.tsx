@@ -9,6 +9,7 @@ import {
   BookOpenCheck,
   CheckCircle2,
   Highlighter,
+  Layers3,
   Lightbulb,
   ListChecks,
   PanelsTopLeft,
@@ -16,14 +17,23 @@ import {
   ScanText,
   Sparkles,
   Target,
+  Timer,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
-import { markCompleted, type GrammarLesson, ALL_LESSONS } from "@/lib/grammar";
+import { useAuth } from "@/components/auth/auth-provider";
+import {
+  ALL_LESSONS,
+  masteryStatus,
+  recordGrammarAttempt,
+  type GrammarExercise,
+  type GrammarLesson,
+} from "@/lib/grammar";
 import { cn } from "@/lib/utils";
+import { submitGrammarAttempt } from "@/lib/grammar/progress-sync";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type T = Dictionary["grammar"];
@@ -34,7 +44,16 @@ const LEVEL_CONTEXT: Record<GrammarLesson["level"], string> = {
   B1: "Fluency",
   B2: "Precision",
   IELTS: "Band 7+",
+  C1: "Advanced control",
 };
+
+function normaliseAnswer(value: string): string {
+  return value.trim().toLocaleLowerCase().replace(/[’‘]/g, "'").replace(/[.!?]+$/g, "").replace(/\s+/g, " ");
+}
+
+function isCorrectAnswer(answer: string, exercise: GrammarExercise): boolean {
+  return normaliseAnswer(answer) === normaliseAnswer(exercise.correctAnswer);
+}
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -119,7 +138,7 @@ function importantNotesFor(lesson: GrammarLesson): string[] {
 
 function examTipsFor(lesson: GrammarLesson): string[] {
   if (lesson.examTips?.length) return lesson.examTips;
-  if (lesson.level === "IELTS") {
+  if (lesson.level === "IELTS" || lesson.level === "C1") {
     return [
       "Writingda bu strukturani bir paragrafda 1-2 marta ishlatish kifoya; juda ko'p ishlatish sun'iy ko'rinadi.",
       "Speakingda avval sodda gap bilan fikrni ayting, keyin shu grammar orqali aniqlik yoki kontrast qo'shing.",
@@ -151,16 +170,19 @@ export function LessonView({
   lesson: GrammarLesson;
   t: T;
 }) {
-  const [answers, setAnswers] = useState<number[]>(() =>
-    new Array(lesson.quiz.length).fill(-1)
-  );
+  const { user } = useAuth();
+  const exercises = useMemo(() => lesson.exercises ?? [], [lesson.exercises]);
+  const [answers, setAnswers] = useState<string[]>(() => new Array(exercises.length).fill(""));
   const [checked, setChecked] = useState(false);
+  const [exerciseStep, setExerciseStep] = useState(0);
 
   const correct = useMemo(
-    () => lesson.quiz.filter((item, i) => answers[i] === item.answer).length,
-    [answers, lesson.quiz]
+    () => exercises.filter((item, i) => isCorrectAnswer(answers[i], item)).length,
+    [answers, exercises]
   );
-  const passed = checked && correct >= Math.ceil(lesson.quiz.length * 0.6);
+  const score = exercises.length ? Math.round((correct / exercises.length) * 100) : 0;
+  const status = masteryStatus(checked ? score : null);
+  const passed = checked && score >= 70;
 
   const index = ALL_LESSONS.findIndex((l) => l.slug === lesson.slug);
   const next = ALL_LESSONS[index + 1];
@@ -169,10 +191,18 @@ export function LessonView({
   const importantNotes = useMemo(() => importantNotesFor(lesson), [lesson]);
   const examTips = useMemo(() => examTipsFor(lesson), [lesson]);
   const patternExamples = useMemo(() => solvedPatternExamples(lesson), [lesson]);
+  const pathLessons = useMemo(() => [...(lesson.prerequisites ?? []), ...(lesson.relatedLessons ?? [])]
+    .map((slug) => ALL_LESSONS.find((candidate) => candidate.slug === slug))
+    .filter((candidate): candidate is GrammarLesson => Boolean(candidate)), [lesson.prerequisites, lesson.relatedLessons]);
 
   function check() {
     setChecked(true);
-    if (correct >= Math.ceil(lesson.quiz.length * 0.6)) markCompleted(lesson.slug);
+    recordGrammarAttempt(lesson.slug, correct, exercises.length);
+    if (user) {
+      void submitGrammarAttempt(user.id, lesson.slug, score).catch(() => {
+        // The local result is retained and merged on the next successful sync.
+      });
+    }
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   }
 
@@ -202,6 +232,8 @@ export function LessonView({
               {lesson.title}
             </h1>
             <p className="mt-2 max-w-2xl text-base text-ink-soft">{lesson.titleUz}</p>
+            {lesson.introduction && <p className="mt-4 max-w-2xl text-base leading-7 text-ink">{lesson.introduction}</p>}
+            <p className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-ink-soft"><Timer className="size-4" aria-hidden />{lesson.estimatedMinutes ?? 15} min · {lesson.category}</p>
           </div>
           {lesson.formula && (
             <div className="premium-card rounded-lg p-5">
@@ -269,12 +301,17 @@ export function LessonView({
           </section>
 
           <LessonPatternLab t={t} lesson={lesson} terms={terms} examples={patternExamples} />
+          <LessonForms lesson={lesson} terms={terms} />
           <LessonExamples lesson={lesson} terms={terms} t={t} />
+          <LessonComparisons lesson={lesson} terms={terms} />
           <LessonMistakes lesson={lesson} terms={terms} t={t} />
-          <LessonQuiz
-            lesson={lesson}
+          <LessonExercises
+            lang={lang}
+            exercises={exercises}
             answers={answers}
             checked={checked}
+            step={exerciseStep}
+            setStep={setExerciseStep}
             setAnswers={setAnswers}
             t={t}
           />
@@ -283,7 +320,7 @@ export function LessonView({
             <Button
               fullWidth
               className="mt-1"
-              disabled={answers.some((a) => a === -1)}
+              disabled={answers.some((answer) => answer.trim() === "")}
               onClick={check}
             >
               {t.check}
@@ -303,15 +340,17 @@ export function LessonView({
                 {passed ? <BadgeCheck className="size-7" aria-hidden /> : <Target className="size-7" aria-hidden />}
               </span>
               <p className="mt-3 text-2xl font-extrabold text-ink">
-                {correct}/{lesson.quiz.length}
+                {correct}/{exercises.length} · {score}%
               </p>
+              <p className="mt-1 text-sm font-bold text-ink-soft">{status.replaceAll("-", " ")}</p>
               <p className="mt-1 text-sm text-ink-soft">{passed ? t.passed : t.tryAgainHint}</p>
               <div className="mt-4 flex flex-wrap justify-center gap-3">
                 {!passed && (
                   <Button
                     onClick={() => {
                       setChecked(false);
-                      setAnswers(new Array(lesson.quiz.length).fill(-1));
+                      setAnswers(new Array(exercises.length).fill(""));
+                      setExerciseStep(0);
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     }}
                   >
@@ -362,6 +401,11 @@ export function LessonView({
               ))}
             </div>
           </section>
+
+          {pathLessons.length > 0 && <section className="surface-panel rounded-lg p-4">
+            <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><Layers3 className="size-4 text-brand-500" aria-hidden />Learning path</h2>
+            <div className="mt-3 space-y-2">{pathLessons.map((pathLesson) => <Link key={pathLesson.slug} href={`/${lang}/grammar/${pathLesson.slug}`} className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink transition hover:bg-raised"><span className="min-w-0 line-clamp-2">{pathLesson.title}</span><ArrowRight className="size-4 shrink-0 text-ink-soft" aria-hidden /></Link>)}</div>
+          </section>}
         </aside>
       </div>
     </main>
@@ -473,6 +517,28 @@ function LessonExamples({ lesson, terms, t }: { lesson: GrammarLesson; terms: st
   );
 }
 
+function LessonForms({ lesson, terms }: { lesson: GrammarLesson; terms: string[] }) {
+  if (!lesson.forms?.length) return null;
+  return (
+    <section className="surface-panel rounded-lg p-5">
+      <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><PanelsTopLeft className="size-4 text-brand-500" aria-hidden />Forms</h2>
+      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+        {lesson.forms.map((form) => <div key={`${form.label}-${form.example}`} className="min-w-0 rounded-lg border border-line bg-card/60 p-4"><p className="text-xs font-extrabold uppercase text-accent-500">{form.label}</p><p className="mt-2 break-words font-mono text-xs font-bold leading-5 text-brand-600 dark:text-brand-300">{form.formula}</p><p className="mt-2 text-sm font-semibold leading-6 text-ink">{highlightText(form.example, terms)}</p></div>)}
+      </div>
+    </section>
+  );
+}
+
+function LessonComparisons({ lesson, terms }: { lesson: GrammarLesson; terms: string[] }) {
+  if (!lesson.comparisons?.length) return null;
+  return (
+    <section className="surface-panel rounded-lg p-5">
+      <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><ScanText className="size-4 text-accent-500" aria-hidden />Compare</h2>
+      <div className="mt-3 space-y-3">{lesson.comparisons.map((comparison) => <div key={comparison.title} className="rounded-lg border border-line bg-card/60 p-4"><h3 className="font-extrabold text-ink">{comparison.title}</h3><div className="mt-3 grid gap-2 sm:grid-cols-2"><p className="rounded-lg border border-success/20 bg-success/5 p-3 text-sm font-semibold leading-6 text-ink">{highlightText(comparison.left, terms)}</p><p className="rounded-lg border border-warning/20 bg-warning/5 p-3 text-sm font-semibold leading-6 text-ink">{highlightText(comparison.right, terms)}</p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{comparison.explanation}</p></div>)}</div>
+    </section>
+  );
+}
+
 function LessonMistakes({ lesson, terms, t }: { lesson: GrammarLesson; terms: string[]; t: T }) {
   return (
     <section className="surface-panel rounded-lg p-5">
@@ -502,19 +568,30 @@ function LessonMistakes({ lesson, terms, t }: { lesson: GrammarLesson; terms: st
   );
 }
 
-function LessonQuiz({
-  lesson,
+function LessonExercises({
+  lang,
+  exercises,
   answers,
   checked,
+  step,
+  setStep,
   setAnswers,
   t,
 }: {
-  lesson: GrammarLesson;
-  answers: number[];
+  lang: string;
+  exercises: GrammarExercise[];
+  answers: string[];
   checked: boolean;
-  setAnswers: (updater: (prev: number[]) => number[]) => void;
+  step: number;
+  setStep: (step: number) => void;
+  setAnswers: (updater: (prev: string[]) => string[]) => void;
   t: T;
 }) {
+  const labels = lang === "ru"
+    ? { "multiple-choice": "Выбор", "fill-blank": "Пропуск", "error-correction": "Исправление", "sentence-builder": "Конструктор", rewrite: "Перефразирование", "context-choice": "Контекст", answer: "Правильный ответ", placeholder: "Введите ответ...", clear: "Очистить", previous: "Назад", next: "Далее" }
+    : lang === "en"
+      ? { "multiple-choice": "Multiple choice", "fill-blank": "Fill the blank", "error-correction": "Correction", "sentence-builder": "Sentence builder", rewrite: "Rewrite", "context-choice": "Context", answer: "Correct answer", placeholder: "Type your answer...", clear: "Clear", previous: "Previous", next: "Next" }
+      : { "multiple-choice": "Variant tanlash", "fill-blank": "Bo‘sh joy", "error-correction": "Xatoni tuzatish", "sentence-builder": "Gap tuzish", rewrite: "Qayta yozish", "context-choice": "Kontekst", answer: "To‘g‘ri javob", placeholder: "Javobni yozing...", clear: "Tozalash", previous: "Oldingi", next: "Keyingi" };
   return (
     <section className="surface-panel rounded-lg p-5">
       <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
@@ -522,42 +599,64 @@ function LessonQuiz({
         {t.quiz}
       </h2>
       <div className="mt-3 space-y-3">
-        {lesson.quiz.map((item, qi) => {
+        {exercises.filter((_, qi) => qi === step).map((item, qiOffset) => {
+          const qi = step + qiOffset;
           const chosen = answers[qi];
+          const correct = isCorrectAnswer(chosen, item);
+          const hasOptions = item.options?.length;
           return (
-            <div key={qi} className="rounded-lg border border-line bg-card/60 p-4">
-              <p className="font-semibold text-ink">
-                {qi + 1}. {item.q}
-              </p>
-              <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
-                {item.options.map((opt, oi) => {
-                  const isAnswer = checked && oi === item.answer;
-                  const isWrongChoice = checked && chosen === oi && oi !== item.answer;
+            <div key={item.id} className={cn("rounded-lg border bg-card/60 p-4", checked && correct ? "border-success/40" : checked ? "border-danger/40" : "border-line")}>
+              <div className="flex flex-wrap items-center justify-between gap-2"><span className="rounded-md border border-line bg-raised/70 px-2 py-1 text-[11px] font-extrabold uppercase text-ink-soft">{labels[item.type]}</span><span className="text-xs font-bold text-ink-soft">{qi + 1}/{exercises.length}</span></div>
+              {item.context && <p className="mt-3 rounded-lg bg-brand-600/5 p-3 text-sm leading-6 text-ink-soft">{item.context}</p>}
+              <p className="mt-3 font-semibold leading-7 text-ink">{item.prompt}</p>
+              {hasOptions ? <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                {item.options!.map((option, optionIndex) => {
+                  const isAnswer = checked && normaliseAnswer(option) === normaliseAnswer(item.correctAnswer);
+                  const isWrongChoice = checked && normaliseAnswer(chosen) === normaliseAnswer(option) && !isAnswer;
                   return (
                     <button
-                      key={oi}
+                      key={`${option}-${optionIndex}`}
                       type="button"
                       disabled={checked}
-                      onClick={() =>
-                        setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))
-                      }
+                      onClick={() => setAnswers((prev) => prev.map((answer, index) => index === qi ? option : answer))}
                       className={cn(
-                        "rounded-lg border px-3 py-2 text-left text-sm font-semibold transition-all",
+                        "min-h-12 rounded-lg border px-3 py-2 text-left text-sm font-semibold leading-6 transition active:translate-y-px",
                         isAnswer && "border-success bg-success/10 text-success",
                         isWrongChoice && "border-danger bg-danger/10 text-danger",
-                        !checked && chosen === oi && "border-brand-500 bg-brand-600/10 text-ink",
-                        !checked && chosen !== oi && "border-line text-ink hover:-translate-y-0.5 hover:bg-line/40",
+                        !checked && chosen === option && "border-brand-500 bg-brand-600/10 text-ink",
+                        !checked && chosen !== option && "border-line text-ink hover:bg-line/40",
                         checked && !isAnswer && !isWrongChoice && "border-line text-ink-soft"
                       )}
                     >
-                      {opt}
+                      {option}
                     </button>
                   );
                 })}
-              </div>
+              </div> : item.type === "sentence-builder" && item.words?.length ? <div className="mt-3"><div className="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border border-line bg-raised/50 p-3 text-sm font-semibold text-ink">{chosen || labels.placeholder}</div><div className="mt-2 flex flex-wrap gap-2">{item.words.map((word, index) => <button key={`${word}-${index}`} type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? `${answer}${answer ? " " : ""}${word}` : answer))} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm font-bold text-ink active:translate-y-px">{word}</button>)}<button type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? "" : answer))} className="min-h-11 rounded-lg px-3 text-sm font-bold text-danger">{labels.clear}</button></div></div> : <input value={chosen} disabled={checked} onChange={(event) => setAnswers((prev) => prev.map((answer, index) => index === qi ? event.target.value : answer))} placeholder={labels.placeholder} autoCapitalize="sentences" autoComplete="off" spellCheck={false} className="mt-3 min-h-12 w-full rounded-lg border border-line bg-raised/70 px-3 text-base text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20" />}
+              {checked && <div className={cn("mt-3 rounded-lg border p-3 text-sm leading-6", correct ? "border-success/25 bg-success/5" : "border-danger/25 bg-danger/5")}><p className="font-extrabold text-ink">{correct ? "✓" : "✕"} {labels.answer}: {item.correctAnswer}</p><p className="mt-1 text-ink-soft">{item.explanation}</p></div>}
             </div>
           );
         })}
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          disabled={step === 0}
+          onClick={() => setStep(Math.max(0, step - 1))}
+          className="min-h-12 rounded-lg border border-line bg-card px-4 text-sm font-extrabold text-ink transition enabled:hover:bg-raised disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ArrowLeft className="mr-2 inline size-4" aria-hidden />
+          {labels.previous}
+        </button>
+        <button
+          type="button"
+          disabled={step >= exercises.length - 1 || answers[step]?.trim() === ""}
+          onClick={() => setStep(Math.min(exercises.length - 1, step + 1))}
+          className="min-h-12 rounded-lg border border-brand-500 bg-brand-600 px-4 text-sm font-extrabold text-white transition enabled:hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {labels.next}
+          <ArrowRight className="ml-2 inline size-4" aria-hidden />
+        </button>
       </div>
     </section>
   );

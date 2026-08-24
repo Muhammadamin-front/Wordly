@@ -68,6 +68,7 @@ def test_production_rejects_console_email_provider():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
+        FRONTEND_ORIGIN="https://vocora.uz",
         SECRET_KEY=PRODUCTION_SECRET,
         EMAIL_PROVIDER="console",
         COOKIE_SECURE=True,
@@ -82,6 +83,7 @@ def test_production_accepts_complete_resend_configuration():
     settings = Settings(
         _env_file=None,
         ENVIRONMENT="production",
+        FRONTEND_ORIGIN="https://vocora.uz",
         SECRET_KEY=PRODUCTION_SECRET,
         EMAIL_PROVIDER="resend",
         RESEND_API_KEY="re_production",

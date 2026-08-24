@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import "../globals.css";
 
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { GrammarProgressSync } from "@/components/grammar/grammar-progress-sync";
 import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
@@ -111,6 +112,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <AuthProvider>
             <AnalyticsProvider />
+            <GrammarProgressSync />
             {children}
           </AuthProvider>
           <PwaRegister />

@@ -1,4 +1,24 @@
-export type GrammarLevel = "A1" | "A2" | "B1" | "B2" | "IELTS";
+export type CefrGrammarLevel = "A1" | "A2" | "B1" | "B2" | "C1";
+/** `IELTS` remains accepted while legacy source lessons are normalised to C1. */
+export type GrammarLevel = CefrGrammarLevel | "IELTS";
+
+export type GrammarCategory =
+  | "Foundations"
+  | "Word order"
+  | "Nouns & articles"
+  | "Pronouns & determiners"
+  | "Tenses"
+  | "Questions"
+  | "Modal verbs"
+  | "Conditionals"
+  | "Comparison"
+  | "Prepositions"
+  | "Verb patterns"
+  | "Passive"
+  | "Reported speech"
+  | "Relative clauses"
+  | "Clauses & linking"
+  | "Advanced grammar";
 
 export interface GrammarExample {
   en: string;
@@ -15,6 +35,39 @@ export interface GrammarQuizItem {
   q: string; // question, may contain a ___ gap
   options: string[];
   answer: number; // index into options
+  explanation?: string;
+}
+
+export type GrammarExerciseType =
+  | "multiple-choice"
+  | "fill-blank"
+  | "error-correction"
+  | "sentence-builder"
+  | "rewrite"
+  | "context-choice";
+
+export interface GrammarExercise {
+  id: string;
+  type: GrammarExerciseType;
+  prompt: string;
+  correctAnswer: string;
+  explanation: string;
+  options?: string[];
+  words?: string[];
+  context?: string;
+}
+
+export interface GrammarForm {
+  label: "Positive" | "Negative" | "Question";
+  formula: string;
+  example: string;
+}
+
+export interface GrammarComparison {
+  title: string;
+  left: string;
+  right: string;
+  explanation: string;
 }
 
 export interface GrammarKeyPoint {
@@ -55,8 +108,13 @@ export interface GrammarLesson {
   title: string; // English grammar name, e.g. "Present Simple"
   titleUz: string; // Uzbek name, e.g. "Oddiy hozirgi zamon"
   emoji: string;
+  category?: GrammarCategory;
+  order?: number;
+  introduction?: string;
   explanation: string[]; // paragraphs
   formula?: string;
+  forms?: GrammarForm[];
+  comparisons?: GrammarComparison[];
   highlights?: string[]; // words/structures to visually mark inside explanations and examples
   keyPoints?: GrammarKeyPoint[]; // compact "why / how / when" teaching blocks
   importantNotes?: string[]; // short high-priority warnings or exam notes
@@ -64,6 +122,22 @@ export interface GrammarLesson {
   examples: GrammarExample[];
   mistakes: GrammarMistake[];
   quiz: GrammarQuizItem[];
+  exercises?: GrammarExercise[];
+  prerequisites?: string[];
+  relatedLessons?: string[];
+  estimatedMinutes?: number;
+  difficulty?: 1 | 2 | 3 | 4 | 5;
   /** Other locales. A missing entry falls back to the Uzbek base text. */
   translations?: Partial<Record<"ru" | "en", GrammarLessonTranslation>>;
+}
+
+export interface GrammarLessonSummary {
+  slug: string;
+  level: CefrGrammarLevel;
+  title: string;
+  titleUz: string;
+  category: GrammarCategory;
+  order: number;
+  estimatedMinutes: number;
+  prerequisites: string[];
 }

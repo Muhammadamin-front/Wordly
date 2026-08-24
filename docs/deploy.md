@@ -1,8 +1,8 @@
 # Deploying Vocora
 
-The stack is two containers plus managed state: **api** (FastAPI/uvicorn),
-**web** (Next.js standalone), **Postgres 16**, **Redis 7**. A single VM with
-docker compose is enough to launch. The WebSocket multiplayer now runs its
+The production stack is five containers: **api** (FastAPI/uvicorn), **web**
+(Next.js standalone), **Postgres 16**, **Redis 7**, and **cloudflared**. A single
+VM with Docker Compose is enough to launch. The WebSocket multiplayer runs its
 room state and cross-worker broadcast through Redis (`RedisRoomStore` +
 `RedisPubSub`, wired in `app/main.py`'s `lifespan()` whenever `REDIS_URL` is
 set), so it's safe to run multiple API replicas — a client connected to one
@@ -12,14 +12,24 @@ worker still sees moves made on a room hosted by another worker.
 
 Create a `.env` next to `docker-compose.yml` (compose reads it automatically):
 
+For first-time setup, run `./scripts/setup-production.sh`. It opens the relevant
+provider dashboards, hides secret input, writes the ignored root `.env`, and
+runs the same release preflight documented below. The manual template is:
+
 ```bash
 ENVIRONMENT=production
+APP_VERSION=1.0.0
 # Generate once: python -c "import secrets; print(secrets.token_urlsafe(48))"
 SECRET_KEY=<paste-generated-output>
 # Use only the immediate reverse proxy/LB addresses or private CIDRs.
 TRUSTED_PROXY_CIDRS=10.0.0.10/32
 FRONTEND_ORIGIN=https://vocora.uz
 COOKIE_SECURE=true
+API_BIND_HOST=127.0.0.1
+POSTGRES_USER=words
+POSTGRES_PASSWORD=<generated-unique-password>
+POSTGRES_DB=words
+DATABASE_URL=postgresql+asyncpg://words:<same-password>@postgres:5432/words
 EMAIL_PROVIDER=resend
 RESEND_API_KEY=re_...
 EMAIL_FROM=Vocora <noreply@vocora.uz>      # domain must be verified in Resend
@@ -27,6 +37,7 @@ EMAIL_REPLY_TO=support@vocora.uz
 NEXT_PUBLIC_API_URL=https://api.vocora.uz  # baked into the web bundle at build
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=...           # optional: Google sign-in
 GOOGLE_CLIENT_ID=...                        # same client id, API side
+APPLE_CLIENT_ID=uz.vocora.mobile            # native iOS identity-token audience
 NEXT_PUBLIC_GITHUB_CLIENT_ID=...           # optional: GitHub sign-in
 GITHUB_CLIENT_ID=...                        # same client id, API side
 GITHUB_CLIENT_SECRET=...                    # API side only, never in the bundle
@@ -57,6 +68,8 @@ NEXT_PUBLIC_SENTRY_DSN=...                 # web — separate Sentry project; ba
 SENTRY_ORG=...
 SENTRY_PROJECT=...
 SENTRY_AUTH_TOKEN=...
+# Cloudflare dashboard → Tunnels → vocora-production → Add a replica.
+CLOUDFLARE_TUNNEL_TOKEN=...
 ```
 
 Notes that will bite you if skipped:
@@ -73,6 +86,8 @@ Notes that will bite you if skipped:
   redirect URIs empty for this implementation. Use the same Web application
   client ID for `NEXT_PUBLIC_GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_ID`; no Google
   client secret is used or stored by Vocora.
+- Native Sign in with Apple sends an identity token whose audience is the iOS
+  bundle identifier, so the API must have `APPLE_CLIENT_ID=uz.vocora.mobile`.
 - Every variable above belongs in **this file** — the repo-root `.env` that
   `docker compose` interpolates. `apps/api/.env` and `apps/web/.env.local` are
   for local development only; the containers never read them, so a provider
@@ -86,6 +101,8 @@ Notes that will bite you if skipped:
   colon; the full token stays server-side as `TELEGRAM_BOT_TOKEN`.
 - `ENVIRONMENT=production` turns off `/docs`, turns on HSTS, and requires HTTPS
   cookies (`COOKIE_SECURE=true`).
+- `API_BIND_HOST=127.0.0.1` keeps the API off the public network. The Compose
+  tunnel reaches the services over the private Docker network.
 - Checkout is exposed only for fully configured providers. Sandbox activation
   is always disabled in production, and the family plan is hidden until member
   management is implemented.
@@ -102,15 +119,36 @@ Notes that will bite you if skipped:
 ## 2. Build & run
 
 ```bash
-docker compose build
-docker compose up -d
+node scripts/release-preflight.mjs --server-only
+docker compose --profile production build
+docker compose --profile production up -d --remove-orphans
 docker compose exec api python -m scripts.seed   # idempotent: corpus + passages
+curl --fail https://api.vocora.uz/health/detail
+curl --fail --head https://vocora.uz/uz
 ```
 
 The API container runs `alembic upgrade head` on boot, so schema upgrades are
-a `git pull && docker compose build api && docker compose up -d api`.
+a `git pull && docker compose --profile production build api && docker compose
+--profile production up -d api`.
 
-## 3. TLS / reverse proxy
+## 3. Cloudflare Tunnel and TLS
+
+The Compose production profile starts the dashboard-managed tunnel with
+`CLOUDFLARE_TUNNEL_TOKEN`; do not paste that token into source control or chat.
+In Cloudflare's `vocora-production` tunnel, configure exactly these published
+application routes:
+
+- `vocora.uz` → `http://web:3000`
+- `api.vocora.uz` → `http://api:8000`
+
+These are Docker service names, not `localhost`. Keep the tunnel's connector at
+one or more healthy replicas. A stopped server/connector makes both public hosts
+unavailable even when DNS is correct.
+
+Cloudflare terminates public TLS, while the outbound-only tunnel means the host
+does not need public inbound 80/443. Keep the zone SSL mode at **Full (strict)**.
+
+### Alternative: public nginx origin
 
 Terminate TLS in front with nginx — [`deploy/nginx-vocora.conf`](deploy/nginx-vocora.conf)
 is the version-controlled starting point (per-IP request/connection limits,
@@ -171,9 +209,7 @@ section is what's still worth doing at and under the origin.
   hurts real users, so it's for the day there's a genuine flood in progress,
   not a standing setting.
 
-**Origin exposure — diagnose before locking anything down.** How the VM is
-actually reached changes what "lock down the origin" means, and this repo
-doesn't currently know which one it is. Run once, on the VM itself:
+**Origin exposure — verify after launch.** Run once on the VM:
 
 ```bash
 sudo ss -tlnp | grep -E ':80|:443'   # anything listening on a public interface?
@@ -181,7 +217,8 @@ pgrep -a cloudflared                  # is Cloudflare Tunnel running?
 sudo ufw status verbose               # or: sudo iptables -L -n
 ```
 
-- **If `cloudflared` is running and nothing public listens on 80/443**: the
+- **With the default production profile, `cloudflared` is running and nothing
+  public listens on 80/443**: the
   origin has no inbound port to bypass Cloudflare with at all — this is
   already the strongest posture, no firewall change needed. Just confirm
   there's no stray `ufw allow 80/443` left over from an earlier attempt, and
@@ -232,6 +269,13 @@ read-only verification command plus a tested restore procedure.
 
 ## 7. CI
 
-`.github/workflows/ci.yml` gates every push/PR on three jobs: pytest on SQLite,
+`.github/workflows/ci.yml` gates every push/PR on four jobs: pytest on SQLite,
 pytest **plus migrations & seed on Postgres 16** (dialect drift is caught here,
-not on the VM), and web typecheck/lint/vitest/build.
+not on the VM), web typecheck/lint/vitest/build, and mobile typecheck/release
+configuration validation.
+
+The mobile audit blocks critical advisories. Expo SDK 54's CLI/Metro build
+toolchain currently reports upstream high advisories whose offered npm fix is a
+breaking SDK 57 upgrade. Upgrade Expo in a dedicated tested release rather than
+letting `npm audit fix --force` rewrite the native stack immediately before a
+store submission.

@@ -84,3 +84,27 @@ jobs:
       - run: npm run test --workspace web
       - run: npm run build --workspace web
       - run: npm audit --omit=dev --workspace=web --audit-level=high
+
+  mobile:
+    name: Mobile — typecheck + release config
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+      - run: npm ci
+      - run: npm run check:release
+        env:
+          EXPO_PUBLIC_API_URL: https://api.vocora.uz
+          EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID: 000000000000-ci-web.apps.googleusercontent.com
+          EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID: 000000000000-ci-ios.apps.googleusercontent.com
+      # Expo SDK 54's CLI/Metro build chain currently carries upstream high
+      # advisories with no non-breaking fix. They are not shipped as an
+      # executable server in the native app; still block any critical advisory.
+      - run: npm audit --omit=dev --audit-level=critical

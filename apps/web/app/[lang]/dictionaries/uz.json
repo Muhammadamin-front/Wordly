@@ -1262,7 +1262,7 @@
   },
   "grammar": {
     "title": "Grammatika",
-    "subtitle": "Noldan IELTS'gacha to'liq yo'l — har bir mavzu chuqur tushuntirilgan",
+    "subtitle": "A1 dan C1 gacha 200 ta tartibli dars — tushuntirish, taqqoslash va 3 000 ta amaliy mashq",
     "completed": "bajarildi",
     "done": "Tayyor",
     "formula": "Formula",
@@ -1271,7 +1271,7 @@
     "quiz": "Mashq testi",
     "check": "Javoblarni tekshirish",
     "passed": "Ajoyib! Dars yakunlandi.",
-    "tryAgainHint": "Darsni qayta ko'rib chiqing — 60% kerak.",
+    "tryAgainHint": "Darsni qayta ko'rib chiqing — kamida 70% kerak.",
     "retry": "Qayta urinish",
     "nextLesson": "Keyingi dars",
     "backToList": "Barcha mavzular",

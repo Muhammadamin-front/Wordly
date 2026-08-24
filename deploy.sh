@@ -2,7 +2,8 @@
 set -e
 set -o pipefail
 
-cd /home/kitsune/Wordly
+script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+cd "$script_dir"
 expected_sha="${1:-}"
 
 echo "=== Check working tree ==="
@@ -18,17 +19,24 @@ if [ -n "$expected_sha" ]; then
   git cat-file -e "${expected_sha}^{commit}"
   git merge-base --is-ancestor "$expected_sha" origin/main
   echo "=== Deploy verified commit $expected_sha ==="
-  git reset --hard "$expected_sha"
+  git merge --ff-only "$expected_sha"
 else
   echo "=== Deploy latest main (manual run) ==="
   git pull --ff-only origin main
 fi
 
+echo "=== Production preflight ==="
+node scripts/release-preflight.mjs --server-only
+
 echo "=== Build images ==="
-docker compose build
+docker compose --profile production build
+
+echo "=== Validate migration graph inside release image ==="
+heads_count="$(docker compose --profile production run --rm --no-deps api alembic heads | grep -c '(head)')"
+test "$heads_count" -eq 1
 
 echo "=== Apply containers ==="
-docker compose up -d --remove-orphans
+docker compose --profile production up -d --remove-orphans
 
 echo "=== Waiting for API ==="
 for attempt in $(seq 1 30); do
@@ -49,6 +57,10 @@ docker compose ps
 
 echo "=== Health check ==="
 curl -f http://127.0.0.1:8000/health/detail
+
+echo "=== Public tunnel smoke ==="
+curl -f --max-time 20 "${PUBLIC_API_HEALTH_URL:-https://api.vocora.uz/health/detail}"
+curl -fI --max-time 20 "${PUBLIC_WEB_URL:-https://vocora.uz/uz}"
 
 echo
 echo "✅ Deploy complete"

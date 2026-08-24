@@ -9,6 +9,7 @@ import { Button, ErrorNote, Field, Heading, Loader, Paper, Screen } from "@/comp
 import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
+import { formatApiDate } from "@/utils/dates";
 
 const labels = {
   uz: { title: "Mening sinflarim", subtitle: "O‘qituvchingiz bergan mashqlarni shu yerda kuzating.", teacher: "O‘qituvchi paneli", join: "Sinfga qo‘shilish", code: "Join code", joinButton: "Qo‘shilish", invalid: "Join code topilmadi. Kodni qayta tekshiring.", assignments: "Topshiriqlar", noClasses: "Hali sinfga qo‘shilmagansiz. O‘qituvchidan join code so‘rang.", due: "Muddat", of: "dan", reviews: "takrorlash", done: "Bajarildi", overdue: "Muddati o‘tgan", load: "Sinflar yuklanmoqda...", loadError: "Sinflarni yuklab bo‘lmadi.", retry: "Qayta urinish", joinSuccess: "Sinfga qo‘shildingiz." },
@@ -49,7 +50,7 @@ function ClassCard({ classroom, assignments, locale }: { classroom: StudentClass
 
 function Assignment({ item, locale }: { item: StudentAssignment; locale: Locale }) {
   const t = labels[locale];
-  const due = new Intl.DateTimeFormat(locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short" }).format(new Date(item.assignment.due_at));
+  const due = formatApiDate(item.assignment.due_at, locale === "uz" ? "uz-UZ" : locale === "ru" ? "ru-RU" : "en-US", { day: "numeric", month: "short" }) ?? "—";
   const status = item.done ? t.done : item.overdue ? t.overdue : `${item.reviews}/${item.assignment.target_reviews}`;
   return <View style={styles.assignment}><View style={styles.assignmentCopy}><Text style={styles.assignmentTitle}>{item.assignment.title}</Text>{item.assignment.instructions ? <Text style={styles.instructions}>{item.assignment.instructions}</Text> : null}<Text style={styles.meta}>{t.due}: {due} · {item.reviews} {t.of} {item.assignment.target_reviews} {t.reviews}</Text></View><View style={[styles.status, item.done ? styles.statusDone : item.overdue ? styles.statusOverdue : styles.statusOpen]}><Text numberOfLines={2} style={[styles.statusText, item.done ? styles.statusDoneText : item.overdue ? styles.statusOverdueText : styles.statusOpenText]}>{status}</Text></View></View>;
 }

@@ -1,8 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { useAudioPlayer } from "expo-audio";
+import * as Haptics from "expo-haptics";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AccessibilityInfo, Animated, Easing, FlatList, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, Vibration, View } from "react-native";
+import { AccessibilityInfo, Animated, Easing, FlatList, Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Svg, { G, Path, Text as SvgText } from "react-native-svg";
 
 import {
@@ -20,6 +21,28 @@ type WheelPick = { topic: SpeakingTopic; question: string };
 
 const WHEEL_SEGMENTS = 8;
 const TICK_WAV = "data:audio/wav;base64,UklGRmQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YUABAACAm6mjjXBbWGiDnaihiW5bWmuGnqeehmxbXG6Jn6abg2pbX3KMoKWYgGhcYXWOoKOVfWddZHiQoKGSe2ZeZnuSoJ+PeGVfaX2ToJ2MdmVkcYWWnZaEcWVmc4eXnJOCcGZodoiXmpGAb2ZqeIqXmY9+bmdseouWl418bmhufIyWlYp7bmpwfo2Vk4h5bmtygI6UkoZ4bmx0go6TkIV3bm52g46SjoN3b3B4hI6RjIF2cHF6hY6QioB2cXN7ho2OiX92cnV9ho2Nh352c3Z+h4yMhn12dHh/h4uKhH13dXmAh4qJg3x3d3qBhomHgnx4eHyBhoiGgXx5eX2ChoeFgXx6e36ChYWDgH17fH+ChISCgH18fX+Cg4OCgH59foCBgoKBgH9/f4CBgYGAgICAgA==";
+
+type WheelHaptic = "start" | "tick" | "success";
+
+function triggerWheelHaptic(feedback: WheelHaptic) {
+  if (Platform.OS === "web") return;
+
+  const promise = Platform.OS === "android"
+    ? Haptics.performAndroidHapticsAsync(
+        feedback === "start"
+          ? Haptics.AndroidHaptics.Gesture_Start
+          : feedback === "tick"
+            ? Haptics.AndroidHaptics.Segment_Frequent_Tick
+            : Haptics.AndroidHaptics.Confirm,
+      )
+    : feedback === "start"
+      ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+      : feedback === "tick"
+        ? Haptics.selectionAsync()
+        : Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+  void promise.catch(() => undefined);
+}
 
 function sampleTopics(topics: SpeakingTopic[], count: number) {
   const copy = [...topics];
@@ -123,9 +146,10 @@ function QuestionWheel({topics,locale,scope,onOpen}:{topics:SpeakingTopic[];loca
   };
 
   const tick = () => {
-    if (!soundOn || reduceMotion) return;
-    void tickPlayer.seekTo(0).then(() => tickPlayer.play()).catch(() => undefined);
-    Vibration.vibrate(8);
+    if (soundOn && !reduceMotion) {
+      void tickPlayer.seekTo(0).then(() => tickPlayer.play()).catch(() => undefined);
+    }
+    if (!reduceMotion) triggerWheelHaptic("tick");
   };
 
   const spin = () => {
@@ -143,6 +167,7 @@ function QuestionWheel({topics,locale,scope,onOpen}:{topics:SpeakingTopic[];loca
     setWheelTopics(next);
     setResult(null);
     setSpinning(true);
+    triggerWheelHaptic("start");
     const listener = rotation.addListener(({ value }) => {
       const boundary = Math.floor(value / step);
       const now = Date.now();
@@ -163,7 +188,7 @@ function QuestionWheel({topics,locale,scope,onOpen}:{topics:SpeakingTopic[];loca
       setSpinning(false);
       if (finished) {
         setResult({ topic: next[winner], question });
-        if (!reduceMotion && soundOn) Vibration.vibrate(18);
+        triggerWheelHaptic("success");
       }
     });
   };

@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, Uuid
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, JSON, String, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.security import utcnow
@@ -81,6 +81,37 @@ class RefreshToken(Base):
     user_agent: Mapped[Optional[str]] = mapped_column(String(256), nullable=True)
     ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
+class DevicePushToken(Base):
+    """Native push target for a user's current device.
+
+    Tokens are not secrets, but they are still scoped to a user/device. Keep one
+    active owner per provider token so logout/login or account switching cannot
+    send reminders to the wrong account.
+    """
+
+    __tablename__ = "device_push_tokens"
+    __table_args__ = (
+        UniqueConstraint("provider", "token", name="uq_device_push_tokens_provider_token"),
+        Index("ix_device_push_tokens_user", "user_id"),
+        Index("ix_device_push_tokens_user_active", "user_id", "is_active"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    provider: Mapped[str] = mapped_column(String(16), default="expo", nullable=False)
+    platform: Mapped[str] = mapped_column(String(16), nullable=False)
+    token: Mapped[str] = mapped_column(String(512), nullable=False)
+    app_version: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
 
 
 class OneTimeToken(Base):

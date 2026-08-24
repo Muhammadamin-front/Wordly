@@ -2,6 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Platform } from "react-native";
 import { ApiError, authApi, installAuthBridge, type TokenPair, type User } from "@/api/client";
+import { clearGoogleSignInSession } from "@/auth/google-session";
 
 const ACCESS_KEY = "vocora.access";
 const REFRESH_KEY = "vocora.refresh";
@@ -103,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     sessionGeneration.current += 1;
     const refreshToken = await credentialStore.getItemAsync(REFRESH_KEY);
-    await clearCredentials();
+    await Promise.all([clearCredentials(), clearGoogleSignInSession()]);
     if (refreshToken) await authApi.logout(refreshToken).catch(() => undefined);
   }, [clearCredentials]);
 

@@ -21,7 +21,6 @@ from app.services.multiplayer_timers import MemoryPhaseLock, RedisPhaseLock
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("words.api")
 
-APP_VERSION = "0.1.0"
 STARTED_AT = time.time()
 
 SECURITY_HEADERS = {
@@ -63,7 +62,7 @@ def create_app() -> FastAPI:
     init_sentry(settings)
     app = FastAPI(
         title=settings.APP_NAME,
-        version=APP_VERSION,
+        version=settings.APP_VERSION,
         lifespan=lifespan,
         docs_url="/docs" if not is_prod else None,
         redoc_url=None,
@@ -161,14 +160,20 @@ def create_app() -> FastAPI:
                 await db.execute(text("SELECT 1"))
         except Exception:  # noqa: BLE001 — health check must not raise
             db_ok = False
-        return {
-            "status": "ok" if db_ok else "degraded",
-            "version": APP_VERSION,
+        backend = getattr(app.state, "backend", "memory")
+        ready = db_ok and (not is_prod or backend == "redis")
+        payload = {
+            "status": "ok" if ready else "degraded",
+            "version": settings.APP_VERSION,
             "environment": settings.ENVIRONMENT,
             "uptime_seconds": int(time.time() - STARTED_AT),
             "database": "ok" if db_ok else "error",
-            "backend": getattr(app.state, "backend", "memory"),
+            "backend": backend,
         }
+        return JSONResponse(
+            status_code=status.HTTP_200_OK if ready else status.HTTP_503_SERVICE_UNAVAILABLE,
+            content=payload,
+        )
 
     app.include_router(api_router, prefix=settings.API_V1_PREFIX)
     return app

@@ -11,6 +11,7 @@ def production_settings(secret_key: str) -> Settings:
     return Settings(
         _env_file=None,
         ENVIRONMENT="production",
+        FRONTEND_ORIGIN="https://vocora.uz",
         SECRET_KEY=secret_key,
         EMAIL_PROVIDER="resend",
         RESEND_API_KEY="re_production",

@@ -10,3 +10,6 @@ services:
 
   web:
     restart: unless-stopped
+
+  cloudflared:
+    restart: unless-stopped

@@ -3,6 +3,7 @@ from functools import lru_cache
 from ipaddress import IPv4Network, IPv6Network, ip_network
 from math import log2
 from typing import List, Literal, Optional, Tuple, Union
+from urllib.parse import urlparse
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -44,6 +45,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     APP_NAME: str = "Vocora API"
+    APP_VERSION: str = "1.0.0"
     ENVIRONMENT: str = "development"  # development | test | production
     API_V1_PREFIX: str = "/api/v1"
 
@@ -232,9 +234,13 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> List[str]:
-        origins = [self.FRONTEND_ORIGIN]
+        origins = [self.FRONTEND_ORIGIN.strip().rstrip("/")]
         if self.FRONTEND_ORIGINS:
-            origins.extend(origin.strip() for origin in self.FRONTEND_ORIGINS.split(",") if origin.strip())
+            origins.extend(
+                origin.strip().rstrip("/")
+                for origin in self.FRONTEND_ORIGINS.split(",")
+                if origin.strip()
+            )
         if self.ENVIRONMENT == "development":
             origins.extend(
                 [
@@ -250,6 +256,25 @@ class Settings(BaseSettings):
             )
         return list(dict.fromkeys(origins))
 
+    def validate_cors_origins(self) -> None:
+        """Reject CORS values that would weaken credentialed browser auth."""
+        for origin in self.cors_origins:
+            parsed = urlparse(origin)
+            if (
+                origin == "*"
+                or parsed.scheme not in {"http", "https"}
+                or not parsed.netloc
+                or parsed.path
+                or parsed.params
+                or parsed.query
+                or parsed.fragment
+                or parsed.username
+                or parsed.password
+            ):
+                raise RuntimeError("CORS origins must be exact scheme-and-host origins")
+            if self.ENVIRONMENT == "production" and parsed.scheme != "https":
+                raise RuntimeError("CORS origins must use HTTPS in production")
+
     def validate_runtime(self) -> None:
         try:
             trusted_proxy_networks = self.trusted_proxy_networks
@@ -260,6 +285,8 @@ class Settings(BaseSettings):
 
         if any(network.prefixlen == 0 for network in trusted_proxy_networks):
             raise RuntimeError("TRUSTED_PROXY_CIDRS must not trust every IP address")
+
+        self.validate_cors_origins()
 
         if self.ENVIRONMENT != "production":
             return

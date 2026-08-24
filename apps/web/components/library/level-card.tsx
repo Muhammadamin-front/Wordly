@@ -63,7 +63,6 @@ export function LevelCard({
 }) {
   const Icon = ICONS[meta.slug] ?? BookOpen;
   const tilt = createTiltHandlers({ rotateX: 12, rotateY: 14, lift: -8 });
-  const pct = total > 0 ? Math.round((learned / total) * 100) : 0;
   const custom = !!meta.href;
   const locked = meta.soon || (!custom && total === 0);
 
@@ -120,34 +119,17 @@ export function LevelCard({
           </div>
         ) : (
           !locked && (
-            <div className="mt-2 space-y-1.5 border-t border-white/16 pt-2 sm:mt-5 sm:space-y-3 sm:pt-4">
-              <div className="flex items-end justify-between gap-3">
-                <div>
-                  <p className="text-base font-black tracking-tight text-white sm:text-3xl">
-                    {learned}
-                    <span className="text-[#d9cab2]/48">/{total}</span>
-                  </p>
-                  <p className="hidden text-sm text-[#d9cab2]/78 sm:block">{labels.learned}</p>
-                </div>
-                <span className="rounded-full border border-white/16 bg-white/12 px-2 py-1 text-xs font-extrabold text-white backdrop-blur-xl sm:px-3 sm:py-1.5 sm:text-sm">
-                  {pct}%
-                </span>
+            <div className="mt-2 flex items-end justify-between gap-3 border-t border-white/16 pt-2 sm:mt-5 sm:pt-4">
+              <div>
+                <p className="text-base font-black tracking-tight text-white sm:text-3xl">
+                  {learned}
+                </p>
+                <p className="text-[11px] text-[#d9cab2]/78 sm:text-sm">{labels.learned}</p>
               </div>
-
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/16">
-                <div
-                  className={cn("h-full rounded-full", meta.bar)}
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-
-              <div className="hidden items-center justify-between sm:flex">
-                <span className="text-sm font-medium text-[#d9cab2]/80">{labels.words}</span>
-                <span className="flex items-center gap-1.5 text-sm font-bold text-[#f3d4a4] transition-transform group-hover:translate-x-1">
-                  {learned > 0 ? labels.continue : labels.start}
-                  <ArrowRight className="size-4" />
-                </span>
-              </div>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-[#f3d4a4] transition-transform group-hover:translate-x-1 sm:gap-1.5 sm:text-sm">
+                <span className="hidden sm:inline">{learned > 0 ? labels.continue : labels.start}</span>
+                <ArrowRight className="size-4" />
+              </span>
             </div>
           )
         )}
