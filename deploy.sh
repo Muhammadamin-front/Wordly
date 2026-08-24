@@ -6,6 +6,23 @@ script_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 cd "$script_dir"
 expected_sha="${1:-}"
 
+retry() {
+  local max_attempts="$1"
+  shift
+  local attempt=1
+
+  until "$@"; do
+    if [ "$attempt" -ge "$max_attempts" ]; then
+      echo "Command failed after ${max_attempts} attempts: $*"
+      return 1
+    fi
+
+    echo "Attempt ${attempt}/${max_attempts} failed; retrying in 5 seconds..."
+    attempt=$((attempt + 1))
+    sleep 5
+  done
+}
+
 echo "=== Check working tree ==="
 if [ -n "$(git status --porcelain)" ]; then
   echo "Working tree is dirty. Commit/stash local changes before deploying."
@@ -29,7 +46,7 @@ echo "=== Production preflight ==="
 node scripts/release-preflight.mjs --server-only
 
 echo "=== Build images ==="
-docker compose --profile production build
+retry 3 docker compose --profile production build
 
 echo "=== Validate migration graph inside release image ==="
 heads_count="$(docker compose --profile production run --rm --no-deps api alembic heads | grep -c '(head)')"

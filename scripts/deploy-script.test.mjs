@@ -13,3 +13,7 @@ test("production deploy seeds the idempotent corpus before public smoke", () => 
   assert.ok(seedIndex > applyIndex, "corpus seed must run after the API container is applied");
   assert.ok(smokeIndex > seedIndex, "public smoke must run after the corpus is seeded");
 });
+
+test("production image build retries transient registry failures", () => {
+  assert.match(deploy, /retry 3 docker compose --profile production build/);
+});
