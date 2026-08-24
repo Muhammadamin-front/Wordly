@@ -53,3 +53,27 @@ test("a quoted EMAIL_FROM loaded from dotenv is accepted and normalized", () => 
   const output = readFileSync(envPath, "utf8");
   assert.match(output, /^EMAIL_FROM=Vocora <noreply@vocora\.uz>$/m);
 });
+
+test("Cloudflare Docker command is reduced to the tunnel token", () => {
+  const directory = mkdtempSync(join(tmpdir(), "vocora-wizard-"));
+  const envPath = join(directory, ".env");
+  const token = `eyJ${"a".repeat(120)}`;
+  const result = bash(
+    'source "$WIZARD_PATH"; ENV_FILE="$TEST_ENV"; persist_cloudflare_tunnel_token "$TEST_COMMAND"',
+    {
+      TEST_ENV: envPath,
+      TEST_COMMAND: `docker run cloudflare/cloudflared:latest tunnel --no-autoupdate run --token ${token}`,
+    },
+  );
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(readFileSync(envPath, "utf8"), new RegExp(`^CLOUDFLARE_TUNNEL_TOKEN=${token}$`, "m"));
+});
+
+test("invalid Cloudflare tunnel values are rejected", () => {
+  for (const value of ["", "tunnel-id", "cloudflare-api-token", "docker run --token short"]) {
+    const result = bash('source "$WIZARD_PATH"; valid_cloudflare_tunnel_token "$TEST_VALUE"', {
+      TEST_VALUE: value,
+    });
+    assert.notEqual(result.status, 0, value);
+  }
+});

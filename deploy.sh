@@ -59,8 +59,7 @@ echo "=== Health check ==="
 curl -f http://127.0.0.1:8000/health/detail
 
 echo "=== Public tunnel smoke ==="
-curl -f --max-time 20 "${PUBLIC_API_HEALTH_URL:-https://api.vocora.uz/health/detail}"
-curl -fI --max-time 20 "${PUBLIC_WEB_URL:-https://vocora.uz/uz}"
+node scripts/production-smoke.mjs
 
 echo
 echo "✅ Deploy complete"

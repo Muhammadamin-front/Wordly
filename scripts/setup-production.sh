@@ -223,6 +223,33 @@ persist_resend_config() {
   write_env EMAIL_REPLY_TO support@vocora.uz
 }
 
+normalize_cloudflare_tunnel_token() {
+  local value="$1"
+  if [[ "$value" =~ --token(=|[[:space:]]+)([^[:space:]\"\']+) ]]; then
+    value="${BASH_REMATCH[2]}"
+  fi
+  if [[ ${#value} -ge 2 ]] && {
+    [[ "${value:0:1}" == '"' && "${value: -1}" == '"' ]] \
+      || [[ "${value:0:1}" == "'" && "${value: -1}" == "'" ]];
+  }; then
+    value="${value:1:${#value}-2}"
+  fi
+  printf '%s' "$value"
+}
+
+valid_cloudflare_tunnel_token() {
+  local value
+  value="$(normalize_cloudflare_tunnel_token "$1")"
+  [[ "$value" =~ ^eyJ[A-Za-z0-9_-]{100,}$ ]]
+}
+
+persist_cloudflare_tunnel_token() {
+  local token
+  token="$(normalize_cloudflare_tunnel_token "$1")"
+  valid_cloudflare_tunnel_token "$token" || return 1
+  write_env CLOUDFLARE_TUNNEL_TOKEN "$token"
+}
+
 if [[ "${WIZARD_VALIDATE_ONLY:-}" == "1" ]]; then
   return 0 2>/dev/null || exit 0
 fi
@@ -302,14 +329,16 @@ say "The tunnel is an outbound-only connector; do not expose host ports 80/443."
 open_url "https://one.dash.cloudflare.com/"
 step "Networks → Tunnels → vocora-production → Add a replica → Docker."
 step "Copy only the token after --token (not the whole docker command)."
-ask_secret CLOUDFLARE_TUNNEL_TOKEN "Paste the tunnel token:"
 TUNNEL_READY=false
-if [[ -n "$CLOUDFLARE_TUNNEL_TOKEN" ]]; then
-  write_env CLOUDFLARE_TUNNEL_TOKEN "$CLOUDFLARE_TUNNEL_TOKEN"
-  TUNNEL_READY=true
-else
-  SKIPPED+=("Set CLOUDFLARE_TUNNEL_TOKEN")
-fi
+while true; do
+  ask_secret CLOUDFLARE_TUNNEL_TOKEN "Paste the tunnel token:"
+  if valid_cloudflare_tunnel_token "$CLOUDFLARE_TUNNEL_TOKEN"; then
+    persist_cloudflare_tunnel_token "$CLOUDFLARE_TUNNEL_TOKEN"
+    TUNNEL_READY=true
+    break
+  fi
+  warn "That is not a valid tunnel token. Copy the eyJ... value after --token."
+done
 step "Published application route: vocora.uz → http://web:3000"
 step "Published application route: api.vocora.uz → http://api:8000"
 pause "Press Enter after both routes are saved."

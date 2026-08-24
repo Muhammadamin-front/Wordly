@@ -36,6 +36,10 @@ function googleClientId(value) {
   return Boolean(value?.endsWith(".apps.googleusercontent.com"));
 }
 
+function cloudflareTunnelToken(value) {
+  return /^eyJ[A-Za-z0-9_-]{100,}$/.test(value ?? "");
+}
+
 export function validateReleaseEnv(root, mobile, { checkMobile = true } = {}) {
   const errors = [];
   const warnings = [];
@@ -64,6 +68,9 @@ export function validateReleaseEnv(root, mobile, { checkMobile = true } = {}) {
   requireValue(root, "RESEND_API_KEY");
   requireValue(root, "EMAIL_FROM");
   requireValue(root, "CLOUDFLARE_TUNNEL_TOKEN");
+  if (root.CLOUDFLARE_TUNNEL_TOKEN && !cloudflareTunnelToken(root.CLOUDFLARE_TUNNEL_TOKEN)) {
+    errors.push("root .env: CLOUDFLARE_TUNNEL_TOKEN must be only the eyJ... token after --token, not the Docker command or tunnel ID");
+  }
 
   if (!googleClientId(root.GOOGLE_CLIENT_ID)) errors.push("root .env: GOOGLE_CLIENT_ID is missing or invalid");
   if (!googleClientId(root.NEXT_PUBLIC_GOOGLE_CLIENT_ID)) errors.push("root .env: NEXT_PUBLIC_GOOGLE_CLIENT_ID is missing or invalid");

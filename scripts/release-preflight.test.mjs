@@ -17,7 +17,7 @@ function validRoot() {
     EMAIL_PROVIDER: "resend",
     RESEND_API_KEY: "re_test",
     EMAIL_FROM: "Vocora <noreply@vocora.uz>",
-    CLOUDFLARE_TUNNEL_TOKEN: "tunnel-token",
+    CLOUDFLARE_TUNNEL_TOKEN: `eyJ${"a".repeat(120)}`,
     GOOGLE_CLIENT_ID: webClient,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: webClient,
     APPLE_CLIENT_ID: "uz.vocora.mobile",
@@ -49,6 +49,12 @@ test("development defaults and missing providers are release blockers", () => {
   assert.ok(result.errors.some((error) => error.includes("COOKIE_SECURE")));
   assert.ok(result.errors.some((error) => error.includes("CLOUDFLARE_TUNNEL_TOKEN")));
   assert.ok(result.errors.some((error) => error.includes("EXPO_PUBLIC_API_URL")));
+});
+
+test("a Cloudflare Docker command is rejected as a tunnel token", () => {
+  const root = validRoot();
+  root.CLOUDFLARE_TUNNEL_TOKEN = `docker run cloudflare/cloudflared tunnel run --token eyJ${"a".repeat(120)}`;
+  assert.ok(validateReleaseEnv(root, validMobile).errors.some((error) => error.includes("not the Docker command")));
 });
 
 test("partial payment credentials are rejected", () => {
