@@ -112,8 +112,8 @@ export default async function LandingPage({
       <main className="flex-1 px-3 pb-8 sm:px-5">
 
         <section className="mx-auto mt-5 grid max-w-370 gap-5 xl:grid-cols-[2.1fr_1fr]">
-          <Reveal>
-            <div className="surface-panel rounded-[22px] p-6 sm:p-8">
+          <Reveal className="xl:h-full">
+            <div className="surface-panel rounded-[22px] p-6 sm:p-8 xl:h-full">
               <div className="grid gap-7 lg:grid-cols-[260px_1fr]">
                 <div className="flex flex-col">
                   <p className="flex items-center gap-2 text-[11px] font-black uppercase text-ink-soft">
@@ -189,8 +189,8 @@ export default async function LandingPage({
             </div>
           </Reveal>
 
-          <Reveal delay={0.08}>
-            <div className="relative min-h-130 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]">
+          <Reveal className="xl:h-full" delay={0.08}>
+            <div className="relative min-h-130 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-7 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)] xl:h-full">
               <div aria-hidden className="absolute -right-20 -top-16 size-80 rounded-full border-[28px] border-accent-400/55" />
               <div aria-hidden className="absolute -bottom-24 -left-16 size-64 bg-brand-500/80 rotate-12" />
               <p aria-hidden className="absolute right-6 top-8 font-display text-[7rem] leading-none tracking-wide text-sand-100/10">IELTS</p>

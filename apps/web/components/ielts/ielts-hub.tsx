@@ -144,20 +144,21 @@ export function IeltsHub({
             <h2 className="type-h2 mt-1 text-ink">{t.skillsTitle}</h2>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:auto-rows-fr sm:grid-cols-2">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
             const content = ieltsSkillContent(lang, skill.key);
             return (
               <motion.div
                 key={skill.key}
+                className="sm:h-full"
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
                 <Link
                   href={`/${lang}/ielts/${skill.key}`}
-                  className="premium-card group flex min-h-44 flex-col rounded-[14px] p-5 transition-all duration-200"
+                  className="premium-card group flex min-h-44 flex-col rounded-[14px] p-5 transition-all duration-200 sm:h-full"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="icon-tile size-12 rounded-lg text-brand-500">

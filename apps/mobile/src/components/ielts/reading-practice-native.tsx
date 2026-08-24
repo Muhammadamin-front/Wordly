@@ -132,13 +132,23 @@ function questionCount(test: ReadingPracticeTest) {
   return allReadingQuestions(test).length;
 }
 
-export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Locale; scope: string; onBack: () => void }) {
+type ReadingMockResult = { band: number; score: number; total: number };
+
+export function ReadingPracticeNative({ locale, scope, onBack, mockTestId, onMockComplete, onMockExit, mockExitLabel }: {
+  locale: Locale;
+  scope: string;
+  onBack: () => void;
+  mockTestId?: string;
+  onMockComplete?: (result: ReadingMockResult) => void;
+  onMockExit?: () => void;
+  mockExitLabel?: string;
+}) {
   const screenScroll = useScreenScroll();
   const t = copy[locale];
   const a = advancedCopy[locale];
-  const [screen, setScreen] = useState<ReadingScreen>("library");
+  const [screen, setScreen] = useState<ReadingScreen>(mockTestId ? "start" : "library");
   const [partIndex, setPartIndex] = useState(0);
-  const [selectedTestId, setSelectedTestId] = useState<string>(PARTS[0].testId);
+  const [selectedTestId, setSelectedTestId] = useState<string>(mockTestId ?? PARTS[0].testId);
   const [selectedQuestionType, setSelectedQuestionType] = useState<ReadingQuestionTypeGuideId>("matching-headings");
   const [mode, setMode] = useState<StudyMode>("practice");
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
@@ -168,6 +178,7 @@ export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Local
   const questionsSheetY = useRef(0);
   const questionListY = useRef(0);
   const questionOffsets = useRef<Record<string, number>>({});
+  const mockStarted = useRef(false);
 
   const storageKey = (suffix: string, testId = selectedTestId) => `${STORAGE_PREFIX}:${scope}:${testId}:${suffix}`;
 
@@ -270,6 +281,14 @@ export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Local
     setScreen("test");
   };
 
+  useEffect(() => {
+    if (!mockTestId || mockStarted.current) return;
+    mockStarted.current = true;
+    void launch("exam", true);
+    // `mockTestId` is fixed for the lifetime of one mounted mock leg.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mockTestId]);
+
   function submit() {
     const score = allQuestions.filter((question) => questionIsCorrect(question, answers[question.id])).length;
     const unanswered = allQuestions.filter((question) => {
@@ -299,6 +318,10 @@ export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Local
       void AsyncStorage.setItem(`${STORAGE_PREFIX}:${scope}:completed`, JSON.stringify(next));
       return next;
     });
+    if (onMockComplete) {
+      onMockComplete({ band: readingBand(score, allQuestions.length, selectedTest.track).band, score, total: allQuestions.length });
+      return;
+    }
     setScreen("result");
   }
   submitRef.current = submit;
@@ -310,7 +333,8 @@ export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Local
   const persistVocabulary = (next: SavedVocabulary[]) => { setVocabulary(next); void AsyncStorage.setItem(storageKey("vocabulary"), JSON.stringify(next)); };
 
   const goBack = () => {
-    if (screen === "library") onBack();
+    if (mockTestId) (onMockExit ?? onBack)();
+    else if (screen === "library") onBack();
     else setScreen("library");
   };
 
@@ -486,7 +510,7 @@ export function ReadingPracticeNative({ locale, scope, onBack }: { locale: Local
 
   return (
     <View style={styles.page}>
-      <BackControl label={t.backLibrary} onPress={() => setScreen("library")} />
+      <BackControl label={mockTestId ? (mockExitLabel ?? t.backLibrary) : t.backLibrary} onPress={mockTestId ? (onMockExit ?? onBack) : () => setScreen("library")} />
       <View style={styles.testBar}>
         <View style={styles.testBarCopy}><Text numberOfLines={1} style={styles.testBarTitle}>{selectedTest.title}</Text><Text style={styles.testBarMeta}>{answeredCount}/{allQuestions.length} · {mode}</Text></View>
         {mode === "exam" ? <><View style={styles.timer}><Ionicons name="time-outline" size={16} color={secondsLeft < 300 ? colors.rust : colors.ink} /><Text style={[styles.timerText, secondsLeft < 300 && styles.timerDanger]}>{formatTime(secondsLeft)}</Text></View><Pressable accessibilityRole="button" accessibilityLabel={paused ? t.resume : t.pause} onPress={() => setPaused((value) => !value)} style={({ pressed }) => [styles.pauseButton, pressed && styles.pressed]}><Ionicons name={paused ? "play" : "pause"} size={17} color={colors.ink} /></Pressable></> : <View style={styles.practiceBadge}><Ionicons name="school-outline" size={15} color={colors.teal} /><Text style={styles.practiceBadgeText}>{t.practice}</Text></View>}

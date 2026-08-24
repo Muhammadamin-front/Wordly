@@ -34,7 +34,7 @@ type MapFeature = {
   width: number;
   height: number;
 };
-type WritingVisual = {
+export type WritingVisual = {
   kind: "bar" | "line" | "table" | "process" | "pie-pair" | "map-pair" | "bar-line" | "bar-pie";
   title: string;
   y_label?: string;
@@ -192,7 +192,7 @@ const copy = {
   },
 } as const;
 
-function isVisual(value: unknown): value is WritingVisual {
+export function isWritingVisual(value: unknown): value is WritingVisual {
   if (!value || typeof value !== "object") return false;
   const item = value as Partial<WritingVisual>;
   return typeof item.kind === "string" && typeof item.title === "string" && Array.isArray(item.categories) && Array.isArray(item.series);
@@ -416,7 +416,7 @@ function MapPair({ maps, title }: { maps: NonNullable<WritingVisual["maps"]>; ti
   );
 }
 
-function WritingTaskVisual({ visual, locale }: { visual: WritingVisual; locale: Locale }) {
+export function WritingTaskVisual({ visual, locale }: { visual: WritingVisual; locale: Locale }) {
   const t = copy[locale];
   return (
     <View style={styles.visualCard}>
@@ -468,6 +468,7 @@ export function WritingPracticeNative({ locale, token, onBack }: { locale: Local
     mutationFn: ({ prompt, response }: { prompt: string; response: string }) => request<IeltsWritingScore>("/ielts/writing/score", {
       method: "POST",
       token,
+      timeoutMs: 60_000,
       body: { task_type: taskType, prompt, essay: response, lang: locale },
     }),
     onSuccess: (result) => {
@@ -559,7 +560,7 @@ export function WritingPracticeNative({ locale, token, onBack }: { locale: Local
             ) : null}
           </View>
           <Text style={styles.promptText}>{currentTask.prompt}</Text>
-          {isVisual(currentTask.visual) ? <WritingTaskVisual visual={currentTask.visual} locale={locale} /> : null}
+          {isWritingVisual(currentTask.visual) ? <WritingTaskVisual visual={currentTask.visual} locale={locale} /> : null}
         </View>
       ) : null}
 

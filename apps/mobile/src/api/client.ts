@@ -75,7 +75,7 @@ type AccountDeletionRequest = components["schemas"]["AccountDeletionRequest"];
 
 export class ApiError extends Error { constructor(public status: number, message: string) { super(message); } }
 
-type RequestOptions = { method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"; body?: unknown; token?: string | null; headers?: Record<string, string> };
+type RequestOptions = { method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"; body?: unknown; token?: string | null; headers?: Record<string, string>; timeoutMs?: number };
 type AuthBridge = { refreshAccessToken: () => Promise<string | null> };
 let authBridge: AuthBridge | null = null;
 
@@ -86,7 +86,7 @@ export function installAuthBridge(bridge: AuthBridge | null) {
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const perform = async (token = options.token) => {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15_000);
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 15_000);
     try {
       return await fetch(`${API_URL}/api/v1${path}`, {
         method: options.method ?? "GET",
