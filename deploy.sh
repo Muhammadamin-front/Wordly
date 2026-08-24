@@ -52,6 +52,9 @@ for attempt in $(seq 1 30); do
   sleep 2
 done
 
+echo "=== Seed idempotent production corpus ==="
+docker compose exec -T api python -m scripts.seed
+
 echo "=== Status ==="
 docker compose ps
 
