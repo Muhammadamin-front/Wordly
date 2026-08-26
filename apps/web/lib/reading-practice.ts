@@ -4126,6 +4126,4439 @@ const academicFullElNino: ReadingPracticeTest = {
   passages: [ensoBasics, ensoMechanisms, ensoImpactsForecasting],
 };
 
+const wetlandsBasics: ReadingPassage = {
+  "id": "wetlands-basics",
+  "title": "Why Small Wetlands Matter",
+  "subtitle": "How modest ponds and seasonal pools quietly clean water, ease flooding, and shelter wildlife.",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Wetlands are often imagined as large marshes, wide river deltas, or dramatic coastal landscapes filled with birds. Yet many wetlands are much smaller: a seasonal pond near a village, a shallow depression beside a road, a flooded field after heavy rain, or a narrow strip of reeds along a stream. Because they are modest in size and may dry out during part of the year, these places are easily overlooked by planners and landowners, who often assume that only large, permanent bodies of water deserve attention. A patch of damp ground that vanishes for months can seem unremarkable to anyone assessing land for farming or building. However, small wetlands perform ecological work that is surprisingly important. They slow moving water, trap sediment, shelter insects and amphibians, and provide feeding areas for birds during migration."
+    },
+    {
+      "label": "B",
+      "text": "One reason small wetlands are valuable is that they act like natural filters. When rainwater runs across farmland, car parks, or streets, it can carry soil, fertiliser, oil, and other pollutants toward the nearest stream. A wetland slows the flow, allowing heavier particles to settle before they reach open water. Plants and microorganisms living in the mud and shallow water then help break down or absorb some of the remaining nutrients. This process does not make polluted water perfectly clean, but it can reduce the amount of nitrogen and phosphorus that enters rivers and lakes, both of which encourage excessive plant growth in large quantities. In regions where algal blooms are a growing problem, even modest filtration can be useful, buying time for larger solutions to take effect."
+    },
+    {
+      "label": "C",
+      "text": "Small wetlands also reduce flood risk, although their contribution is sometimes underestimated by engineers who focus on larger, more visible infrastructure such as dams. A single pond may hold only a limited volume of water, but hundreds of small wetlands across a catchment can store rainfall temporarily and release it gradually over hours or days rather than all at once. This matters because floods are not caused only by the total amount of rain; they are also influenced by how quickly water reaches streams. When wetlands are drained or filled, water moves faster across the landscape, with little to slow or absorb it, increasing peak flows after storms and raising the risk of sudden flooding further down the catchment."
+    },
+    {
+      "label": "D",
+      "text": "The biological value of these habitats is equally significant, even though it is rarely obvious to a casual observer. Many amphibians, such as frogs and newts, depend on temporary pools because fish are less likely to survive there and eat their eggs, giving vulnerable young a better chance of reaching adulthood. Insects that breed in shallow water become food for birds and bats hunting nearby. Some plants are adapted to the unusual conditions of alternating wet and dry periods, germinating quickly when water appears and surviving as seeds when the ground dries out again. Although a small wetland may look empty at certain times, it can support complex life cycles that are visible only during particular seasons, often just a few short weeks when conditions are right."
+    },
+    {
+      "label": "E",
+      "text": "Despite these benefits, small wetlands face practical challenges that larger, more famous wetlands rarely encounter. They are often located on private land, where their value may not be obvious to the owner. Farmers may see them as obstacles to efficient cultivation, while developers may view them as unused space ripe for building. Conservation rules frequently protect large or rare wetlands more clearly than scattered seasonal ponds, which can fall outside the boundaries of formal protection entirely. As a result, many disappear gradually through drainage, soil dumping, or changes in groundwater caused by nearby construction, long before anyone documents their loss."
+    },
+    {
+      "label": "F",
+      "text": "Protecting small wetlands does not always require turning them into formal nature reserves with fences and visitor centres. In many cases, leaving a buffer of vegetation, avoiding pesticide runoff, or maintaining natural drainage patterns can be enough to preserve most of the ecological value. Local mapping is also essential, because seasonal wetlands may not appear in surveys carried out during dry months, when the ground looks firm and unremarkable rather than wet and biologically active. If governments and communities recognise these small habitats as part of a wider water system, they can protect biodiversity and reduce flood pressure without expensive engineering, often at a fraction of the cost of building new flood defences."
+    },
+    {
+      "label": "G",
+      "text": "Public attitudes are another part of the problem, and arguably one of the hardest to change through policy alone. Large lakes and forests are easy to present as valuable because their scale is impressive, but a muddy hollow beside a field rarely attracts the same attention. Education campaigns that show photographs of breeding amphibians, flood maps, or water-quality results can change how residents understand these places. When people learn that a wet patch of ground is connected to drinking water, river health, and wildlife movement, they are more likely to accept small inconveniences such as leaving grass unmown or avoiding construction in a low-lying corner. In this sense, conservation depends not only on scientific evidence but also on making invisible services visible."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t16-q1",
+      "number": 1,
+      "group": "Questions 1-5: Matching Headings",
+      "kind": "matching-headings",
+      "prompt": "Paragraph A",
+      "answer": "iii",
+      "explanation": "Paragraph A explains that because small wetlands are modest in size and seasonal, they are easily overlooked by planners and landowners.",
+      "evidence": "these places are easily overlooked by planners and landowners",
+      "options": [
+        {
+          "value": "i",
+          "label": "Hidden habitats with seasonal importance"
+        },
+        {
+          "value": "ii",
+          "label": "A practical approach to protection"
+        },
+        {
+          "value": "iii",
+          "label": "Why small wetlands are easily ignored"
+        },
+        {
+          "value": "iv",
+          "label": "The role of wetlands in cleaning water"
+        },
+        {
+          "value": "v",
+          "label": "A mistaken belief about coastal birds"
+        },
+        {
+          "value": "vi",
+          "label": "How many small sites can influence floods"
+        },
+        {
+          "value": "vii",
+          "label": "Economic pressures on small wetland areas"
+        }
+      ]
+    },
+    {
+      "id": "t16-q2",
+      "number": 2,
+      "group": "Questions 1-5: Matching Headings",
+      "kind": "matching-headings",
+      "prompt": "Paragraph B",
+      "answer": "iv",
+      "explanation": "Paragraph B describes how small wetlands act as natural filters that reduce pollutants entering rivers and lakes.",
+      "evidence": "they act like natural filters",
+      "options": [
+        {
+          "value": "i",
+          "label": "Hidden habitats with seasonal importance"
+        },
+        {
+          "value": "ii",
+          "label": "A practical approach to protection"
+        },
+        {
+          "value": "iii",
+          "label": "Why small wetlands are easily ignored"
+        },
+        {
+          "value": "iv",
+          "label": "The role of wetlands in cleaning water"
+        },
+        {
+          "value": "v",
+          "label": "A mistaken belief about coastal birds"
+        },
+        {
+          "value": "vi",
+          "label": "How many small sites can influence floods"
+        },
+        {
+          "value": "vii",
+          "label": "Economic pressures on small wetland areas"
+        }
+      ]
+    },
+    {
+      "id": "t16-q3",
+      "number": 3,
+      "group": "Questions 1-5: Matching Headings",
+      "kind": "matching-headings",
+      "prompt": "Paragraph C",
+      "answer": "vi",
+      "explanation": "Paragraph C explains that although one pond stores little water, hundreds of small wetlands across a catchment can store and gradually release rainfall, reducing flood peaks.",
+      "evidence": "hundreds of small wetlands across a catchment can store rainfall temporarily and release it gradually over hours or days rather than all at once",
+      "options": [
+        {
+          "value": "i",
+          "label": "Hidden habitats with seasonal importance"
+        },
+        {
+          "value": "ii",
+          "label": "A practical approach to protection"
+        },
+        {
+          "value": "iii",
+          "label": "Why small wetlands are easily ignored"
+        },
+        {
+          "value": "iv",
+          "label": "The role of wetlands in cleaning water"
+        },
+        {
+          "value": "v",
+          "label": "A mistaken belief about coastal birds"
+        },
+        {
+          "value": "vi",
+          "label": "How many small sites can influence floods"
+        },
+        {
+          "value": "vii",
+          "label": "Economic pressures on small wetland areas"
+        }
+      ]
+    },
+    {
+      "id": "t16-q4",
+      "number": 4,
+      "group": "Questions 1-5: Matching Headings",
+      "kind": "matching-headings",
+      "prompt": "Paragraph D",
+      "answer": "i",
+      "explanation": "Paragraph D shows that small wetlands support complex life cycles that are only visible during particular seasons, making them hidden, seasonal habitats.",
+      "evidence": "it can support complex life cycles that are visible only during particular seasons",
+      "options": [
+        {
+          "value": "i",
+          "label": "Hidden habitats with seasonal importance"
+        },
+        {
+          "value": "ii",
+          "label": "A practical approach to protection"
+        },
+        {
+          "value": "iii",
+          "label": "Why small wetlands are easily ignored"
+        },
+        {
+          "value": "iv",
+          "label": "The role of wetlands in cleaning water"
+        },
+        {
+          "value": "v",
+          "label": "A mistaken belief about coastal birds"
+        },
+        {
+          "value": "vi",
+          "label": "How many small sites can influence floods"
+        },
+        {
+          "value": "vii",
+          "label": "Economic pressures on small wetland areas"
+        }
+      ]
+    },
+    {
+      "id": "t16-q5",
+      "number": 5,
+      "group": "Questions 1-5: Matching Headings",
+      "kind": "matching-headings",
+      "prompt": "Paragraph E",
+      "answer": "vii",
+      "explanation": "Paragraph E outlines how farmers and developers view small wetlands as obstacles or unused space, illustrating the economic pressures they face.",
+      "evidence": "Farmers may see them as obstacles to efficient cultivation, while developers may view them as unused space ripe for building.",
+      "options": [
+        {
+          "value": "i",
+          "label": "Hidden habitats with seasonal importance"
+        },
+        {
+          "value": "ii",
+          "label": "A practical approach to protection"
+        },
+        {
+          "value": "iii",
+          "label": "Why small wetlands are easily ignored"
+        },
+        {
+          "value": "iv",
+          "label": "The role of wetlands in cleaning water"
+        },
+        {
+          "value": "v",
+          "label": "A mistaken belief about coastal birds"
+        },
+        {
+          "value": "vi",
+          "label": "How many small sites can influence floods"
+        },
+        {
+          "value": "vii",
+          "label": "Economic pressures on small wetland areas"
+        }
+      ]
+    },
+    {
+      "id": "t16-q6",
+      "number": 6,
+      "group": "Questions 6-9: True / False / Not Given",
+      "kind": "true-false-not-given",
+      "prompt": "The passage says farmers are legally required to preserve every wetland on their land.",
+      "answer": "NOT GIVEN",
+      "explanation": "Paragraph E discusses farmers' attitudes toward wetlands and conservation rules protecting large or rare wetlands, but it never states that farmers are legally required to preserve every wetland.",
+      "evidence": "Conservation rules frequently protect large or rare wetlands more clearly than scattered seasonal ponds, which can fall outside the boundaries of formal protection entirely.",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q7",
+      "number": 7,
+      "group": "Questions 6-9: True / False / Not Given",
+      "kind": "true-false-not-given",
+      "prompt": "Small wetlands may disappear from official records if surveys happen in dry periods.",
+      "answer": "TRUE",
+      "explanation": "Paragraph F states that seasonal wetlands may not appear in surveys carried out during dry months, confirming they can be missed from records.",
+      "evidence": "seasonal wetlands may not appear in surveys carried out during dry months",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q8",
+      "number": 8,
+      "group": "Questions 6-9: True / False / Not Given",
+      "kind": "true-false-not-given",
+      "prompt": "Temporary pools can benefit amphibians because fish may be absent.",
+      "answer": "TRUE",
+      "explanation": "Paragraph D explains that amphibians depend on temporary pools because fish are less likely to survive there and eat their eggs.",
+      "evidence": "fish are less likely to survive there and eat their eggs",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q9",
+      "number": 9,
+      "group": "Questions 6-9: True / False / Not Given",
+      "kind": "true-false-not-given",
+      "prompt": "Wetlands can completely remove all pollutants from rainwater.",
+      "answer": "FALSE",
+      "explanation": "Paragraph B states directly that the filtering process does not make polluted water perfectly clean, contradicting the claim of complete removal.",
+      "evidence": "This process does not make polluted water perfectly clean",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q10",
+      "number": 10,
+      "group": "Questions 10-13: Summary Completion",
+      "kind": "summary-completion",
+      "prompt": "Small wetlands can act as natural 10. ________ by slowing runoff and trapping particles.",
+      "answer": "filters",
+      "explanation": "Paragraph B says small wetlands act like natural filters.",
+      "evidence": "they act like natural filters",
+      "instruction": "Write NO MORE THAN THREE WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q11",
+      "number": 11,
+      "group": "Questions 10-13: Summary Completion",
+      "kind": "summary-completion",
+      "prompt": "They can also lower flood risk by holding water across a 11. ________.",
+      "answer": "catchment",
+      "explanation": "Paragraph C explains that hundreds of small wetlands across a catchment can store rainfall and release it gradually.",
+      "evidence": "hundreds of small wetlands across a catchment can store rainfall temporarily",
+      "instruction": "Write NO MORE THAN THREE WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q12",
+      "number": 12,
+      "group": "Questions 10-13: Summary Completion",
+      "kind": "summary-completion",
+      "prompt": "Some species depend on changing conditions, especially alternating 12. ________ periods.",
+      "answer": "wet and dry",
+      "explanation": "Paragraph D states that some plants are adapted to alternating wet and dry periods.",
+      "evidence": "alternating wet and dry periods",
+      "instruction": "Write NO MORE THAN THREE WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q13",
+      "number": 13,
+      "group": "Questions 10-13: Summary Completion",
+      "kind": "summary-completion",
+      "prompt": "Protection may involve simple actions such as preserving vegetation buffers and natural 13. ________.",
+      "answer": "drainage patterns",
+      "explanation": "Paragraph F says maintaining natural drainage patterns can be enough to preserve ecological value.",
+      "evidence": "maintaining natural drainage patterns can be enough",
+      "instruction": "Write NO MORE THAN THREE WORDS from the passage for each answer."
+    }
+  ]
+};
+
+const librariesHistory: ReadingPassage = {
+  "id": "libraries-history",
+  "title": "The Rise of Public Libraries",
+  "subtitle": "How a fee-based privilege became a public good, and why the library still matters in a digital age.",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Public libraries are sometimes described as quiet survivors from an earlier age, but their origins were far more dynamic than that image suggests. In the nineteenth century, rapid urbanisation created crowded cities filled with workers who had limited access to books, formal education, or safe spaces for study after long shifts in factories and workshops. Reformers argued that libraries could support self-improvement, reduce social disorder, and provide practical knowledge for a changing economy that increasingly rewarded literacy and technical skill. Their arguments were moral, educational, and economic at the same time, and they often appealed to very different audiences, from clergy concerned with public morality to industrialists who simply wanted a more capable workforce."
+    },
+    {
+      "label": "B",
+      "text": "Before tax-supported libraries became common, many reading institutions required subscription fees that placed them out of reach for poorer residents. Mechanics' institutes, private clubs, and circulating libraries allowed some people to borrow books, but access depended on income, gender, or social connections, and many working-class readers were effectively excluded regardless of their enthusiasm for learning. The idea of a library open to all residents therefore represented a significant change in how knowledge was viewed. It suggested that knowledge could be treated as a public good, like clean streets or parks, rather than as a privilege reserved for those who could pay, and this shift in thinking proved just as important as any single building."
+    },
+    {
+      "label": "C",
+      "text": "The growth of public libraries was supported by legislation, philanthropy, and local activism working together, often unevenly. Some city councils used public funds to establish reading rooms, while wealthy donors paid for buildings in towns they had never visited, trusting local committees to manage the details. However, a library did not succeed simply because a building existed with shelves and a roof. Communities needed trained librarians, suitable collections, cataloguing systems, and rules that balanced quiet study with public access, along with enough ongoing funding to keep the doors open and the collection current. These organisational details, rarely visible to visitors, determined whether a library became a living institution or an underused monument gathering dust."
+    },
+    {
+      "label": "D",
+      "text": "Libraries also reflected wider debates about what people should read and why. Some early supporters preferred serious books on history, science, and moral instruction, fearing that popular fiction would waste readers' limited time and distract them from self-improvement. Others argued that novels encouraged reading habits in the first place and could bring new, otherwise reluctant users into the building. Over time, most public libraries accepted a mixed collection that reflected both views. This compromise recognised that entertainment and education were not always separate activities; a reader attracted by a gripping story might later explore biography, travel writing, or politics, following curiosity wherever it led."
+    },
+    {
+      "label": "E",
+      "text": "In the twentieth century, libraries expanded their social role well beyond simply lending printed books. They offered children's rooms, reference desks, local history archives, and dedicated services for immigrants learning a new language, often in partnership with local schools and charities. During periods of economic hardship, libraries became places where people searched job advertisements, completed official forms, and learned practical skills such as basic computing. In this way, the library was not only a storehouse of books but also a civic support system that quietly held communities together during difficult times, asking nothing of those who used its services."
+    },
+    {
+      "label": "F",
+      "text": "Digital technology has again changed expectations of what a library should provide. Many libraries now lend electronic books, provide free internet access, teach media literacy, and host community events ranging from language classes to author talks. Some critics have predicted that online information would make libraries unnecessary, yet the opposite has often occurred in practice. As information becomes abundant and often unreliable, users need help judging reliability, protecting their privacy, and finding sources that match their needs rather than simply the loudest voice online. The public library's mission has shifted considerably, but the basic principle remains constant: equal access to knowledge strengthens society as a whole."
+    },
+    {
+      "label": "G",
+      "text": "The library building itself also continues to matter, even in a digital age. For students in crowded homes, remote workers without quiet rooms, and elderly residents who may feel socially isolated, the physical library provides a neutral public space open to anyone. It is neither a shop requiring purchases nor a formal government office demanding paperwork. This openness gives libraries a rare civic character that is difficult to replicate elsewhere. They can host disagreement without demanding membership of a political group, and they can support private study without turning learning into a commercial service. In an age when many public places are designed around consumption, the library remains unusual because simply staying there is never treated as a failure to buy something."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t16-q14",
+      "number": 14,
+      "group": "Questions 14-16: Multiple Choice",
+      "kind": "multiple-choice",
+      "prompt": "According to paragraph A, reformers supported libraries partly because they believed libraries could",
+      "answer": "B",
+      "explanation": "Paragraph A states reformers argued libraries could support self-improvement, reduce social disorder, and provide practical knowledge, i.e. improve society and help workers learn.",
+      "evidence": "Reformers argued that libraries could support self-improvement, reduce social disorder, and provide practical knowledge for a changing economy",
+      "options": [
+        {
+          "value": "A",
+          "label": "replace all formal schools."
+        },
+        {
+          "value": "B",
+          "label": "improve society and help workers learn."
+        },
+        {
+          "value": "C",
+          "label": "prevent cities from expanding."
+        },
+        {
+          "value": "D",
+          "label": "remove the need for employment."
+        }
+      ]
+    },
+    {
+      "id": "t16-q15",
+      "number": 15,
+      "group": "Questions 14-16: Multiple Choice",
+      "kind": "multiple-choice",
+      "prompt": "What was significant about libraries open to all residents?",
+      "answer": "A",
+      "explanation": "Paragraph B says the idea suggested that knowledge could be treated as a public good, like clean streets or parks, i.e. a shared public resource.",
+      "evidence": "knowledge could be treated as a public good",
+      "options": [
+        {
+          "value": "A",
+          "label": "They treated knowledge as a shared public resource."
+        },
+        {
+          "value": "B",
+          "label": "They charged higher fees than private clubs."
+        },
+        {
+          "value": "C",
+          "label": "They were designed only for wealthy donors."
+        },
+        {
+          "value": "D",
+          "label": "They rejected practical education."
+        }
+      ]
+    },
+    {
+      "id": "t16-q16",
+      "number": 16,
+      "group": "Questions 14-16: Multiple Choice",
+      "kind": "multiple-choice",
+      "prompt": "In paragraph D, the writer suggests that popular fiction",
+      "answer": "B",
+      "explanation": "Paragraph D notes that others argued novels encouraged reading habits and could bring new, otherwise reluctant users into the building.",
+      "evidence": "novels encouraged reading habits in the first place and could bring new, otherwise reluctant users into the building",
+      "options": [
+        {
+          "value": "A",
+          "label": "was quickly banned from all public libraries."
+        },
+        {
+          "value": "B",
+          "label": "was viewed by some as a way to attract readers."
+        },
+        {
+          "value": "C",
+          "label": "replaced history and science books entirely."
+        },
+        {
+          "value": "D",
+          "label": "was considered useful only for children."
+        }
+      ]
+    },
+    {
+      "id": "t16-q17",
+      "number": 17,
+      "group": "Questions 17-20: Matching Information",
+      "kind": "matching-information",
+      "prompt": "examples of services developed beyond book lending",
+      "answer": "E",
+      "explanation": "Paragraph E lists children's rooms, reference desks, local history archives, and services for immigrants as examples of expanded services.",
+      "evidence": "They offered children's rooms, reference desks, local history archives, and dedicated services for immigrants learning a new language",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ]
+    },
+    {
+      "id": "t16-q18",
+      "number": 18,
+      "group": "Questions 17-20: Matching Information",
+      "kind": "matching-information",
+      "prompt": "the need for staff and systems, not only buildings",
+      "answer": "C",
+      "explanation": "Paragraph C states communities needed trained librarians, suitable collections, cataloguing systems, and rules, not just a building.",
+      "evidence": "Communities needed trained librarians, suitable collections, cataloguing systems, and rules that balanced quiet study with public access",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ]
+    },
+    {
+      "id": "t16-q19",
+      "number": 19,
+      "group": "Questions 17-20: Matching Information",
+      "kind": "matching-information",
+      "prompt": "the prediction that digital information might make libraries irrelevant",
+      "answer": "F",
+      "explanation": "Paragraph F mentions that some critics predicted online information would make libraries unnecessary.",
+      "evidence": "Some critics have predicted that online information would make libraries unnecessary",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ]
+    },
+    {
+      "id": "t16-q20",
+      "number": 20,
+      "group": "Questions 17-20: Matching Information",
+      "kind": "matching-information",
+      "prompt": "earlier institutions that limited access by payment or status",
+      "answer": "B",
+      "explanation": "Paragraph B describes subscription institutions where access depended on income, gender, or social connections.",
+      "evidence": "access depended on income, gender, or social connections",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ]
+    },
+    {
+      "id": "t16-q21",
+      "number": 21,
+      "group": "Questions 21-23: Matching Features",
+      "kind": "matching-features",
+      "prompt": "needed cataloguing and collection management",
+      "answer": "B",
+      "explanation": "Paragraph C describes early public library organisers needing cataloguing systems and suitable collections.",
+      "evidence": "suitable collections, cataloguing systems",
+      "options": [
+        {
+          "value": "A",
+          "label": "Subscription libraries and clubs"
+        },
+        {
+          "value": "B",
+          "label": "Early public library organisers"
+        },
+        {
+          "value": "C",
+          "label": "Modern public libraries"
+        }
+      ]
+    },
+    {
+      "id": "t16-q22",
+      "number": 22,
+      "group": "Questions 21-23: Matching Features",
+      "kind": "matching-features",
+      "prompt": "often restricted access through fees or social position",
+      "answer": "A",
+      "explanation": "Paragraph B describes subscription libraries and clubs where access depended on income, gender, or social connections.",
+      "evidence": "access depended on income, gender, or social connections",
+      "options": [
+        {
+          "value": "A",
+          "label": "Subscription libraries and clubs"
+        },
+        {
+          "value": "B",
+          "label": "Early public library organisers"
+        },
+        {
+          "value": "C",
+          "label": "Modern public libraries"
+        }
+      ]
+    },
+    {
+      "id": "t16-q23",
+      "number": 23,
+      "group": "Questions 21-23: Matching Features",
+      "kind": "matching-features",
+      "prompt": "help users evaluate online information",
+      "answer": "C",
+      "explanation": "Paragraph F states that modern users need help judging reliability of abundant online information.",
+      "evidence": "users need help judging reliability",
+      "options": [
+        {
+          "value": "A",
+          "label": "Subscription libraries and clubs"
+        },
+        {
+          "value": "B",
+          "label": "Early public library organisers"
+        },
+        {
+          "value": "C",
+          "label": "Modern public libraries"
+        }
+      ]
+    },
+    {
+      "id": "t16-q24",
+      "number": 24,
+      "group": "Questions 24-26: Sentence Completion",
+      "kind": "sentence-completion",
+      "prompt": "Reformers saw libraries as useful for self-improvement and practical knowledge in a changing ________.",
+      "answer": "economy",
+      "explanation": "Paragraph A states reformers wanted libraries to provide practical knowledge for a changing economy.",
+      "evidence": "provide practical knowledge for a changing economy",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q25",
+      "number": 25,
+      "group": "Questions 24-26: Sentence Completion",
+      "kind": "sentence-completion",
+      "prompt": "Some donors funded library buildings in towns they had ________.",
+      "answer": "never visited",
+      "explanation": "Paragraph C says wealthy donors paid for buildings in towns they had never visited.",
+      "evidence": "wealthy donors paid for buildings in towns they had never visited",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q26",
+      "number": 26,
+      "group": "Questions 24-26: Sentence Completion",
+      "kind": "sentence-completion",
+      "prompt": "The public library's continuing principle is equal access to ________.",
+      "answer": "knowledge",
+      "explanation": "Paragraph F states the basic principle remains that equal access to knowledge strengthens society.",
+      "evidence": "equal access to knowledge strengthens society",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    }
+  ]
+};
+
+const waitingPsychology: ReadingPassage = {
+  "id": "waiting-psychology",
+  "title": "The Psychology of Waiting",
+  "subtitle": "Why the experience of a delay depends on expectation, occupation, and fairness rather than the clock alone.",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Waiting is a common feature of modern life, whether it happens in a hospital corridor, at an airport gate, on a website loading screen, or in a queue for customer service. Although waiting seems like a simple matter of time, psychologists have shown that the experience depends heavily on attention, expectation, control, and fairness, and not merely on the number of minutes that pass on a clock. Two people can wait for exactly the same length of time and come away with completely different impressions of how long it felt. Ten minutes can feel brief if a person understands the reason for a delay, but intolerable if no explanation is provided and the silence itself becomes a source of anxiety."
+    },
+    {
+      "label": "B",
+      "text": "One important factor is uncertainty. When people know approximately how long a delay will last, they can adjust their behaviour accordingly. They may check messages, read, or decide to return later rather than stand and watch the clock. Without information, however, they repeatedly monitor the situation and become more sensitive to each passing minute, which makes the wait feel longer than its actual duration. This is why transport systems often display expected arrival times even when those estimates are imperfect or occasionally wrong. The information gives passengers a sense that the system is visible and manageable, rather than mysterious and entirely outside their control."
+    },
+    {
+      "label": "C",
+      "text": "Occupied time also feels shorter than unoccupied time, a pattern researchers have observed repeatedly across many settings. A restaurant that offers menus while customers wait, or an airport that places security lines some distance from departure gates so that walking becomes part of the journey, can reduce the psychological burden of delay considerably. The activity does not remove the waiting itself, but it changes how attention is directed during that time. When people are doing something that seems relevant or mildly engaging, they are far less likely to focus entirely on the lost time, and the minutes pass with less conscious effort."
+    },
+    {
+      "label": "D",
+      "text": "Fairness is another powerful influence, perhaps the most emotionally charged of all. A queue that follows a clear first-come, first-served rule is usually accepted without complaint, even if it moves slowly, because everyone can see that the order is being respected. Anger increases sharply when people believe others are receiving unfair priority, even if the actual time saved is small. This explains why visible queue management matters so much in practice. If several lines feed into one service point unevenly, customers may suspect that the system is arbitrary and lose their sense of fairness almost immediately. A single organised line can feel fairer, even when the average wait is not much shorter than before."
+    },
+    {
+      "label": "E",
+      "text": "Digital services have introduced new forms of waiting that did not exist a generation ago. A slow website may show a progress bar, a spinning icon, or a message saying that a request is being processed somewhere out of sight. These signals reassure users that the system has not failed silently, even when nothing visible is happening on screen. Yet progress indicators can also frustrate users if they appear inaccurate or misleading. A bar that reaches ninety percent quickly and then stops for a long stretch may feel worse than a slower but steadier display, because it creates an expectation that is then broken, leaving the user unsure whether anything is happening at all."
+    },
+    {
+      "label": "F",
+      "text": "The commercial importance of waiting has led companies to design delays carefully, sometimes with great subtlety. Call centres may offer estimated waiting times, shops may separate quick purchases from complex services, and apps may use small animations to make brief delays feel intentional rather than accidental. However, there is an ethical boundary that designers should not cross. Designing a wait to feel less painful is different from hiding avoidable inefficiency behind a pleasant interface. If organisations use psychology only to disguise poor service, trust may eventually decline, and customers may come to resent the very techniques that were meant to reassure them."
+    },
+    {
+      "label": "G",
+      "text": "The study of waiting therefore shows that time is both objective and subjective at once. Clocks measure minutes with perfect consistency, but people experience those minutes through meaning, expectation, and emotion. A delay can feel acceptable when it is explained, fair, and purposeful, even if it is not especially short. It becomes harder to tolerate when it is uncertain, idle, or unjust, regardless of the actual number of minutes involved. For designers and managers, the lesson is not simply to make every wait shorter, but to make necessary waiting more understandable, fair, and respectful of the people experiencing it."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t16-q27",
+      "number": 27,
+      "group": "Questions 27-30: Yes / No / Not Given",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer says hospitals have solved waiting problems better than airports.",
+      "answer": "NOT GIVEN",
+      "explanation": "Paragraph A mentions hospital corridors and airport gates only as examples of settings where waiting occurs; it makes no comparison of which has solved waiting better.",
+      "evidence": "whether it happens in a hospital corridor, at an airport gate, on a website loading screen, or in a queue for customer service",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q28",
+      "number": 28,
+      "group": "Questions 27-30: Yes / No / Not Given",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer believes waiting is experienced differently depending on psychological factors.",
+      "answer": "YES",
+      "explanation": "Paragraph A states the experience of waiting depends heavily on attention, expectation, control, and fairness, i.e. psychological factors.",
+      "evidence": "the experience depends heavily on attention, expectation, control, and fairness",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q29",
+      "number": 29,
+      "group": "Questions 27-30: Yes / No / Not Given",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer suggests that fairness can matter even when a queue is slow.",
+      "answer": "YES",
+      "explanation": "Paragraph D states a queue following a clear first-come, first-served rule is usually accepted without complaint, even if it moves slowly.",
+      "evidence": "A queue that follows a clear first-come, first-served rule is usually accepted without complaint, even if it moves slowly",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q30",
+      "number": 30,
+      "group": "Questions 27-30: Yes / No / Not Given",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer claims progress bars are always better than written delay messages.",
+      "answer": "NO",
+      "explanation": "Paragraph E states that progress indicators can also frustrate users if they appear inaccurate, contradicting the claim that they are always better.",
+      "evidence": "Yet progress indicators can also frustrate users if they appear inaccurate or misleading.",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ]
+    },
+    {
+      "id": "t16-q31",
+      "number": 31,
+      "group": "Questions 31-34: Matching Sentence Endings",
+      "kind": "matching-features",
+      "prompt": "Expected arrival information",
+      "answer": "A",
+      "explanation": "Paragraph B explains that displaying expected arrival times gives passengers a sense that the system is visible and manageable, reducing uncertainty.",
+      "evidence": "The information gives passengers a sense that the system is visible and manageable, rather than mysterious and entirely outside their control",
+      "options": [
+        {
+          "value": "A",
+          "label": "can make a delay feel less uncertain."
+        },
+        {
+          "value": "B",
+          "label": "may damage trust if used to hide poor service."
+        },
+        {
+          "value": "C",
+          "label": "can make customers suspect unfairness."
+        },
+        {
+          "value": "D",
+          "label": "is always more important than actual waiting time."
+        },
+        {
+          "value": "E",
+          "label": "may reduce attention to lost time."
+        },
+        {
+          "value": "F",
+          "label": "should be removed from every service system."
+        }
+      ]
+    },
+    {
+      "id": "t16-q32",
+      "number": 32,
+      "group": "Questions 31-34: Matching Sentence Endings",
+      "kind": "matching-features",
+      "prompt": "Relevant activity during a wait",
+      "answer": "E",
+      "explanation": "Paragraph C states that when people are engaged in something relevant they are far less likely to focus entirely on the lost time.",
+      "evidence": "they are far less likely to focus entirely on the lost time",
+      "options": [
+        {
+          "value": "A",
+          "label": "can make a delay feel less uncertain."
+        },
+        {
+          "value": "B",
+          "label": "may damage trust if used to hide poor service."
+        },
+        {
+          "value": "C",
+          "label": "can make customers suspect unfairness."
+        },
+        {
+          "value": "D",
+          "label": "is always more important than actual waiting time."
+        },
+        {
+          "value": "E",
+          "label": "may reduce attention to lost time."
+        },
+        {
+          "value": "F",
+          "label": "should be removed from every service system."
+        }
+      ]
+    },
+    {
+      "id": "t16-q33",
+      "number": 33,
+      "group": "Questions 31-34: Matching Sentence Endings",
+      "kind": "matching-features",
+      "prompt": "Uneven queue arrangements",
+      "answer": "C",
+      "explanation": "Paragraph D states that when lines feed unevenly into one service point, customers may suspect that the system is arbitrary.",
+      "evidence": "customers may suspect that the system is arbitrary",
+      "options": [
+        {
+          "value": "A",
+          "label": "can make a delay feel less uncertain."
+        },
+        {
+          "value": "B",
+          "label": "may damage trust if used to hide poor service."
+        },
+        {
+          "value": "C",
+          "label": "can make customers suspect unfairness."
+        },
+        {
+          "value": "D",
+          "label": "is always more important than actual waiting time."
+        },
+        {
+          "value": "E",
+          "label": "may reduce attention to lost time."
+        },
+        {
+          "value": "F",
+          "label": "should be removed from every service system."
+        }
+      ]
+    },
+    {
+      "id": "t16-q34",
+      "number": 34,
+      "group": "Questions 31-34: Matching Sentence Endings",
+      "kind": "matching-features",
+      "prompt": "Psychological design",
+      "answer": "B",
+      "explanation": "Paragraph F warns that if organisations use psychology only to disguise poor service, trust may eventually decline.",
+      "evidence": "If organisations use psychology only to disguise poor service, trust may eventually decline",
+      "options": [
+        {
+          "value": "A",
+          "label": "can make a delay feel less uncertain."
+        },
+        {
+          "value": "B",
+          "label": "may damage trust if used to hide poor service."
+        },
+        {
+          "value": "C",
+          "label": "can make customers suspect unfairness."
+        },
+        {
+          "value": "D",
+          "label": "is always more important than actual waiting time."
+        },
+        {
+          "value": "E",
+          "label": "may reduce attention to lost time."
+        },
+        {
+          "value": "F",
+          "label": "should be removed from every service system."
+        }
+      ]
+    },
+    {
+      "id": "t16-q35",
+      "number": 35,
+      "group": "Questions 35-37: Note Completion",
+      "kind": "sentence-completion",
+      "prompt": "Uncertainty makes people monitor each 35. ________.",
+      "answer": "minute",
+      "explanation": "Paragraph B states that without information people become more sensitive to each passing minute.",
+      "evidence": "become more sensitive to each passing minute",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q36",
+      "number": 36,
+      "group": "Questions 35-37: Note Completion",
+      "kind": "sentence-completion",
+      "prompt": "Occupied time changes where 36. ________ is directed.",
+      "answer": "attention",
+      "explanation": "Paragraph C states that activity does not remove waiting but changes how attention is directed.",
+      "evidence": "it changes how attention is directed",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q37",
+      "number": 37,
+      "group": "Questions 35-37: Note Completion",
+      "kind": "sentence-completion",
+      "prompt": "Clear queue rules increase a sense of 37. ________.",
+      "answer": "fairness",
+      "explanation": "Paragraph D shows that uneven queues make customers lose their sense of fairness, implying clear rules increase it.",
+      "evidence": "lose their sense of fairness almost immediately",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q38",
+      "number": 38,
+      "group": "Questions 38-39: Diagram Label Completion",
+      "kind": "diagram-labelling",
+      "prompt": "Delay explained + fair + purposeful → feels 38. ________.",
+      "answer": "acceptable",
+      "explanation": "Paragraph G states a delay can feel acceptable when it is explained, fair, and purposeful.",
+      "evidence": "A delay can feel acceptable when it is explained, fair, and purposeful",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q39",
+      "number": 39,
+      "group": "Questions 38-39: Diagram Label Completion",
+      "kind": "diagram-labelling",
+      "prompt": "Delay uncertain + idle + unjust → harder to 39. ________.",
+      "answer": "tolerate",
+      "explanation": "Paragraph G states it becomes harder to tolerate a delay when it is uncertain, idle, or unjust.",
+      "evidence": "It becomes harder to tolerate when it is uncertain, idle, or unjust",
+      "instruction": "Write NO MORE THAN TWO WORDS from the passage for each answer."
+    },
+    {
+      "id": "t16-q40",
+      "number": 40,
+      "group": "Question 40: Short Answer Question",
+      "kind": "short-answer",
+      "prompt": "What do progress indicators reassure users that the system has not done?",
+      "answer": "failed",
+      "explanation": "Paragraph E states these signals reassure users that the system has not failed silently.",
+      "evidence": "reassure users that the system has not failed",
+      "instruction": "Write NO MORE THAN THREE WORDS."
+    }
+  ]
+};
+
+const academicFullT16: ReadingPracticeTest = {
+  "id": "academic-full-t16",
+  "title": "Full Test 16: Small Systems, Shared Spaces, and the Weight of Waiting",
+  "description": "A three-passage Academic Reading test covering the overlooked ecological value of small wetlands, the historical rise of public libraries as a shared public good, and the psychology of how people experience waiting.",
+  "track": "Cambridge-style",
+  "level": "Advanced",
+  "minutes": 60,
+  "passages": [wetlandsBasics, librariesHistory, waitingPsychology]
+};
+const sleepScienceBasics: ReadingPassage = {
+  id: "sleep-science-basics",
+  title: "The Changing Science of Sleep",
+  subtitle: "How researchers came to see sleep as an active process shaped by biology, technology, and daily schedules.",
+  paragraphs: [
+    { label: "A", text: "For much of modern industrial history, sleep was treated as a passive state, a period when useful activity simply stopped. Factories, schools, and offices were designed around waking productivity, while tiredness was often seen as a sign of weak discipline rather than biological need. Workers who admitted to needing more rest risked being viewed as unreliable, an attitude that shaped shift patterns and school timetables. Over the last few decades, however, researchers have shown that sleep is an active biological process rather than an empty gap between productive hours. The brain sorts information, regulates emotion, repairs some cellular damage, and prepares the body for the demands of the next day. Brain-scan studies have revealed how much activity continues once the eyes close." },
+    { label: "B", text: "One important discovery is that sleep is not uniform from the moment a person closes their eyes until the moment they wake. During the night, people move through repeating cycles that include lighter sleep, deeper sleep, and rapid eye movement sleep, each with a distinct pattern of brain activity. These stages appear to support different functions, and researchers can now distinguish them using sensors that track brain waves and breathing. Deep sleep is linked with physical restoration and immune processes, including the release of growth-related hormones, while rapid eye movement sleep is associated with dreaming and emotional memory. Although scientists still debate the exact purpose of each stage, there is broad agreement that regular disruption to this cycling can affect learning, mood, and long-term health." },
+    { label: "C", text: "Modern technology has made sleep both easier and harder to study, changing who collects the data and how much of it exists. Wearable devices can estimate sleep length and movement, giving users a rough picture of their habits without the cost of a sleep laboratory. Millions now check a screen each morning to see how their night was scored, turning a private experience into something quantified and compared. At the same time, these devices may encourage anxiety when people focus too much on nightly scores rather than on how they actually feel during the day. A person may feel rested and alert, yet worry because a watch reports poor sleep quality. Researchers warn that consumer devices are useful for observing patterns over time but cannot replace clinical measurement when serious sleep disorders are suspected." },
+    { label: "D", text: "Light exposure is another major influence on how well and when people sleep. Human sleep is guided by circadian rhythms, internal cycles lasting roughly twenty-four hours that respond strongly to light and darkness in the surrounding environment. Morning light helps signal wakefulness by resetting this internal clock each day, while evening darkness supports the release of melatonin, a hormone related to sleep timing and drowsiness. Bright screens late at night can delay this signal, especially when combined with stimulating activities such as work messages or competitive games that keep the mind alert past the point when the body expects to wind down. The problem is not only the device itself but also the mental engagement it encourages." },
+    { label: "E", text: "Social schedules can also conflict with biology in ways that individuals rarely control on their own. Teenagers naturally tend to fall asleep and wake later than younger children, a shift driven by hormonal changes during adolescence, yet many secondary schools begin early to fit transport and staffing routines built around older norms. Shift workers face a more extreme challenge because their work hours may require wakefulness during the biological night, forcing the body to attempt alertness precisely when its internal clock is pushing it toward sleep. These mismatches can produce what researchers call social jet lag, where the body's internal clock is repeatedly pushed away from external obligations." },
+    { label: "F", text: "Improving sleep therefore requires more than telling people to be sensible about bedtimes and screens. Personal habits matter, but architecture, school timetables, workplace expectations, and public health policy also shape sleep opportunities in ways a single person cannot control through willpower alone. A society that values sleep only as private downtime, something to be sacrificed for ambition or entertainment, may ignore its wider effects on safety, education, and economic performance, from tired drivers on the road to distracted employees in critical jobs. The science of sleep suggests a different view: rest is not the enemy of productivity but one of its conditions, as important to sustained performance as diet or exercise." },
+    { label: "G", text: "Workplace culture is a useful example of this broader issue, showing how structural pressure can undermine even well-intentioned personal habits. Employees may know that sleep is important, yet still answer messages late at night because silence might be interpreted as lack of commitment by managers or colleagues in other time zones. In such environments, advice about avoiding screens before bed can sound unrealistic to someone whose job depends on being reachable outside normal hours. Some companies have begun to limit after-hours emails or encourage meeting schedules that respect different time zones, recognising that constant availability erodes the rest that supports good decision-making. These measures do not guarantee better sleep, but they shift responsibility away from the individual alone. Sleep science increasingly suggests that healthy rest is supported by systems, not personal willpower." },
+  ],
+  questions: [
+    {
+      id: "t17-q1",
+      number: 1,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph A",
+      instruction: "Choose the correct heading for paragraphs A-E from the list of headings below. Note that there are more headings than paragraphs, so two headings will not be used.",
+      options: [{ value: "i", label: "School performance in rural areas" }, { value: "ii", label: "Different stages and their functions" }, { value: "iii", label: "Biological clocks and modern light" }, { value: "iv", label: "The limits of personal responsibility" }, { value: "v", label: "When schedules conflict with natural timing" }, { value: "vi", label: "A new view of sleep as active" }, { value: "vii", label: "Helpful data and unnecessary worry" }],
+      answer: "vi",
+      explanation: "Paragraph A introduces the shift from viewing sleep as a passive, unproductive state to understanding it as an active biological process.",
+      evidence: "researchers have shown that sleep is an active biological process rather than an empty gap between productive hours",
+    },
+    {
+      id: "t17-q2",
+      number: 2,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph B",
+      options: [{ value: "i", label: "School performance in rural areas" }, { value: "ii", label: "Different stages and their functions" }, { value: "iii", label: "Biological clocks and modern light" }, { value: "iv", label: "The limits of personal responsibility" }, { value: "v", label: "When schedules conflict with natural timing" }, { value: "vi", label: "A new view of sleep as active" }, { value: "vii", label: "Helpful data and unnecessary worry" }],
+      answer: "ii",
+      explanation: "Paragraph B describes the different stages of sleep (light, deep, REM) and the distinct functions associated with each.",
+      evidence: "These stages appear to support different functions",
+    },
+    {
+      id: "t17-q3",
+      number: 3,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph C",
+      options: [{ value: "i", label: "School performance in rural areas" }, { value: "ii", label: "Different stages and their functions" }, { value: "iii", label: "Biological clocks and modern light" }, { value: "iv", label: "The limits of personal responsibility" }, { value: "v", label: "When schedules conflict with natural timing" }, { value: "vi", label: "A new view of sleep as active" }, { value: "vii", label: "Helpful data and unnecessary worry" }],
+      answer: "vii",
+      explanation: "Paragraph C explains that wearable devices provide useful data on sleep patterns but can also cause unnecessary anxiety.",
+      evidence: "these devices may encourage anxiety when people focus too much on nightly scores",
+    },
+    {
+      id: "t17-q4",
+      number: 4,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph D",
+      options: [{ value: "i", label: "School performance in rural areas" }, { value: "ii", label: "Different stages and their functions" }, { value: "iii", label: "Biological clocks and modern light" }, { value: "iv", label: "The limits of personal responsibility" }, { value: "v", label: "When schedules conflict with natural timing" }, { value: "vi", label: "A new view of sleep as active" }, { value: "vii", label: "Helpful data and unnecessary worry" }],
+      answer: "iii",
+      explanation: "Paragraph D discusses circadian rhythms (the body's biological clock) and how modern light sources, especially screens, disrupt them.",
+      evidence: "Human sleep is guided by circadian rhythms, internal cycles lasting roughly twenty-four hours that respond strongly to light and darkness",
+    },
+    {
+      id: "t17-q5",
+      number: 5,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph E",
+      options: [{ value: "i", label: "School performance in rural areas" }, { value: "ii", label: "Different stages and their functions" }, { value: "iii", label: "Biological clocks and modern light" }, { value: "iv", label: "The limits of personal responsibility" }, { value: "v", label: "When schedules conflict with natural timing" }, { value: "vi", label: "A new view of sleep as active" }, { value: "vii", label: "Helpful data and unnecessary worry" }],
+      answer: "v",
+      explanation: "Paragraph E describes how social schedules such as school start times and shift work conflict with the body's natural sleep timing.",
+      evidence: "Social schedules can also conflict with biology in ways that individuals rarely control on their own",
+    },
+    {
+      id: "t17-q6",
+      number: 6,
+      group: "Questions 6-9: True / False / Not Given",
+      kind: "true-false-not-given",
+      prompt: "Consumer sleep devices are always as reliable as clinical tests.",
+      instruction: "Do the following statements agree with the information given in Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "FALSE",
+      explanation: "The passage states that consumer devices cannot replace clinical measurement when serious sleep disorders are suspected, so they are not always as reliable as clinical tests.",
+      evidence: "cannot replace clinical measurement when serious sleep disorders are suspected",
+    },
+    {
+      id: "t17-q7",
+      number: 7,
+      group: "Questions 6-9: True / False / Not Given",
+      kind: "true-false-not-given",
+      prompt: "The passage states that all teenagers need exactly nine hours of sleep.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NOT GIVEN",
+      explanation: "The passage discusses teenagers' shifted sleep timing but never gives an exact number of hours they need.",
+      evidence: "Teenagers naturally tend to fall asleep and wake later than younger children",
+    },
+    {
+      id: "t17-q8",
+      number: 8,
+      group: "Questions 6-9: True / False / Not Given",
+      kind: "true-false-not-given",
+      prompt: "Researchers now view sleep as a biological process rather than simple inactivity.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "TRUE",
+      explanation: "Paragraph A directly states that researchers have shown sleep to be an active biological process.",
+      evidence: "researchers have shown that sleep is an active biological process",
+    },
+    {
+      id: "t17-q9",
+      number: 9,
+      group: "Questions 6-9: True / False / Not Given",
+      kind: "true-false-not-given",
+      prompt: "Evening screen use may affect sleep partly because of mental stimulation.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "TRUE",
+      explanation: "Paragraph D states that the problem is not only the device but also the mental engagement it encourages.",
+      evidence: "The problem is not only the device itself but also the mental engagement it encourages",
+    },
+    {
+      id: "t17-q10",
+      number: 10,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "Sleep includes several stages, including deep sleep and ________ sleep.",
+      instruction: "Complete the summary below. Write NO MORE THAN THREE WORDS from the passage for each answer.",
+      answer: "rapid eye movement",
+      explanation: "Paragraph B names the sleep stages as lighter sleep, deeper sleep, and rapid eye movement sleep.",
+      evidence: "rapid eye movement sleep, each with a distinct pattern of brain activity",
+    },
+    {
+      id: "t17-q11",
+      number: 11,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "Wearable devices can show rough ________, but they may also cause worry.",
+      instruction: "Complete the summary below. Write NO MORE THAN THREE WORDS from the passage for each answer.",
+      answer: "patterns",
+      explanation: "Paragraph C states that consumer devices are useful for observing patterns over time.",
+      evidence: "consumer devices are useful for observing patterns over time",
+    },
+    {
+      id: "t17-q12",
+      number: 12,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "Sleep timing is influenced by ________ rhythms, which respond to light.",
+      instruction: "Complete the summary below. Write NO MORE THAN THREE WORDS from the passage for each answer.",
+      answer: "circadian",
+      explanation: "Paragraph D states that human sleep is guided by circadian rhythms that respond to light and darkness.",
+      evidence: "Human sleep is guided by circadian rhythms",
+    },
+    {
+      id: "t17-q13",
+      number: 13,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "The passage argues that rest should be seen as a condition of ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN THREE WORDS from the passage for each answer.",
+      answer: "productivity",
+      explanation: "Paragraph F states that rest is not the enemy of productivity but one of its conditions.",
+      evidence: "rest is not the enemy of productivity but one of its conditions",
+    },
+  ],
+};
+
+const barterToDigitalPayment: ReadingPassage = {
+  id: "barter-to-digital-payment",
+  title: "From Barter to Digital Payment",
+  subtitle: "A look at how trust, not just technology, has shaped the history of money and payment systems.",
+  paragraphs: [
+    { label: "A", text: "The history of payment is often told as a simple movement from barter to coins, paper money, bank cards, and digital wallets. In reality, the story is less tidy than this neat sequence suggests. Many early communities used credit systems, gift obligations, and social memory long before coins were common, keeping track of debts through reputation rather than physical tokens. Barter existed, but it was not necessarily the everyday foundation of exchange that popular accounts imply. People often knew who owed what to whom within a small community, and trust reduced the need for immediate settlement, since a favour given today might be repaid in a different form months later without anyone keeping a written ledger." },
+    { label: "B", text: "Coins became useful when exchange moved beyond familiar networks, into markets where buyer and seller might never meet again. A coin could carry a recognised value and did not require personal knowledge between the two parties, which made distant trade far more practical than relying on memory or reputation. States also benefited because coins helped collect taxes, pay soldiers, and display political authority across territories that a ruler could never visit in person. The images stamped on coins were not only decorative; they communicated power and legitimacy across distance, reminding anyone who handled the metal which authority stood behind its value and reach." },
+    { label: "C", text: "Paper money created another shift because value became more clearly symbolic than it had been with metal coins. A banknote was useful not because the paper itself was valuable, but because people trusted the institution behind it to honour its promise. This trust had to be maintained through law, convertibility, or credible government management, and it could be damaged by rumour as easily as by genuine financial trouble. When confidence failed, paper money could lose value rapidly, sometimes within days, showing that money is as much a social agreement as a physical object, dependent on shared belief rather than on the material it is printed on." },
+    { label: "D", text: "Electronic payment systems changed the speed and scale of transactions in ways that would have seemed remarkable only a few generations earlier. Businesses could pay suppliers across borders within seconds, employers could transfer salaries automatically each month, and consumers could buy goods without carrying cash or visiting a bank branch. Card networks and clearing systems made it possible for a single transaction to touch several institutions in different countries within moments. These systems reduced some risks, such as theft of physical money from homes or shops, but introduced others, including fraud, technical failure, and the exclusion of people without bank access, particularly in regions where formal banking infrastructure remains limited or unevenly distributed." },
+    { label: "E", text: "Mobile payment platforms have expanded financial participation in some regions, especially where conventional banking never fully took hold. Where traditional banks are scarce, a phone-based account can allow users to receive wages, save small amounts, or pay school fees without travelling long distances to a branch. In several countries, such platforms now handle a larger share of everyday transactions than cash or cards combined. Yet mobile money depends on networks, agents, regulation, and user literacy, none of which appear automatically alongside the technology itself. A successful system is not created by technology alone; it requires a trusted environment around the technology, including reliable agents who can convert digital balances into cash when needed." },
+    { label: "F", text: "The rise of digital currencies has renewed old questions in new language, even as the underlying technology looks unfamiliar. Who guarantees value when no government stands behind a currency? How private should transactions be, and who should be able to see them? What happens if a payment system becomes too concentrated in the hands of a few companies or states, able to freeze accounts or dictate terms? Although the tools have changed dramatically, payment remains a social technology at its core. It works only when people believe that records, institutions, and rules will be honoured, regardless of how the underlying ledger is built." },
+    { label: "G", text: "This helps explain why new payment technologies spread unevenly across regions and social groups, despite similar levels of technical capability. A digital wallet may be technically efficient, but users will hesitate if they fear hidden fees, sudden account freezes, or weak protection against scams that drain their savings without recourse. Merchants also need confidence that payments will settle reliably and that disputes can be resolved fairly when something goes wrong. For this reason, successful payment systems usually combine convenience with rules that users may barely notice until something goes wrong. Speed attracts attention, but trust keeps the system alive, and the history of money repeatedly shows that the most elegant technology fails if people doubt the promises behind it." },
+  ],
+  questions: [
+    {
+      id: "t17-q14",
+      number: 14,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "What does paragraph A suggest about barter?",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "It was the only form of early exchange." }, { value: "B", label: "It was less universal than simple histories imply." }, { value: "C", label: "It began after coins were invented." }, { value: "D", label: "It required digital records." }],
+      answer: "B",
+      explanation: "Paragraph A states that barter existed but was not necessarily the everyday foundation of exchange that popular accounts imply, since many communities relied on credit and social memory instead.",
+      evidence: "it was not necessarily the everyday foundation of exchange that popular accounts imply",
+    },
+    {
+      id: "t17-q15",
+      number: 15,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "According to paragraph B, coins helped states by",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "removing taxes completely." }, { value: "B", label: "spreading political messages and supporting payments." }, { value: "C", label: "preventing all forms of trade conflict." }, { value: "D", label: "replacing soldiers with merchants." }],
+      answer: "B",
+      explanation: "Paragraph B explains that coins helped states collect taxes, pay soldiers, and display political authority, and that the images on coins communicated power and legitimacy.",
+      evidence: "States also benefited because coins helped collect taxes, pay soldiers, and display political authority",
+    },
+    {
+      id: "t17-q16",
+      number: 16,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "The main point of paragraph C is that paper money",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "depends heavily on institutional trust." }, { value: "B", label: "has value because paper is rare." }, { value: "C", label: "cannot lose value." }, { value: "D", label: "works without laws or government." }],
+      answer: "A",
+      explanation: "Paragraph C states that a banknote was useful because people trusted the institution behind it, and this trust had to be maintained through law, convertibility, or credible government management.",
+      evidence: "people trusted the institution behind it to honour its promise",
+    },
+    {
+      id: "t17-q17",
+      number: 17,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "risks created by electronic payment",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "D",
+      explanation: "Paragraph D lists risks introduced by electronic payment systems, including fraud, technical failure, and exclusion of people without bank access.",
+      evidence: "introduced others, including fraud, technical failure, and the exclusion of people without bank access",
+    },
+    {
+      id: "t17-q18",
+      number: 18,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "the symbolic role of images on coins",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "B",
+      explanation: "Paragraph B states that the images stamped on coins were not only decorative but communicated power and legitimacy.",
+      evidence: "The images stamped on coins were not only decorative",
+    },
+    {
+      id: "t17-q19",
+      number: 19,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "the conditions needed for mobile money to work",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "E",
+      explanation: "Paragraph E explains that mobile money depends on networks, agents, regulation, and user literacy, and requires a trusted environment.",
+      evidence: "mobile money depends on networks, agents, regulation, and user literacy",
+    },
+    {
+      id: "t17-q20",
+      number: 20,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "the idea that money is a social agreement",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "C",
+      explanation: "Paragraph C concludes that money is as much a social agreement as a physical object.",
+      evidence: "money is as much a social agreement as a physical object",
+    },
+    {
+      id: "t17-q21",
+      number: 21,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "useful where traditional banks are limited",
+      instruction: "Match each statement with the correct payment form, A, B, or C.",
+      options: [{ value: "A", label: "Coins" }, { value: "B", label: "Paper money" }, { value: "C", label: "Mobile payment" }],
+      answer: "C",
+      explanation: "Paragraph E states that mobile payment platforms have expanded financial participation where traditional banks are scarce.",
+      evidence: "Where traditional banks are scarce, a phone-based account can allow users to receive wages",
+    },
+    {
+      id: "t17-q22",
+      number: 22,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "carried stamped signs of authority",
+      instruction: "Match each statement with the correct payment form, A, B, or C.",
+      options: [{ value: "A", label: "Coins" }, { value: "B", label: "Paper money" }, { value: "C", label: "Mobile payment" }],
+      answer: "A",
+      explanation: "Paragraph B describes coins as carrying stamped images that communicated power and legitimacy.",
+      evidence: "they communicated power and legitimacy across distance",
+    },
+    {
+      id: "t17-q23",
+      number: 23,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "depended on belief in the issuing institution",
+      instruction: "Match each statement with the correct payment form, A, B, or C.",
+      options: [{ value: "A", label: "Coins" }, { value: "B", label: "Paper money" }, { value: "C", label: "Mobile payment" }],
+      answer: "B",
+      explanation: "Paragraph C explains that a banknote was useful only because people trusted the institution behind it.",
+      evidence: "because people trusted the institution behind it to honour its promise",
+    },
+    {
+      id: "t17-q24",
+      number: 24,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Trust within a community reduced the need for immediate ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "settlement",
+      explanation: "Paragraph A states that trust reduced the need for immediate settlement.",
+      evidence: "trust reduced the need for immediate settlement",
+    },
+    {
+      id: "t17-q25",
+      number: 25,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Electronic payments reduced the danger of theft of ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "physical money",
+      explanation: "Paragraph D states that electronic systems reduced the risk of theft of physical money.",
+      evidence: "such as theft of physical money from homes or shops",
+    },
+    {
+      id: "t17-q26",
+      number: 26,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Payment works when people believe rules and institutions will be ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "honoured",
+      explanation: "Paragraph F states that payment works only when people believe that records, institutions, and rules will be honoured.",
+      evidence: "records, institutions, and rules will be honoured",
+    },
+  ],
+};
+
+const citizenScienceResearch: ReadingPassage = {
+  id: "citizen-science-and-professional-research",
+  title: "Citizen Science and Professional Research",
+  subtitle: "How volunteer participation is reshaping data collection, and the challenges of quality, fairness, and trust it raises.",
+  paragraphs: [
+    { label: "A", text: "Citizen science refers to research in which members of the public help collect, classify, or interpret data, often working alongside professional scientists rather than replacing them. It is not a new idea: birdwatchers have counted species for generations, filling in gaps that professional ornithologists could never cover alone, and amateur astronomers have reported unusual events in the night sky long before automated telescopes existed. What has changed is the scale of participation and the speed at which observations can be shared. Smartphones, online platforms, and cheap sensors now allow thousands of volunteers to contribute observations across wide areas simultaneously, creating datasets that would have been unimaginable a generation ago, when a single researcher with a notebook was often the only observer for an entire region." },
+    { label: "B", text: "The strongest argument for citizen science is coverage, the sheer geographic and temporal reach that volunteers can offer. A small research team may not be able to monitor every beach, forest, or urban street, no matter how well funded or motivated its members are. Volunteers can report plastic waste, air quality, plant flowering times, or animal sightings from places professionals rarely visit, including remote coastlines and small neighbourhood parks that would never attract dedicated research funding on their own. When observations are repeated over months or years by many different contributors, the resulting datasets can reveal patterns that would otherwise remain invisible, such as gradual shifts in migration timing or slow changes in local pollution levels that a short study could never detect." },
+    { label: "C", text: "However, data quality is a persistent concern that project organisers cannot simply wish away. Volunteers differ in training, attention, and equipment, and even enthusiastic participants can make honest mistakes under time pressure. One person may correctly identify a butterfly species using careful field marks, while another records a similar species by mistake because the two look alike from a distance. Good projects therefore use photographs, validation systems, clear instructions, and statistical methods to reduce error, often cross-checking uncertain records against expert review before they enter a public dataset. The aim is not to pretend that volunteer data are perfect, an unrealistic standard for any dataset, but to understand their limits and design around them so that conclusions remain trustworthy." },
+    { label: "D", text: "Citizen science can also change public attitudes toward the natural world and toward science itself. People who measure local air pollution or record river insects may begin to see environmental problems as concrete and local rather than distant and abstract, something happening in a different country to someone else. Participation can increase scientific literacy because volunteers learn how evidence is gathered, why sample size matters, and why uncertainty is a normal part of honest research rather than a sign of failure. In some cases, communities use the data they have collected to demand policy changes from local authorities, giving research a direct civic role that goes well beyond simply adding numbers to an academic paper." },
+    { label: "E", text: "This civic role can be controversial, particularly when the motivations behind a project are not clearly separated from the data itself. Professional researchers may worry that activist goals will influence data collection or interpretation, while community groups may suspect that academic institutions are slow to respond to urgent local problems that residents can see with their own eyes. These tensions are not necessarily harmful if they are handled openly and discussed early in a project's design. A project that clearly separates data collection, interpretation, and advocacy, keeping each stage transparent to all participants, may produce both reliable evidence and genuine public engagement rather than forcing a choice between the two." },
+    { label: "F", text: "Technology has made participation easier, but it has not removed inequality between different kinds of potential volunteers. Projects that rely on smartphones, stable internet, or free time may exclude older adults, low-income groups, or rural communities with weak connectivity, even when those very communities have the most direct stake in the environmental questions being studied. If citizen science is meant to democratise research rather than simply expand its reach among already-connected groups, organisers must think carefully about language, training, equipment, and feedback loops that keep participants informed. Volunteers are more likely to stay involved over the long term when they can see how their contributions are used and what difference their effort has actually made." },
+    { label: "G", text: "The future of citizen science will probably depend on partnership rather than replacement of one group by the other. Volunteers cannot take over all professional research, since some questions require specialised equipment, training, or years of accumulated expertise that no short-term contributor could reasonably acquire. Professional researchers, in turn, cannot observe everything alone across the scales that today's environmental and social questions demand. The most successful projects combine public reach with expert design, pairing the observational power of many hands with the analytical rigour of trained scientists. They recognise that scientific knowledge is strengthened not only by better instruments but also by broader participation, provided that quality and fairness are taken seriously at every stage of the process." },
+  ],
+  questions: [
+    {
+      id: "t17-q27",
+      number: 27,
+      group: "Questions 27-30: Yes / No / Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer argues that volunteer observations are always accurate enough without checking.",
+      instruction: "Do the following statements agree with the views of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NO",
+      explanation: "Paragraph C states that the aim is not to pretend volunteer data are perfect, showing the writer does not believe volunteer observations are always accurate without checking.",
+      evidence: "not to pretend that volunteer data are perfect",
+    },
+    {
+      id: "t17-q28",
+      number: 28,
+      group: "Questions 27-30: Yes / No / Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer believes citizen science has recently become possible on a much larger scale.",
+      instruction: "Do the following statements agree with the views of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "YES",
+      explanation: "Paragraph A states that what has changed is the scale of participation, enabled by smartphones and cheap sensors.",
+      evidence: "What has changed is the scale of participation",
+    },
+    {
+      id: "t17-q29",
+      number: 29,
+      group: "Questions 27-30: Yes / No / Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer says professional scientists should stop collecting field data.",
+      instruction: "Do the following statements agree with the views of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NO",
+      explanation: "Paragraph G states that volunteers cannot take over all professional research, implying professionals should continue their work.",
+      evidence: "Volunteers cannot take over all professional research",
+    },
+    {
+      id: "t17-q30",
+      number: 30,
+      group: "Questions 27-30: Yes / No / Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer suggests that participation can make environmental problems feel more immediate.",
+      instruction: "Do the following statements agree with the views of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "YES",
+      explanation: "Paragraph D states that people who measure local pollution may begin to see environmental problems as concrete and local rather than distant and abstract.",
+      evidence: "see environmental problems as concrete and local rather than distant and abstract",
+    },
+    {
+      id: "t17-q31",
+      number: 31,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "sentence-completion",
+      prompt: "Repeated volunteer observations",
+      instruction: "Complete each sentence with the correct ending, A-F.",
+      options: [{ value: "A", label: "can reveal patterns across large areas." }, { value: "B", label: "may exclude some groups if access needs are ignored." }, { value: "C", label: "should completely replace expert research teams." }, { value: "D", label: "can help reduce mistakes in volunteer records." }, { value: "E", label: "always prevents disagreement between researchers and communities." }, { value: "F", label: "may increase understanding of how evidence is produced." }],
+      answer: "A",
+      explanation: "Paragraph B states that when observations are repeated over months or years, the resulting datasets can reveal patterns that would otherwise remain invisible.",
+      evidence: "the resulting datasets can reveal patterns that would otherwise remain invisible",
+    },
+    {
+      id: "t17-q32",
+      number: 32,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "sentence-completion",
+      prompt: "Photographs and validation systems",
+      instruction: "Complete each sentence with the correct ending, A-F.",
+      options: [{ value: "A", label: "can reveal patterns across large areas." }, { value: "B", label: "may exclude some groups if access needs are ignored." }, { value: "C", label: "should completely replace expert research teams." }, { value: "D", label: "can help reduce mistakes in volunteer records." }, { value: "E", label: "always prevents disagreement between researchers and communities." }, { value: "F", label: "may increase understanding of how evidence is produced." }],
+      answer: "D",
+      explanation: "Paragraph C states that good projects use photographs, validation systems, clear instructions, and statistical methods to reduce error.",
+      evidence: "use photographs, validation systems, clear instructions, and statistical methods to reduce error",
+    },
+    {
+      id: "t17-q33",
+      number: 33,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "sentence-completion",
+      prompt: "Participation in local measurement",
+      instruction: "Complete each sentence with the correct ending, A-F.",
+      options: [{ value: "A", label: "can reveal patterns across large areas." }, { value: "B", label: "may exclude some groups if access needs are ignored." }, { value: "C", label: "should completely replace expert research teams." }, { value: "D", label: "can help reduce mistakes in volunteer records." }, { value: "E", label: "always prevents disagreement between researchers and communities." }, { value: "F", label: "may increase understanding of how evidence is produced." }],
+      answer: "F",
+      explanation: "Paragraph D states that participation can increase scientific literacy because volunteers learn how evidence is gathered.",
+      evidence: "Participation can increase scientific literacy because volunteers learn how evidence is gathered",
+    },
+    {
+      id: "t17-q34",
+      number: 34,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "sentence-completion",
+      prompt: "Technology-based projects",
+      instruction: "Complete each sentence with the correct ending, A-F.",
+      options: [{ value: "A", label: "can reveal patterns across large areas." }, { value: "B", label: "may exclude some groups if access needs are ignored." }, { value: "C", label: "should completely replace expert research teams." }, { value: "D", label: "can help reduce mistakes in volunteer records." }, { value: "E", label: "always prevents disagreement between researchers and communities." }, { value: "F", label: "may increase understanding of how evidence is produced." }],
+      answer: "B",
+      explanation: "Paragraph F states that projects relying on smartphones or stable internet may exclude older adults, low-income groups, or rural communities with weak connectivity.",
+      evidence: "may exclude older adults, low-income groups, or rural communities with weak connectivity",
+    },
+    {
+      id: "t17-q35",
+      number: 35,
+      group: "Questions 35-37: Table Completion",
+      kind: "table-completion",
+      prompt: "volunteer error -> use validation systems and clear ________",
+      instruction: "Complete the table below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "instructions",
+      explanation: "Paragraph C states that good projects use photographs, validation systems, clear instructions, and statistical methods.",
+      evidence: "validation systems, clear instructions, and statistical methods",
+    },
+    {
+      id: "t17-q36",
+      number: 36,
+      group: "Questions 35-37: Table Completion",
+      kind: "table-completion",
+      prompt: "activist tension -> separate collection, interpretation, and ________",
+      instruction: "Complete the table below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "advocacy",
+      explanation: "Paragraph E states that a project that clearly separates data collection, interpretation, and advocacy may produce reliable evidence and engagement.",
+      evidence: "clearly separates data collection, interpretation, and advocacy",
+    },
+    {
+      id: "t17-q37",
+      number: 37,
+      group: "Questions 35-37: Table Completion",
+      kind: "table-completion",
+      prompt: "unequal access -> consider language, equipment, and ________",
+      instruction: "Complete the table below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "training",
+      explanation: "Paragraph F states that organisers must think carefully about language, training, equipment, and feedback loops.",
+      evidence: "think carefully about language, training, equipment, and feedback loops",
+    },
+    {
+      id: "t17-q38",
+      number: 38,
+      group: "Questions 38-39: Diagram Label Completion",
+      kind: "diagram-labelling",
+      prompt: "Successful citizen science = public ________ + expert design",
+      instruction: "Complete the diagram below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "reach",
+      explanation: "Paragraph G states that the most successful projects combine public reach with expert design.",
+      evidence: "The most successful projects combine public reach with expert design",
+    },
+    {
+      id: "t17-q39",
+      number: 39,
+      group: "Questions 38-39: Diagram Label Completion",
+      kind: "diagram-labelling",
+      prompt: "Successful citizen science = public reach + expert ________",
+      instruction: "Complete the diagram below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "design",
+      explanation: "Paragraph G states that the most successful projects combine public reach with expert design.",
+      evidence: "combine public reach with expert design",
+    },
+    {
+      id: "t17-q40",
+      number: 40,
+      group: "Question 40: Short Answer Question",
+      kind: "short-answer",
+      prompt: "What are volunteers more likely to continue doing when they see how their work is used?",
+      instruction: "Answer the question below. Write NO MORE THAN THREE WORDS from the passage.",
+      answer: "stay involved",
+      explanation: "Paragraph F states that volunteers are more likely to stay involved over the long term when they can see how their contributions are used.",
+      evidence: "Volunteers are more likely to stay involved over the long term when they can see how their contributions are used",
+    },
+  ],
+};
+
+const academicFullT17: ReadingPracticeTest = {
+  id: "academic-full-t17",
+  title: "Full Test 17: Rest, Trust, and Reach",
+  description:
+    "A Cambridge-style Academic Reading test covering the science of sleep, the history of payment systems, and the rise of citizen science.",
+  track: "Cambridge-style",
+  level: "Advanced",
+  minutes: 60,
+  passages: [sleepScienceBasics, barterToDigitalPayment, citizenScienceResearch],
+};
+
+const repairCulturePassage: ReadingPassage = {
+  id: "repair-culture-basics",
+  title: "The Return of Repair Culture",
+  subtitle: "Why fixing things is becoming fashionable again",
+  paragraphs: [
+    {
+      label: "A",
+      text: "For several decades, many consumer products have been designed around replacement rather than repair. When a toaster, phone, or printer fails, buying a new one is often easier than finding parts or a skilled technician. This pattern has supported economic growth, encouraging steady demand and continuous production, but it has also increased waste and weakened practical repair skills that earlier generations took for granted. Household tool kits that once contained screwdrivers, spare fuses, and sewing needles have been replaced by drawers of unused chargers and broken gadgets awaiting collection. Recently, repair culture has begun to attract renewed interest from environmental groups, community workshops, and some policymakers, who view it as a meaningful response to disposable consumption."
+    },
+    {
+      label: "B",
+      text: "The environmental argument is straightforward. Manufacturing a new device requires raw materials, energy, transport, and packaging. Even small electronics may contain metals mined in distant countries and plastics derived from fossil fuels. Extending a product's life by a few years can therefore reduce its overall environmental impact, since fewer replacement units need to be manufactured, shipped, and eventually disposed of. Repair does not remove the need for better product design, and designers must still consider materials and efficiency from the outset, but it slows the cycle of extraction, production, and disposal, conserving resources that would otherwise be discarded prematurely."
+    },
+    {
+      label: "C",
+      text: "Repair also has social value. Community repair cafes bring volunteers and residents together to fix household items, from kettles to bicycles with worn brake pads. Participants may save money, but they also learn how objects work and gain confidence in handling unfamiliar tools. A broken lamp becomes an educational opportunity rather than rubbish, as a volunteer explains wiring, switches, and simple diagnosis while the owner watches and sometimes helps with the repair itself. These events can be especially valuable in societies where many people feel disconnected from the technologies they use daily, offering a rare chance to open a device, ask questions, and discover that many faults are simpler to fix than expected."
+    },
+    {
+      label: "D",
+      text: "However, repair is not always simple. Modern devices often use glued components, special screws, or software locks that prevent independent technicians from accessing internal parts. Manufacturers may argue that sealed designs improve safety, reduce weight, or protect intellectual property. Critics reply that such design choices make independent repair unnecessarily difficult, effectively forcing owners back toward costly official service centres or premature replacement. The debate has led to right-to-repair laws in several places, requiring companies to provide parts, manuals, or diagnostic information to independent repairers and consumers alike. Supporters see the laws as restoring a basic freedom to maintain what one owns, while manufacturers warn of safety risks from untrained repair attempts."
+    },
+    {
+      label: "E",
+      text: "Economics remains a major barrier. If repair costs almost as much as replacement, many consumers will choose the new product. Labour is expensive in high-income countries, while mass-produced goods are often cheap, making repair look unattractive even to consumers who would prefer to keep an old, familiar item. To make repair attractive, governments may need to reduce taxes on repair services, support training for technicians, or require longer warranties that make durability a selling point rather than an afterthought. Businesses can also design products so that common failures, such as a cracked screen or a worn battery, are quick and affordable to fix, turning repairability itself into a competitive advantage."
+    },
+    {
+      label: "F",
+      text: "The return of repair culture is not a rejection of innovation. Instead, it asks whether innovation should include durability, openness, and maintainability alongside speed, novelty, and convenience. A product that lasts longer may generate fewer immediate sales, but it can build trust and reduce environmental pressure across its entire lifetime of use. Such reliability can build customer loyalty over time. If repair becomes normal again, consumers may begin to see ownership not as temporary use followed by disposal, but as a longer relationship with the things they buy, one that includes occasional care, maintenance, and thoughtful upgrade rather than automatic discarding."
+    },
+    {
+      label: "G",
+      text: "Education may determine whether this shift lasts. Many adults are willing to repair goods in principle but lack the confidence to open a device or diagnose a simple fault, often fearing further damage. Schools, libraries, and community centres can teach basic maintenance without expecting everyone to become an engineer. Learning how to replace a bicycle brake pad, clean a laptop fan, or sew a torn pocket changes the meaning of ownership. It also helps people ask better questions when professional repair is needed, since a basic understanding of how something works makes it easier to judge whether a quoted price or diagnosis is reasonable. A culture of repair grows strongest when knowledge is shared early and treated as ordinary competence rather than specialist mystery."
+    }
+  ],
+  questions: [
+    {
+      id: "t18-q1",
+      number: 1,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph A",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [
+        {
+          value: "i",
+          label: "Legal arguments over access to repair"
+        },
+        {
+          value: "ii",
+          label: "Why replacement became convenient"
+        },
+        {
+          value: "iii",
+          label: "Learning through community repair"
+        },
+        {
+          value: "iv",
+          label: "Financial obstacles to fixing goods"
+        },
+        {
+          value: "v",
+          label: "Repair as part of future innovation"
+        },
+        {
+          value: "vi",
+          label: "Why products should never change"
+        },
+        {
+          value: "vii",
+          label: "The environmental case for longer use"
+        }
+      ],
+      answer: "ii",
+      explanation: "Paragraph A explains why buying a replacement became the easier, faster option compared with finding parts or a technician.",
+      evidence: "buying a new one is often easier than finding parts or a skilled technician"
+    },
+    {
+      id: "t18-q2",
+      number: 2,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph B",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [
+        {
+          value: "i",
+          label: "Legal arguments over access to repair"
+        },
+        {
+          value: "ii",
+          label: "Why replacement became convenient"
+        },
+        {
+          value: "iii",
+          label: "Learning through community repair"
+        },
+        {
+          value: "iv",
+          label: "Financial obstacles to fixing goods"
+        },
+        {
+          value: "v",
+          label: "Repair as part of future innovation"
+        },
+        {
+          value: "vi",
+          label: "Why products should never change"
+        },
+        {
+          value: "vii",
+          label: "The environmental case for longer use"
+        }
+      ],
+      answer: "vii",
+      explanation: "Paragraph B sets out the environmental reasoning for keeping products in use for longer.",
+      evidence: "Extending a product's life by a few years can therefore reduce its overall environmental impact"
+    },
+    {
+      id: "t18-q3",
+      number: 3,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph C",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [
+        {
+          value: "i",
+          label: "Legal arguments over access to repair"
+        },
+        {
+          value: "ii",
+          label: "Why replacement became convenient"
+        },
+        {
+          value: "iii",
+          label: "Learning through community repair"
+        },
+        {
+          value: "iv",
+          label: "Financial obstacles to fixing goods"
+        },
+        {
+          value: "v",
+          label: "Repair as part of future innovation"
+        },
+        {
+          value: "vi",
+          label: "Why products should never change"
+        },
+        {
+          value: "vii",
+          label: "The environmental case for longer use"
+        }
+      ],
+      answer: "iii",
+      explanation: "Paragraph C describes how community repair cafes teach participants and build confidence.",
+      evidence: "they also learn how objects work and gain confidence"
+    },
+    {
+      id: "t18-q4",
+      number: 4,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph D",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [
+        {
+          value: "i",
+          label: "Legal arguments over access to repair"
+        },
+        {
+          value: "ii",
+          label: "Why replacement became convenient"
+        },
+        {
+          value: "iii",
+          label: "Learning through community repair"
+        },
+        {
+          value: "iv",
+          label: "Financial obstacles to fixing goods"
+        },
+        {
+          value: "v",
+          label: "Repair as part of future innovation"
+        },
+        {
+          value: "vi",
+          label: "Why products should never change"
+        },
+        {
+          value: "vii",
+          label: "The environmental case for longer use"
+        }
+      ],
+      answer: "i",
+      explanation: "Paragraph D covers the legal debate that produced right-to-repair laws.",
+      evidence: "The debate has led to right-to-repair laws in several places"
+    },
+    {
+      id: "t18-q5",
+      number: 5,
+      group: "Questions 1-5: Matching Headings",
+      kind: "matching-headings",
+      prompt: "Paragraph E",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [
+        {
+          value: "i",
+          label: "Legal arguments over access to repair"
+        },
+        {
+          value: "ii",
+          label: "Why replacement became convenient"
+        },
+        {
+          value: "iii",
+          label: "Learning through community repair"
+        },
+        {
+          value: "iv",
+          label: "Financial obstacles to fixing goods"
+        },
+        {
+          value: "v",
+          label: "Repair as part of future innovation"
+        },
+        {
+          value: "vi",
+          label: "Why products should never change"
+        },
+        {
+          value: "vii",
+          label: "The environmental case for longer use"
+        }
+      ],
+      answer: "iv",
+      explanation: "Paragraph E discusses cost as the main barrier preventing people from choosing repair.",
+      evidence: "Economics remains a major barrier"
+    },
+    {
+      id: "t18-q6",
+      number: 6,
+      group: "Questions 6-9: True/False/Not Given",
+      kind: "true-false-not-given",
+      prompt: "Some manufacturers claim sealed designs have practical advantages.",
+      instruction: "Do the following statements agree with the information given in Reading Passage 1? Write TRUE, FALSE or NOT GIVEN.",
+      options: [
+        {
+          value: "TRUE",
+          label: "TRUE"
+        },
+        {
+          value: "FALSE",
+          label: "FALSE"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "TRUE",
+      explanation: "Paragraph D states manufacturers argue sealed designs improve safety, reduce weight, or protect intellectual property, which are practical advantages.",
+      evidence: "Manufacturers may argue that sealed designs improve safety, reduce weight, or protect intellectual property"
+    },
+    {
+      id: "t18-q7",
+      number: 7,
+      group: "Questions 6-9: True/False/Not Given",
+      kind: "true-false-not-given",
+      prompt: "Extending product life can reduce environmental impact.",
+      instruction: "Do the following statements agree with the information given in Reading Passage 1? Write TRUE, FALSE or NOT GIVEN.",
+      options: [
+        {
+          value: "TRUE",
+          label: "TRUE"
+        },
+        {
+          value: "FALSE",
+          label: "FALSE"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "TRUE",
+      explanation: "Paragraph B directly states that extending a product's life can reduce its overall environmental impact.",
+      evidence: "Extending a product's life by a few years can therefore reduce its overall environmental impact"
+    },
+    {
+      id: "t18-q8",
+      number: 8,
+      group: "Questions 6-9: True/False/Not Given",
+      kind: "true-false-not-given",
+      prompt: "The passage says all governments have already passed right-to-repair laws.",
+      instruction: "Do the following statements agree with the information given in Reading Passage 1? Write TRUE, FALSE or NOT GIVEN.",
+      options: [
+        {
+          value: "TRUE",
+          label: "TRUE"
+        },
+        {
+          value: "FALSE",
+          label: "FALSE"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "NOT GIVEN",
+      explanation: "Paragraph D says such laws exist 'in several places', not that every government has passed them, so this cannot be confirmed.",
+      evidence: "right-to-repair laws in several places"
+    },
+    {
+      id: "t18-q9",
+      number: 9,
+      group: "Questions 6-9: True/False/Not Given",
+      kind: "true-false-not-given",
+      prompt: "Repair cafes only exist to train professional engineers.",
+      instruction: "Do the following statements agree with the information given in Reading Passage 1? Write TRUE, FALSE or NOT GIVEN.",
+      options: [
+        {
+          value: "TRUE",
+          label: "TRUE"
+        },
+        {
+          value: "FALSE",
+          label: "FALSE"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "FALSE",
+      explanation: "Paragraph C describes repair cafes as bringing together volunteers and residents, not as training grounds for professional engineers.",
+      evidence: "Community repair cafes bring volunteers and residents together to fix household items"
+    },
+    {
+      id: "t18-q10",
+      number: 10,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "Repair culture challenges a system based on 10. ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "replacement",
+      explanation: "Paragraph A explains that products have been designed around replacement rather than repair, the system repair culture challenges.",
+      evidence: "many consumer products have been designed around replacement rather than repair"
+    },
+    {
+      id: "t18-q11",
+      number: 11,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "It may reduce waste by slowing extraction and 11. ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "disposal",
+      explanation: "Paragraph B states that repair slows the cycle of extraction, production, and disposal.",
+      evidence: "it slows the cycle of extraction, production, and disposal"
+    },
+    {
+      id: "t18-q12",
+      number: 12,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "Community repair can build confidence, while right-to-repair laws may require access to parts and 12. ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "manuals",
+      explanation: "Paragraph D notes that right-to-repair laws require companies to provide parts, manuals, or diagnostic information.",
+      evidence: "requiring companies to provide parts, manuals, or diagnostic information"
+    },
+    {
+      id: "t18-q13",
+      number: 13,
+      group: "Questions 10-13: Summary Completion",
+      kind: "summary-completion",
+      prompt: "For repair to become common, products need more durability and 13. ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "maintainability",
+      explanation: "Paragraph F states that innovation should include durability, openness, and maintainability.",
+      evidence: "it asks whether innovation should include durability, openness, and maintainability"
+    }
+  ]
+};
+
+const oceanFloorPassage: ReadingPassage = {
+  id: "ocean-floor-mapping",
+  title: "Mapping the Ocean Floor",
+  subtitle: "Sonar, submersibles, and the race to chart the deep sea",
+  paragraphs: [
+    {
+      label: "A",
+      text: "Although satellites can photograph land in extraordinary detail, mapping mountain ranges and river valleys within days, the ocean floor remains far less familiar despite covering most of the planet's surface. Water blocks many forms of direct observation, and deep-sea conditions make exploration expensive, requiring specialised vessels, pressure-resistant instruments, and highly trained crews. For a long time, maps of the seabed were based on scattered measurements taken by ships, which recorded depth at isolated points along their routes rather than continuously across the seafloor. These maps were useful for navigation, helping vessels avoid shallow hazards, but they left huge areas represented by estimates rather than direct evidence, leaving scientists to guess at the terrain lying between widely spaced survey lines."
+    },
+    {
+      label: "B",
+      text: "Modern mapping relies heavily on sonar. A ship sends sound pulses downward and measures how long the echoes take to return after bouncing off the seabed. Since sound travels through water at a known speed, researchers can estimate depth with considerable accuracy. Multibeam sonar improves this process by sending many pulses at different angles, creating a wider image of the seabed with each pass of the ship rather than a single narrow line of depth readings. The result can reveal mountains, trenches, plains, and signs of underwater landslides, producing detailed three-dimensional pictures of terrain that would otherwise remain completely hidden from view."
+    },
+    {
+      label: "C",
+      text: "Mapping the ocean floor matters for science. Seafloor shape influences currents, habitats, and the movement of sediments, shaping where nutrients accumulate and where marine life gathers to feed or breed. Hydrothermal vents, for example, support unusual ecosystems that depend on chemical energy rather than sunlight, hosting bacteria, tube worms, and crabs that would be poisoned by surface conditions yet thrive in mineral-rich, superheated water. Submarine mountains can guide migrating animals and create areas of high biodiversity, acting as underwater landmarks and feeding grounds for whales, tuna, and seabirds that travel enormous distances each year. Without accurate maps, scientists may miss important relationships between geology and life, failing to notice how a ridge or a canyon shapes the ecosystem that depends on it."
+    },
+    {
+      label: "D",
+      text: "There are also practical reasons to improve seabed maps. Cables carrying internet traffic cross the ocean floor, and their routes must avoid unstable slopes where landslides could sever a connection relied upon by millions of people. Coastal communities need better information about earthquake faults and tsunami risk, since undersea geology can determine how a coastline will be affected when the seabed suddenly shifts. Fishing, mineral exploration, and offshore wind development all depend on knowledge of underwater terrain, from locating stable foundations for turbines to identifying seabed habitats that fishing fleets should avoid disturbing. Poor maps can increase costs and environmental damage, leading to misplaced infrastructure, wasted survey time, or accidental harm to fragile ecosystems that were never properly recorded."
+    },
+    {
+      label: "E",
+      text: "Autonomous underwater vehicles are expanding what can be mapped. Unlike surface ships, these machines can travel closer to the seabed and collect high-resolution data, capturing details that a signal sent from the surface would blur or miss entirely. Some are programmed to follow planned routes, methodically covering a survey area in straight lines, while others adjust their path in response to obstacles, avoiding canyons, wrecks, or unexpected terrain as they encounter it. However, they still face limits: batteries run down after a matter of hours, communication underwater is slow because radio signals do not travel well through water, and pressure increases dramatically with depth, testing the durability of hulls, seals, and electronic components on every long dive."
+    },
+    {
+      label: "F",
+      text: "International projects aim to produce a more complete map of the ocean floor, but the task is enormous. The oceans cover most of the planet, and high-resolution mapping takes time, often years of ship time for a single, well-surveyed region. Cooperation is also complicated by military secrecy, commercial competition, and the cost of research vessels. Even so, each new survey improves the picture, gradually replacing old estimates with verified depth readings gathered by sonar and satellite altimetry. Mapping the seabed is not merely filling blank space; it is building a foundation for safer technology, better science, and more responsible ocean use."
+    },
+    {
+      label: "G",
+      text: "There is also a question of priority. Coastal regions used by shipping, fishing, or energy companies are more likely to be surveyed than remote deep-ocean areas with no immediate commercial value, since funding tends to follow economic activity rather than scientific curiosity alone. This creates a distorted picture of the planet, in which economically useful places become visible first while vast stretches of open ocean remain essentially unmapped. Scientists argue that less profitable regions may still contain important geological records or fragile ecosystems, including features that could reveal how the seafloor has changed over millions of years. Deciding where to map next is therefore not only a technical matter. It involves choices about risk, curiosity, environmental responsibility, and whose interests are represented in global knowledge, raising questions that extend well beyond oceanography itself."
+    }
+  ],
+  questions: [
+    {
+      id: "t18-q14",
+      number: 14,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "Why were older ocean maps incomplete?",
+      instruction: "Choose the correct letter, A, B, C or D.",
+      options: [
+        {
+          value: "A",
+          label: "Satellites could not photograph land."
+        },
+        {
+          value: "B",
+          label: "They depended on scattered ship measurements."
+        },
+        {
+          value: "C",
+          label: "Ships were forbidden to travel at sea."
+        },
+        {
+          value: "D",
+          label: "Scientists had no interest in navigation."
+        }
+      ],
+      answer: "B",
+      explanation: "Paragraph A explains that older maps of the seabed were based on scattered measurements taken by ships.",
+      evidence: "maps of the seabed were based on scattered measurements taken by ships"
+    },
+    {
+      id: "t18-q15",
+      number: 15,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "Multibeam sonar is useful because it",
+      instruction: "Choose the correct letter, A, B, C or D.",
+      options: [
+        {
+          value: "A",
+          label: "sends many sound pulses at different angles"
+        },
+        {
+          value: "B",
+          label: "replaces the need for sound"
+        },
+        {
+          value: "C",
+          label: "works only in shallow rivers"
+        },
+        {
+          value: "D",
+          label: "photographs fish directly"
+        }
+      ],
+      answer: "A",
+      explanation: "Paragraph B states that multibeam sonar sends many pulses at different angles, creating a wider image of the seabed.",
+      evidence: "Multibeam sonar improves this process by sending many pulses at different angles"
+    },
+    {
+      id: "t18-q16",
+      number: 16,
+      group: "Questions 14-16: Multiple Choice",
+      kind: "multiple-choice",
+      prompt: "What is the main idea of paragraph F?",
+      instruction: "Choose the correct letter, A, B, C or D.",
+      options: [
+        {
+          value: "A",
+          label: "Ocean mapping is finished."
+        },
+        {
+          value: "B",
+          label: "Ocean mapping requires cooperation despite major difficulties."
+        },
+        {
+          value: "C",
+          label: "Military secrecy has no effect on research."
+        },
+        {
+          value: "D",
+          label: "High-resolution mapping is quick and cheap."
+        }
+      ],
+      answer: "B",
+      explanation: "Paragraph F shows that mapping the ocean floor is an enormous task that still requires international cooperation despite secrecy, competition, and cost.",
+      evidence: "Cooperation is also complicated by military secrecy, commercial competition, and the cost of research vessels"
+    },
+    {
+      id: "t18-q17",
+      number: 17,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "examples of commercial and safety uses for seabed maps",
+      instruction: "Which paragraph contains the following information? Choose the correct letter, A-G.",
+      options: [
+        {
+          value: "A",
+          label: "Paragraph A"
+        },
+        {
+          value: "B",
+          label: "Paragraph B"
+        },
+        {
+          value: "C",
+          label: "Paragraph C"
+        },
+        {
+          value: "D",
+          label: "Paragraph D"
+        },
+        {
+          value: "E",
+          label: "Paragraph E"
+        },
+        {
+          value: "F",
+          label: "Paragraph F"
+        },
+        {
+          value: "G",
+          label: "Paragraph G"
+        }
+      ],
+      answer: "D",
+      explanation: "Paragraph D lists cables, tsunami risk, fishing, mineral exploration, and offshore wind development as practical, commercial, and safety uses.",
+      evidence: "Fishing, mineral exploration, and offshore wind development all depend on knowledge of underwater terrain"
+    },
+    {
+      id: "t18-q18",
+      number: 18,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "the way sound is used to measure depth",
+      instruction: "Which paragraph contains the following information? Choose the correct letter, A-G.",
+      options: [
+        {
+          value: "A",
+          label: "Paragraph A"
+        },
+        {
+          value: "B",
+          label: "Paragraph B"
+        },
+        {
+          value: "C",
+          label: "Paragraph C"
+        },
+        {
+          value: "D",
+          label: "Paragraph D"
+        },
+        {
+          value: "E",
+          label: "Paragraph E"
+        },
+        {
+          value: "F",
+          label: "Paragraph F"
+        },
+        {
+          value: "G",
+          label: "Paragraph G"
+        }
+      ],
+      answer: "B",
+      explanation: "Paragraph B explains how a ship sends sound pulses and measures echo return time to estimate depth.",
+      evidence: "A ship sends sound pulses downward and measures how long the echoes take to return"
+    },
+    {
+      id: "t18-q19",
+      number: 19,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "technical limitations of underwater vehicles",
+      instruction: "Which paragraph contains the following information? Choose the correct letter, A-G.",
+      options: [
+        {
+          value: "A",
+          label: "Paragraph A"
+        },
+        {
+          value: "B",
+          label: "Paragraph B"
+        },
+        {
+          value: "C",
+          label: "Paragraph C"
+        },
+        {
+          value: "D",
+          label: "Paragraph D"
+        },
+        {
+          value: "E",
+          label: "Paragraph E"
+        },
+        {
+          value: "F",
+          label: "Paragraph F"
+        },
+        {
+          value: "G",
+          label: "Paragraph G"
+        }
+      ],
+      answer: "E",
+      explanation: "Paragraph E lists battery life, slow underwater communication, and pressure as limits facing autonomous underwater vehicles.",
+      evidence: "batteries run down after a matter of hours, communication underwater is slow"
+    },
+    {
+      id: "t18-q20",
+      number: 20,
+      group: "Questions 17-20: Matching Information",
+      kind: "matching-information",
+      prompt: "ecosystems that do not rely on sunlight",
+      instruction: "Which paragraph contains the following information? Choose the correct letter, A-G.",
+      options: [
+        {
+          value: "A",
+          label: "Paragraph A"
+        },
+        {
+          value: "B",
+          label: "Paragraph B"
+        },
+        {
+          value: "C",
+          label: "Paragraph C"
+        },
+        {
+          value: "D",
+          label: "Paragraph D"
+        },
+        {
+          value: "E",
+          label: "Paragraph E"
+        },
+        {
+          value: "F",
+          label: "Paragraph F"
+        },
+        {
+          value: "G",
+          label: "Paragraph G"
+        }
+      ],
+      answer: "C",
+      explanation: "Paragraph C describes hydrothermal vents supporting ecosystems that depend on chemical energy rather than sunlight.",
+      evidence: "Hydrothermal vents, for example, support unusual ecosystems that depend on chemical energy rather than sunlight"
+    },
+    {
+      id: "t18-q21",
+      number: 21,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "can operate closer to the seabed",
+      instruction: "Match each statement with the correct feature, A, B or C.",
+      options: [
+        {
+          value: "A",
+          label: "Surface ships"
+        },
+        {
+          value: "B",
+          label: "Multibeam sonar"
+        },
+        {
+          value: "C",
+          label: "Autonomous underwater vehicles"
+        }
+      ],
+      answer: "C",
+      explanation: "Paragraph E states that autonomous underwater vehicles can travel closer to the seabed than surface ships.",
+      evidence: "these machines can travel closer to the seabed and collect high-resolution data"
+    },
+    {
+      id: "t18-q22",
+      number: 22,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "historically provided scattered measurements",
+      instruction: "Match each statement with the correct feature, A, B or C.",
+      options: [
+        {
+          value: "A",
+          label: "Surface ships"
+        },
+        {
+          value: "B",
+          label: "Multibeam sonar"
+        },
+        {
+          value: "C",
+          label: "Autonomous underwater vehicles"
+        }
+      ],
+      answer: "A",
+      explanation: "Paragraph A explains that older seabed maps were based on scattered measurements taken by ships.",
+      evidence: "maps of the seabed were based on scattered measurements taken by ships"
+    },
+    {
+      id: "t18-q23",
+      number: 23,
+      group: "Questions 21-23: Matching Features",
+      kind: "matching-features",
+      prompt: "creates a wider image using angled pulses",
+      instruction: "Match each statement with the correct feature, A, B or C.",
+      options: [
+        {
+          value: "A",
+          label: "Surface ships"
+        },
+        {
+          value: "B",
+          label: "Multibeam sonar"
+        },
+        {
+          value: "C",
+          label: "Autonomous underwater vehicles"
+        }
+      ],
+      answer: "B",
+      explanation: "Paragraph B describes multibeam sonar sending pulses at different angles to create a wider image of the seabed.",
+      evidence: "sending many pulses at different angles, creating a wider image of the seabed"
+    },
+    {
+      id: "t18-q24",
+      number: 24,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Water blocks many forms of direct ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "observation",
+      explanation: "Paragraph A states that water blocks many forms of direct observation.",
+      evidence: "Water blocks many forms of direct observation"
+    },
+    {
+      id: "t18-q25",
+      number: 25,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Internet cables must avoid unstable ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "slopes",
+      explanation: "Paragraph D states that cable routes must avoid unstable slopes.",
+      evidence: "their routes must avoid unstable slopes"
+    },
+    {
+      id: "t18-q26",
+      number: 26,
+      group: "Questions 24-26: Sentence Completion",
+      kind: "sentence-completion",
+      prompt: "Cooperation is made harder by military secrecy and commercial ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "competition",
+      explanation: "Paragraph F states that cooperation is complicated by military secrecy, commercial competition, and vessel costs.",
+      evidence: "Cooperation is also complicated by military secrecy, commercial competition"
+    }
+  ]
+};
+
+const citiesRememberPassage: ReadingPassage = {
+  id: "how-cities-remember",
+  title: "How Cities Remember",
+  subtitle: "Memory, heritage, and change in the modern urban landscape",
+  paragraphs: [
+    {
+      label: "A",
+      text: "Cities preserve memory in ways that are both deliberate and accidental. Monuments, museums, street names, and public ceremonies are official forms of remembrance, planned and funded by governments or institutions that decide what deserves permanent recognition. At the same time, old shop signs, informal markets, worn steps, and neighbourhood stories carry traces of everyday life that no official body ever approved or catalogued. Urban memory is therefore not stored in one archive, filed neatly for later retrieval; it is distributed across buildings, habits, images, and arguments about what should be protected or forgotten. A single street can hold a plaque commemorating a historic event alongside a worn doorway that only long-term residents recognise as meaningful, and both belong equally to the city's memory."
+    },
+    {
+      label: "B",
+      text: "The politics of memory becomes visible when cities change quickly. A factory district may be converted into apartments, a traditional market may be replaced by a shopping centre, or a street may be renamed after a new political hero, erasing the previous name from maps and signage. Supporters of change often describe these projects as modernisation, pointing to new housing, improved infrastructure, and economic opportunity as clear benefits for the city as a whole. Critics may see them as erasure, especially when residents with fewer resources are forced out and their histories receive little recognition. The same physical transformation can therefore be told as either progress or loss, depending on who is telling the story."
+    },
+    {
+      label: "C",
+      text: "Heritage protection tries to manage this tension, but it is selective by nature. A city cannot preserve every building or practice, since limited funding and competing priorities force difficult choices about what receives protection. Officials must decide which places are historically significant, architecturally rare, or socially meaningful, applying criteria that inevitably favour some communities and buildings over others. These categories do not always agree with one another. A modest building may have little architectural value but deep importance for a migrant community, serving as a gathering place despite its plain appearance. Conversely, an impressive building may be preserved even if few residents feel connected to it, protected chiefly for its design rather than for any living relationship with the people around it."
+    },
+    {
+      label: "D",
+      text: "Tourism can both support and distort urban memory. Visitor interest may bring money for restoration and encourage pride in local history, funding repairs that a city might otherwise be unable to afford and encouraging residents to value buildings they once overlooked. However, neighbourhoods can be simplified into attractive images for outsiders, reduced to a handful of photogenic streets, festivals, or dishes that are easy to market. A complex working district may be marketed as a charming cultural quarter, while poverty, labour conflict, or displacement is left out of the story entirely, hidden behind carefully curated tours and souvenir shops. In such cases, memory becomes a product rather than a conversation, packaged for consumption instead of debated, questioned, or allowed to remain complicated."
+    },
+    {
+      label: "E",
+      text: "Digital archives offer new possibilities. Residents can upload photographs, record oral histories, and map places that official heritage lists ignore, building an alternative record shaped by ordinary experience rather than official designation. These projects can make memory more democratic, especially when they include minority languages and personal experiences that rarely appear in museums or textbooks, giving voice to communities long excluded from formal recognition. Yet digital memory is fragile. Platforms close, file formats become obsolete, and online material may be hard to verify, leaving gaps that can be just as damaging as the physical demolition of a building. Preservation still requires institutions, resources, and careful description, since technology alone cannot guarantee that a recording, photograph, or story will remain accessible decades from now."
+    },
+    {
+      label: "F",
+      text: "The most thoughtful urban memory projects do not simply freeze a city in the past. They allow old and new uses to coexist, treating history as a living layer rather than a museum piece sealed off from daily life. A former railway station may become a library while retaining signs of its original function, such as departure boards, platform edges, or ironwork left visible for visitors to notice. A market may be renovated without removing long-standing traders, updating stalls and facilities while keeping the relationships and routines that make the place recognisable to those who use it daily. Such projects recognise that memory is not opposed to change; rather, it can guide change by showing what communities value, offering direction rather than resistance."
+    },
+    {
+      label: "G",
+      text: "Remembering a city is therefore an active process. It involves selection, disagreement, maintenance, and imagination, requiring ongoing decisions rather than a single act of preservation completed once and left untouched. The question is not whether cities should change, because they always do, shaped by economics, migration, technology, and shifting political priorities. The harder question is who gets to influence the story of that change, and whose voices are consulted before a building is demolished, a street renamed, or a market redeveloped. When memory is shared broadly, drawing on official records as well as informal and digital sources, urban development can become less like replacement and more like continuity, allowing a city to grow without erasing the people and histories that shaped it."
+    }
+  ],
+  questions: [
+    {
+      id: "t18-q27",
+      number: 27,
+      group: "Questions 27-30: Yes/No/Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer believes urban memory exists in both official and informal forms.",
+      instruction: "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES, NO or NOT GIVEN.",
+      options: [
+        {
+          value: "YES",
+          label: "YES"
+        },
+        {
+          value: "NO",
+          label: "NO"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "YES",
+      explanation: "Paragraph A distinguishes official forms of remembrance from informal traces of everyday life, confirming both exist.",
+      evidence: "Monuments, museums, street names, and public ceremonies are official forms of remembrance"
+    },
+    {
+      id: "t18-q28",
+      number: 28,
+      group: "Questions 27-30: Yes/No/Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer suggests tourism can remove difficult parts of a neighbourhood's history.",
+      instruction: "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES, NO or NOT GIVEN.",
+      options: [
+        {
+          value: "YES",
+          label: "YES"
+        },
+        {
+          value: "NO",
+          label: "NO"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "YES",
+      explanation: "Paragraph D states that poverty, labour conflict, or displacement is left out of the story when tourism markets a neighbourhood.",
+      evidence: "poverty, labour conflict, or displacement is left out of the story entirely"
+    },
+    {
+      id: "t18-q29",
+      number: 29,
+      group: "Questions 27-30: Yes/No/Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer argues that every old building should be preserved.",
+      instruction: "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES, NO or NOT GIVEN.",
+      options: [
+        {
+          value: "YES",
+          label: "YES"
+        },
+        {
+          value: "NO",
+          label: "NO"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "NO",
+      explanation: "Paragraph C states directly that a city cannot preserve every building or practice, contradicting this statement.",
+      evidence: "A city cannot preserve every building or practice"
+    },
+    {
+      id: "t18-q30",
+      number: 30,
+      group: "Questions 27-30: Yes/No/Not Given",
+      kind: "yes-no-not-given",
+      prompt: "The writer says digital archives are always more reliable than museums.",
+      instruction: "Do the following statements agree with the claims of the writer in Reading Passage 3? Write YES, NO or NOT GIVEN.",
+      options: [
+        {
+          value: "YES",
+          label: "YES"
+        },
+        {
+          value: "NO",
+          label: "NO"
+        },
+        {
+          value: "NOT GIVEN",
+          label: "NOT GIVEN"
+        }
+      ],
+      answer: "NO",
+      explanation: "Paragraph E states that digital memory is fragile and online material may be hard to verify, the opposite of always being more reliable.",
+      evidence: "Yet digital memory is fragile"
+    },
+    {
+      id: "t18-q31",
+      number: 31,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "matching-features",
+      prompt: "A modest community building",
+      instruction: "Complete each sentence with the correct ending, A-F, below.",
+      options: [
+        {
+          value: "A",
+          label: "may be remembered even without architectural importance."
+        },
+        {
+          value: "B",
+          label: "can turn memory into a simplified product."
+        },
+        {
+          value: "C",
+          label: "makes heritage protection unnecessary."
+        },
+        {
+          value: "D",
+          label: "may allow personal histories to be included."
+        },
+        {
+          value: "E",
+          label: "is impossible in cities that develop quickly."
+        },
+        {
+          value: "F",
+          label: "can guide change rather than prevent it."
+        }
+      ],
+      answer: "A",
+      explanation: "Paragraph C notes a modest building may have little architectural value but deep importance for a migrant community.",
+      evidence: "A modest building may have little architectural value but deep importance for a migrant community"
+    },
+    {
+      id: "t18-q32",
+      number: 32,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "matching-features",
+      prompt: "Tourism marketing",
+      instruction: "Complete each sentence with the correct ending, A-F, below.",
+      options: [
+        {
+          value: "A",
+          label: "may be remembered even without architectural importance."
+        },
+        {
+          value: "B",
+          label: "can turn memory into a simplified product."
+        },
+        {
+          value: "C",
+          label: "makes heritage protection unnecessary."
+        },
+        {
+          value: "D",
+          label: "may allow personal histories to be included."
+        },
+        {
+          value: "E",
+          label: "is impossible in cities that develop quickly."
+        },
+        {
+          value: "F",
+          label: "can guide change rather than prevent it."
+        }
+      ],
+      answer: "B",
+      explanation: "Paragraph D explains that in such cases memory becomes a product rather than a conversation.",
+      evidence: "memory becomes a product rather than a conversation"
+    },
+    {
+      id: "t18-q33",
+      number: 33,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "matching-features",
+      prompt: "Digital archiving",
+      instruction: "Complete each sentence with the correct ending, A-F, below.",
+      options: [
+        {
+          value: "A",
+          label: "may be remembered even without architectural importance."
+        },
+        {
+          value: "B",
+          label: "can turn memory into a simplified product."
+        },
+        {
+          value: "C",
+          label: "makes heritage protection unnecessary."
+        },
+        {
+          value: "D",
+          label: "may allow personal histories to be included."
+        },
+        {
+          value: "E",
+          label: "is impossible in cities that develop quickly."
+        },
+        {
+          value: "F",
+          label: "can guide change rather than prevent it."
+        }
+      ],
+      answer: "D",
+      explanation: "Paragraph E states digital archives can include minority languages and personal experiences that rarely appear elsewhere.",
+      evidence: "especially when they include minority languages and personal experiences"
+    },
+    {
+      id: "t18-q34",
+      number: 34,
+      group: "Questions 31-34: Matching Sentence Endings",
+      kind: "matching-features",
+      prompt: "Urban memory",
+      instruction: "Complete each sentence with the correct ending, A-F, below.",
+      options: [
+        {
+          value: "A",
+          label: "may be remembered even without architectural importance."
+        },
+        {
+          value: "B",
+          label: "can turn memory into a simplified product."
+        },
+        {
+          value: "C",
+          label: "makes heritage protection unnecessary."
+        },
+        {
+          value: "D",
+          label: "may allow personal histories to be included."
+        },
+        {
+          value: "E",
+          label: "is impossible in cities that develop quickly."
+        },
+        {
+          value: "F",
+          label: "can guide change rather than prevent it."
+        }
+      ],
+      answer: "F",
+      explanation: "Paragraph F states memory is not opposed to change; rather, it can guide change.",
+      evidence: "memory is not opposed to change; rather, it can guide change"
+    },
+    {
+      id: "t18-q35",
+      number: 35,
+      group: "Questions 35-37: Flow-chart Completion",
+      kind: "sentence-completion",
+      prompt: "Rapid change -> supporters call it 35. ________",
+      instruction: "Complete the flow-chart below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "modernisation",
+      explanation: "Paragraph B states supporters of change often describe these projects as modernisation.",
+      evidence: "Supporters of change often describe these projects as modernisation"
+    },
+    {
+      id: "t18-q36",
+      number: 36,
+      group: "Questions 35-37: Flow-chart Completion",
+      kind: "sentence-completion",
+      prompt: "-> critics may see 36. ________",
+      instruction: "Complete the flow-chart below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "erasure",
+      explanation: "Paragraph B states critics may see the same projects as erasure.",
+      evidence: "Critics may see them as erasure"
+    },
+    {
+      id: "t18-q37",
+      number: 37,
+      group: "Questions 35-37: Flow-chart Completion",
+      kind: "sentence-completion",
+      prompt: "-> heritage officials must decide what is 37. ________",
+      instruction: "Complete the flow-chart below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "significant",
+      explanation: "Paragraph C states officials must decide which places are historically significant.",
+      evidence: "Officials must decide which places are historically significant"
+    },
+    {
+      id: "t18-q38",
+      number: 38,
+      group: "Questions 38-39: Diagram Label Completion",
+      kind: "diagram-labelling",
+      prompt: "Digital memory risks: platforms close + file formats become 38. ________",
+      instruction: "Complete the diagram labels below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "obsolete",
+      explanation: "Paragraph E lists file formats becoming obsolete as one of the risks facing digital memory.",
+      evidence: "file formats become obsolete"
+    },
+    {
+      id: "t18-q39",
+      number: 39,
+      group: "Questions 38-39: Diagram Label Completion",
+      kind: "diagram-labelling",
+      prompt: "+ material hard to 39. ________",
+      instruction: "Complete the diagram labels below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "verify",
+      explanation: "Paragraph E states online material may be hard to verify.",
+      evidence: "online material may be hard to verify"
+    },
+    {
+      id: "t18-q40",
+      number: 40,
+      group: "Question 40: Short Answer Question",
+      kind: "short-answer",
+      prompt: "According to paragraph G, what is the harder question about urban change?",
+      instruction: "Answer the question below. Write NO MORE THAN FOUR WORDS from the passage.",
+      answer: "who gets to influence",
+      explanation: "Paragraph G states the harder question is who gets to influence the story of that change.",
+      evidence: "The harder question is who gets to influence the story of that change"
+    }
+  ]
+};
+
+const academicFullT18: ReadingPracticeTest = {
+  id: "academic-full-t18",
+  title: "Full Test 18: Repair, the Seafloor, and What Cities Remember",
+  description: "A Cambridge-style Academic Reading test covering repair culture, ocean floor mapping, and urban memory, with 40 questions across three passages.",
+  track: "Cambridge-style",
+  level: "Advanced",
+  minutes: 60,
+  passages: [repairCulturePassage, oceanFloorPassage, citiesRememberPassage],
+};
+
+const schoolGardensPassage: ReadingPassage = {
+  id: "school-gardens-basics",
+  title: "The Value of School Gardens",
+  subtitle: "Why hands-on growing belongs in the curriculum, not on the sidelines",
+  paragraphs: [
+    { label: "A", text: "School gardens are sometimes treated as pleasant extras, useful mainly for decoration or an occasional outdoor lesson. Yet educators in many countries are reconsidering their value. A garden can connect science, health, environmental awareness, and social learning in one concrete setting, drawing together subjects normally taught separately. Instead of reading only about plant growth from a diagram, students can observe germination, soil moisture, insects, and seasonal change with their own eyes, returning to the same beds to note what has changed. The garden becomes a small laboratory that is alive and unpredictable, responding to weather, pests, and neglect in ways a textbook page never can." },
+    { label: "B", text: "One clear educational benefit is that gardens make abstract biological processes visible. Photosynthesis, nutrient cycles, pollination, and decomposition are difficult for young students to understand when presented only as arrows and labels on a diagram. When students see leaves damaged by pests, watch bees moving between flowers, or notice compost slowly turning into dark soil, they can connect classroom vocabulary with direct physical evidence rather than memorised definitions. A teacher can point to a wilting seedling and ask why it is struggling, turning a routine walk into an informal science lesson. This hands-on exposure does not replace formal teaching; rather, it gives teachers concrete examples that students can return to over the term." },
+    { label: "C", text: "Gardens can also influence eating habits, an outcome that interests health researchers as much as teachers. Children who grow vegetables themselves may be more willing to taste unfamiliar produce, especially when they have planted the seed, watered the seedling, and harvested the crop themselves. Surveys of school garden programmes often report that children who once refused certain foods will try a small piece of something they grew, out of curiosity or pride in the result. The effect, however, is not automatic, and a few isolated gardening lessons will not transform a child's diet on their own; deeper habits are shaped by family and repeated exposure. What school gardens can do is support wider nutrition programmes by making healthy food more familiar and less abstract." },
+    { label: "D", text: "Social skills are another advantage that teachers frequently mention. Garden tasks naturally require cooperation and a division of labour: one group may prepare the soil, another may measure and record growth, and another may carry water to thirsty seedlings. These roles shift from week to week, so most students experience several kinds of responsibility. Students who struggle in traditional classrooms, perhaps because reading or writing does not come easily, may find an unexpected form of confidence outdoors, where success depends on patience and observation rather than test performance. Teachers often report that practical, hands-on tasks create opportunities for leadership among children who are usually quiet during written work." },
+    { label: "E", text: "The main challenges facing school gardens are time, maintenance, and adequate teacher support, none of which are trivial within a crowded school calendar. A garden can fail quickly if no one waters it during school holidays, or if teachers feel unprepared or too busy to weave it into their lessons, leaving beds overgrown within weeks. Some schools depend too heavily on a single enthusiastic staff member who organises everything from seed orders to watering rotas, which makes the project vulnerable when that person changes jobs or retires. Successful, long-lasting gardens usually involve shared responsibility spread across several teachers, willing families, and local volunteers, so the project does not collapse the moment one person steps back." },
+    { label: "F", text: "Climate and available space also matter, explaining why no two school gardens look quite the same. A school in a dense city may have nothing more than a handful of containers on a rooftop, while a rural school may have a large open plot but limited water during the dry season. There is no single model that works everywhere, and copying a design from a different climate without adaptation often fails within a year or two. The most effective projects adapt carefully to local conditions, choosing crops suited to the available light and rainfall, and treat the garden as part of the curriculum rather than as an isolated activity. When this happens, even a modest patch of soil can become a powerful educational resource that shapes how students think about food and science." },
+    { label: "G", text: "Assessment is another important reason gardens should be integrated carefully into the wider curriculum rather than left to run informally. If outdoor work is treated only as play, its genuine academic value may be underestimated. Students can measure plant growth with rulers, compare soil types from different parts of the site, write detailed observation journals, calculate harvest weights and convert them into simple graphs, or debate how limited water should be shared fairly during dry weeks. These varied activities produce real, recordable evidence of learning across several subjects, not merely anecdotal impressions of enjoyment. They also help teachers include students who may not perform well in standard written tests but can reason clearly through hands-on, practical tasks. The strongest garden programmes therefore combine curiosity with structure, connecting exploration to measurable learning goals." },
+  ],
+  questions: [
+    {
+      id: "t19-q1",
+      number: 1,
+      group: "Questions 1-5",
+      kind: "matching-headings",
+      prompt: "Paragraph A",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [{ value: "i", label: "Practical limits and shared responsibility" }, { value: "ii", label: "A living classroom" }, { value: "iii", label: "Better results from online lessons" }, { value: "iv", label: "Making scientific ideas observable" }, { value: "v", label: "Local adaptation and curriculum links" }, { value: "vi", label: "Food familiarity and student taste" }, { value: "vii", label: "Confidence through cooperation" }],
+      answer: "ii",
+      explanation: "Paragraph A introduces the garden as a hands-on, ever-changing space for learning across subjects.",
+      evidence: "The garden becomes a small laboratory that is alive and unpredictable",
+    },
+    {
+      id: "t19-q2",
+      number: 2,
+      group: "Questions 1-5",
+      kind: "matching-headings",
+      prompt: "Paragraph B",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [{ value: "i", label: "Practical limits and shared responsibility" }, { value: "ii", label: "A living classroom" }, { value: "iii", label: "Better results from online lessons" }, { value: "iv", label: "Making scientific ideas observable" }, { value: "v", label: "Local adaptation and curriculum links" }, { value: "vi", label: "Food familiarity and student taste" }, { value: "vii", label: "Confidence through cooperation" }],
+      answer: "iv",
+      explanation: "Paragraph B explains how gardens let students see processes like photosynthesis and decomposition directly.",
+      evidence: "gardens make abstract biological processes visible",
+    },
+    {
+      id: "t19-q3",
+      number: 3,
+      group: "Questions 1-5",
+      kind: "matching-headings",
+      prompt: "Paragraph C",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [{ value: "i", label: "Practical limits and shared responsibility" }, { value: "ii", label: "A living classroom" }, { value: "iii", label: "Better results from online lessons" }, { value: "iv", label: "Making scientific ideas observable" }, { value: "v", label: "Local adaptation and curriculum links" }, { value: "vi", label: "Food familiarity and student taste" }, { value: "vii", label: "Confidence through cooperation" }],
+      answer: "vi",
+      explanation: "Paragraph C describes how growing vegetables can make children more willing to try them.",
+      evidence: "Children who grow vegetables themselves may be more willing to taste unfamiliar produce",
+    },
+    {
+      id: "t19-q4",
+      number: 4,
+      group: "Questions 1-5",
+      kind: "matching-headings",
+      prompt: "Paragraph D",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [{ value: "i", label: "Practical limits and shared responsibility" }, { value: "ii", label: "A living classroom" }, { value: "iii", label: "Better results from online lessons" }, { value: "iv", label: "Making scientific ideas observable" }, { value: "v", label: "Local adaptation and curriculum links" }, { value: "vi", label: "Food familiarity and student taste" }, { value: "vii", label: "Confidence through cooperation" }],
+      answer: "vii",
+      explanation: "Paragraph D discusses how cooperative garden tasks build confidence, especially for quieter students.",
+      evidence: "Garden tasks naturally require cooperation and a division of labour",
+    },
+    {
+      id: "t19-q5",
+      number: 5,
+      group: "Questions 1-5",
+      kind: "matching-headings",
+      prompt: "Paragraph E",
+      instruction: "Choose the correct heading for each paragraph from the list of headings below.",
+      options: [{ value: "i", label: "Practical limits and shared responsibility" }, { value: "ii", label: "A living classroom" }, { value: "iii", label: "Better results from online lessons" }, { value: "iv", label: "Making scientific ideas observable" }, { value: "v", label: "Local adaptation and curriculum links" }, { value: "vi", label: "Food familiarity and student taste" }, { value: "vii", label: "Confidence through cooperation" }],
+      answer: "i",
+      explanation: "Paragraph E outlines the practical obstacles gardens face and the need for shared responsibility.",
+      evidence: "Successful, long-lasting gardens usually involve shared responsibility spread across several teachers, willing families, and local volunteers",
+    },
+    {
+      id: "t19-q6",
+      number: 6,
+      group: "Questions 6-9",
+      kind: "true-false-not-given",
+      prompt: "Practical garden tasks may help quieter students show leadership.",
+      instruction: "Do the following statements agree with the information given in Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "TRUE",
+      explanation: "Paragraph D states that practical tasks create leadership opportunities for children who are usually quiet during written work.",
+      evidence: "opportunities for leadership among children who are usually quiet during written work",
+    },
+    {
+      id: "t19-q7",
+      number: 7,
+      group: "Questions 6-9",
+      kind: "true-false-not-given",
+      prompt: "The passage says rooftop gardens are illegal in dense cities.",
+      instruction: "Do the following statements agree with the information given in Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NOT GIVEN",
+      explanation: "Paragraph F mentions rooftop containers in dense cities but never discusses their legality.",
+      evidence: "a handful of containers on a rooftop",
+    },
+    {
+      id: "t19-q8",
+      number: 8,
+      group: "Questions 6-9",
+      kind: "true-false-not-given",
+      prompt: "A few garden lessons always change children's diet completely.",
+      instruction: "Do the following statements agree with the information given in Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "FALSE",
+      explanation: "Paragraph C explicitly states the effect is not automatic and a few lessons will not transform diet on their own.",
+      evidence: "a few isolated gardening lessons will not transform a child's diet on their own",
+    },
+    {
+      id: "t19-q9",
+      number: 9,
+      group: "Questions 6-9",
+      kind: "true-false-not-given",
+      prompt: "School gardens can help students connect scientific terms with real examples.",
+      instruction: "Do the following statements agree with the information given in Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      options: [{ value: "TRUE", label: "TRUE" }, { value: "FALSE", label: "FALSE" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "TRUE",
+      explanation: "Paragraph B explains that gardens let students connect classroom vocabulary with direct physical evidence.",
+      evidence: "they can connect classroom vocabulary with direct physical evidence",
+    },
+    {
+      id: "t19-q10",
+      number: 10,
+      group: "Questions 10-13",
+      kind: "summary-completion",
+      prompt: "School gardens can operate as small ________ where students observe living processes.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "laboratory",
+      explanation: "Paragraph A describes the garden as becoming a small laboratory that is alive and unpredictable.",
+      evidence: "The garden becomes a small laboratory that is alive and unpredictable",
+    },
+    {
+      id: "t19-q11",
+      number: 11,
+      group: "Questions 10-13",
+      kind: "summary-completion",
+      prompt: "They may support nutrition by making vegetables more ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "familiar",
+      explanation: "Paragraph C states that gardens support nutrition programmes by making healthy food more familiar and less abstract.",
+      evidence: "making healthy food more familiar and less abstract",
+    },
+    {
+      id: "t19-q12",
+      number: 12,
+      group: "Questions 10-13",
+      kind: "summary-completion",
+      prompt: "Garden work also develops cooperation and sometimes ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "leadership",
+      explanation: "Paragraph D notes that practical tasks create opportunities for leadership among quieter children.",
+      evidence: "opportunities for leadership among children who are usually quiet during written work",
+    },
+    {
+      id: "t19-q13",
+      number: 13,
+      group: "Questions 10-13",
+      kind: "summary-completion",
+      prompt: "For long-term success, projects should be adapted to local conditions and linked to the ________.",
+      instruction: "Complete the summary below. Write NO MORE THAN TWO WORDS from the passage for each answer.",
+      answer: "curriculum",
+      explanation: "Paragraph F states that the most effective projects treat the garden as part of the curriculum.",
+      evidence: "treat the garden as part of the curriculum",
+    },
+  ],
+};
+
+const timeZonesPassage: ReadingPassage = {
+  id: "development-of-time-zones",
+  title: "The Development of Time Zones",
+  subtitle: "How trains, telegraphs, and empires carved the world into hours",
+  paragraphs: [
+    { label: "A", text: "Before the nineteenth century, local time in most parts of the world was usually based directly on the position of the sun rather than on any shared, artificial standard. Noon occurred, by definition, when the sun reached its highest point above a particular town, and clocks were typically set by a local observatory, church, or town hall to match that moment. This system worked reasonably well when travel and communication were slow and infrequent, since few people needed to compare the exact time in two distant places on the same day. A difference of several minutes between nearby towns mattered little to people moving by foot, horse, or sailing boat, since journeys took hours or days." },
+    { label: "B", text: "Railways changed this situation almost overnight. Trains moved far faster than any older form of transport and needed detailed, published timetables that passengers and staff could rely on. If each town along a line kept its own local time, scheduling quickly became confusing, and in the worst cases genuinely dangerous, since two trains might be marked as arriving at the same junction at times only accurate according to two different local clocks. To solve this, railway companies began to adopt a single standard time across their network, printing it on timetables and installing station clocks that all showed the same hour regardless of the sun's actual position. These were pragmatic business decisions, but they quietly prepared the way for wider national and international timekeeping systems." },
+    { label: "C", text: "Telegraphy also strongly encouraged standardisation, working alongside the railways. Messages could suddenly travel almost instantly across long distances, arriving in a distant city within minutes of being sent, which made the small differences between local times far more visible and, at times, genuinely confusing to those exchanging messages. Businesses coordinating shipments, newspapers reporting distant events, and governments managing far-off territories increasingly needed shared reference points so that a message timestamped in one place could be understood correctly in another. Standard time was therefore not only a railway issue; it was part of a much broader transformation in how people communicated and coordinated activity." },
+    { label: "D", text: "The division of the world into time zones was influenced by geography, politics, and the legacies of empire, and was never simply a matter of mathematics. In theory, zones could follow neat, evenly spaced lines of longitude, each differing from its neighbour by exactly one hour. In practice, however, borders were repeatedly adjusted to fit the shape of countries, existing trade relationships, and administrative convenience, so that a single province would not be awkwardly split across two different times. Some large countries adopted multiple time zones to keep clock time reasonably close to solar time, while others, often for reasons of national unity or administrative simplicity, preferred a single national time even where clock noon and solar noon could differ by an hour or more." },
+    { label: "E", text: "The introduction of standard time was not universally welcomed when it was first proposed, and in several countries it produced genuine public debate and, occasionally, open protest. Some people objected strongly that it replaced natural, locally rooted rhythms with an artificial system imposed from a distant capital, with little regard for the particular place where they lived. Local noon no longer necessarily matched clock noon, sometimes by a significant margin, which struck many as an odd break from the natural world outside their window. For farmers and other small communities whose working day had always followed the sun, the change could feel like a real loss of autonomy. Nevertheless, the practical advantages for transport, trade, and administration gradually outweighed this early resistance." },
+    { label: "F", text: "Today, time zones still create debate in ways that would likely surprise the engineers who first pushed for standardisation. Arguments over daylight saving time, the awkward scheduling of international business calls, and the demands of global online work all show that time remains as much a social arrangement as it is a fixed astronomical fact rooted in the sun's position. Digital devices now update automatically as travellers cross borders, making the system feel effortless and almost invisible to the ordinary user, who rarely thinks about where the boundary between two zones runs. But behind that quiet convenience lies a long and often contested history of negotiation between natural cycles, such as sunrise and sunset, and the practical demands of human coordination." },
+    { label: "G", text: "The experience of time zones is especially uneven in modern global work, where the same standardised system can feel very different depending on where an employee happens to be sitting. A meeting scheduled conveniently for one office may fall late at night for a colleague on another continent, forcing someone to sacrifice sleep or family time. Remote work has made such problems far more visible than before, because teams can now include members spread across many continents rather than a single city or country. In response, some organisations rotate meeting times deliberately, or record discussions and share notes, so inconvenience is spread more fairly. These practices show that standard time solves one coordination problem while quietly creating others." },
+  ],
+  questions: [
+    {
+      id: "t19-q14",
+      number: 14,
+      group: "Questions 14-16",
+      kind: "multiple-choice",
+      prompt: "Why did local solar time work reasonably well before the nineteenth century?",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "People never travelled." }, { value: "B", label: "Movement and communication were relatively slow." }, { value: "C", label: "All towns had identical noon times." }, { value: "D", label: "Railways already used timetables." }],
+      answer: "B",
+      explanation: "Paragraph A explains that this system worked well because travel and communication were slow and infrequent.",
+      evidence: "travel and communication were slow and infrequent",
+    },
+    {
+      id: "t19-q15",
+      number: 15,
+      group: "Questions 14-16",
+      kind: "multiple-choice",
+      prompt: "Railway companies adopted standard times mainly because",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "passengers disliked sunlight." }, { value: "B", label: "scheduling across local times was confusing." }, { value: "C", label: "telegraphs stopped working at noon." }, { value: "D", label: "farmers requested it." }],
+      answer: "B",
+      explanation: "Paragraph B states that scheduling across different local times quickly became confusing and even dangerous.",
+      evidence: "scheduling quickly became confusing",
+    },
+    {
+      id: "t19-q16",
+      number: 16,
+      group: "Questions 14-16",
+      kind: "multiple-choice",
+      prompt: "Paragraph D suggests that time zone borders",
+      instruction: "Choose the correct letter, A, B, C, or D.",
+      options: [{ value: "A", label: "always follow perfect longitude lines." }, { value: "B", label: "are shaped only by astronomy." }, { value: "C", label: "are influenced by political and practical concerns." }, { value: "D", label: "are identical in all countries." }],
+      answer: "C",
+      explanation: "Paragraph D states that borders were adjusted to fit countries, trade relationships, and administrative convenience.",
+      evidence: "borders were repeatedly adjusted to fit the shape of countries, existing trade relationships, and administrative convenience",
+    },
+    {
+      id: "t19-q17",
+      number: 17,
+      group: "Questions 17-20",
+      kind: "matching-information",
+      prompt: "objections to replacing local rhythms",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "E",
+      explanation: "Paragraph E describes objections that standard time replaced natural, locally rooted rhythms.",
+      evidence: "objected strongly that it replaced natural, locally rooted rhythms",
+    },
+    {
+      id: "t19-q18",
+      number: 18,
+      group: "Questions 17-20",
+      kind: "matching-information",
+      prompt: "the role of instant long-distance messaging",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "C",
+      explanation: "Paragraph C discusses how telegraphy allowed messages to travel almost instantly across long distances.",
+      evidence: "Messages could suddenly travel almost instantly across long distances",
+    },
+    {
+      id: "t19-q19",
+      number: 19,
+      group: "Questions 17-20",
+      kind: "matching-information",
+      prompt: "why old local time was acceptable",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "A",
+      explanation: "Paragraph A explains that solar time worked well because travel and communication were slow and infrequent.",
+      evidence: "travel and communication were slow and infrequent",
+    },
+    {
+      id: "t19-q20",
+      number: 20,
+      group: "Questions 17-20",
+      kind: "matching-information",
+      prompt: "current examples showing time is still debated",
+      instruction: "Which paragraph contains the following information? Write the correct letter, A-G.",
+      options: [{ value: "A", label: "Paragraph A" }, { value: "B", label: "Paragraph B" }, { value: "C", label: "Paragraph C" }, { value: "D", label: "Paragraph D" }, { value: "E", label: "Paragraph E" }, { value: "F", label: "Paragraph F" }, { value: "G", label: "Paragraph G" }],
+      answer: "F",
+      explanation: "Paragraph F gives daylight saving time, international business calls, and global online work as current examples of debate.",
+      evidence: "Arguments over daylight saving time, the awkward scheduling of international business calls, and the demands of global online work",
+    },
+    {
+      id: "t19-q21",
+      number: 21,
+      group: "Questions 21-23",
+      kind: "matching-features",
+      prompt: "updates automatically on devices",
+      instruction: "Match each description with the correct type of time, A, B, or C.",
+      options: [{ value: "A", label: "Local solar time" }, { value: "B", label: "Railway standard time" }, { value: "C", label: "Modern digital time" }],
+      answer: "C",
+      explanation: "Paragraph F states that digital devices now update automatically as travellers cross borders.",
+      evidence: "Digital devices now update automatically as travellers cross borders",
+    },
+    {
+      id: "t19-q22",
+      number: 22,
+      group: "Questions 21-23",
+      kind: "matching-features",
+      prompt: "depended on the sun's position in each town",
+      instruction: "Match each description with the correct type of time, A, B, or C.",
+      options: [{ value: "A", label: "Local solar time" }, { value: "B", label: "Railway standard time" }, { value: "C", label: "Modern digital time" }],
+      answer: "A",
+      explanation: "Paragraph A states that local time was based directly on the position of the sun.",
+      evidence: "local time in most parts of the world was usually based directly on the position of the sun",
+    },
+    {
+      id: "t19-q23",
+      number: 23,
+      group: "Questions 21-23",
+      kind: "matching-features",
+      prompt: "helped coordinate train timetables",
+      instruction: "Match each description with the correct type of time, A, B, or C.",
+      options: [{ value: "A", label: "Local solar time" }, { value: "B", label: "Railway standard time" }, { value: "C", label: "Modern digital time" }],
+      answer: "B",
+      explanation: "Paragraph B explains that trains needed detailed, published timetables, prompting standard time.",
+      evidence: "needed detailed, published timetables",
+    },
+    {
+      id: "t19-q24",
+      number: 24,
+      group: "Questions 24-26",
+      kind: "sentence-completion",
+      prompt: "Telegraphy made time differences more ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "visible",
+      explanation: "Paragraph C states that telegraphy made the small differences between local times far more visible.",
+      evidence: "made the small differences between local times far more visible",
+    },
+    {
+      id: "t19-q25",
+      number: 25,
+      group: "Questions 24-26",
+      kind: "sentence-completion",
+      prompt: "Some countries chose one national time for unity or ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "simplicity",
+      explanation: "Paragraph D notes that some countries preferred a single national time for reasons of unity or administrative simplicity.",
+      evidence: "for reasons of national unity or administrative simplicity",
+    },
+    {
+      id: "t19-q26",
+      number: 26,
+      group: "Questions 24-26",
+      kind: "sentence-completion",
+      prompt: "The history of time zones reflects negotiation between natural cycles and human ________.",
+      instruction: "Complete the sentences below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "coordination",
+      explanation: "Paragraph F describes a history of negotiation between natural cycles and the demands of human coordination.",
+      evidence: "negotiation between natural cycles, such as sunrise and sunset, and the practical demands of human coordination",
+    },
+  ],
+};
+
+const persuasiveDesignPassage: ReadingPassage = {
+  id: "ethics-of-persuasive-design",
+  title: "The Ethics of Persuasive Design",
+  subtitle: "Where helpful nudges end and manipulation begins",
+  paragraphs: [
+    { label: "A", text: "Persuasive design refers to features deliberately created to influence user behaviour, often in ways users barely notice. It can include reminders to exercise, prompts to save money, progress bars that fill in as a course is completed, or notifications encouraging users to return after inactivity. Not all persuasion of this kind is harmful, and it would be a mistake to treat every nudge as suspicious. A medicine reminder that helps someone take a prescribed dose, or a language streak that encourages daily practice, may genuinely support goals users already value. The real ethical difficulty lies not in the existence of persuasion but in deciding when helpful guidance quietly turns into manipulation that serves the company more than the user." },
+    { label: "B", text: "Designers building these features often rely on established behavioural psychology, borrowing techniques studied in laboratories and applying them to everyday apps. Research shows that people are more likely to act when a task is simple to start, feedback is immediate rather than delayed, and rewards are visible and satisfying. A fitness app may celebrate a completed walk with a small animation; a budgeting app may show how small weekly savings grow into a meaningful sum over months. These features can effectively translate distant, abstract long-term benefits, such as better health or financial security, into short-term motivation that feels rewarding right now. Without such features, many users may quietly abandon goals requiring repeated effort, since the payoff can feel too far away to sustain motivation." },
+    { label: "C", text: "However, exactly the same underlying techniques can be used to exploit attention rather than support it. Infinite scrolling feeds that never quite end, unpredictable rewards delivered at random intervals, and urgent-sounding notifications may keep users engaged past the point where they would honestly prefer to stop. A platform may formally claim to offer users a free choice, while quietly designing its interface so the most profitable option for the company is also the easiest and most prominent one to select. The underlying problem is not persuasion itself, which can be entirely benign, but persuasion that works against the user's own considered interests, exploiting attention and habit for the benefit of someone else." },
+    { label: "D", text: "Consent is central to any honest discussion of persuasive design, but it is far more complicated than it first appears. Users technically agree to lengthy terms of service the moment they tap \"accept,\" yet very few people ever read these long documents in full, and fewer still understand how interface design will go on to shape their behaviour. A person may consent to receive notifications from a new app without realising how frequently those notifications will interrupt focused work, family time, or sleep. Genuine, meaningful consent requires understandable choices presented in plain language, sensible default settings that do not quietly favour the company, and a straightforward ability to change those settings later without confusion." },
+    { label: "E", text: "Another important issue, closely related to consent, is vulnerability. Children, people with compulsive habits, and users experiencing stress or emotional difficulty may all be more affected by persuasive systems than the calm adult designers often imagine when testing a product. Ethical design should consider not only how an average user might respond, but also how those more easily influenced are likely to be affected by the same feature. A gambling-style reward pattern built into a game, offering rare and unpredictable prizes, may be relatively harmless for some adults but genuinely risky for younger users who cannot easily judge when to stop. Responsibility on the part of the designer increases sharply whenever they can predict that certain groups are likely to be harmed by a feature they release." },
+    { label: "F", text: "Companies often defend persuasive design by pointing to strong user engagement figures, presenting long average session times as evidence that people love the product. High engagement may indeed indicate genuine satisfaction in some cases, but it can just as easily reflect quiet dependence, habit formed under pressure, or simply a lack of realistic alternatives the user could switch to instead. Time spent on a platform is therefore, on its own, an incomplete and sometimes misleading measure of real value delivered to the person using it. A more honest evaluation would instead ask whether the product genuinely helps users achieve their own stated purposes, whether it respects rather than exploits their limited attention, and, importantly, whether leaving the product or reducing its use is straightforward." },
+    { label: "G", text: "Persuasive design will not simply disappear from digital products, because every interface, however minimal, guides user behaviour in some way, whether or not that influence is deliberate. The realistic goal should not be eliminating persuasion but ensuring accountability around how it is used. Designers and the companies that employ them need to explain what behaviour a feature is encouraging, why they are encouraging it, and, crucially, who actually benefits from that behaviour change. When persuasion is transparent about its aims, adjustable by the user, and genuinely aligned with user welfare rather than opposed to it, it can be a useful and welcome form of support. When it is instead hidden and one-sided in whose interests it serves, it becomes, in effect, a quiet and largely invisible form of control." },
+  ],
+  questions: [
+    {
+      id: "t19-q27",
+      number: 27,
+      group: "Questions 27-30",
+      kind: "yes-no-not-given",
+      prompt: "The writer suggests that immediate feedback can help users maintain useful habits.",
+      instruction: "Do the following statements agree with the claims of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "YES",
+      explanation: "Paragraph B explains that features like immediate feedback translate long-term benefits into short-term motivation that sustains effort.",
+      evidence: "translate distant, abstract long-term benefits, such as better health or financial security, into short-term motivation",
+    },
+    {
+      id: "t19-q28",
+      number: 28,
+      group: "Questions 27-30",
+      kind: "yes-no-not-given",
+      prompt: "The writer believes all forms of persuasive design are harmful.",
+      instruction: "Do the following statements agree with the claims of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NO",
+      explanation: "Paragraph A states plainly that not all persuasion of this kind is harmful.",
+      evidence: "Not all persuasion of this kind is harmful",
+    },
+    {
+      id: "t19-q29",
+      number: 29,
+      group: "Questions 27-30",
+      kind: "yes-no-not-given",
+      prompt: "The writer argues that long terms and conditions always produce genuine consent.",
+      instruction: "Do the following statements agree with the claims of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "NO",
+      explanation: "Paragraph D notes that very few people ever read these long documents in full, undermining genuine consent.",
+      evidence: "very few people ever read these long documents in full",
+    },
+    {
+      id: "t19-q30",
+      number: 30,
+      group: "Questions 27-30",
+      kind: "yes-no-not-given",
+      prompt: "The writer believes engagement figures alone do not prove a product is valuable.",
+      instruction: "Do the following statements agree with the claims of the writer in Passage 3? Write YES, NO, or NOT GIVEN.",
+      options: [{ value: "YES", label: "YES" }, { value: "NO", label: "NO" }, { value: "NOT GIVEN", label: "NOT GIVEN" }],
+      answer: "YES",
+      explanation: "Paragraph F states that time spent on a platform is an incomplete and sometimes misleading measure of real value.",
+      evidence: "an incomplete and sometimes misleading measure of real value",
+    },
+    {
+      id: "t19-q31",
+      number: 31,
+      group: "Questions 31-34",
+      kind: "matching-features",
+      prompt: "Behavioural feedback",
+      instruction: "Match each item with the correct ending, A-F.",
+      options: [{ value: "A", label: "may guide behaviour against a user's real interests." }, { value: "B", label: "can turn long-term goals into short-term motivation." }, { value: "C", label: "should be the only measure of product success." }, { value: "D", label: "requires clear choices and changeable settings." }, { value: "E", label: "affects no vulnerable users." }, { value: "F", label: "should involve accountability about who benefits." }],
+      answer: "B",
+      explanation: "Paragraph B explains that features like immediate feedback turn long-term goals into short-term motivation.",
+      evidence: "translate distant, abstract long-term benefits, such as better health or financial security, into short-term motivation",
+    },
+    {
+      id: "t19-q32",
+      number: 32,
+      group: "Questions 31-34",
+      kind: "matching-features",
+      prompt: "Manipulative design",
+      instruction: "Match each item with the correct ending, A-F.",
+      options: [{ value: "A", label: "may guide behaviour against a user's real interests." }, { value: "B", label: "can turn long-term goals into short-term motivation." }, { value: "C", label: "should be the only measure of product success." }, { value: "D", label: "requires clear choices and changeable settings." }, { value: "E", label: "affects no vulnerable users." }, { value: "F", label: "should involve accountability about who benefits." }],
+      answer: "A",
+      explanation: "Paragraph C defines the problem as persuasion that works against the user's own considered interests.",
+      evidence: "persuasion that works against the user's own considered interests",
+    },
+    {
+      id: "t19-q33",
+      number: 33,
+      group: "Questions 31-34",
+      kind: "matching-features",
+      prompt: "Genuine consent",
+      instruction: "Match each item with the correct ending, A-F.",
+      options: [{ value: "A", label: "may guide behaviour against a user's real interests." }, { value: "B", label: "can turn long-term goals into short-term motivation." }, { value: "C", label: "should be the only measure of product success." }, { value: "D", label: "requires clear choices and changeable settings." }, { value: "E", label: "affects no vulnerable users." }, { value: "F", label: "should involve accountability about who benefits." }],
+      answer: "D",
+      explanation: "Paragraph D states that genuine consent requires understandable choices and the ability to change settings.",
+      evidence: "requires understandable choices presented in plain language",
+    },
+    {
+      id: "t19-q34",
+      number: 34,
+      group: "Questions 31-34",
+      kind: "matching-features",
+      prompt: "Ethical persuasion",
+      instruction: "Match each item with the correct ending, A-F.",
+      options: [{ value: "A", label: "may guide behaviour against a user's real interests." }, { value: "B", label: "can turn long-term goals into short-term motivation." }, { value: "C", label: "should be the only measure of product success." }, { value: "D", label: "requires clear choices and changeable settings." }, { value: "E", label: "affects no vulnerable users." }, { value: "F", label: "should involve accountability about who benefits." }],
+      answer: "F",
+      explanation: "Paragraph G calls for accountability about who benefits from a behaviour change.",
+      evidence: "who actually benefits from that behaviour change",
+    },
+    {
+      id: "t19-q35",
+      number: 35,
+      group: "Questions 35-37",
+      kind: "summary-completion",
+      prompt: "Ethical concerns: persuasive features may exploit ________.",
+      instruction: "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "attention",
+      explanation: "Paragraph C states that the same techniques can be used to exploit attention.",
+      evidence: "used to exploit attention",
+    },
+    {
+      id: "t19-q36",
+      number: 36,
+      group: "Questions 35-37",
+      kind: "summary-completion",
+      prompt: "Vulnerable groups include children and users under ________.",
+      instruction: "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "stress",
+      explanation: "Paragraph E lists users experiencing stress or emotional difficulty among vulnerable groups.",
+      evidence: "users experiencing stress or emotional difficulty",
+    },
+    {
+      id: "t19-q37",
+      number: 37,
+      group: "Questions 35-37",
+      kind: "summary-completion",
+      prompt: "High engagement may show satisfaction or ________.",
+      instruction: "Complete the notes below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "dependence",
+      explanation: "Paragraph F notes that high engagement can also reflect quiet dependence.",
+      evidence: "reflect quiet dependence",
+    },
+    {
+      id: "t19-q38",
+      number: 38,
+      group: "Questions 38-39",
+      kind: "diagram-labelling",
+      prompt: "Good persuasion: transparent + adjustable + aligned with ________.",
+      instruction: "Complete the diagram labels below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "user welfare",
+      explanation: "Paragraph G states that ethical persuasion is transparent, adjustable, and aligned with user welfare.",
+      evidence: "genuinely aligned with user welfare",
+    },
+    {
+      id: "t19-q39",
+      number: 39,
+      group: "Questions 38-39",
+      kind: "diagram-labelling",
+      prompt: "Bad persuasion: hidden + one-sided → quiet form of ________.",
+      instruction: "Complete the diagram labels below. Write NO MORE THAN TWO WORDS for each answer.",
+      answer: "control",
+      explanation: "Paragraph G states that hidden, one-sided persuasion becomes a quiet form of control.",
+      evidence: "a quiet and largely invisible form of control",
+    },
+    {
+      id: "t19-q40",
+      number: 40,
+      group: "Question 40",
+      kind: "short-answer",
+      prompt: "According to paragraph F, what should be easy besides using the product?",
+      instruction: "Answer the question below. Write NO MORE THAN THREE WORDS.",
+      answer: "leaving the product",
+      explanation: "Paragraph F asks whether leaving the product or reducing its use is straightforward.",
+      evidence: "whether leaving the product or reducing its use is straightforward",
+    },
+  ],
+};
+
+const academicFullT19: ReadingPracticeTest = {
+  id: "academic-full-t19",
+  title: "Full Test 19: Gardens, Clocks, and the Ethics of Design",
+  description: "A Cambridge-style Academic Reading test covering school gardens, the history of time zones, and the ethics of persuasive design.",
+  track: "Cambridge-style",
+  level: "Advanced",
+  minutes: 60,
+  passages: [schoolGardensPassage, timeZonesPassage, persuasiveDesignPassage],
+};
+
+
+const passageUrbanNoise: ReadingPassage = {
+  "id": "urban-noise-basics",
+  "title": "Noise in the Modern City",
+  "subtitle": "How urban sound shapes health, learning, and fairness",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Urban noise is often treated as an unavoidable background to city life. Traffic, construction, delivery vehicles, music, and public transport combine to create a continuous soundscape that rarely falls silent, even after midnight. Unlike visible pollution such as smoke or litter, noise can be difficult to measure emotionally, because people respond to the very same sound in strikingly different ways. Some residents become used to busy streets, filtering out traffic almost automatically, while others experience persistent stress, poor concentration, or disturbed sleep from sounds their neighbours barely notice. The fact that noise is common and widely tolerated does not mean it is harmless, only that its costs are easy to overlook."
+    },
+    {
+      "label": "B",
+      "text": "Researchers distinguish between raw sound level, measured in decibels, and the broader concept of noise impact, which captures how disruptive a sound actually feels. A brief loud sound, such as a passing siren, may be less damaging over time than a lower but constant sound that continues steadily through the night, eroding the depth and quality of sleep. The timing of a sound, its predictability, and its meaning to the listener all matter. A train passing at a known time each evening may be far less stressful than irregular engine noise outside a bedroom window at unpredictable hours. Human response to noise depends partly on whether people feel they have some control over the disturbance, or whether it feels imposed on them without warning or recourse."
+    },
+    {
+      "label": "C",
+      "text": "Long-term exposure to noise has been linked with health concerns, including chronic sleep disruption and elevated stress hormones. Beyond these physical effects, noise can also affect learning in measurable ways. In classrooms near busy roads or beneath airport flight paths, teachers may need to repeat instructions several times, and students may consequently miss parts of speech that carry important meaning, from grammatical endings to subtle vocabulary. Younger children are especially vulnerable, because early language development depends heavily on hearing fine, subtle differences in sound, distinctions that become harder to detect against traffic or engine noise. Over a school career, such small losses can accumulate into a real disadvantage."
+    },
+    {
+      "label": "D",
+      "text": "Noise reduction can involve thoughtful design rather than an unrealistic pursuit of silence. Trees and walls may block or soften some sound, but street layout, building materials, traffic speed, and public transport planning are often far more important in determining how loud a neighbourhood feels. Smooth road surfaces and lower vehicle speeds, for instance, can substantially reduce the tyre noise that dominates many residential streets, particularly at night. Designing housing so that bedrooms face quieter internal courtyards, rather than busy roads, can noticeably improve sleep quality even in dense neighbourhoods where a fully quiet location is not available. Such measures rarely eliminate noise entirely, but together they shift a district from merely tolerable to genuinely comfortable."
+    },
+    {
+      "label": "E",
+      "text": "There is also an important fairness issue in debates about urban noise. Lower-income residents are statistically more likely to live near major roads, industrial areas, or airports, often because housing there is cheaper precisely because it is less desirable. They may also have less access to sound insulation, nearby quiet parks, or meaningful legal influence over planning decisions. As a result, noise pollution can reinforce existing social and economic inequalities, adding an invisible burden to communities that already face other disadvantages. A quiet environment becomes not simply a comfort for those who can afford it, but a genuine public health resource, one that ought to be distributed more evenly across a city."
+    },
+    {
+      "label": "F",
+      "text": "Cities will never be completely silent, nor should they be, since sound can signal activity, culture, and safety, from the hum of a busy street at night to the chatter of a market at dawn. The challenge is to distinguish lively, meaningful urban sound from genuinely harmful exposure that damages health without any compensating benefit. Better noise mapping, stricter building standards, and thoughtful transport policies can reduce the worst effects of urban noise without removing the energy that makes city life appealing. Managing noise is therefore part of designing a healthier and more equitable city, where the benefits and burdens of sound are shared more fairly among all residents."
+    },
+    {
+      "label": "G",
+      "text": "Community involvement can improve noise policy, because official measurements do not always capture residents' lived experience. A sensor may record an average level across a night that appears acceptable on paper, while residents experience sudden bursts of sound that interrupt sleep or prayer, bursts an average smooths away. Citizen reporting, organised sound walks, and neighbourhood consultations can reveal patterns of disturbance that technical surveys alone tend to miss. These methods also help planners understand which sounds people actually value. A market, playground, or festival may register as loud yet remain socially meaningful, whereas a night-time delivery route may bring little benefit to those kept awake by it. Good policy therefore asks not only how loud a place is, but what the sound represents to the people who live with it."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t20-q1",
+      "number": 1,
+      "group": "Questions 1-5",
+      "kind": "matching-headings",
+      "prompt": "Paragraph A",
+      "instruction": "The Reading Passage has seven paragraphs, A-G. Choose the correct heading for paragraphs A-E from the list of headings below.",
+      "options": [
+        {
+          "value": "i",
+          "label": "Design methods for reducing sound impact"
+        },
+        {
+          "value": "ii",
+          "label": "Noise as a health and learning issue"
+        },
+        {
+          "value": "iii",
+          "label": "Why silence should be the only goal"
+        },
+        {
+          "value": "iv",
+          "label": "A common but underestimated problem"
+        },
+        {
+          "value": "v",
+          "label": "Unequal exposure to noise"
+        },
+        {
+          "value": "vi",
+          "label": "Why response depends on more than volume"
+        },
+        {
+          "value": "vii",
+          "label": "The history of airport construction"
+        }
+      ],
+      "answer": "iv",
+      "explanation": "Paragraph A opens by describing noise as a familiar background to city life whose harm is easy to overlook, making it a common but underestimated problem.",
+      "evidence": "The fact that noise is common and widely tolerated does not mean it is harmless, only that its costs are easy to overlook."
+    },
+    {
+      "id": "t20-q2",
+      "number": 2,
+      "group": "Questions 1-5",
+      "kind": "matching-headings",
+      "prompt": "Paragraph B",
+      "options": [
+        {
+          "value": "i",
+          "label": "Design methods for reducing sound impact"
+        },
+        {
+          "value": "ii",
+          "label": "Noise as a health and learning issue"
+        },
+        {
+          "value": "iii",
+          "label": "Why silence should be the only goal"
+        },
+        {
+          "value": "iv",
+          "label": "A common but underestimated problem"
+        },
+        {
+          "value": "v",
+          "label": "Unequal exposure to noise"
+        },
+        {
+          "value": "vi",
+          "label": "Why response depends on more than volume"
+        },
+        {
+          "value": "vii",
+          "label": "The history of airport construction"
+        }
+      ],
+      "answer": "vi",
+      "explanation": "Paragraph B explains that timing, predictability, meaning, and perceived control shape how a sound is experienced, not simply its volume.",
+      "evidence": "Human response to noise depends partly on whether people feel they have some control over the disturbance, or whether it feels imposed on them without warning or recourse."
+    },
+    {
+      "id": "t20-q3",
+      "number": 3,
+      "group": "Questions 1-5",
+      "kind": "matching-headings",
+      "prompt": "Paragraph C",
+      "options": [
+        {
+          "value": "i",
+          "label": "Design methods for reducing sound impact"
+        },
+        {
+          "value": "ii",
+          "label": "Noise as a health and learning issue"
+        },
+        {
+          "value": "iii",
+          "label": "Why silence should be the only goal"
+        },
+        {
+          "value": "iv",
+          "label": "A common but underestimated problem"
+        },
+        {
+          "value": "v",
+          "label": "Unequal exposure to noise"
+        },
+        {
+          "value": "vi",
+          "label": "Why response depends on more than volume"
+        },
+        {
+          "value": "vii",
+          "label": "The history of airport construction"
+        }
+      ],
+      "answer": "ii",
+      "explanation": "Paragraph C links noise to health concerns and to learning problems in classrooms, especially for younger children.",
+      "evidence": "noise can also affect learning in measurable ways"
+    },
+    {
+      "id": "t20-q4",
+      "number": 4,
+      "group": "Questions 1-5",
+      "kind": "matching-headings",
+      "prompt": "Paragraph D",
+      "options": [
+        {
+          "value": "i",
+          "label": "Design methods for reducing sound impact"
+        },
+        {
+          "value": "ii",
+          "label": "Noise as a health and learning issue"
+        },
+        {
+          "value": "iii",
+          "label": "Why silence should be the only goal"
+        },
+        {
+          "value": "iv",
+          "label": "A common but underestimated problem"
+        },
+        {
+          "value": "v",
+          "label": "Unequal exposure to noise"
+        },
+        {
+          "value": "vi",
+          "label": "Why response depends on more than volume"
+        },
+        {
+          "value": "vii",
+          "label": "The history of airport construction"
+        }
+      ],
+      "answer": "i",
+      "explanation": "Paragraph D describes design methods, such as road surfaces, vehicle speed, and courtyard layout, that reduce the impact of sound.",
+      "evidence": "Noise reduction can involve thoughtful design rather than an unrealistic pursuit of silence."
+    },
+    {
+      "id": "t20-q5",
+      "number": 5,
+      "group": "Questions 1-5",
+      "kind": "matching-headings",
+      "prompt": "Paragraph E",
+      "options": [
+        {
+          "value": "i",
+          "label": "Design methods for reducing sound impact"
+        },
+        {
+          "value": "ii",
+          "label": "Noise as a health and learning issue"
+        },
+        {
+          "value": "iii",
+          "label": "Why silence should be the only goal"
+        },
+        {
+          "value": "iv",
+          "label": "A common but underestimated problem"
+        },
+        {
+          "value": "v",
+          "label": "Unequal exposure to noise"
+        },
+        {
+          "value": "vi",
+          "label": "Why response depends on more than volume"
+        },
+        {
+          "value": "vii",
+          "label": "The history of airport construction"
+        }
+      ],
+      "answer": "v",
+      "explanation": "Paragraph E discusses how lower-income residents are more exposed to noise and have less power to address it.",
+      "evidence": "Lower-income residents are statistically more likely to live near major roads, industrial areas, or airports"
+    },
+    {
+      "id": "t20-q6",
+      "number": 6,
+      "group": "Questions 6-9",
+      "kind": "true-false-not-given",
+      "prompt": "The passage states that wealthy residents never experience noise pollution.",
+      "instruction": "Do the following statements agree with the information given in Reading Passage 1? Write TRUE, FALSE, or NOT GIVEN.",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "NOT GIVEN",
+      "explanation": "Paragraph E states that lower-income residents are more likely to be affected by noise, but it never claims wealthy residents are entirely unaffected.",
+      "evidence": "noise pollution can reinforce existing social and economic inequalities"
+    },
+    {
+      "id": "t20-q7",
+      "number": 7,
+      "group": "Questions 6-9",
+      "kind": "true-false-not-given",
+      "prompt": "The passage says trees remove all traffic noise.",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "FALSE",
+      "explanation": "Paragraph D says trees may block or soften some sound, not remove all of it.",
+      "evidence": "Trees and walls may block or soften some sound"
+    },
+    {
+      "id": "t20-q8",
+      "number": 8,
+      "group": "Questions 6-9",
+      "kind": "true-false-not-given",
+      "prompt": "People can respond differently to the same urban soundscape.",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "TRUE",
+      "explanation": "Paragraph A states that people respond to the same sound in strikingly different ways.",
+      "evidence": "because people respond to the very same sound in strikingly different ways"
+    },
+    {
+      "id": "t20-q9",
+      "number": 9,
+      "group": "Questions 6-9",
+      "kind": "true-false-not-given",
+      "prompt": "Constant night noise may be more harmful than a brief loud sound.",
+      "options": [
+        {
+          "value": "TRUE",
+          "label": "TRUE"
+        },
+        {
+          "value": "FALSE",
+          "label": "FALSE"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "TRUE",
+      "explanation": "Paragraph B states that a constant sound through the night may be more damaging than a brief loud sound.",
+      "evidence": "a lower but constant sound that continues steadily through the night"
+    },
+    {
+      "id": "t20-q10",
+      "number": 10,
+      "group": "Questions 10-13",
+      "kind": "summary-completion",
+      "prompt": "Noise impact depends on timing, predictability, meaning, and perceived ________.",
+      "instruction": "Complete the summary below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "answer": "control",
+      "explanation": "Paragraph B states that response depends partly on whether people feel they have control over the disturbance.",
+      "evidence": "whether people feel they have some control over the disturbance"
+    },
+    {
+      "id": "t20-q11",
+      "number": 11,
+      "group": "Questions 10-13",
+      "kind": "summary-completion",
+      "prompt": "In schools, noise may cause students to miss parts of ________.",
+      "answer": "speech",
+      "explanation": "Paragraph C states that students may miss parts of speech when noise forces teachers to repeat instructions.",
+      "evidence": "students may consequently miss parts of speech"
+    },
+    {
+      "id": "t20-q12",
+      "number": 12,
+      "group": "Questions 10-13",
+      "kind": "summary-completion",
+      "prompt": "Design responses include quieter courtyards and lower vehicle ________.",
+      "answer": "speeds",
+      "explanation": "Paragraph D states that lower vehicle speeds can reduce tyre noise, alongside courtyards facing away from busy roads.",
+      "evidence": "lower vehicle speeds, for instance, can substantially reduce the tyre noise"
+    },
+    {
+      "id": "t20-q13",
+      "number": 13,
+      "group": "Questions 10-13",
+      "kind": "summary-completion",
+      "prompt": "A quiet environment should be seen as a public health ________.",
+      "answer": "resource",
+      "explanation": "Paragraph E describes a quiet environment as a genuine public health resource.",
+      "evidence": "a genuine public health resource"
+    }
+  ]
+};
+
+const passageHistoryOfPaper: ReadingPassage = {
+  "id": "history-of-paper",
+  "title": "The History of Paper",
+  "subtitle": "How a light, flexible material reshaped record keeping and daily life",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Paper seems entirely ordinary today, because it is cheap and available almost everywhere, yet its development quietly transformed administration, education, and culture. Before paper existed, people wrote on materials including clay tablets, wooden strips, silk cloth, animal-skin parchment, and papyrus reeds. These earlier materials could be durable or prestigious, valued precisely because they were difficult to obtain, but they were often heavy to transport, expensive to produce, or simply too slow to manufacture in the large quantities that growing societies increasingly required. Paper offered a lighter, cheaper, and considerably more flexible alternative, one that could eventually meet the needs of expanding bureaucracies and an increasingly literate population."
+    },
+    {
+      "label": "B",
+      "text": "Early paper was developed in China using fibres drawn from plants, old rags, and the inner bark of certain trees, materials that were more abundant than animal skins or reeds. The basic process involved breaking these fibres down thoroughly in water until they formed a loose pulp, spreading the resulting mixture evenly across a fine screen, and then drying it carefully into thin, coherent sheets strong enough to write on. Over time, these techniques improved and spread along trade routes connecting China to Central Asia, the Middle East, and eventually Europe. Paper travelled not simply as a finished product carried in merchants' packs, but as embodied knowledge, since craftspeople had to understand local fibres, water, tools, and drying conditions before they could reproduce the process."
+    },
+    {
+      "label": "C",
+      "text": "As paper spread westward, it supported new forms of record keeping that earlier materials had made difficult or expensive. Governments could now store detailed tax information across thousands of pages, courts could keep extensive legal documents for future reference, and merchants could record accounts and contracts far more easily than before. Because paper was lighter than clay, wood, or parchment, documents could circulate across considerably longer distances without becoming a burden for messengers to carry. This helped connect scattered local administration with regional and imperial centres, allowing decisions and legal rulings to travel back and forth across an empire in a way that had not been practical before."
+    },
+    {
+      "label": "D",
+      "text": "The relationship between paper and printing was especially important to the spread of written culture. Printing existed in various forms before movable type became widespread, but paper made repeated, large-scale production genuinely practical, since it could be manufactured cheaply enough to match the output of a printing press. Books, religious texts, technical manuals, and later newspapers could consequently reach far larger audiences than when each copy had to be produced individually on costly material. Literacy did not expand because of paper alone; teaching and social attitudes played essential roles too. Yet cheap, abundant writing material lowered one significant barrier to learning, making it more realistic for ordinary households and schools to own written texts."
+    },
+    {
+      "label": "E",
+      "text": "Paper also quietly changed private life in ways official histories rarely emphasise. Letters became far easier to send between family and friends, diaries easier to keep daily, and personal sketches easier to preserve for years. Ordinary people, not just officials or scholars, could now record family matters, household debts, favourite recipes, and private reflections on paper cheap enough to use freely. Many such humble documents were never intended to become historical evidence; they were written for practical or personal reasons, then folded away or forgotten. Yet today they help historians understand daily experience far beyond what official government records alone could ever reveal, offering glimpses of ordinary life that formal archives typically overlook."
+    },
+    {
+      "label": "F",
+      "text": "Today, paper faces intense competition from digital media, yet it has not disappeared from daily life. It remains genuinely useful where electricity, screens, or secure digital systems are unavailable or unreliable, from remote regions with patchy power to emergencies where digital infrastructure has failed. Paper is also still highly valued for legal signatures, protective packaging, artistic work, and everyday education, contexts where its physical, tangible qualities matter. The environmental cost of large-scale paper production has encouraged widespread recycling programmes and a shift toward more sustainable forestry practices in many countries. The broader story of paper is therefore not a simple rise followed by an inevitable fall, but a continuing adaptation of an old technology to new circumstances."
+    },
+    {
+      "label": "G",
+      "text": "Paper also has cognitive and cultural qualities that help explain its stubborn survival alongside digital alternatives. Many readers find it easier to annotate printed pages by hand, compare documents side by side, or remember the physical location of information within a familiar book, a spatial memory that screens rarely replicate. Artists continue to value the texture, absorbency, and resistance of different papers, qualities that shape how ink or pencil behaves on the page. Bureaucracies may deliberately prefer paper for sensitive records, precisely because it is visible, physically signed, and difficult to alter afterwards without leaving obvious traces. None of these advantages make paper superior in every situation, but they help explain why its replacement by digital media has, so far, been distinctly partial rather than complete."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t20-q14",
+      "number": 14,
+      "group": "Questions 14-16",
+      "kind": "multiple-choice",
+      "prompt": "Why was paper important compared with some earlier writing materials?",
+      "instruction": "Choose the correct letter, A, B, C, or D.",
+      "options": [
+        {
+          "value": "A",
+          "label": "It was always more beautiful than silk."
+        },
+        {
+          "value": "B",
+          "label": "It was lighter and easier to produce widely."
+        },
+        {
+          "value": "C",
+          "label": "It could not be damaged."
+        },
+        {
+          "value": "D",
+          "label": "It replaced speech immediately."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph A explains that paper was lighter, cheaper, and more flexible than earlier materials.",
+      "evidence": "Paper offered a lighter, cheaper, and considerably more flexible alternative"
+    },
+    {
+      "id": "t20-q15",
+      "number": 15,
+      "group": "Questions 14-16",
+      "kind": "multiple-choice",
+      "prompt": "Paragraph B emphasises that paper spread as",
+      "options": [
+        {
+          "value": "A",
+          "label": "only a finished product."
+        },
+        {
+          "value": "B",
+          "label": "knowledge of a craft as well as material."
+        },
+        {
+          "value": "C",
+          "label": "a military secret."
+        },
+        {
+          "value": "D",
+          "label": "an electronic technology."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph B states that paper travelled not simply as a product but as embodied craft knowledge.",
+      "evidence": "Paper travelled not simply as a finished product carried in merchants' packs, but as embodied knowledge"
+    },
+    {
+      "id": "t20-q16",
+      "number": 16,
+      "group": "Questions 14-16",
+      "kind": "multiple-choice",
+      "prompt": "What does paragraph D suggest about literacy?",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paper alone made everyone literate."
+        },
+        {
+          "value": "B",
+          "label": "Paper removed one obstacle to learning."
+        },
+        {
+          "value": "C",
+          "label": "Printing was impossible before paper."
+        },
+        {
+          "value": "D",
+          "label": "Newspapers reduced reading."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph D states that cheap writing material lowered one significant barrier to learning.",
+      "evidence": "cheap, abundant writing material lowered one significant barrier to learning"
+    },
+    {
+      "id": "t20-q17",
+      "number": 17,
+      "group": "Questions 17-20",
+      "kind": "matching-information",
+      "prompt": "private documents that later became useful to historians",
+      "instruction": "Which paragraph contains the following information? Write the correct letter, A-G.",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ],
+      "answer": "E",
+      "explanation": "Paragraph E explains that private documents, though never meant as historical evidence, now help historians understand daily life.",
+      "evidence": "they help historians understand daily experience far beyond what official government records alone could ever reveal"
+    },
+    {
+      "id": "t20-q18",
+      "number": 18,
+      "group": "Questions 17-20",
+      "kind": "matching-information",
+      "prompt": "the basic steps in early paper production",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph B describes breaking fibres in water, spreading the pulp on a screen, and drying it into sheets.",
+      "evidence": "breaking these fibres down thoroughly in water until they formed a loose pulp, spreading the resulting mixture evenly across a fine screen, and then drying it carefully into thin, coherent sheets"
+    },
+    {
+      "id": "t20-q19",
+      "number": 19,
+      "group": "Questions 17-20",
+      "kind": "matching-information",
+      "prompt": "modern reasons paper remains useful",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ],
+      "answer": "F",
+      "explanation": "Paragraph F lists reasons paper is still used today, including signatures, packaging, art, and education.",
+      "evidence": "Paper is also still highly valued for legal signatures, protective packaging, artistic work, and everyday education"
+    },
+    {
+      "id": "t20-q20",
+      "number": 20,
+      "group": "Questions 17-20",
+      "kind": "matching-information",
+      "prompt": "administrative uses of paper after it spread",
+      "options": [
+        {
+          "value": "A",
+          "label": "Paragraph A"
+        },
+        {
+          "value": "B",
+          "label": "Paragraph B"
+        },
+        {
+          "value": "C",
+          "label": "Paragraph C"
+        },
+        {
+          "value": "D",
+          "label": "Paragraph D"
+        },
+        {
+          "value": "E",
+          "label": "Paragraph E"
+        },
+        {
+          "value": "F",
+          "label": "Paragraph F"
+        },
+        {
+          "value": "G",
+          "label": "Paragraph G"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Paragraph C describes governments, courts, and merchants using paper for tax records, legal documents, and accounts.",
+      "evidence": "Governments could now store detailed tax information across thousands of pages, courts could keep extensive legal documents for future reference, and merchants could record accounts and contracts far more easily than before"
+    },
+    {
+      "id": "t20-q21",
+      "number": 21,
+      "group": "Questions 21-23",
+      "kind": "matching-features",
+      "prompt": "made from fibres such as plants and bark",
+      "instruction": "Match each description with the correct material, A-C.",
+      "options": [
+        {
+          "value": "A",
+          "label": "Earlier writing materials"
+        },
+        {
+          "value": "B",
+          "label": "Early Chinese paper"
+        },
+        {
+          "value": "C",
+          "label": "Modern paper"
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph B describes early Chinese paper as made from fibres drawn from plants and bark.",
+      "evidence": "Early paper was developed in China using fibres drawn from plants, old rags, and the inner bark of certain trees"
+    },
+    {
+      "id": "t20-q22",
+      "number": 22,
+      "group": "Questions 21-23",
+      "kind": "matching-features",
+      "prompt": "still used for packaging and art",
+      "options": [
+        {
+          "value": "A",
+          "label": "Earlier writing materials"
+        },
+        {
+          "value": "B",
+          "label": "Early Chinese paper"
+        },
+        {
+          "value": "C",
+          "label": "Modern paper"
+        }
+      ],
+      "answer": "C",
+      "explanation": "Paragraph F states modern paper is valued for protective packaging and artistic work.",
+      "evidence": "protective packaging, artistic work"
+    },
+    {
+      "id": "t20-q23",
+      "number": 23,
+      "group": "Questions 21-23",
+      "kind": "matching-features",
+      "prompt": "could be heavy or expensive",
+      "options": [
+        {
+          "value": "A",
+          "label": "Earlier writing materials"
+        },
+        {
+          "value": "B",
+          "label": "Early Chinese paper"
+        },
+        {
+          "value": "C",
+          "label": "Modern paper"
+        }
+      ],
+      "answer": "A",
+      "explanation": "Paragraph A states that earlier materials were often heavy to transport or expensive to produce.",
+      "evidence": "they were often heavy to transport, expensive to produce, or simply too slow to manufacture in the large quantities"
+    },
+    {
+      "id": "t20-q24",
+      "number": 24,
+      "group": "Questions 24-26",
+      "kind": "sentence-completion",
+      "prompt": "Paper helped documents circulate across longer ________.",
+      "instruction": "Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "answer": "distances",
+      "explanation": "Paragraph C states that because paper was lighter, documents could circulate across longer distances.",
+      "evidence": "documents could circulate across considerably longer distances"
+    },
+    {
+      "id": "t20-q25",
+      "number": 25,
+      "group": "Questions 24-26",
+      "kind": "sentence-completion",
+      "prompt": "Cheap writing material lowered one barrier to ________.",
+      "answer": "learning",
+      "explanation": "Paragraph D states that cheap, abundant writing material lowered one significant barrier to learning.",
+      "evidence": "cheap, abundant writing material lowered one significant barrier to learning"
+    },
+    {
+      "id": "t20-q26",
+      "number": 26,
+      "group": "Questions 24-26",
+      "kind": "sentence-completion",
+      "prompt": "Environmental concerns have encouraged recycling and sustainable ________.",
+      "answer": "forestry",
+      "explanation": "Paragraph F states that environmental cost has encouraged recycling programmes and sustainable forestry practices.",
+      "evidence": "encouraged widespread recycling programmes and a shift toward more sustainable forestry practices"
+    }
+  ]
+};
+
+const passageDecisionFatigue: ReadingPassage = {
+  "id": "decision-fatigue",
+  "title": "Decision Fatigue",
+  "subtitle": "Why the number of choices we make each day has a hidden cost",
+  "paragraphs": [
+    {
+      "label": "A",
+      "text": "Modern life offers a remarkable number of choices on any given day: what to eat, which messages to answer first, how to travel, what to buy, and which sources of information to trust. Choice is often associated with freedom, yet psychologists have long suspected that repeated decision-making, however small each choice may seem, can gradually become genuinely tiring in a measurable way. Decision fatigue describes the decline in mental energy or judgement quality that tends to follow after a person has made many choices in succession, especially when those choices require sustained attention and active self-control rather than simple habit. The effect is subtle at first, but it can shape decisions that matter, long after a person has stopped noticing how tired they have become."
+    },
+    {
+      "label": "B",
+      "text": "The concept is attractive largely because it explains many familiar experiences. After a long day of work, a person may avoid comparing complicated insurance plans, or may choose unhealthy food simply because it requires less deliberation than a planned meal. Managers may postpone genuinely difficult decisions until the following morning, sensing their judgement has become less reliable by late afternoon. Students may find that the effort of selecting sources, organising notes, and planning an essay leaves them too tired to revise their own writing carefully, even when they recognise its flaws. In each case, the underlying problem is not a lack of intelligence or care, but simply depleted attention, a finite resource that has already been spent on earlier decisions during the same day."
+    },
+    {
+      "label": "C",
+      "text": "Research on decision fatigue has, however, produced considerable ongoing debate among psychologists. Some carefully controlled experiments suggest that self-control genuinely weakens after repeated effort, while other studies find effects that are considerably smaller or less consistent across different populations and settings. Measurement in this area is notoriously difficult, because fatigue, motivation, hunger, stress, and a person's own beliefs about willpower can all interact in complex ways. A person who firmly expects to become mentally exhausted may genuinely behave quite differently from someone who views sustained effort as energising rather than depleting. The concept is clearly useful, but researchers increasingly agree it should not be treated as a simple, universal mechanical law."
+    },
+    {
+      "label": "D",
+      "text": "Organisations have strong practical reasons to care about decision fatigue, quite apart from academic debate about its mechanism. Hospitals, courts, airlines, and financial firms all depend on consistently high-quality judgement from their staff, often under time pressure. If workers are required to make too many complex decisions in succession without adequate breaks, errors may increase noticeably, sometimes with serious consequences. In response, some organisations have deliberately introduced checklists, sensible default options, or dedicated decision support systems specifically to reduce unnecessary mental load on staff during a shift. These tools do not remove professional responsibility from the individual making the final call, but they can genuinely help protect scarce attention for the cases that truly require deep expertise and careful judgement, rather than allowing that attention to be exhausted on routine matters."
+    },
+    {
+      "label": "E",
+      "text": "In consumer settings, decision fatigue can be, and often is, deliberately exploited by designers seeking to influence behaviour. A website may present a customer with many confusing options and add-ons before finally revealing extra fees near the end of checkout, calculating that tired customers will simply accept whatever default is offered rather than continue evaluating alternatives at that late stage. Subscription services may deliberately make the cancellation process require several separate steps. Such designs use friction strategically rather than accidentally, shaping the path a user must follow to serve the company's interests. They benefit the company not by improving the underlying product, but by making an already tired user less willing to keep choosing."
+    },
+    {
+      "label": "F",
+      "text": "Individuals can reduce their own decision fatigue considerably by deliberately simplifying repeated choices rather than treating every instance as a fresh decision. Preparing meals in advance, setting consistent routines, limiting notifications, and deciding genuinely important matters earlier in the day, while mental energy is still relatively fresh, can help preserve attention for when it matters most. However, personal strategies of this kind are not enough on their own when the surrounding systems a person interacts with are deliberately designed to be complex or confusing. Ethical design, by contrast, should actively work to reduce unnecessary choice wherever possible, make default options clearly transparent to the user rather than hidden, and allow people to reverse earlier decisions easily if circumstances change."
+    },
+    {
+      "label": "G",
+      "text": "The broader lesson emerging from this research is that choice, however desirable in principle, always carries a genuine cognitive cost. More options are valuable only when people actually have enough time, relevant information, and available mental energy to evaluate them properly before deciding. A society that celebrates choice enthusiastically without considering these real cognitive limits may end up creating environments that feel free in theory but prove genuinely exhausting in practice, leaving people nominally free to choose among many options while lacking the attention to choose well among any of them. Good decision design does not seek to remove freedom from people's lives; rather, it protects the underlying mental conditions that make freedom meaningful and usable in everyday life."
+    }
+  ],
+  "questions": [
+    {
+      "id": "t20-q27",
+      "number": 27,
+      "group": "Questions 27-30",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer suggests some companies make processes difficult on purpose.",
+      "instruction": "Do the following statements agree with the views of the writer in Reading Passage 3? Write YES, NO, or NOT GIVEN.",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "YES",
+      "explanation": "Paragraph E states that confusing designs use friction strategically rather than accidentally.",
+      "evidence": "Such designs use friction strategically rather than accidentally"
+    },
+    {
+      "id": "t20-q28",
+      "number": 28,
+      "group": "Questions 27-30",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer claims people should avoid making any choices after lunch.",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "NOT GIVEN",
+      "explanation": "Paragraph F advises deciding important matters earlier in the day, but there is no blanket rule against all choices after lunch.",
+      "evidence": "deciding genuinely important matters earlier in the day, while mental energy is still relatively fresh"
+    },
+    {
+      "id": "t20-q29",
+      "number": 29,
+      "group": "Questions 27-30",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer believes repeated decisions can reduce the quality of judgement.",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "YES",
+      "explanation": "Paragraph A defines decision fatigue as the decline in judgement quality after making many choices.",
+      "evidence": "Decision fatigue describes the decline in mental energy or judgement quality that tends to follow after a person has made many choices in succession"
+    },
+    {
+      "id": "t20-q30",
+      "number": 30,
+      "group": "Questions 27-30",
+      "kind": "yes-no-not-given",
+      "prompt": "The writer says all research on decision fatigue has reached identical conclusions.",
+      "options": [
+        {
+          "value": "YES",
+          "label": "YES"
+        },
+        {
+          "value": "NO",
+          "label": "NO"
+        },
+        {
+          "value": "NOT GIVEN",
+          "label": "NOT GIVEN"
+        }
+      ],
+      "answer": "NO",
+      "explanation": "Paragraph C states that research on decision fatigue has produced ongoing debate, not identical conclusions.",
+      "evidence": "Research on decision fatigue has, however, produced considerable ongoing debate among psychologists."
+    },
+    {
+      "id": "t20-q31",
+      "number": 31,
+      "group": "Questions 31-34",
+      "kind": "matching-features",
+      "prompt": "Decision support systems",
+      "instruction": "Match each sentence beginning with the correct ending, A-F.",
+      "options": [
+        {
+          "value": "A",
+          "label": "can reduce unnecessary mental load."
+        },
+        {
+          "value": "B",
+          "label": "may be used to push tired users toward defaults."
+        },
+        {
+          "value": "C",
+          "label": "is valuable only when people can evaluate options properly."
+        },
+        {
+          "value": "D",
+          "label": "proves that intelligence disappears after work."
+        },
+        {
+          "value": "E",
+          "label": "should include reversible decisions and transparent defaults."
+        },
+        {
+          "value": "F",
+          "label": "always produces the same effect in every experiment."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Paragraph D states that decision support systems reduce unnecessary mental load on staff.",
+      "evidence": "dedicated decision support systems specifically to reduce unnecessary mental load on staff during a shift"
+    },
+    {
+      "id": "t20-q32",
+      "number": 32,
+      "group": "Questions 31-34",
+      "kind": "matching-features",
+      "prompt": "Confusing consumer design",
+      "options": [
+        {
+          "value": "A",
+          "label": "can reduce unnecessary mental load."
+        },
+        {
+          "value": "B",
+          "label": "may be used to push tired users toward defaults."
+        },
+        {
+          "value": "C",
+          "label": "is valuable only when people can evaluate options properly."
+        },
+        {
+          "value": "D",
+          "label": "proves that intelligence disappears after work."
+        },
+        {
+          "value": "E",
+          "label": "should include reversible decisions and transparent defaults."
+        },
+        {
+          "value": "F",
+          "label": "always produces the same effect in every experiment."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Paragraph E states that confusing options are designed so tired customers accept the default.",
+      "evidence": "calculating that tired customers will simply accept whatever default is offered"
+    },
+    {
+      "id": "t20-q33",
+      "number": 33,
+      "group": "Questions 31-34",
+      "kind": "matching-features",
+      "prompt": "Ethical design",
+      "options": [
+        {
+          "value": "A",
+          "label": "can reduce unnecessary mental load."
+        },
+        {
+          "value": "B",
+          "label": "may be used to push tired users toward defaults."
+        },
+        {
+          "value": "C",
+          "label": "is valuable only when people can evaluate options properly."
+        },
+        {
+          "value": "D",
+          "label": "proves that intelligence disappears after work."
+        },
+        {
+          "value": "E",
+          "label": "should include reversible decisions and transparent defaults."
+        },
+        {
+          "value": "F",
+          "label": "always produces the same effect in every experiment."
+        }
+      ],
+      "answer": "E",
+      "explanation": "Paragraph F states ethical design should make defaults transparent and allow decisions to be reversed easily.",
+      "evidence": "make default options clearly transparent to the user rather than hidden, and allow people to reverse earlier decisions easily"
+    },
+    {
+      "id": "t20-q34",
+      "number": 34,
+      "group": "Questions 31-34",
+      "kind": "matching-features",
+      "prompt": "Choice",
+      "options": [
+        {
+          "value": "A",
+          "label": "can reduce unnecessary mental load."
+        },
+        {
+          "value": "B",
+          "label": "may be used to push tired users toward defaults."
+        },
+        {
+          "value": "C",
+          "label": "is valuable only when people can evaluate options properly."
+        },
+        {
+          "value": "D",
+          "label": "proves that intelligence disappears after work."
+        },
+        {
+          "value": "E",
+          "label": "should include reversible decisions and transparent defaults."
+        },
+        {
+          "value": "F",
+          "label": "always produces the same effect in every experiment."
+        }
+      ],
+      "answer": "C",
+      "explanation": "Paragraph G states that more options are valuable only when people can properly evaluate them.",
+      "evidence": "More options are valuable only when people actually have enough time, relevant information, and available mental energy to evaluate them properly before deciding."
+    },
+    {
+      "id": "t20-q35",
+      "number": 35,
+      "group": "Questions 35-37",
+      "kind": "diagram-labelling",
+      "prompt": "Many decisions -> depleted ________",
+      "instruction": "Complete the flow-chart below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "answer": "attention",
+      "explanation": "Paragraph B states that the underlying problem after many decisions is depleted attention.",
+      "evidence": "depleted attention, a finite resource that has already been spent on earlier decisions during the same day"
+    },
+    {
+      "id": "t20-q36",
+      "number": 36,
+      "group": "Questions 35-37",
+      "kind": "diagram-labelling",
+      "prompt": "Systems can reduce load with checklists and ________",
+      "answer": "default options",
+      "explanation": "Paragraph D states organisations use checklists and default options to reduce mental load.",
+      "evidence": "some organisations have deliberately introduced checklists, sensible default options, or dedicated decision support systems"
+    },
+    {
+      "id": "t20-q37",
+      "number": 37,
+      "group": "Questions 35-37",
+      "kind": "diagram-labelling",
+      "prompt": "Attention protected for cases needing ________",
+      "answer": "expertise",
+      "explanation": "Paragraph D states these tools protect attention for cases that require deep expertise and careful judgement.",
+      "evidence": "protect scarce attention for the cases that truly require deep expertise and careful judgement"
+    },
+    {
+      "id": "t20-q38",
+      "number": 38,
+      "group": "Questions 38-39",
+      "kind": "diagram-labelling",
+      "prompt": "Useful choice requires: time + information + ________",
+      "instruction": "Complete the diagram labels below. Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "answer": "energy",
+      "explanation": "Paragraph G states that options are valuable only when people have enough time, information, and mental energy.",
+      "evidence": "enough time, relevant information, and available mental energy to evaluate them properly"
+    },
+    {
+      "id": "t20-q39",
+      "number": 39,
+      "group": "Questions 38-39",
+      "kind": "diagram-labelling",
+      "prompt": "Too many choices without limits can feel: free in theory but ________ in practice",
+      "answer": "exhausting",
+      "explanation": "Paragraph G states that such environments can feel free in theory but genuinely exhausting in practice.",
+      "evidence": "may end up creating environments that feel free in theory but prove genuinely exhausting in practice"
+    },
+    {
+      "id": "t20-q40",
+      "number": 40,
+      "group": "Question 40",
+      "kind": "short-answer",
+      "prompt": "What kind of choices can individuals simplify to reduce decision fatigue?",
+      "instruction": "Answer the question below. Choose NO MORE THAN THREE WORDS from the passage.",
+      "answer": "repeated choices",
+      "explanation": "Paragraph F states individuals can reduce decision fatigue by simplifying repeated choices.",
+      "evidence": "simplifying repeated choices"
+    }
+  ]
+};
+
+const academicFullT20: ReadingPracticeTest = {
+  id: "academic-full-t20",
+  title: "Full Test 20: Cities, Paper, and the Cost of Choice",
+  description: "A Cambridge-style IELTS Academic Reading test covering urban noise, the history of paper, and decision fatigue.",
+  track: "Cambridge-style",
+  level: "Advanced",
+  minutes: 60,
+  passages: [passageUrbanNoise, passageHistoryOfPaper, passageDecisionFatigue],
+};
+
 const FULL_TEST_SEEDS: readonly FullTestSeed[] = [
   {
     id: "academic-materials-adaptation",
@@ -4475,6 +8908,11 @@ export const READING_PRACTICE_TESTS: ReadingPracticeTest[] = [
   academicFullSpaceWeather,
   academicFullGroundwater,
   academicFullElNino,
+  academicFullT16,
+  academicFullT17,
+  academicFullT18,
+  academicFullT19,
+  academicFullT20,
   {
     id: "general-training-community",
     title: "General Training: Community Centre",
