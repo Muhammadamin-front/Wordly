@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-words}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-words}
@@ -18,6 +19,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     ports:
       # Override with REDIS_PORT if 6379 is taken on the host.
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
@@ -29,6 +31,7 @@ services:
 
   api:
     build: ./apps/api
+    restart: unless-stopped
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-development}
       APP_VERSION: ${APP_VERSION:-1.0.0}
@@ -104,6 +107,7 @@ services:
         NEXT_PUBLIC_TELEGRAM_BOT_ID: ${NEXT_PUBLIC_TELEGRAM_BOT_ID:-}
         # DSNs are not secret; baked into the browser bundle like the vars above.
         NEXT_PUBLIC_SENTRY_DSN: ${NEXT_PUBLIC_SENTRY_DSN:-}
+    restart: unless-stopped
     environment:
       # Server-side instrumentation.ts reads this at runtime (Node.js), same
       # value as the build arg above.
@@ -118,6 +122,7 @@ services:
   cloudflared:
     image: cloudflare/cloudflared:2026.8.2
     profiles: ["production"]
+    restart: unless-stopped
     command: ["tunnel", "--no-autoupdate", "--loglevel", "info", "run"]
     environment:
       # Environment form keeps the token out of process listings.
