@@ -56,4 +56,12 @@ def inflection_candidates(word: str) -> list[str]:
     elif w.endswith("er") and len(w) > 3:
         add(w[:-2])  # faster -> fast
 
+    # Adverb -ly.
+    if w.endswith("ily") and len(w) > 5:
+        add(w[:-3] + "y")  # happily -> happy, easily -> easy
+    if w.endswith("ally") and len(w) > 6:
+        add(w[:-4])  # basically -> basic, dramatically -> dramatic
+    if w.endswith("ly") and len(w) > 3:
+        add(w[:-2])  # slowly -> slow, slightly -> slight, totally -> total
+
     return candidates

@@ -16,6 +16,7 @@ from app.models.vocabulary import (
     WordRelation,
     WordSense,
 )
+from app.services.inflection import inflection_candidates
 from app.schemas.vocabulary import (
     ExampleIn,
     ImportReport,
@@ -157,17 +158,25 @@ async def list_words(
             Category.slug == category_slug
         )
     if q:
-        needle = "%{}%".format(q.lower())
+        term = q.lower()
+        needle = "%{}%".format(term)
         # A join + OR across both tables can't use either trigram index — the
         # planner has to hash-join everything first, then filter. Three
         # separately indexed id lookups, combined with UNION, let each branch
         # hit its own GIN index and only join the (small) matching id set
         # back to words.
-        matching_ids = union(
+        branches = [
             select(Word.id).where(func.lower(Word.headword).like(needle)),
             select(WordSense.word_id).where(func.lower(WordSense.translation_uz).like(needle)),
             select(WordSense.word_id).where(func.lower(WordSense.translation_ru).like(needle)),
-        ).subquery()
+        ]
+        # The corpus indexes base lemmas ("slight"), but a searched term may be
+        # an inflected form ("slightly") that isn't a substring of its lemma —
+        # match those against the guessed base form too.
+        candidates = inflection_candidates(term)
+        if candidates:
+            branches.append(select(Word.id).where(func.lower(Word.headword).in_(candidates)))
+        matching_ids = union(*branches).subquery()
         query = query.where(Word.id.in_(select(matching_ids.c.id)))
 
     total = (

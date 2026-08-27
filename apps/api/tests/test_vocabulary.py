@@ -136,6 +136,19 @@ async def test_search_matches_headword_and_translations(client):
     assert (await client.get("/api/v1/words", params={"level": "B2"})).json()["total"] == 0
 
 
+async def test_search_matches_an_inflected_form_against_the_base_headword(client):
+    headers = await make_admin(client)
+    slight = {**WORD_PAYLOAD, "headword": "slight", "pos": "adjective"}
+    await client.post("/api/v1/admin/words", json=slight, headers=headers)
+
+    # "slight" is not a substring of "slightly", so only the inflection-aware
+    # branch of the search finds it.
+    response = await client.get("/api/v1/words", params={"q": "slightly"})
+    body = response.json()
+    assert body["total"] == 1
+    assert body["items"][0]["headword"] == "slight"
+
+
 async def test_word_lookup_matches_published_headwords_case_insensitively(client):
     headers = await make_admin(client)
     await client.post("/api/v1/admin/words", json=WORD_PAYLOAD, headers=headers)

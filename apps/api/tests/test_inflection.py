@@ -29,6 +29,15 @@ def test_comparative_superlative():
     assert "easy" in inflection_candidates("easiest")
 
 
+def test_adverbs():
+    assert "slight" in inflection_candidates("slightly")
+    assert "slow" in inflection_candidates("slowly")
+    assert "total" in inflection_candidates("totally")
+    assert "happy" in inflection_candidates("happily")
+    assert "easy" in inflection_candidates("easily")
+    assert "basic" in inflection_candidates("basically")
+
+
 def test_never_returns_the_input_word_itself():
     for word in ("bicycles", "underperformed", "running", "fastest", "explain"):
         assert word not in inflection_candidates(word)
