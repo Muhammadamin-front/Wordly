@@ -47,7 +47,7 @@ export function Podium({ mp, board }: { mp: Dictionary["mp"]; board: ScoreRow[] 
                 <div
                   className={cn(
                     "mt-2 w-full rounded-t-lg border border-b-0 border-brand-950/20 bg-linear-to-b from-brand-400/30 to-brand-500/10",
-                    PODIUM_HEIGHT[i]
+                    PODIUM_HEIGHT[order]
                   )}
                 />
               </motion.div>
