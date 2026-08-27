@@ -426,8 +426,11 @@ async def quiz_socket(websocket: WebSocket):
                     await enter_phase(room, code)
 
             elif action == "answer" and code is not None:
-                answer_index = int(data.get("index", -1))
-                option = int(data.get("option", -1))
+                try:
+                    answer_index = int(data.get("index", -1))
+                    option = int(data.get("option", -1))
+                except (TypeError, ValueError):
+                    answer_index, option = -1, -1
                 result = {"all_answered": False}
 
                 def mutate(room: Room, result=result) -> None:
