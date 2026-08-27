@@ -21,6 +21,9 @@ class FakeAiClient:
         self.calls.append("chat")
         return "That's great! What did you do next?"
 
+    #: overrides the canned define-word response for individual tests.
+    define_word_response: Dict[str, Any] = None
+
     async def json(self, *, system, prompt, schema, max_tokens) -> Any:
         self.calls.append("json")
         if "questions" in schema["properties"]:
@@ -28,6 +31,19 @@ class FakeAiClient:
                 "questions": [
                     {"prompt": "What does 'apple' mean?", "options": ["olma", "non", "suv", "choy"], "answer_index": 0}
                 ]
+            }
+        if "recognized" in schema["properties"]:
+            if self.define_word_response is not None:
+                return self.define_word_response
+            return {
+                "recognized": True,
+                "headword": "slight",
+                "pos": "adjective",
+                "cefr_level": "B1",
+                "translation_uz": "sezilarli emas",
+                "translation_ru": "незначительный",
+                "definition_en": "very small in degree or amount.",
+                "example_en": "There was a slight improvement in her grades.",
             }
         return {"corrected": "I went to school.", "feedback": "Use past tense 'went'."}
 
@@ -194,3 +210,75 @@ async def test_report_is_stored(client):
         reports = (await session.scalars(select(AiReport))).all()
     assert len(reports) == 1
     assert reports[0].kind == "explain"
+
+
+async def test_define_word_creates_a_reviewable_ai_generated_word(client):
+    fake = FakeAiClient()
+    use_fake(fake)
+    try:
+        headers = await learner(client)
+        response = await client.post(
+            "/api/v1/ai/define-word", json={"word": "slightly"}, headers=headers
+        )
+        assert response.status_code == 201, response.text
+        body = response.json()
+        # The corpus lookup (with inflection-guessing) ran first and found
+        # nothing for "slightly", so the AI's corrected headword "slight" is
+        # what actually got created.
+        assert body["headword"] == "slight"
+        assert body["status"] == "review"  # stays out of the public catalogue
+        assert body["ai_generated"] is True
+        assert body["senses"][0]["translation_uz"] == "sezilarli emas"
+        assert fake.calls == ["json"]
+
+        quota = (await client.get("/api/v1/ai/quota", headers=headers)).json()
+        assert quota["remaining"] == 4  # one action consumed
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_define_word_reuses_an_existing_match_without_calling_ai(client):
+    await seed_word(client)  # "apple", published
+    fake = FakeAiClient()
+    use_fake(fake)
+    try:
+        headers = await learner(client)
+        response = await client.post(
+            "/api/v1/ai/define-word", json={"word": "APPLE"}, headers=headers
+        )
+        assert response.status_code == 201, response.text
+        assert response.json()["headword"] == "apple"
+        assert fake.calls == []  # no AI call, no quota spent
+
+        quota = (await client.get("/api/v1/ai/quota", headers=headers)).json()
+        assert quota["remaining"] == 5  # untouched
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_define_word_rejects_gibberish_without_creating_anything(client):
+    fake = FakeAiClient()
+    fake.define_word_response = {
+        "recognized": False,
+        "headword": "",
+        "pos": "noun",
+        "cefr_level": "A1",
+        "translation_uz": "",
+        "translation_ru": "",
+        "definition_en": "",
+        "example_en": "",
+    }
+    use_fake(fake)
+    try:
+        headers = await learner(client)
+        response = await client.post(
+            "/api/v1/ai/define-word", json={"word": "asdkjhaskjdh"}, headers=headers
+        )
+        assert response.status_code == 404
+
+        # Still consumed — the AI call itself succeeded, it just correctly
+        # judged the input unrecognizable; that's not a free retry.
+        quota = (await client.get("/api/v1/ai/quota", headers=headers)).json()
+        assert quota["remaining"] == 4
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)

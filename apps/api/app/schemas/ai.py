@@ -67,6 +67,12 @@ class WritingCheckOut(BaseModel):
     ai_generated: bool = True
 
 
+class DefineWordRequest(BaseModel):
+    # A raw search term, not yet known to be a real word — the corpus lookup
+    # (exact + inflected-form match) happens server-side before any AI call.
+    word: str = Field(min_length=1, max_length=80)
+
+
 class ReportRequest(BaseModel):
     kind: str = Field(min_length=1, max_length=24)
     output: str = Field(min_length=1, max_length=4000)

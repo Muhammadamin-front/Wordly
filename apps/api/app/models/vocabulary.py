@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import Boolean, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.security import utcnow
@@ -44,6 +44,11 @@ class Word(Base):
     word_family: Mapped[Optional[str]] = mapped_column(String(80), nullable=True)  # groups act/action/active
     common_mistake: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # Uzbek-learner pitfall note
     status: Mapped[str] = mapped_column(String(10), default="draft", nullable=False)
+    # Distinct from status: "review" already means "awaiting curator approval"
+    # for CSV imports too, so it can't also double as "the source was an AI
+    # fallback for a search miss" without conflating two unrelated reasons a
+    # word might not be published yet.
+    ai_generated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     category_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         Uuid, ForeignKey("categories.id", ondelete="SET NULL"), nullable=True
     )

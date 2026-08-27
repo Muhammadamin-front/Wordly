@@ -114,6 +114,7 @@ class WordListItem(BaseModel):
     cefr_level: str
     frequency_rank: Optional[int] = None
     status: str
+    ai_generated: bool = False
     category: Optional[CategoryOut] = None
     primary_translation_uz: Optional[str] = None
     primary_translation_ru: Optional[str] = None
@@ -136,6 +137,7 @@ class WordOut(BaseModel):
     word_family: Optional[str] = None
     common_mistake: Optional[str] = None
     status: str
+    ai_generated: bool = False
     category: Optional[CategoryOut] = None
     senses: List[SenseOut]
     relations: List[RelationOut]

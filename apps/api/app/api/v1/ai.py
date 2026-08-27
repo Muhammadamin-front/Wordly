@@ -1,8 +1,8 @@
-from typing import Callable, Awaitable, List
+from typing import Callable, Awaitable, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -12,9 +12,10 @@ from app.db.session import get_db
 from app.models.ai import AiReport
 from app.models.flashcards import Card
 from app.models.user import User
-from app.models.vocabulary import Word
+from app.models.vocabulary import CEFR_LEVELS, Word
 from app.schemas.ai import (
     ChatRequest,
+    DefineWordRequest,
     ExplainRequest,
     MessageOut,
     MnemonicRequest,
@@ -28,8 +29,10 @@ from app.schemas.ai import (
     WritingCheckRequest,
     WritingCheckOut,
 )
-from app.services import ai_quota
+from app.schemas.vocabulary import ExampleIn, SenseIn, WordCreate, WordOut
+from app.services import ai_quota, vocabulary as vocab_service
 from app.services.ai_client import AiClient, AiError, get_ai_client
+from app.services.inflection import inflection_candidates
 
 router = APIRouter(
     prefix="/ai",
@@ -146,6 +149,138 @@ async def mnemonic(
         lambda: client.text(system=tutor_system(user), prompt=prompt, max_tokens=250),
     )
     return AiTextOut(text=text)
+
+
+_DEFINE_WORD_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "recognized": {"type": "boolean"},
+        "headword": {"type": "string"},
+        "pos": {
+            "type": "string",
+            "enum": [
+                "noun", "verb", "adjective", "adverb", "preposition",
+                "conjunction", "pronoun", "interjection", "phrase",
+            ],
+        },
+        "cefr_level": {"type": "string", "enum": list(CEFR_LEVELS)},
+        "translation_uz": {"type": "string"},
+        "translation_ru": {"type": "string"},
+        "definition_en": {"type": "string"},
+        "example_en": {"type": "string"},
+    },
+    "required": [
+        "recognized", "headword", "pos", "cefr_level",
+        "translation_uz", "translation_ru", "definition_en", "example_en",
+    ],
+    "additionalProperties": False,
+}
+
+
+async def _find_existing(db: AsyncSession, term: str) -> Optional[Word]:
+    """Exact match, plus the same inflection-guessing the search bar uses —
+    covers both "already in the curated corpus" and "a previous learner's
+    search already generated this via AI", so the same missing word never
+    costs a second AI call."""
+    candidates = [term, *inflection_candidates(term)]
+    return await db.scalar(
+        select(Word).where(func.lower(Word.headword).in_(candidates)).limit(1)
+    )
+
+
+@router.post("/define-word", response_model=WordOut, status_code=status.HTTP_201_CREATED)
+async def define_word(
+    payload: DefineWordRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    client: AiClient = Depends(require_ai_client),
+):
+    """Fallback for a vocabulary search that came back empty: ask the AI to
+    define the term and add it to the corpus (status="review", so it stays
+    out of the public catalogue until a curator promotes it — same as a
+    CSV-imported word — while ai_generated=True keeps that distinct from a
+    CSV import awaiting review for an unrelated reason). Every subsequent
+    search for the same word — from anyone — finds this row directly and
+    never re-triggers the AI."""
+    term = payload.word.strip().lower()
+    existing = await _find_existing(db, term)
+    if existing is not None:
+        return WordOut.model_validate(existing)
+
+    prompt = (
+        "A learner searched the dictionary for \"{term}\" and it wasn't found. "
+        "Decide whether this is a real, dictionary-worthy English word or short phrase "
+        "(fixing an obvious typo if there is one). If it is, set recognized=true and fill in "
+        "every field: the correct dictionary headword, part of speech, an honest CEFR level "
+        "estimate, natural Uzbek and Russian translations suited to a learner (not a literal "
+        "word-for-word gloss), a clear beginner-friendly English definition, and one natural "
+        "example sentence that uses the word. If \"{term}\" is gibberish, not English, or you "
+        "cannot confidently resolve it, set recognized=false and leave the other string fields "
+        "empty."
+    ).format(term=payload.word.strip())
+
+    async def call():
+        data = await client.json(
+            system=(
+                "You are a careful lexicographer building a dictionary for Uzbek "
+                "learners of English. Only mark a term recognized when you are "
+                "confident it is a genuine English word or common phrase."
+            ),
+            prompt=prompt,
+            schema=_DEFINE_WORD_SCHEMA,
+            max_tokens=500,
+        )
+        headword = str(data.get("headword", "")).strip()[:80]
+        if not data.get("recognized") or not headword:
+            return None
+        # The AI's own correction (e.g. a typo fix) can land on a headword
+        # already in the corpus under a different search term — re-check
+        # before creating a duplicate row.
+        dup = await _find_existing(db, headword.lower())
+        if dup is not None:
+            return dup
+        pos = str(data.get("pos", "")).strip().lower()
+        if pos not in _DEFINE_WORD_SCHEMA["properties"]["pos"]["enum"]:
+            pos = "noun"
+        cefr_level = str(data.get("cefr_level", "")).strip().upper()
+        if cefr_level not in CEFR_LEVELS:
+            cefr_level = "B1"
+        try:
+            word_payload = WordCreate(
+                headword=headword,
+                pos=pos,
+                cefr_level=cefr_level,
+                status="review",
+                senses=[
+                    SenseIn(
+                        definition_en=str(data.get("definition_en", "")).strip()[:1000] or headword,
+                        translation_uz=str(data.get("translation_uz", "")).strip()[:160] or headword,
+                        translation_ru=str(data.get("translation_ru", "")).strip()[:160] or headword,
+                        examples=(
+                            [ExampleIn(text_en=str(data["example_en"]).strip()[:500])]
+                            if str(data.get("example_en", "")).strip()
+                            else []
+                        ),
+                    )
+                ],
+            )
+        except ValueError:
+            # A malformed-but-technically-valid-JSON response (schema
+            # adherence isn't guaranteed, especially on the Bedrock provider —
+            # see ai_client.py) — treat exactly like "not recognized" rather
+            # than crashing into a 500.
+            return None
+        word = await vocab_service.create_word(db, word_payload)
+        word.ai_generated = True
+        return word
+
+    word = await _guarded(db, user, call)
+    if word is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="This doesn't look like a real English word — check the spelling and try again.",
+        )
+    return WordOut.model_validate(word)
 
 
 async def _learning_words(db: AsyncSession, user: User, limit: int = 6) -> List[Word]:
