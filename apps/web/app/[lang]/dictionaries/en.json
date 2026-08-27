@@ -1197,6 +1197,11 @@
     "listen": "Listen",
     "loadMore": "Load more",
     "noResults": "Nothing found",
+    "aiDefineCta": "Not in our dictionary yet — look it up with AI",
+    "aiDefineLoading": "Looking it up…",
+    "aiDefineNotRecognized": "That doesn't look like a real English word — check the spelling and try again.",
+    "aiDefineError": "Couldn't reach the AI lookup. Check your connection and try again.",
+    "aiDefineQuotaExceeded": "You've used today's AI lookups. Upgrade to Premium for more, or try again tomorrow.",
     "shelves": {
       "a1": {
         "name": "A1 · Beginner",
