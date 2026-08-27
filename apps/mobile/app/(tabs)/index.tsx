@@ -46,9 +46,9 @@ export default function Today() {
 
 function DailyQuestsCard({ quests, locale }: { quests: DailyQuests; locale: "uz" | "ru" | "en" }) {
   const labels = {
-    uz: { title: "Bugungi questlar", complete: "bajarildi", reward: "XP", codes: { correct_5: "5 ta to'g'ri javob", combo_3: "3 ta ketma-ket javob", match_1: "1 ta Word Match", phrasal_5: "5 ta phrasal verb", memory_1: "1 ta Memory o'yini", complete_2: "2 ta o'yinni yakunlang", phrasal_blank_5: "5 ta phrasal blank", perfect_1: "1 ta mukammal raund", story_1: "1 ta Story mode" } },
-    ru: { title: "Задания на сегодня", complete: "выполнено", reward: "XP", codes: { correct_5: "5 правильных ответов", combo_3: "3 ответа подряд", match_1: "1 Word Match", phrasal_5: "5 фразовых глаголов", memory_1: "1 игра Memory", complete_2: "Завершите 2 игры", phrasal_blank_5: "5 phrasal blank", perfect_1: "1 идеальный раунд", story_1: "1 Story mode" } },
-    en: { title: "Today's quests", complete: "complete", reward: "XP", codes: { correct_5: "5 correct answers", combo_3: "3-answer combo", match_1: "1 Word Match", phrasal_5: "5 phrasal verbs", memory_1: "1 Memory game", complete_2: "Finish 2 games", phrasal_blank_5: "5 phrasal blanks", perfect_1: "1 perfect round", story_1: "1 Story mode" } },
+    uz: { title: "Bugungi questlar", complete: "bajarildi", reward: "XP", codes: { correct_5: "5 ta to'g'ri javob", combo_3: "3 ta ketma-ket javob", match_1: "1 ta Word Match", phrasal_5: "5 ta phrasal verb", memory_1: "1 ta Memory o'yini", complete_2: "2 ta o'yinni yakunlang", phrasal_blank_5: "5 ta phrasal blank", perfect_1: "1 ta mukammal raund", hangman_1: "1 ta Hangman" } },
+    ru: { title: "Задания на сегодня", complete: "выполнено", reward: "XP", codes: { correct_5: "5 правильных ответов", combo_3: "3 ответа подряд", match_1: "1 Word Match", phrasal_5: "5 фразовых глаголов", memory_1: "1 игра Memory", complete_2: "Завершите 2 игры", phrasal_blank_5: "5 phrasal blank", perfect_1: "1 идеальный раунд", hangman_1: "1 Hangman" } },
+    en: { title: "Today's quests", complete: "complete", reward: "XP", codes: { correct_5: "5 correct answers", combo_3: "3-answer combo", match_1: "1 Word Match", phrasal_5: "5 phrasal verbs", memory_1: "1 Memory game", complete_2: "Finish 2 games", phrasal_blank_5: "5 phrasal blanks", perfect_1: "1 perfect round", hangman_1: "1 Hangman" } },
   } as const;
   const t = labels[locale];
   return <View style={{ gap: 8 }}>

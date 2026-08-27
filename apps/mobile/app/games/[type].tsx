@@ -13,7 +13,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
 
 type Source = { key: string; label: string; query: string };
-const choiceTypes = new Set<GameType>(["word_match", "speed_quiz", "fill_blank", "audio_guess", "memory", "story_mode"]);
+const choiceTypes = new Set<GameType>(["word_match", "speed_quiz", "fill_blank", "audio_guess", "memory"]);
 
 const labels = {
   uz: { choose: "Mashq manbasini tanlang", sourceHint: "Daraja yoki mavzuni tanlasangiz, o‘yin shu so‘zlarni kartalaringizga qo‘shadi.", mine: "Mening kartalarim", ielts: "IELTS", phrasal: "Phrasal verbs", idioms: "Idioms", start: "O‘yinni boshlash", loading: "O‘yin tayyorlanmoqda...", prompt: "Javobingizni yozing", check: "Tekshirish", next: "Keyingi savol", again: "Yana o‘ynash", change: "Manbani o‘zgartirish", correct: "To‘g‘ri!", wrong: "Javob boshqa edi", complete: "O‘yin tugadi", completeBody: "Natijangiz SRS va kunlik questlarga qo‘shildi.", score: "Natija", xp: "XP", listen: "Eshitish", needWords: "Avval kamida 4 ta so‘z kerak", needWordsBody: "Kartalaringizga bir nechta so‘z qo‘shing yoki CEFR daraja tanlang.", error: "O‘yinni ochib bo‘lmadi.", retry: "Qayta urinib ko‘ring", question: "Savol" },

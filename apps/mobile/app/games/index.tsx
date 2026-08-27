@@ -7,7 +7,7 @@ import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
 
-export const GAME_TYPES = ["word_match", "speed_quiz", "fill_blank", "audio_guess", "typing_race", "memory", "hangman", "spelling_bee", "sentence_builder", "word_search", "crossword", "story_mode"] as const;
+export const GAME_TYPES = ["word_match", "speed_quiz", "fill_blank", "audio_guess", "typing_race", "memory", "hangman", "spelling_bee", "sentence_builder", "word_search", "crossword"] as const;
 export type GameType = (typeof GAME_TYPES)[number];
 
 type GameMeta = { icon: keyof typeof Ionicons.glyphMap; name: string; description: string; color: string };
@@ -24,7 +24,6 @@ const gameMeta: Record<Locale, Record<GameType, GameMeta>> = {
     sentence_builder: { icon: "reorder-three-outline", name: "Sentence Builder", description: "Jumlani qayta tuzing.", color: colors.teal },
     word_search: { icon: "search-outline", name: "Word Search", description: "Tarjimadan so‘zni toping.", color: colors.rust },
     crossword: { icon: "apps-outline", name: "Crossword", description: "Izohdan so‘zni toping.", color: colors.teal },
-    story_mode: { icon: "book-outline", name: "Story Mode", description: "Hikoyani to‘g‘ri so‘z bilan davom ettiring.", color: colors.rust },
   },
   ru: {
     word_match: { icon: "git-compare-outline", name: "Word Match", description: "Соединяйте слово и перевод.", color: colors.teal },
@@ -38,7 +37,6 @@ const gameMeta: Record<Locale, Record<GameType, GameMeta>> = {
     sentence_builder: { icon: "reorder-three-outline", name: "Sentence Builder", description: "Соберите предложение.", color: colors.teal },
     word_search: { icon: "search-outline", name: "Word Search", description: "Найдите слово по переводу.", color: colors.rust },
     crossword: { icon: "apps-outline", name: "Crossword", description: "Найдите слово по определению.", color: colors.teal },
-    story_mode: { icon: "book-outline", name: "Story Mode", description: "Продолжите историю правильным словом.", color: colors.rust },
   },
   en: {
     word_match: { icon: "git-compare-outline", name: "Word Match", description: "Match a word with its meaning.", color: colors.teal },
@@ -52,7 +50,6 @@ const gameMeta: Record<Locale, Record<GameType, GameMeta>> = {
     sentence_builder: { icon: "reorder-three-outline", name: "Sentence Builder", description: "Rebuild the sentence.", color: colors.teal },
     word_search: { icon: "search-outline", name: "Word Search", description: "Find the word from its meaning.", color: colors.rust },
     crossword: { icon: "apps-outline", name: "Crossword", description: "Find the word from its clue.", color: colors.teal },
-    story_mode: { icon: "book-outline", name: "Story Mode", description: "Continue the story with the right word.", color: colors.rust },
   },
 };
 
