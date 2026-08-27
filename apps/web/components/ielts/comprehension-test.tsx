@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,8 +50,6 @@ export function ComprehensionTest({
   t: Ielts;
   embedded?: boolean;
 }) {
-  const speech = useSpeech();
-
   const [bank, setBank] = useState<BankItem[] | null>(null);
   const [test, setTest] = useState<GeneratedTest | null>(null);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -66,18 +63,20 @@ export function ComprehensionTest({
   // replay made the practice score meaningless.
   const [audioFinished, setAudioFinished] = useState(false);
   const [heard, setHeard] = useState({ current: 0, duration: 0 });
+  const [audioFailed, setAudioFailed] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
 
-  // Natural ElevenLabs narration when the server has TTS; falls back to the
-  // browser's speechSynthesis voice when it doesn't.
+  // Natural ElevenLabs narration only — no browser speechSynthesis fallback.
+  // A robotic voice on a real listening test reads as broken, not degraded,
+  // so a failure surfaces as a clear retry state instead.
   const stopAudio = () => {
     audioRef.current?.pause();
-    speech.cancel();
     setAudioPlaying(false);
   };
 
-  async function playNarration(testId: string, body: string) {
+  async function playNarration(testId: string) {
+    setAudioFailed(false);
     try {
       const token = await waitForAccessToken();
       const resp = await fetch(`${API_URL}/api/v1/ielts/listening/${testId}/audio`, {
@@ -102,7 +101,7 @@ export function ComprehensionTest({
       await audio.play();
     } catch {
       audioRef.current = null;
-      speech.speak(body, { rate: 0.98 }); // graceful fallback
+      setAudioFailed(true);
     }
   }
 
@@ -151,7 +150,7 @@ export function ComprehensionTest({
     );
     if (kind === "listening") {
       // Play the recording once, automatically — like the real exam.
-      window.setTimeout(() => playNarration(generated.test_id, generated.body), 400);
+      window.setTimeout(() => playNarration(generated.test_id), 400);
     }
   }
 
@@ -394,20 +393,18 @@ export function ComprehensionTest({
                     <Button
                       variant="secondary"
                       className="size-12 shrink-0 rounded-full p-0 text-lg"
-                      aria-label={audioPlaying || speech.speaking ? t.pause : t.replay}
+                      aria-label={audioPlaying ? t.pause : t.replay}
                       disabled={!result && audioFinished}
                       onClick={() => {
                         if (audioRef.current) {
                           if (audioPlaying) audioRef.current.pause();
                           else void audioRef.current.play();
-                        } else if (speech.speaking) {
-                          speech.cancel();
                         } else {
-                          void playNarration(test.test_id, test.body);
+                          void playNarration(test.test_id);
                         }
                       }}
                     >
-                      {audioPlaying || speech.speaking ? "⏸" : "▶"}
+                      {audioFailed ? "↻" : audioPlaying ? "⏸" : "▶"}
                     </Button>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-2">
@@ -431,8 +428,8 @@ export function ComprehensionTest({
                           style={{ width: `${played * 100}%` }}
                         />
                       </div>
-                      <p className="mt-1.5 text-[11px] leading-4 text-ink-soft">
-                        {result ? t.listeningHint : t.listeningPlaysOnce}
+                      <p className={cn("mt-1.5 text-[11px] leading-4", audioFailed ? "font-bold text-danger" : "text-ink-soft")}>
+                        {audioFailed ? t.error : result ? t.listeningHint : t.listeningPlaysOnce}
                       </p>
                     </div>
                   </div>

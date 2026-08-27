@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { API_URL, waitForAccessToken } from "@/lib/api";
@@ -37,19 +36,22 @@ export function MockListeningLeg({
   onDone: (band: number, detail: { correct: number; total: number }) => Promise<boolean>;
   onAbandon: () => void;
 }) {
-  const speech = useSpeech();
   const [test, setTest] = useState<GeneratedTest | null>(null);
   const [answers, setAnswers] = useState<number[]>([]);
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [audioFinished, setAudioFinished] = useState(false);
+  const [audioFailed, setAudioFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
-  const ttsStartedRef = useRef(false);
 
-  async function playNarration(testId: string, body: string) {
+  // Natural ElevenLabs narration only — no browser speechSynthesis fallback.
+  // A robotic voice reading a real exam script reads as broken, not
+  // degraded, so a failure surfaces as a clear retry state instead.
+  async function playNarration(testId: string) {
+    setAudioFailed(false);
     try {
       const token = await waitForAccessToken();
       const resp = await fetch(`${API_URL}/api/v1/ielts/listening/${testId}/audio`, {
@@ -70,8 +72,7 @@ export function MockListeningLeg({
       await audio.play();
     } catch {
       audioRef.current = null;
-      ttsStartedRef.current = true;
-      speech.speak(body, { rate: 0.98 });
+      setAudioFailed(true);
     }
   }
 
@@ -86,7 +87,7 @@ export function MockListeningLeg({
         setTest(started);
         setAnswers(new Array(started.questions.length).fill(-1));
         setSecondsLeft(MOCK_SKILL_MINUTES.listening * 60);
-        window.setTimeout(() => playNarration(started.test_id, started.body), 400);
+        window.setTimeout(() => playNarration(started.test_id), 400);
       } catch {
         if (!cancelled) setError(t.error);
       }
@@ -94,16 +95,9 @@ export function MockListeningLeg({
     return () => {
       cancelled = true;
       audioRef.current?.pause();
-      speech.cancel();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Browser TTS has no onended callback of its own; infer completion from
-  // `speaking` flipping back to false after we started an utterance.
-  useEffect(() => {
-    if (ttsStartedRef.current && !speech.speaking) setAudioFinished(true);
-  }, [speech.speaking]);
 
   useEffect(() => {
     if (!test) return;
@@ -124,7 +118,6 @@ export function MockListeningLeg({
     if (!test || submitting) return;
     setSubmitting(true);
     audioRef.current?.pause();
-    speech.cancel();
     try {
       const graded = await ieltsApi.submit("listening", test.test_id, answers, session.id);
       const ok = await onDone(graded.band, { correct: graded.correct, total: graded.total });
@@ -185,16 +178,18 @@ export function MockListeningLeg({
               if (audioRef.current) {
                 if (audioPlaying) audioRef.current.pause();
                 else void audioRef.current.play();
-              } else if (speech.speaking) {
-                speech.cancel();
+              } else if (audioFailed) {
+                void playNarration(test.test_id);
               }
             }}
           >
-            {audioPlaying || speech.speaking ? "⏸" : "▶"}
+            {audioFailed ? "↻" : audioPlaying ? "⏸" : "▶"}
           </Button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-ink">{test.title}</p>
-            <p className="mt-1 text-[11px] leading-4 text-ink-soft">{ieltsT.listeningPlaysOnce}</p>
+            <p className={cn("mt-1 text-[11px] leading-4", audioFailed ? "font-bold text-danger" : "text-ink-soft")}>
+              {audioFailed ? t.error : ieltsT.listeningPlaysOnce}
+            </p>
           </div>
         </div>
       </div>
