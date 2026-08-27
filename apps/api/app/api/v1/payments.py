@@ -4,6 +4,7 @@ from urllib.parse import urljoin, urlparse
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -23,7 +24,7 @@ from app.schemas.billing import (
     SubscriptionOut,
 )
 from app.services import checkout, click, payme, referrals, subscriptions, uzum
-from app.services.plans import SELLABLE_PLAN_CODES, get_plan, public_plans, som_to_tiyin
+from app.services.plans import SELLABLE_PLAN_CODES, Plan, get_plan, public_plans, som_to_tiyin
 
 # --- Gateway callbacks (called by Payme/Click servers, not the browser) -----
 gateway_router = APIRouter(prefix="/payments", tags=["payments"])
@@ -59,8 +60,8 @@ async def uzum_callback(
     return await uzum.handle_callback(db, await request.json(), webhook_secret)
 
 
-# --- Authenticated billing surface (the app itself) -------------------------
-router = APIRouter(prefix="/billing", tags=["billing"], dependencies=[Depends(get_current_user)])
+# --- Billing surface (public catalogue + authenticated account actions) -----
+router = APIRouter(prefix="/billing", tags=["billing"])
 
 IDEMPOTENCY_KEY_PATTERN = re.compile(r"^[A-Za-z0-9._-]{16,64}$")
 
@@ -127,6 +128,28 @@ async def subscription(
     )
 
 
+def _existing_checkout_response(
+    existing: Payment, payload: CheckoutRequest, plan: Plan, return_url: Optional[str]
+) -> CheckoutOut:
+    if existing.provider != payload.provider or existing.plan_code != plan.code:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Idempotency key already belongs to a different checkout",
+        )
+    if existing.provider == "payme":
+        url = checkout.payme_url(str(existing.id), plan, return_url)
+    elif existing.provider == "click":
+        url = checkout.click_url(str(existing.id), plan, return_url)
+    elif existing.checkout_url:
+        url = existing.checkout_url
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Checkout registration is incomplete; start a new payment",
+        )
+    return CheckoutOut(order_id=str(existing.id), checkout_url=url, amount_som=plan.price_som)
+
+
 @router.post("/checkout", response_model=CheckoutOut, status_code=status.HTTP_201_CREATED)
 async def create_checkout(
     payload: CheckoutRequest,
@@ -160,23 +183,7 @@ async def create_checkout(
             select(Payment).where(Payment.user_id == user.id, Payment.idempotency_key == key)
         )
         if existing is not None:
-            if existing.provider != payload.provider or existing.plan_code != plan.code:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Idempotency key already belongs to a different checkout",
-                )
-            if existing.provider == "payme":
-                url = checkout.payme_url(str(existing.id), plan, return_url)
-            elif existing.provider == "click":
-                url = checkout.click_url(str(existing.id), plan, return_url)
-            elif existing.checkout_url:
-                url = existing.checkout_url
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_409_CONFLICT,
-                    detail="Checkout registration is incomplete; start a new payment",
-                )
-            return CheckoutOut(order_id=str(existing.id), checkout_url=url, amount_som=plan.price_som)
+            return _existing_checkout_response(existing, payload, plan, return_url)
 
     order = Payment(
         user_id=user.id,
@@ -188,7 +195,24 @@ async def create_checkout(
         idempotency_key=key,
     )
     db.add(order)
-    await db.commit()
+    if key:
+        try:
+            await db.commit()
+        except IntegrityError:
+            # Two concurrent requests with the same idempotency key (double
+            # click, client auto-retry) can both pass the SELECT above before
+            # either commits — the loser hits the unique constraint here
+            # instead of crashing, it re-fetches the winner's row and returns
+            # that checkout, exactly like the pre-existing branch above.
+            await db.rollback()
+            existing = await db.scalar(
+                select(Payment).where(Payment.user_id == user.id, Payment.idempotency_key == key)
+            )
+            if existing is None:
+                raise
+            return _existing_checkout_response(existing, payload, plan, return_url)
+    else:
+        await db.commit()
 
     if payload.provider == "payme":
         url = checkout.payme_url(str(order.id), plan, return_url)

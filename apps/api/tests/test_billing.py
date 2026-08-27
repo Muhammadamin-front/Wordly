@@ -11,12 +11,18 @@ async def learner(client, email="buyer@words.uz") -> dict:
 
 
 async def test_plans_listed(client):
-    headers = await learner(client)
-    body = (await client.get("/api/v1/billing/plans", headers=headers)).json()
+    body = (await client.get("/api/v1/billing/plans")).json()
     codes = {p["code"] for p in body["plans"]}
     assert codes == {"free", "premium_monthly", "premium_yearly"}
     monthly = next(p for p in body["plans"] if p["code"] == "premium_monthly")
     assert monthly["price_som"] == 29000
+
+
+async def test_public_billing_catalog_keeps_account_actions_protected(client):
+    assert (await client.get("/api/v1/billing/plans")).status_code == 200
+    assert (await client.get("/api/v1/billing/status")).status_code == 200
+    assert (await client.get("/api/v1/billing/subscription")).status_code == 401
+    assert (await client.post("/api/v1/billing/cancel")).status_code == 401
 
 
 async def test_new_user_is_not_premium(client):
