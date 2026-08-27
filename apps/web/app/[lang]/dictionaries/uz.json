@@ -261,7 +261,7 @@
     "startReview": "Takrorlashni boshlash",
     "statsLink": "Statistika",
     "dailyPathTitle": "Aqlli o'rganish yo'lingiz",
-    "dailyPathDesc": "Takrorlang, zaif so'zlarni tuzating, darajani moslang va hikoya orqali o'rganing.",
+    "dailyPathDesc": "Takrorlang, zaif so'zlarni tuzating, darajani moslang va haqiqiy gaplarni to'ldiring.",
     "openDailyPath": "Bugungi yo'lni ochish",
     "cardMistakes": "Xatolar daftari",
     "cardMistakesDesc": "Adashilgan so'zlarni mustahkam xotiraga aylantiring"
@@ -269,7 +269,7 @@
   "learning": {
     "todayEyebrow": "Bugun uchun aniq mashg'ulot",
     "todayTitle": "Ingliz tili uchun eng samarali 15 daqiqa",
-    "todaySubtitle": "Bitta aniq yo'l SRS takrorlash, zaif so'zlarni tiklash, adaptive mashq va qisqa lug'at hikoyasini birlashtiradi.",
+    "todaySubtitle": "Bitta aniq yo'l SRS takrorlash, zaif so'zlarni tiklash, adaptive mashq va gap to'ldirishni birlashtiradi.",
     "todaysRoute": "Bugungi yo'l",
     "routeDescription": "To'rt bosqichni tartib bilan bajaring yoki eng keraklisidan boshlang.",
     "reviewStep": "Navbati kelgan so'zlarni eslang",
@@ -278,9 +278,9 @@
     "mistakesStepDesc": "Adashgan so'zlaringizni kontekst bilan qayta o'rganing.",
     "adaptiveStep": "Darajangizda mashq qiling",
     "adaptiveStepDesc": "Qiyinchilik so'nggi javoblaringiz aniqligiga avtomatik moslashadi.",
-    "storyStep": "So'zlarni hikoyada ishlating",
-    "storyStepDesc": "Yo'lni tanlang va hikoya davomida mazmunli gaplarni to'ldiring.",
-    "storyMeta": "Tarmoqlanuvchi lug'at hikoyasi",
+    "storyStep": "Gapni to'ldiring",
+    "storyStepDesc": "Haqiqiy inglizcha gapni to'ldirish uchun tushib qolgan so'zni kiriting.",
+    "storyMeta": "Gap to'ldirish",
     "start": "Bosqichni boshlash",
     "continue": "O'rganishni davom ettirish",
     "startAgain": "Yangi raund boshlash",
@@ -631,10 +631,6 @@
       "name": "Krossvord",
       "desc": "Definition ishoralarini yechib, panjarani to'ldiring"
     },
-    "story_mode": {
-      "name": "Hikoya rejimi",
-      "desc": "Yo'lni tanlang va lug'at yordamida hikoyani oching"
-    },
     "across": "Eniga",
     "down": "Bo'yiga",
     "crosswordInstruction": "Ishorani tanlang, javobni yozing va so'zni tekshiring. Barcha javoblar boshida yashirin bo'ladi.",
@@ -671,19 +667,7 @@
     "recentAccuracy": "So'nggi aniqlik",
     "guided": "Yo'naltirilgan",
     "balanced": "Muvozanatli",
-    "challenge": "Murakkab",
-    "storyChapter": "Bob",
-    "storyPath": "Sizning yo'lingiz",
-    "storyScene": "Hikoya lavhasi",
-    "storyOpeningScene": "Birinchi ishora",
-    "storyBraveScene": "Eski darvoza ortida",
-    "storyCuriousScene": "Yashirin so'qmoq",
-    "storyChooseWord": "Lavhani to'ldiradigan so'zni tanlang",
-    "storyChooseDirection": "Hikoya qayerga davom etadi?",
-    "storyBrave": "Jasur yo'lni tanlash",
-    "storyBraveDesc": "Oldinga yuring va keyingi sinovga duch keling.",
-    "storyCurious": "Ishoralarni kuzatish",
-    "storyCuriousDesc": "Yaqinroq qarang va yashirin tafsilotni toping."
+    "challenge": "Murakkab"
   },
   "stats": {
     "title": "Statistika",

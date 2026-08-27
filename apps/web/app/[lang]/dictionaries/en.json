@@ -261,7 +261,7 @@
     "startReview": "Start review",
     "statsLink": "Statistics",
     "dailyPathTitle": "Your smart learning path",
-    "dailyPathDesc": "Review, fix weak words, adapt the challenge, then learn through a story.",
+    "dailyPathDesc": "Review, fix weak words, adapt the challenge, then complete real sentences.",
     "openDailyPath": "Open today's path",
     "cardMistakes": "Mistake notebook",
     "cardMistakesDesc": "Turn missed words into lasting memory"
@@ -269,7 +269,7 @@
   "learning": {
     "todayEyebrow": "A focused session for today",
     "todayTitle": "Your smartest 15 minutes of English",
-    "todaySubtitle": "One clear route combines spaced repetition, weak-word recovery, adaptive practice and a short vocabulary story.",
+    "todaySubtitle": "One clear route combines spaced repetition, weak-word recovery, adaptive practice and sentence completion.",
     "todaysRoute": "Today's route",
     "routeDescription": "Complete the four steps in order or jump to the one you need most.",
     "reviewStep": "Recall what is due",
@@ -278,9 +278,9 @@
     "mistakesStepDesc": "Revisit words you missed and learn them again with context.",
     "adaptiveStep": "Train at your level",
     "adaptiveStepDesc": "The challenge adjusts to your recent accuracy automatically.",
-    "storyStep": "Use words in a story",
-    "storyStepDesc": "Choose a path and complete meaningful sentences as the story unfolds.",
-    "storyMeta": "Branching vocabulary story",
+    "storyStep": "Complete the sentence",
+    "storyStepDesc": "Fill in the missing word to complete a real English sentence.",
+    "storyMeta": "Sentence completion",
     "start": "Start step",
     "continue": "Continue learning",
     "startAgain": "Start another round",
@@ -631,10 +631,6 @@
       "name": "Crossword",
       "desc": "Solve definition clues and complete the grid"
     },
-    "story_mode": {
-      "name": "Story Mode",
-      "desc": "Choose a path and unlock the story with vocabulary"
-    },
     "across": "Across",
     "down": "Down",
     "crosswordInstruction": "Choose a clue, type its answer, then check the word. Every answer starts hidden.",
@@ -671,19 +667,7 @@
     "recentAccuracy": "Recent accuracy",
     "guided": "Guided",
     "balanced": "Balanced",
-    "challenge": "Challenge",
-    "storyChapter": "Chapter",
-    "storyPath": "Your path",
-    "storyScene": "Story scene",
-    "storyOpeningScene": "The first clue",
-    "storyBraveScene": "Beyond the old gate",
-    "storyCuriousScene": "The hidden trail",
-    "storyChooseWord": "Choose the word that completes the scene",
-    "storyChooseDirection": "Where does the story go next?",
-    "storyBrave": "Take the bold path",
-    "storyBraveDesc": "Move forward and face the next challenge.",
-    "storyCurious": "Follow the clues",
-    "storyCuriousDesc": "Look closer and uncover a hidden detail."
+    "challenge": "Challenge"
   },
   "stats": {
     "title": "Statistics",
