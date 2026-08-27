@@ -22,6 +22,8 @@
     "login": "Kirish",
     "register": "Ro'yxatdan o'tish",
     "dashboard": "Boshqaruv paneli",
+    "account": "Akkaunt",
+    "switchAccount": "Akkauntni almashtirish",
     "logout": "Chiqish",
     "decks": "Kartalar",
     "games": "O'yinlar",
@@ -72,7 +74,7 @@
     "loginSubtitle": "Ingliz tili safaringizni davom ettirish uchun kiring",
     "registerTitle": "Vocora'ga qo'shiling",
     "registerSubtitle": "Bir daqiqada boshlang — bepul",
-    "email": "Email yoki foydalanuvchi nomi",
+    "email": "Email",
     "password": "Parol",
     "passwordHint": "Kamida 8 ta belgi",
     "displayName": "Ismingiz",
@@ -85,6 +87,7 @@
     "socialDivider": "yoki quyidagilar orqali",
     "socialLoading": "Ulanmoqda...",
     "googleUnavailable": "Google orqali kirish hozircha ishlamayapti. Boshqa usuldan foydalaning yoki keyinroq urinib ko'ring.",
+    "switchAccountNotice": "Siz akkauntdan chiqdingiz. Endi boshqa Google, Telegram yoki email akkauntini tanlang.",
     "forgotLink": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
     "haveAccount": "Hisobingiz bormi?",
@@ -939,6 +942,7 @@
     "notPremium": "Sizda Premium yo'q",
     "cancel": "Obunani bekor qilish",
     "canceled": "Bekor qilindi",
+    "willNotRenew": "Uzaytirilmaydi — yuqoridagi sanagacha kirish saqlanadi",
     "upgrade": "Premium olish",
     "billingLink": "Obuna",
     "referTitle": "Do'stlarni taklif qiling",
@@ -950,7 +954,10 @@
     "rewarded": "mukofotlangan",
     "referLink": "Taklif qilish",
     "notConfigured": "To'lov tizimi hozircha sozlanmagan.",
-    "error": "Xatolik yuz berdi."
+    "error": "Xatolik yuz berdi.",
+    "loadError": "Narxlar va to'lov holatini yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
+    "signInToChoose": "Kirish va tanlash"
   },
   "teacher": {
     "title": "O'qituvchi paneli",
@@ -1103,6 +1110,7 @@
     "errorRoomFull": "Xona to'lgan",
     "errorForbidden": "Bu amalni bajarib bo'lmaydi",
     "errorRoundClosed": "Bu raund allaqachon yakunlangan",
+    "errorConnectionLost": "Aloqa uzildi. Internetni tekshirib, qayta urinib ko'ring.",
     "hostSkip": "O'tkazib yuborish",
     "reviewMistakes": "Xatolarni ko'rib chiqish",
     "hideMistakes": "Xatolarni yashirish",
@@ -1195,6 +1203,8 @@
     "listen": "Tinglash",
     "loadMore": "Yana yuklash",
     "noResults": "Hech narsa topilmadi",
+    "loadError": "Kutubxona ma'lumotlarini yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
     "shelves": {
       "a1": {
         "name": "A1 · Boshlang'ich",
@@ -1313,7 +1323,10 @@
     "mistakes": "Ko'p uchraydigan xatolar",
     "nativeNotes": "Native so'zlovchi izohlari",
     "addToCards": "Kartalarga qo'shish",
-    "addedToCards": "Kartalarga qo'shildi"
+    "addedToCards": "Kartalarga qo'shildi",
+    "loadError": "Iboralarni yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "detailLoadError": "Ibora tafsilotlarini ochib bo'lmadi. Qayta urinib ko'ring.",
+    "retry": "Qayta urinish"
   },
   "speakingPractice": {
     "eyebrow": "IELTS Speaking amaliyoti",
@@ -1395,6 +1408,7 @@
     "eyebrow": "IELTS Reading",
     "title": "Diqqat bilan o'qing. Dalil bilan isbotlang.",
     "journey": "Sizning Reading yo'lingiz",
+    "mockCompleteError": "Natijani saqlab bo'lmadi. Internetni tekshirib, qayta yuboring.",
     "fullMock": "To'liq sinov test",
     "fullMockBody": "10 ta to'liq Academic testdan tanlang",
     "fullMockMeta": "Har biri: 3 matn · 40 savol · 60 daqiqa",
