@@ -1,9 +1,9 @@
 import type {
   CefrGrammarLevel,
   GrammarCategory,
-  GrammarExercise,
   GrammarLesson,
 } from "./types";
+import { EXPANSION_CONTENT } from "./curriculum-expansion-content";
 
 type TopicSpec = readonly [
   slug: string,
@@ -169,86 +169,10 @@ const TOPICS_BY_LEVEL: Record<CefrGrammarLevel, TopicSpec[]> = {
   C1: C1_TOPICS,
 };
 
-function unmark(marked: string): { sentence: string; answer: string; gap: string } {
-  const match = marked.match(/\[([^\]]+)]/);
-  if (!match) throw new Error(`Grammar model has no marked answer: ${marked}`);
-  return {
-    answer: match[1],
-    sentence: marked.replace(`[${match[1]}]`, match[1]),
-    gap: marked.replace(`[${match[1]}]`, "___"),
-  };
-}
-
-function distractors(answer: string): string[] {
-  const exact: Record<string, string[]> = {
-    him: ["he", "his", "himself"], mine: ["my", "me", "I"], These: ["This", "That", "It"],
-    some: ["any", "many", "much"], many: ["much", "little", "a little"], since: ["for", "during", "from"],
-    the: ["a", "an", "no article"], where: ["what", "when", "which"], were: ["was", "are", "did"],
-    gone: ["been", "went", "going"], neither: ["both", "every", "all"], whereas: ["therefore", "because", "unless"],
-  };
-  const words = answer.split(/\s+/);
-  const first = words[0];
-  const auxiliary: Record<string, string[]> = {
-    am: ["is", "are", "do"], is: ["are", "does", "has"], are: ["is", "do", "have"],
-    was: ["were", "did", "has"], were: ["was", "did", "had"], do: ["does", "did", "is"], does: ["do", "did", "is"],
-    has: ["have", "had", "is"], have: ["has", "had", "are"], had: ["has", "have", "did"],
-    will: ["would", "did", "is"], would: ["will", "did", "has"], can: ["could", "does", "is"],
-    could: ["can", "would", "did"], might: ["must", "may", "did"], must: ["might", "should", "did"],
-  };
-  const mapped = exact[answer] ?? exact[first];
-  const candidates = mapped ?? (words.length > 1 && auxiliary[first]
-    ? auxiliary[first].map((replacement) => [replacement, ...words.slice(1)].join(" "))
-    : words.length > 1
-      ? [words.slice(1).join(" "), `not ${answer}`, `${answer} to`]
-      : [`not ${answer}`, `${answer}ing`, `to ${answer}`]);
-  return [...new Set(candidates.filter((item) => item !== answer))].slice(0, 3);
-}
-
-function generatedExercises(slug: string, marked: string, title: string): GrammarExercise[] {
-  const { sentence, answer, gap } = unmark(marked);
-  const wrongAnswers = distractors(answer);
-  const options = [answer, ...wrongAnswers];
-  const explanation = `${title}: ${answer} shakli berilgan formula va gap ma’nosiga mos keladi.`;
-  const wrongSentence = gap.replace("___", wrongAnswers[0] ?? "—");
-  const words = sentence.replace(/[?.!,]/g, "").split(/\s+/);
-  const shuffled = [...words.slice(1), words[0]];
-  const exercise = (
-    id: number,
-    type: GrammarExercise["type"],
-    prompt: string,
-    correctAnswer: string,
-    extra: Partial<GrammarExercise> = {},
-  ): GrammarExercise => ({ id: `${slug}-${id}`, type, prompt, correctAnswer, explanation, ...extra });
-
-  return [
-    exercise(1, "multiple-choice", gap, answer, { options }),
-    exercise(2, "fill-blank", `Bo‘sh joyni to‘ldiring: ${gap}`, answer),
-    exercise(3, "error-correction", `Xatoni tuzating: ${wrongSentence}`, sentence),
-    exercise(4, "sentence-builder", "So‘zlardan to‘g‘ri gap tuzing.", sentence, { words: shuffled }),
-    exercise(5, "rewrite", `Gapni ${title} qoidasi bilan aynan qayta yozing: ${sentence}`, sentence),
-    exercise(6, "context-choice", `Qaysi gap ${title} uchun to‘g‘ri model?`, sentence, {
-      context: "Kundalik ingliz tilida grammatik jihatdan aniq variantni tanlang.",
-      options: [sentence, wrongSentence, gap.replace("___", wrongAnswers[1] ?? "—")],
-    }),
-    exercise(7, "multiple-choice", `To‘g‘ri shaklni tanlang: ${gap}`, answer, { options: [...options].reverse() }),
-    exercise(8, "fill-blank", `Formula bo‘yicha yozing (${title}): ${gap}`, answer),
-    exercise(9, "error-correction", `Bu gapdagi formani tuzating: ${wrongSentence}`, sentence),
-    exercise(10, "sentence-builder", "Gap bo‘laklarini mantiqiy tartibga keltiring.", sentence, { words: [...shuffled].reverse() }),
-    exercise(11, "rewrite", `Ma’noni o‘zgartirmasdan to‘g‘ri modelni yozing: ${wrongSentence}`, sentence),
-    exercise(12, "context-choice", `Dars formulasiga mos gapni toping.`, sentence, {
-      context: `${title} bo‘yicha nazorat savoli.`,
-      options: [wrongSentence, sentence, gap.replace("___", wrongAnswers[2] ?? "—")],
-    }),
-    exercise(13, "multiple-choice", `Kontekstdagi yetishmayotgan formani belgilang: ${gap}`, answer, { options: [wrongAnswers[0] ?? "—", answer, ...wrongAnswers.slice(1)] }),
-    exercise(14, "fill-blank", `Faqat yetishmayotgan qismni yozing: ${gap}`, answer),
-    exercise(15, "sentence-builder", "Model gapni tiklang.", sentence, { words: shuffled }),
-  ];
-}
-
 function topicToLesson(spec: TopicSpec, level: CefrGrammarLevel, order: number): GrammarLesson {
-  const [slug, title, titleUz, category, formula, marked, purposeUz] = spec;
-  const { sentence, answer, gap } = unmark(marked);
-  const wrong = gap.replace("___", distractors(answer)[0] ?? "—");
+  const [slug, title, titleUz, category, formula, , purposeUz] = spec;
+  const content = EXPANSION_CONTENT[slug];
+  if (!content) throw new Error(`No authored content found for grammar topic: ${slug}`);
   return {
     slug,
     level,
@@ -258,40 +182,11 @@ function topicToLesson(spec: TopicSpec, level: CefrGrammarLevel, order: number):
     category,
     order,
     introduction: purposeUz,
-    explanation: [
-      purposeUz,
-      `Asosiy qolip: ${formula}. Gapni tuzishda avval subject va yordamchi fe’lni, keyin asosiy formani tekshiring.`,
-      `Model gap: ${sentence} Vaqt, subject yoki kontekst o‘zgarsa ham strukturaning asosiy qismini saqlang.`,
-      ...(level === "C1" ? [`C1 darajada ${title} uslub, information focus va muallif pozitsiyasini ham o‘zgartiradi; strukturani faqat grammatik emas, pragmatik maqsad bilan tanlang.`] : []),
-    ],
+    explanation: content.explanation,
     formula,
-    forms: [{ label: "Positive", formula, example: sentence }],
-    highlights: [answer],
-    comparisons: [{
-      title: `${title}: correct form vs common error`,
-      left: sentence,
-      right: wrong,
-      explanation: `${answer} formasi qoida va kontekstga mos; ikkinchi variantda shakl buzilgan.`,
-    }],
-    examples: [
-      { en: sentence, uz: purposeUz },
-      { en: `In class, the correct model was: “${sentence}”`, uz: "Darsdagi modelda aynan shu struktura saqlanadi." },
-      { en: `A learner wrote this accurately: “${sentence}”`, uz: "Bu gap qoida bo‘yicha to‘g‘ri tuzilgan." },
-      { en: `For revision, compare the form in: “${sentence}”`, uz: "Takrorlashda belgilangan formaga e’tibor bering." },
-    ],
-    mistakes: [
-      { wrong, right: sentence, note: `${answer} formasi tushib qolmasligi yoki noto‘g‘ri o‘zgarmasligi kerak.` },
-      { wrong: gap.replace("___", distractors(answer)[1] ?? "—"), right: sentence, note: `Subject, vaqt va ${title} formulasini birga tekshiring.` },
-    ],
-    quiz: generatedExercises(slug, marked, title).filter((item) => item.options).slice(0, 5).map((item) => ({
-      q: item.prompt,
-      options: item.options!,
-      answer: item.options!.indexOf(item.correctAnswer),
-      explanation: item.explanation,
-    })),
-    exercises: generatedExercises(slug, marked, title),
-    prerequisites: [],
-    relatedLessons: [],
+    examples: content.examples,
+    mistakes: content.mistakes,
+    quiz: content.quiz,
     estimatedMinutes: level === "A1" ? 12 : level === "A2" ? 14 : level === "B1" ? 16 : level === "B2" ? 18 : 20,
     difficulty: level === "A1" ? 1 : level === "A2" ? 2 : level === "B1" ? 3 : level === "B2" ? 4 : 5,
   };
