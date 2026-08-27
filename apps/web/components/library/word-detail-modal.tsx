@@ -140,6 +140,7 @@ export function WordDetailModal({
                 <Tag>{summary.pos}</Tag>
                 {summary.ipa && <Tag>/{summary.ipa}/</Tag>}
                 {categoryName && <Tag>{categoryName}</Tag>}
+                {summary.ai_generated && <Tag>✨ {copy.aiGeneratedBadge}</Tag>}
               </div>
             </div>
             <button
@@ -322,6 +323,7 @@ const modalCopy = {
     meaning: "Ma'no",
     promptTitle: "Mashq prompti",
     error: "So'z tafsilotlarini yuklab bo'lmadi.",
+    aiGeneratedBadge: "AI tomonidan yaratilgan",
     prompt: (word: string, category: string | null) =>
       `"${word}" so'zini ishlatib, ${category ? `${category.toLowerCase()} mavzusida ` : ""}ingliz tilida ikkita gap yozing. Birinchi gapda kundalik hayotingizdan, ikkinchisida esa kelajak rejangizdan misol keltiring.`,
   },
@@ -333,6 +335,7 @@ const modalCopy = {
     meaning: "Значение",
     promptTitle: "Задание",
     error: "Не удалось загрузить подробности слова.",
+    aiGeneratedBadge: "Создано AI",
     prompt: (word: string, category: string | null) =>
       `Напишите два предложения на английском со словом "${word}"${category ? ` на тему «${category}»` : ""}. В первом приведите пример из повседневной жизни, во втором — из ваших планов на будущее.`,
   },
@@ -344,6 +347,7 @@ const modalCopy = {
     meaning: "Meaning",
     promptTitle: "Practice prompt",
     error: "Could not load the word details.",
+    aiGeneratedBadge: "AI-generated",
     prompt: (word: string, category: string | null) =>
       `Write two English sentences using "${word}"${category ? ` in the context of ${category.toLowerCase()}` : ""}. Use one example from your daily life and one from your future plans.`,
   },

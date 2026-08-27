@@ -20,6 +20,7 @@ export interface WordListItem {
   cefr_level: string;
   frequency_rank: number | null;
   status: string;
+  ai_generated?: boolean;
   category: Category | null;
   primary_translation_uz: string | null;
   primary_translation_ru: string | null;
@@ -80,6 +81,7 @@ export interface Word {
   word_family: string | null;
   common_mistake: string | null;
   status: string;
+  ai_generated?: boolean;
   category: Category | null;
   senses: Sense[];
   relations: Relation[];
@@ -186,6 +188,16 @@ export async function fetchWord(slug: string): Promise<Word | null> {
   if (response.status === 404) return null;
   if (!response.ok) throw new Error("word fetch failed");
   return response.json();
+}
+
+/** Fallback for a search that came back empty: ask the AI to define the term
+ *  and add it to the corpus (status "review" — it stays out of the public
+ *  catalogue until a curator promotes it, but this same call already
+ *  returns the full detail so the searcher sees it immediately). Throws
+ *  ApiError(404) when the AI judged the term isn't a real word, 429 when
+ *  the learner's daily AI quota is used up, 503 when AI isn't configured. */
+export async function defineWordViaAi(word: string): Promise<Word> {
+  return apiFetch<Word>("/ai/define-word", { method: "POST", body: { word }, auth: true });
 }
 
 // --- admin (browser, Bearer-authenticated) ----------------------------------

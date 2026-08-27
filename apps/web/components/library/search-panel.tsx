@@ -6,10 +6,32 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { WordCard } from "@/components/library/word-card";
 import { WordDetailModal } from "@/components/library/word-detail-modal";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
-import { fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
+import { defineWordViaAi, fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+function toListItem(word: Word): WordListItem {
+  const sense = word.senses[0];
+  return {
+    id: word.id,
+    headword: word.headword,
+    slug: word.slug,
+    pos: word.pos,
+    ipa: word.ipa,
+    cefr_level: word.cefr_level,
+    frequency_rank: word.frequency_rank,
+    status: word.status,
+    ai_generated: word.ai_generated,
+    category: word.category,
+    primary_translation_uz: sense?.translation_uz ?? null,
+    primary_translation_ru: sense?.translation_ru ?? null,
+    primary_example_en: sense?.examples[0]?.text_en ?? null,
+    image_url: word.image_url,
+  };
+}
 
 /** Corpus-wide word search with one-tap add to the learner's cards. */
 export function SearchPanel({
@@ -28,6 +50,8 @@ export function SearchPanel({
   const [openWord, setOpenWord] = useState<WordListItem | null>(null);
   const [wordDetail, setWordDetail] = useState<Word | null>(null);
   const [wordDetailLoading, setWordDetailLoading] = useState(false);
+  const [aiDefining, setAiDefining] = useState(false);
+  const [aiDefineError, setAiDefineError] = useState<string | null>(null);
   const detailRequest = useRef(0);
 
   // Debounced search across the whole published corpus (no level filter).
@@ -64,6 +88,7 @@ export function SearchPanel({
   const onQueryChange = (value: string) => {
     setQuery(value);
     setLoading(value.trim().length > 0);
+    setAiDefineError(null);
   };
 
   const onAdd = (word: WordListItem) => {
@@ -92,6 +117,27 @@ export function SearchPanel({
       .finally(() => {
         if (detailRequest.current === request) setWordDetailLoading(false);
       });
+  };
+
+  const onDefineViaAi = () => {
+    const term = query.trim();
+    if (!term || aiDefining) return;
+    setAiDefining(true);
+    setAiDefineError(null);
+    defineWordViaAi(term)
+      .then((word) => {
+        // Skip the results grid entirely — straight to the detail modal,
+        // since the AI call already returned the full definition.
+        setOpenWord(toListItem(word));
+        setWordDetail(word);
+        setWordDetailLoading(false);
+      })
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 404) setAiDefineError(t.aiDefineNotRecognized);
+        else if (err instanceof ApiError && err.status === 429) setAiDefineError(t.aiDefineQuotaExceeded);
+        else setAiDefineError(t.aiDefineError);
+      })
+      .finally(() => setAiDefining(false));
   };
 
   const onCloseWord = useCallback(() => {
@@ -136,7 +182,17 @@ export function SearchPanel({
           className="mt-5"
         >
           {results.length === 0 ? (
-            <p className="py-6 text-center text-sm text-ink-soft">{t.noResults}</p>
+            <div className="flex flex-col items-center gap-3 py-6 text-center">
+              <p className="text-sm text-ink-soft">{t.noResults}</p>
+              <Button variant="secondary" size="sm" loading={aiDefining} onClick={onDefineViaAi}>
+                {aiDefining ? t.aiDefineLoading : t.aiDefineCta}
+              </Button>
+              {aiDefineError && (
+                <Alert tone="error" className="max-w-sm">
+                  {aiDefineError}
+                </Alert>
+              )}
+            </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
               <AnimatePresence>
