@@ -27,7 +27,6 @@ GAME_TYPES = (
     "sentence_builder",
     "word_search",
     "crossword",
-    "story_mode",
     # M11 skill drills — same session/answer plumbing, surfaced under /skills.
     "listening",
     "speaking",
@@ -456,7 +455,7 @@ async def build_session(
     if game_type in BOARD_GAMES:
         count = min(count, BOARD_GAME_MAX)
 
-    need_example = game_type in ("sentence_builder", "listening", "story_mode")
+    need_example = game_type in ("sentence_builder", "listening")
     if level or category:
         # Practice a specific level/category from the shared corpus.
         cards = await _ensure_cards_for_source(
@@ -507,7 +506,7 @@ async def build_session(
             # Pronunciation: see the uz word, say the English one; the client
             # compares the SpeechRecognition transcript to the answer.
             questions.append(GameQuestion(card.id, translation, headword, [], audio_text=headword))
-        elif game_type in ("fill_blank", "story_mode"):
+        elif game_type == "fill_blank":
             example = _first_example(card)
             blanked = _blank_sentence(example, headword) if example else None
             prompt = blanked or "“{}”".format(card.word.senses[0].definition_en)

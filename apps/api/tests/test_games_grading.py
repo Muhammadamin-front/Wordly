@@ -119,3 +119,18 @@ def test_rotating_quest_codes_are_unique():
     codes = [definition.code for definition in ROTATING_QUESTS]
     assert len(set(codes)) == len(codes)
     assert len(ROTATING_QUESTS) == 7  # one per weekday
+
+
+def test_every_rotating_quest_actually_advances_from_its_own_game():
+    """Regression: story_1 was removed and replaced with hangman_1 in
+    ROTATING_QUESTS, but _progress_for's own code whitelist (a separate,
+    unrelated place the code string is spelled out) still said "story_1" —
+    the quest would have rendered, been playable, and always stuck at 0/1
+    forever, since none of its runs would count. Every code besides the ones
+    with dedicated branches above must reach the "one finished run = done"
+    branch for its own real game_type."""
+    covered = {"correct_5", "combo_3", "phrasal_5", "phrasal_blank_5", "perfect_1"}
+    for definition in ROTATING_QUESTS:
+        if definition.code in covered:
+            continue
+        assert _progress_for(definition, [_run(definition.game_type)]) == 1, definition.code

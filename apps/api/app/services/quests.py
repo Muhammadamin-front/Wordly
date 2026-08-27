@@ -35,7 +35,7 @@ ROTATING_QUESTS = (
     QuestDefinition("complete_2", 2, 25, "speed_quiz"),
     QuestDefinition("phrasal_blank_5", 5, 25, "fill_blank", "phrasal"),
     QuestDefinition("perfect_1", 1, 30, "speed_quiz"),
-    QuestDefinition("story_1", 1, 20, "story_mode"),
+    QuestDefinition("hangman_1", 1, 20, "hangman"),
 )
 
 
@@ -62,7 +62,7 @@ def _progress_for(definition: QuestDefinition, runs: list[GameRun]) -> int:
         return sum(run.correct_count for run in matching)
     if definition.code == "combo_3":
         return max((run.best_combo for run in matching), default=0)
-    if definition.code in ("match_1", "complete_2", "memory_1", "story_1"):
+    if definition.code in ("match_1", "complete_2", "memory_1", "hangman_1"):
         return len(finished)
     if definition.code == "perfect_1":
         return sum(
