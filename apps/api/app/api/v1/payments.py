@@ -60,8 +60,8 @@ async def uzum_callback(
     return await uzum.handle_callback(db, await request.json(), webhook_secret)
 
 
-# --- Billing surface (public catalogue + authenticated account actions) -----
-router = APIRouter(prefix="/billing", tags=["billing"])
+# --- Authenticated billing surface (the app itself) -------------------------
+router = APIRouter(prefix="/billing", tags=["billing"], dependencies=[Depends(get_current_user)])
 
 IDEMPOTENCY_KEY_PATTERN = re.compile(r"^[A-Za-z0-9._-]{16,64}$")
 

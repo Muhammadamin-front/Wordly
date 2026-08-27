@@ -526,7 +526,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
               onClick={() => setActivePart(part.key)}
               aria-pressed={activePart === part.key}
               className={cn(
-                "min-h-11 rounded-full px-3 py-2 text-center transition-all",
+                "rounded-full px-3 py-2 text-center transition-all",
                 activePart === part.key
                   ? "bg-primary text-white shadow-[0_10px_24px_rgba(12,46,20,0.22)] dark:text-brand-950"
                   : "text-ink-soft hover:bg-hover hover:text-ink"

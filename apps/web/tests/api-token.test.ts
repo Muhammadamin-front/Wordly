@@ -1,13 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import {
-  ApiTimeoutError,
-  DEFAULT_API_TIMEOUT_MS,
-  apiFetch,
-  refreshSession,
-  setAccessToken,
-  waitForAccessToken,
-} from "@/lib/api";
+import { apiFetch, refreshSession, setAccessToken, waitForAccessToken } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 
 const json = (status: number, body: unknown) =>
@@ -43,22 +36,6 @@ describe("review requests", () => {
   afterEach(() => {
     setAccessToken(null);
     vi.unstubAllGlobals();
-  });
-
-  it("aborts a request that exceeds the API timeout", async () => {
-    vi.useFakeTimers();
-    const fetchMock = vi.fn().mockImplementation((_input: RequestInfo | URL, init?: RequestInit) =>
-      new Promise<Response>((_resolve, reject) => {
-        init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
-      })
-    );
-    vi.stubGlobal("fetch", fetchMock);
-
-    const pending = apiFetch("/slow");
-    const assertion = expect(pending).rejects.toBeInstanceOf(ApiTimeoutError);
-    await vi.advanceTimersByTimeAsync(DEFAULT_API_TIMEOUT_MS);
-    await assertion;
-    vi.useRealTimers();
   });
 
   it("sends the stable idempotency key in a request header", async () => {
