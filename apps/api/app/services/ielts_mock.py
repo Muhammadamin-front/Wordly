@@ -95,9 +95,20 @@ async def complete_leg(
 ) -> MockSession:
     """Record one leg's band, then either hand off to the next leg or, for the
     last leg (Speaking), compute the overall band and close the session out."""
-    if session.status != "in_progress" or session.current_leg != skill:
+    # Re-fetch with a row lock: two near-simultaneous complete calls for the
+    # same leg (double-submit / a mobile client's retry-on-timeout) must not
+    # both pass the in-progress checks below before either commits, or the
+    # second silently overwrites the first leg's band/detail.
+    session = await db.scalar(
+        select(MockSession).where(MockSession.id == session.id).with_for_update()
+    )
+    if session is None or session.status != "in_progress" or session.current_leg != skill:
         raise LegNotActive(f"{skill} is not the active leg of this session")
-    leg = await get_leg(db, session, skill)
+    leg = await db.scalar(
+        select(MockLeg)
+        .where(MockLeg.session_id == session.id, MockLeg.skill == skill)
+        .with_for_update()
+    )
     if leg is None or leg.status != "in_progress":
         raise LegNotActive(f"{skill} leg is not in progress")
 
