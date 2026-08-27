@@ -22,6 +22,7 @@ from app.services import referrals, subscriptions
 # Payme error codes
 ERR_AUTH = -32504
 ERR_METHOD = -32601
+ERR_INVALID_PARAMS = -32602
 ERR_AMOUNT = -31001
 ERR_ACCOUNT = -31050  # order not found / invalid
 ERR_TXN_NOT_FOUND = -31003
@@ -72,7 +73,11 @@ async def _load_order(db: AsyncSession, params: Dict[str, Any]) -> Payment:
         order_uuid = UUID(str(order_id))
     except ValueError:
         raise PaymeError(ERR_ACCOUNT, "invalid order_id", data="order_id")
-    order = await db.scalar(select(Payment).where(Payment.id == order_uuid))
+    # Locks the row for the rest of this request's transaction so two
+    # near-simultaneous callbacks for the same order (Payme retries on
+    # timeout) can't both read pending state and both perform it — mirrors
+    # services/uzum.py's handle_callback, which has the same requirement.
+    order = await db.scalar(select(Payment).where(Payment.id == order_uuid).with_for_update())
     if order is None or order.provider != "payme":
         raise PaymeError(ERR_ACCOUNT, "order not found", data="order_id")
     return order
@@ -80,17 +85,31 @@ async def _load_order(db: AsyncSession, params: Dict[str, Any]) -> Payment:
 
 async def _by_txn(db: AsyncSession, params: Dict[str, Any]) -> Payment:
     txn_id = params.get("id")
+    if not txn_id:
+        raise PaymeError(ERR_INVALID_PARAMS, "id required", data="id")
     order = await db.scalar(
-        select(Payment).where(Payment.provider == "payme", Payment.provider_txn_id == txn_id)
+        select(Payment)
+        .where(Payment.provider == "payme", Payment.provider_txn_id == txn_id)
+        .with_for_update()
     )
     if order is None:
         raise PaymeError(ERR_TXN_NOT_FOUND, "transaction not found")
     return order
 
 
+def _amount_tiyin(params: Dict[str, Any]) -> int:
+    """Payme's amount arrives as a JSON number, but the public webhook accepts
+    arbitrary input — a non-numeric value must fail as a clean Payme protocol
+    error, not an uncaught ValueError/TypeError -> generic 500."""
+    try:
+        return int(params.get("amount", 0))
+    except (TypeError, ValueError):
+        raise PaymeError(ERR_AMOUNT, "incorrect amount")
+
+
 async def check_perform(db: AsyncSession, params: Dict[str, Any]) -> Dict[str, Any]:
     order = await _load_order(db, params)
-    if int(params.get("amount", 0)) != order.amount_tiyin:
+    if _amount_tiyin(params) != order.amount_tiyin:
         raise PaymeError(ERR_AMOUNT, "incorrect amount")
     if order.state != PENDING:
         raise PaymeError(ERR_CANT_PERFORM, "order already processed")
@@ -99,7 +118,9 @@ async def check_perform(db: AsyncSession, params: Dict[str, Any]) -> Dict[str, A
 
 async def create_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[str, Any]:
     order = await _load_order(db, params)
-    txn_id = params["id"]
+    txn_id = params.get("id")
+    if not txn_id:
+        raise PaymeError(ERR_INVALID_PARAMS, "id required", data="id")
 
     if order.provider_txn_id == txn_id:  # idempotent retry
         if order.state != CREATED:
@@ -108,7 +129,7 @@ async def create_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[s
 
     if order.state != PENDING:
         raise PaymeError(ERR_CANT_PERFORM, "order already has a transaction")
-    if int(params.get("amount", 0)) != order.amount_tiyin:
+    if _amount_tiyin(params) != order.amount_tiyin:
         raise PaymeError(ERR_AMOUNT, "incorrect amount")
 
     order.provider_txn_id = txn_id

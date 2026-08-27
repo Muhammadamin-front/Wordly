@@ -7,7 +7,7 @@ successful Complete. Error codes follow Click's spec.
 import hashlib
 import hmac
 from uuid import UUID
-from typing import Dict
+from typing import Dict, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -78,9 +78,25 @@ async def _order(db: AsyncSession, merchant_trans_id: str) -> Payment:
         order_uuid = UUID(str(merchant_trans_id))
     except ValueError:
         return None
+    # Locks the row for the rest of this request's transaction so two
+    # near-simultaneous Complete callbacks for the same order (Click retries
+    # on timeout) can't both read pre-paid state and both grant the
+    # subscription — mirrors services/uzum.py's handle_callback.
     return await db.scalar(
-        select(Payment).where(Payment.id == order_uuid, Payment.provider == "click")
+        select(Payment)
+        .where(Payment.id == order_uuid, Payment.provider == "click")
+        .with_for_update()
     )
+
+
+def _click_amount_tiyin(params: Dict[str, str]) -> Optional[int]:
+    """Click's amount arrives as a decimal string, but the public webhook
+    accepts arbitrary input — a non-numeric value must fail as a clean Click
+    protocol error response, not an uncaught ValueError -> generic 500."""
+    try:
+        return int(float(params.get("amount", 0)) * 100)
+    except (TypeError, ValueError):
+        return None
 
 
 async def prepare(db: AsyncSession, params: Dict[str, str]) -> Dict:
@@ -95,7 +111,8 @@ async def prepare(db: AsyncSession, params: Dict[str, str]) -> Dict:
         return _error(ERR_USER_NOT_FOUND, "order not found")
     if order.state in (-1, -2):
         return _error(ERR_CANCELLED, "cancelled")
-    if int(float(params.get("amount", 0)) * 100) != order.amount_tiyin:
+    amount_tiyin = _click_amount_tiyin(params)
+    if amount_tiyin is None or amount_tiyin != order.amount_tiyin:
         return _error(ERR_AMOUNT, "incorrect amount")
 
     transaction_id = params.get("click_trans_id")
@@ -141,7 +158,11 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
         return _error(ERR_TXN_NOT_FOUND, "transaction mismatch")
 
     # A negative Click error in the request means the user cancelled.
-    if int(params.get("error", 0)) < 0:
+    try:
+        click_error = int(params.get("error", 0))
+    except (TypeError, ValueError):
+        return _error(ERR_ACTION, "invalid error code")
+    if click_error < 0:
         order.state = -1
         order.status = "cancelled"
         await db.flush()
