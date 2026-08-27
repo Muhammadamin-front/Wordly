@@ -144,7 +144,7 @@ export function TodayView({
       icon: Map,
       title: t.storyStep,
       description: t.storyStepDesc,
-      href: `/${lang}/games/story_mode`,
+      href: `/${lang}/games/fill_blank`,
       meta: t.storyMeta,
     },
   ];

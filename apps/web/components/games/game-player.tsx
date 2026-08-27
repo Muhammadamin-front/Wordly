@@ -35,7 +35,6 @@ import { MemoryGame, type Tile } from "@/components/games/memory-game";
 import { SentenceGame, type SentenceItem } from "@/components/games/sentence-game";
 import { SpeakingGame } from "@/components/games/speaking-game";
 import { SpellingGame } from "@/components/games/spelling-game";
-import { StoryGame } from "@/components/games/story-game";
 import { TypingGame } from "@/components/games/typing-game";
 import { useAmbientMusic } from "@/components/games/use-ambient-music";
 import { WordSearchGame, buildWordSearch, type WordSearch } from "@/components/games/word-search-game";
@@ -441,7 +440,7 @@ export function GamePlayer({
   return (
     <div
       className={`mx-auto w-full ${
-        gameType === "crossword" ? "max-w-5xl" : gameType === "story_mode" ? "max-w-3xl" : "max-w-xl"
+        gameType === "crossword" ? "max-w-5xl" : "max-w-xl"
       }`}
     >
       <div className="mb-3 flex items-center gap-2 text-xs font-bold text-ink-soft">
@@ -521,8 +520,6 @@ export function GamePlayer({
         <WordSearchGame {...shared} search={prepared.wordSearch} />
       ) : gameType === "crossword" && prepared.crossword ? (
         <CrosswordGame {...shared} crossword={prepared.crossword} />
-      ) : gameType === "story_mode" ? (
-        <StoryGame {...shared} items={prepared.choice} />
       ) : gameType === "listening" ? (
         <DictationGame {...shared} questions={prepared.questions} />
       ) : gameType === "speaking" ? (

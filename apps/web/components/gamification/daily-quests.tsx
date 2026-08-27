@@ -32,7 +32,7 @@ function questCopy(code: string, gam: Dictionary["gam"]): { title: string; body:
       return { title: gam.questComplete2, body: gam.questComplete2Desc, icon: Award };
     case "perfect_1":
       return { title: gam.questPerfect1, body: gam.questPerfect1Desc, icon: Zap };
-    // match_1 and story_1 are both "finish one round"; they differ only in
+    // match_1 and hangman_1 are both "finish one round"; they differ only in
     // which game the card links to.
     default:
       return { title: gam.questComplete1, body: gam.questComplete1Desc, icon: Award };
