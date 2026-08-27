@@ -70,6 +70,9 @@ export const ERROR_CODES = [
   "not_enough_words",
   "forbidden",
   "round_closed",
+  // Client-only: the socket closed unexpectedly (network drop, server
+  // restart, failed handshake) rather than the server ever rejecting us.
+  "connection_lost",
 ] as const;
 export type MultiplayerError = (typeof ERROR_CODES)[number];
 

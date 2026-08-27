@@ -70,7 +70,7 @@ export const initialState: State = {
   reviewOpen: false,
 };
 
-export type Action = { source: "server"; message: ServerMessage } | { source: "local"; type: "select"; option: number } | { source: "local"; type: "connecting" } | { source: "local"; type: "reset" } | { source: "local"; type: "toggle_review" };
+export type Action = { source: "server"; message: ServerMessage } | { source: "local"; type: "select"; option: number } | { source: "local"; type: "connecting" } | { source: "local"; type: "reset" } | { source: "local"; type: "toggle_review" } | { source: "local"; type: "socket_error" };
 
 export function reducer(state: State, action: Action): State {
   if (action.source === "local") {
@@ -83,6 +83,12 @@ export function reducer(state: State, action: Action): State {
         return state.selected === null ? { ...state, selected: action.option } : state;
       case "toggle_review":
         return { ...state, reviewOpen: !state.reviewOpen };
+      case "socket_error":
+        return {
+          ...state,
+          phase: state.phase === "connecting" ? "menu" : state.phase,
+          error: "connection_lost",
+        };
     }
   }
 
@@ -143,6 +149,8 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
+  const intentionalCloseRef = useRef(false);
+
   const withSocket = useCallback((then: (socket: WebSocket) => void) => {
     const existing = socketRef.current;
     if (existing && existing.readyState === WebSocket.OPEN) {
@@ -150,6 +158,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
       return;
     }
     dispatch({ source: "local", type: "connecting" });
+    intentionalCloseRef.current = false;
     const socket = openQuizSocket();
     socketRef.current = socket;
     socket.onmessage = (event) => {
@@ -157,8 +166,17 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
       dispatch({ source: "server", message });
     };
     socket.onopen = () => then(socket);
+    // A failed handshake fires onerror then onclose; a healthy connection
+    // dropping mid-game only fires onclose. Either way, onclose is where we
+    // must surface something — without this, a bad token or a network drop
+    // left the UI stuck on "Connecting..." (or silently frozen mid-game)
+    // forever, since nothing else ever moved the reducer out of that phase.
+    socket.onerror = () => {
+      socketRef.current = null;
+    };
     socket.onclose = () => {
       socketRef.current = null;
+      if (!intentionalCloseRef.current) dispatch({ source: "local", type: "socket_error" });
     };
   }, []);
 
@@ -191,7 +209,13 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
     if (state.phase === "finished") sound.play("winner");
   }, [state.phase, sound]);
 
-  useEffect(() => () => socketRef.current?.close(), []);
+  useEffect(
+    () => () => {
+      intentionalCloseRef.current = true;
+      socketRef.current?.close();
+    },
+    []
+  );
 
   const act = useCallback((action: ClientAction) => {
     if (socketRef.current) sendAction(socketRef.current, action);
@@ -215,6 +239,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
   };
   const skip = () => act({ action: "skip" });
   const leave = () => {
+    intentionalCloseRef.current = true;
     if (socketRef.current) sendAction(socketRef.current, { action: "leave" });
     socketRef.current?.close();
     socketRef.current = null;
@@ -236,6 +261,7 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
           not_enough_words: mp.notEnoughWords,
           forbidden: mp.errorForbidden,
           round_closed: mp.errorRoundClosed,
+          connection_lost: mp.errorConnectionLost,
         }[code]
       : null;
 
