@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { apiFetch, refreshSession, setAccessToken, waitForAccessToken } from "@/lib/api";
+import {
+  ApiTimeoutError,
+  DEFAULT_API_TIMEOUT_MS,
+  apiFetch,
+  refreshSession,
+  setAccessToken,
+  waitForAccessToken,
+} from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 
 const json = (status: number, body: unknown) =>
@@ -36,6 +43,22 @@ describe("review requests", () => {
   afterEach(() => {
     setAccessToken(null);
     vi.unstubAllGlobals();
+  });
+
+  it("aborts a request that exceeds the API timeout", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn().mockImplementation((_input: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
+      })
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const pending = apiFetch("/slow");
+    const assertion = expect(pending).rejects.toBeInstanceOf(ApiTimeoutError);
+    await vi.advanceTimersByTimeAsync(DEFAULT_API_TIMEOUT_MS);
+    await assertion;
+    vi.useRealTimers();
   });
 
   it("sends the stable idempotency key in a request header", async () => {
@@ -82,6 +105,27 @@ describe("review requests", () => {
     expect((fetchMock.mock.calls[2][1] as RequestInit).headers).toMatchObject({
       Authorization: "Bearer fresh-token",
     });
+  });
+
+  it("surfaces the real failure when the post-refresh retry itself throws, instead of the stale 401", async () => {
+    setAccessToken("expired-token");
+    const retryError = new Error("network down");
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ detail: "Expired" }), { status: 401 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ access_token: "fresh-token", user: {} }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        })
+      )
+      .mockRejectedValueOnce(retryError);
+    vi.stubGlobal("fetch", fetchMock);
+
+    // The token WAS successfully refreshed; only the retried request failed
+    // (network blip / timeout). That real failure must win over the stale
+    // first-attempt 401 Response still sitting around from before the retry.
+    await expect(apiFetch("/protected", { auth: true })).rejects.toBe(retryError);
   });
 
   // AuthProvider's silent-refresh-on-mount and apiFetch's own 401-retry used
