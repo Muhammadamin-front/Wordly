@@ -25,7 +25,7 @@ export function MockSpeakingLeg({
 }: {
   t: Copy;
   coachT: Coach;
-  onDone: (band: number, detail: { coach_session_id: string }) => void;
+  onDone: (band: number, detail: { coach_session_id: string }) => Promise<boolean>;
   onAbandon: () => void;
 }) {
   const [character, setCharacter] = useState<Character | null>(null);
@@ -71,6 +71,11 @@ export function MockSpeakingLeg({
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 sm:px-6">
+      {error && (
+        <Alert tone="error" className="mt-4">
+          {error}
+        </Alert>
+      )}
       <VoiceChat
         character={character}
         session={coachSession}
@@ -80,9 +85,14 @@ export function MockSpeakingLeg({
           // "scored zero" — abandon the session rather than fake a band.
           if (!scoredRef.current) onAbandon();
         }}
-        onScored={(band) => {
-          scoredRef.current = true;
-          onDone(band, { coach_session_id: coachSession.id });
+        onScored={async (band) => {
+          const ok = await onDone(band, { coach_session_id: coachSession.id });
+          // Only treat the exam as scored once the result actually attached
+          // to the mock session — otherwise a failed completeLeg call left
+          // scoredRef true forever, so backing out afterward silently
+          // skipped abandoning a session that never actually advanced.
+          if (ok) scoredRef.current = true;
+          else setError(t.error);
         }}
         exitLabel={t.speakingContinue}
       />

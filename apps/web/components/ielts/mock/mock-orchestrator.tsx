@@ -45,14 +45,14 @@ export function MockOrchestrator({
   const [starting, setStarting] = useState(false);
   const [justCompleted, setJustCompleted] = useState<{ skill: MockSkill; band: number } | null>(null);
 
-  // Picked once per session (not per render) so the assigned passage stays
-  // stable across re-renders while the learner is on the Reading leg.
+  // Deterministic, not random: a page reload during the Reading leg remounts
+  // this whole component, so a random pick here used to hand the learner a
+  // *different* passage (and a freshly reset timer) than the one they were
+  // mid-attempt on. Deriving the choice from the session id means the same
+  // session always resolves to the same passage, reload or not, with no
+  // extra storage needed.
   const readingTestId = useMemo(
-    () => (session ? readingTestIdForTrack() : null),
-    // Intentionally keyed on id/track, not the whole session object, which
-    // gets a new identity on every leg completion — re-picking a test each
-    // time would reset the Reading leg's assigned passage mid-attempt.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    () => (session ? readingTestIdForTrack(session.id) : null),
     [session?.id, session?.track]
   );
 
@@ -119,15 +119,26 @@ export function MockOrchestrator({
     loadHistory();
   }
 
-  async function completeLeg(skill: MockSkill, band: number, detail?: Record<string, unknown>) {
-    if (!session) return;
+  /** Returns whether the leg's result was actually recorded. The grading
+   *  call that produced `band` already succeeded by the time this runs — a
+   *  failure here only means attaching that result to the mock session
+   *  failed (network blip / 5xx), so the caller must surface it and let the
+   *  learner retry rather than silently spinning forever. */
+  async function completeLeg(
+    skill: MockSkill,
+    band: number,
+    detail?: Record<string, unknown>
+  ): Promise<boolean> {
+    if (!session) return false;
     try {
       const updated = await ieltsMockApi.completeLeg(session.id, skill, band, detail);
       setSession(updated);
       setJustCompleted({ skill, band });
       if (updated.status === "finished") loadHistory();
+      return true;
     } catch {
       setError(t.error);
+      return false;
     }
   }
 
@@ -243,7 +254,7 @@ export function MockOrchestrator({
  *  (3-passage, 40-question) General Training bank yet — see MockIntro, which
  *  only offers the Academic track until that content exists, so every mock
  *  session reaching this leg is Academic regardless of the `track` field. */
-function readingTestIdForTrack(): string {
+function readingTestIdForTrack(sessionId: string): string {
   const academicIds = [
     "academic-full-volcano-hazards",
     "academic-full-coral-reefs",
@@ -251,5 +262,9 @@ function readingTestIdForTrack(): string {
     "academic-full-groundwater",
     "academic-full-el-nino",
   ];
-  return academicIds[Math.floor(Math.random() * academicIds.length)];
+  let hash = 0;
+  for (let index = 0; index < sessionId.length; index += 1) {
+    hash = (hash * 31 + sessionId.charCodeAt(index)) >>> 0;
+  }
+  return academicIds[hash % academicIds.length];
 }

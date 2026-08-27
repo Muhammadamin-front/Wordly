@@ -34,7 +34,7 @@ export function MockListeningLeg({
   t: Copy;
   ieltsT: Ielts;
   session: MockSession;
-  onDone: (band: number, detail: { correct: number; total: number }) => void;
+  onDone: (band: number, detail: { correct: number; total: number }) => Promise<boolean>;
   onAbandon: () => void;
 }) {
   const speech = useSpeech();
@@ -127,7 +127,11 @@ export function MockListeningLeg({
     speech.cancel();
     try {
       const graded = await ieltsApi.submit("listening", test.test_id, answers, session.id);
-      onDone(graded.band, { correct: graded.correct, total: graded.total });
+      const ok = await onDone(graded.band, { correct: graded.correct, total: graded.total });
+      if (!ok) {
+        setError(t.error);
+        setSubmitting(false);
+      }
     } catch {
       setError(t.error);
       setSubmitting(false);

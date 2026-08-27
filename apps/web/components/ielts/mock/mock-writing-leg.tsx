@@ -39,7 +39,7 @@ export function MockWritingLeg({
   ieltsT: Ielts;
   lang: string;
   session: MockSession;
-  onDone: (band: number, detail: { task1: number; task2: number }) => void;
+  onDone: (band: number, detail: { task1: number; task2: number }) => Promise<boolean>;
   onAbandon: () => void;
 }) {
   const [tasks, setTasks] = useState<Record<string, WritingTask[]> | null>(null);
@@ -95,7 +95,11 @@ export function MockWritingLeg({
         setSubmitting(false);
       } else {
         const combined = combineWritingBand(task1Band ?? 0, 0);
-        onDone(combined, { task1: task1Band ?? 0, task2: 0 });
+        const ok = await onDone(combined, { task1: task1Band ?? 0, task2: 0 });
+        if (!ok) {
+          setError(t.error);
+          setSubmitting(false);
+        }
       }
       return;
     }
@@ -110,7 +114,11 @@ export function MockWritingLeg({
         setSubmitting(false);
       } else {
         const combined = combineWritingBand(task1Band ?? score.band_overall, score.band_overall);
-        onDone(combined, { task1: task1Band ?? score.band_overall, task2: score.band_overall });
+        const ok = await onDone(combined, { task1: task1Band ?? score.band_overall, task2: score.band_overall });
+        if (!ok) {
+          setError(t.error);
+          setSubmitting(false);
+        }
       }
     } catch (err) {
       setError(err instanceof ApiError && err.status === 429 ? ieltsT.quotaOut : t.error);

@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   READING_FULL_TESTS,
@@ -293,7 +294,7 @@ export function ReadingPracticeView({
    *  test's start screen directly, and reports the result up instead of
    *  showing the built-in result screen (the mock renders its own). */
   mockTestId?: string;
-  onMockComplete?: (result: { score: number; total: number; band: number; approximate: boolean }) => void;
+  onMockComplete?: (result: { score: number; total: number; band: number; approximate: boolean }) => Promise<boolean> | void;
   /** Called instead of returning to the library when the learner backs out
    *  of the start screen or exits mid-test while in mock mode. */
   onMockExit?: () => void;
@@ -313,6 +314,7 @@ export function ReadingPracticeView({
   const [isPaused, setIsPaused] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [result, setResult] = useState<TestResult | null>(null);
+  const [mockCompleteError, setMockCompleteError] = useState(false);
   const [history, setHistory] = useState<TestHistory>({});
 
   const test = getReadingTest(selectedTestId);
@@ -369,7 +371,13 @@ export function ReadingPracticeView({
     });
     if (onMockComplete) {
       const { band, approximate } = readingBand(score, questions.length, selected.track);
-      onMockComplete({ score, total: questions.length, band, approximate });
+      setMockCompleteError(false);
+      Promise.resolve(onMockComplete({ score, total: questions.length, band, approximate })).then((ok) => {
+        // A leg component's own onDone already narrows this to a real
+        // boolean; a bare void return (older/other callers) is treated as
+        // success so this stays backward compatible.
+        if (ok === false) setMockCompleteError(true);
+      });
       return;
     }
     setScreen("result");
@@ -417,7 +425,13 @@ export function ReadingPracticeView({
 
   if (screen === "test") {
     return (
-      <ReadingWorkspace t={t2}
+      <>
+        {mockCompleteError && (
+          <Alert tone="error" className="mx-auto mt-4 max-w-3xl">
+            {t2.mockCompleteError}
+          </Alert>
+        )}
+        <ReadingWorkspace t={t2}
         key={test.id}
         test={test}
         studyMode={studyMode}
@@ -438,9 +452,10 @@ export function ReadingPracticeView({
         }}
         onPassageChange={setCurrentPassageIndex}
         onPause={() => setIsPaused((value) => !value)}
-        onEnd={submitTest}
-        onExit={onMockExit ?? (() => setScreen("library"))}
-      />
+          onEnd={submitTest}
+          onExit={onMockExit ?? (() => setScreen("library"))}
+        />
+      </>
     );
   }
 
@@ -511,7 +526,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
               onClick={() => setActivePart(part.key)}
               aria-pressed={activePart === part.key}
               className={cn(
-                "rounded-full px-3 py-2 text-center transition-all",
+                "min-h-11 rounded-full px-3 py-2 text-center transition-all",
                 activePart === part.key
                   ? "bg-primary text-white shadow-[0_10px_24px_rgba(12,46,20,0.22)] dark:text-brand-950"
                   : "text-ink-soft hover:bg-hover hover:text-ink"
