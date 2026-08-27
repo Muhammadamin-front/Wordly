@@ -1,13 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { useSpeech } from "@/components/coach/use-speech";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { ListeningQuestionInput, type ListeningAnswerValue } from "@/components/ielts/listening-question-input";
 import { API_URL, waitForAccessToken } from "@/lib/api";
-import { ieltsApi, type BankItem, type GeneratedTest } from "@/lib/ielts";
 import { MOCK_SKILL_MINUTES, type MockSession } from "@/lib/ielts-mock";
+import {
+  LISTENING_FULL_TESTS,
+  isListeningCorrect,
+  listeningBand,
+  type ListeningFullTest,
+} from "@/lib/listening-practice";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -20,44 +25,58 @@ function fmt(sec: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-/** The Full Mock's Listening leg: one bank passage, played once, with no
- *  picker — a real exam doesn't let you choose your recording. Grades
- *  server-side, tags the result with this mock session, then hands the band
- *  to the orchestrator. */
+/** The Full Mock's Listening leg: a real 4-section IELTS-format test —
+ *  strictly linear (no going back between sections, matching the real
+ *  exam), each section's audio played once automatically, one leg-wide
+ *  timer. Content is static (see lib/listening-practice.ts); only the
+ *  per-section audio is fetched, from a small backend catalog keyed by
+ *  slug+section, never from a per-user generated/persisted test row. */
 export function MockListeningLeg({
   t,
   ieltsT,
+  slug,
   session,
   onDone,
   onAbandon,
 }: {
   t: Copy;
   ieltsT: Ielts;
+  slug: string;
   session: MockSession;
   onDone: (band: number, detail: { correct: number; total: number }) => Promise<boolean>;
   onAbandon: () => void;
 }) {
-  const speech = useSpeech();
-  const [test, setTest] = useState<GeneratedTest | null>(null);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const test = useMemo<ListeningFullTest | undefined>(
+    () => LISTENING_FULL_TESTS.find((item) => item.slug === slug),
+    [slug]
+  );
+
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, ListeningAnswerValue>>({});
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [audioFinished, setAudioFinished] = useState(false);
+  const [audioFailed, setAudioFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const submitRef = useRef<() => void>(() => {});
-  const ttsStartedRef = useRef(false);
+  const section = test?.sections[sectionIndex];
+  const lastSection = test ? sectionIndex === test.sections.length - 1 : false;
 
-  async function playNarration(testId: string, body: string) {
+  async function playSection(sectionNumber: number) {
+    if (!test) return;
+    setAudioFailed(false);
+    setAudioFinished(false);
     try {
       const token = await waitForAccessToken();
-      const resp = await fetch(`${API_URL}/api/v1/ielts/listening/${testId}/audio`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        credentials: "include",
-      });
+      const resp = await fetch(
+        `${API_URL}/api/v1/ielts/mock/listening/${test.slug}/section/${sectionNumber}/audio`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {}, credentials: "include" }
+      );
       if (!resp.ok) throw new Error(String(resp.status));
       const url = URL.createObjectURL(await resp.blob());
+      audioRef.current?.pause();
       const audio = new Audio(url);
       audio.onplay = () => setAudioPlaying(true);
       audio.onpause = () => setAudioPlaying(false);
@@ -70,40 +89,18 @@ export function MockListeningLeg({
       await audio.play();
     } catch {
       audioRef.current = null;
-      ttsStartedRef.current = true;
-      speech.speak(body, { rate: 0.98 });
+      setAudioFailed(true);
     }
   }
 
+  // Seed the leg-wide timer and start section 1's audio once.
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const bank = await ieltsApi.bank("listening");
-        const pick = pickBankItem(bank);
-        const started = await ieltsApi.bankStart("listening", pick);
-        if (cancelled) return;
-        setTest(started);
-        setAnswers(new Array(started.questions.length).fill(-1));
-        setSecondsLeft(MOCK_SKILL_MINUTES.listening * 60);
-        window.setTimeout(() => playNarration(started.test_id, started.body), 400);
-      } catch {
-        if (!cancelled) setError(t.error);
-      }
-    })();
-    return () => {
-      cancelled = true;
-      audioRef.current?.pause();
-      speech.cancel();
-    };
+    if (!test) return;
+    setSecondsLeft(MOCK_SKILL_MINUTES.listening * 60);
+    window.setTimeout(() => void playSection(test.sections[0].number), 400);
+    return () => audioRef.current?.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Browser TTS has no onended callback of its own; infer completion from
-  // `speaking` flipping back to false after we started an utterance.
-  useEffect(() => {
-    if (ttsStartedRef.current && !speech.speaking) setAudioFinished(true);
-  }, [speech.speaking]);
+  }, [test?.slug]);
 
   useEffect(() => {
     if (!test) return;
@@ -120,14 +117,23 @@ export function MockListeningLeg({
     return () => window.clearInterval(id);
   }, [test]);
 
+  function goToNextSection() {
+    if (!test || lastSection) return;
+    const next = sectionIndex + 1;
+    setSectionIndex(next);
+    void playSection(test.sections[next].number);
+  }
+
   async function submit() {
     if (!test || submitting) return;
     setSubmitting(true);
     audioRef.current?.pause();
-    speech.cancel();
     try {
-      const graded = await ieltsApi.submit("listening", test.test_id, answers, session.id);
-      const ok = await onDone(graded.band, { correct: graded.correct, total: graded.total });
+      const allQuestions = test.sections.flatMap((s) => s.questions);
+      const correct = allQuestions.filter((q) => isListeningCorrect(q, answers[q.id])).length;
+      const total = allQuestions.length;
+      const { band } = listeningBand(correct, total);
+      const ok = await onDone(band, { correct, total });
       if (!ok) {
         setError(t.error);
         setSubmitting(false);
@@ -141,7 +147,7 @@ export function MockListeningLeg({
     submitRef.current = submit;
   });
 
-  if (!test) {
+  if (!test || !section) {
     return (
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" aria-hidden />
@@ -173,58 +179,55 @@ export function MockListeningLeg({
         </span>
       </div>
 
-      <p className="mt-3 text-sm text-ink-soft">{t.listeningIntro}</p>
+      <p className="mt-3 text-sm font-bold text-ink-soft">
+        {t.listeningSectionOf.replace("{n}", String(section.number))}
+      </p>
+      <p className="mt-1 text-sm text-ink-soft">{section.title}</p>
 
       <div className="mt-4 rounded-2xl border border-line bg-card p-4 sm:p-5">
         <div className="flex items-center gap-3">
           <Button
             variant="secondary"
             className="size-12 shrink-0 rounded-full p-0 text-lg"
-            disabled={audioFinished}
+            disabled={!audioFailed && audioFinished}
             onClick={() => {
-              if (audioRef.current) {
+              if (audioFailed) {
+                void playSection(section.number);
+              } else if (audioRef.current) {
                 if (audioPlaying) audioRef.current.pause();
                 else void audioRef.current.play();
-              } else if (speech.speaking) {
-                speech.cancel();
               }
             }}
           >
-            {audioPlaying || speech.speaking ? "⏸" : "▶"}
+            {audioFailed ? "↻" : audioPlaying ? "⏸" : "▶"}
           </Button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-ink">{test.title}</p>
-            <p className="mt-1 text-[11px] leading-4 text-ink-soft">{ieltsT.listeningPlaysOnce}</p>
+            <p className={cn("mt-1 text-[11px] leading-4", audioFailed ? "font-bold text-danger" : "text-ink-soft")}>
+              {audioFailed ? t.error : t.listeningIntro}
+            </p>
           </div>
         </div>
       </div>
 
       <div className="mt-5 space-y-5">
-        {test.questions.map((q, qi) => (
-          <div key={qi} className="rounded-2xl border border-line bg-card p-4">
+        {section.questions.map((q) => (
+          <div key={q.id} className="rounded-2xl border border-line bg-card p-4">
             <p className="flex items-start gap-2 font-semibold text-ink">
               <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded border border-line text-xs font-bold text-ink-soft">
-                {qi + 1}
+                {q.number}
               </span>
               {q.prompt}
             </p>
-            <div className="mt-2 space-y-1.5">
-              {q.options.map((opt, oi) => (
-                <button
-                  key={oi}
-                  type="button"
-                  onClick={() => setAnswers((prev) => prev.map((a, i) => (i === qi ? oi : a)))}
-                  className={cn(
-                    "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
-                    answers[qi] === oi
-                      ? "border-brand-500 bg-brand-600/10 text-ink"
-                      : "border-line text-ink hover:bg-line/40"
-                  )}
-                >
-                  <span className="font-bold">{String.fromCharCode(65 + oi)}</span>
-                  {opt}
-                </button>
-              ))}
+            {q.instruction && <p className="mt-1 pl-8 text-xs text-ink-soft">{q.instruction}</p>}
+            <div className="mt-2 pl-8">
+              <ListeningQuestionInput
+                question={q}
+                value={answers[q.id]}
+                disabled={false}
+                typeAnswerLabel={t.listeningTypeAnswer}
+                onChange={(value) => setAnswers((prev) => ({ ...prev, [q.id]: value }))}
+              />
             </div>
           </div>
         ))}
@@ -236,26 +239,17 @@ export function MockListeningLeg({
         </Alert>
       )}
 
-      <Button
-        fullWidth
-        className="mt-5"
-        loading={submitting}
-        disabled={answers.some((a) => a === -1)}
-        onClick={submit}
-      >
-        {ieltsT.submitTest}
-      </Button>
+      {lastSection ? (
+        <Button fullWidth className="mt-5" loading={submitting} onClick={submit}>
+          {ieltsT.submitTest}
+        </Button>
+      ) : (
+        <Button fullWidth className="mt-5" disabled={!audioFinished} onClick={goToNextSection}>
+          {t.listeningContinueSection}
+        </Button>
+      )}
     </main>
   );
-}
-
-/** Prefers a passage the learner hasn't already completed in standalone
- *  practice, so a Mock attempt doesn't hand back content they've memorised;
- *  falls back to any item once everything is done. */
-function pickBankItem(bank: BankItem[]): string {
-  const pool = bank.filter((item) => !item.done);
-  const from = pool.length > 0 ? pool : bank;
-  return from[Math.floor(Math.random() * from.length)].id;
 }
 
 export function MockLegHeader({

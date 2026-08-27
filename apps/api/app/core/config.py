@@ -104,10 +104,14 @@ class Settings(BaseSettings):
 
     # Text-to-speech (ElevenLabs). Pronunciation audio is proxied through the
     # API (the key never reaches the browser) and disk-cached, so each unique
-    # text costs ElevenLabs credits exactly once. Off gracefully when unset —
-    # the web client falls back to the browser's built-in voice.
+    # text costs ElevenLabs credits exactly once. Off when unset — listening
+    # UIs show a retry state rather than degrading to a robotic browser voice.
     ELEVENLABS_API_KEY: Optional[str] = None
     ELEVENLABS_VOICE_ID: str = "pNInz6obpgDQGcFmaJgB"  # "Adam" — free-tier OK
+    # Second speaker for multi-voice content (Full Mock listening dialogues).
+    # Unset = every role collapses onto ELEVENLABS_VOICE_ID (single-voice
+    # fallback), so this stays optional without breaking anything.
+    ELEVENLABS_VOICE_ID_B: Optional[str] = "EXAVITQu4vr4xnSDxMaL"  # "Bella"
     ELEVENLABS_MODEL: str = "eleven_flash_v2_5"
     ELEVENLABS_OUTPUT_FORMAT: str = "mp3_44100_128"
     ELEVENLABS_STABILITY: float = 0.42
@@ -122,6 +126,9 @@ class Settings(BaseSettings):
     # /tts/word needs no sign-in, so this is the only cost control on an
     # anonymous caller — deliberately tighter than the signed-in limit.
     RATE_LIMIT_TTS_GUEST: str = "20/60"
+    # A full listening attempt is 4 requests (one per section); this allows
+    # roughly 10 attempts/hour/user, generous for retries after a failure.
+    RATE_LIMIT_MOCK_LISTENING_AUDIO: str = "40/3600"
 
     @property
     def tts_enabled(self) -> bool:

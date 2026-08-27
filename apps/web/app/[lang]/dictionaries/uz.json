@@ -884,7 +884,10 @@
     "error": "Nimadir xato ketdi. Qaytadan urinib ko'ring.",
     "trackLabel": "Modulni tanlang",
     "comingSoon": "Tez orada",
-    "exit": "Chiqish"
+    "exit": "Chiqish",
+    "listeningSectionOf": "{n}-bo'lim / 4",
+    "listeningContinueSection": "Keyingi bo'limga o'tish",
+    "listeningTypeAnswer": "Javobingizni yozing"
   },
   "billing": {
     "title": "Narxlar",

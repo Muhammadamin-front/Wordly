@@ -96,12 +96,12 @@ export const MOCK_SKILL_LABEL: Record<MockSkill, string> = {
   speaking: "Speaking",
 };
 
-/** Honest per-leg time budgets given the content actually available today —
- *  Reading and Writing match the real exam; Listening is one short passage
- *  rather than the real exam's four sections, so it is timed accordingly
- *  rather than padded to 30 minutes to match a claim the content can't back. */
+/** Per-leg time budgets, matching the real exam. Listening now covers a
+ *  real 4-section test (see lib/listening-practice.ts) — timed at the real
+ *  exam's ~30 minutes rather than the actual (shorter) synthesized-audio
+ *  length, so the pacing feels like the real thing rather than rushed. */
 export const MOCK_SKILL_MINUTES: Record<MockSkill, number> = {
-  listening: 6,
+  listening: 30,
   reading: 60,
   writing: 60,
   speaking: 15,

@@ -884,7 +884,10 @@
     "error": "Что-то пошло не так. Попробуйте ещё раз.",
     "trackLabel": "Выберите модуль",
     "comingSoon": "Скоро",
-    "exit": "Выйти"
+    "exit": "Выйти",
+    "listeningSectionOf": "Раздел {n} из 4",
+    "listeningContinueSection": "Перейти к следующему разделу",
+    "listeningTypeAnswer": "Введите ответ"
   },
   "billing": {
     "title": "Цены",

@@ -884,7 +884,10 @@
     "error": "Something went wrong. Please try again.",
     "trackLabel": "Choose your track",
     "comingSoon": "Soon",
-    "exit": "Exit"
+    "exit": "Exit",
+    "listeningSectionOf": "Section {n} of 4",
+    "listeningContinueSection": "Continue to next section",
+    "listeningTypeAnswer": "Type your answer"
   },
   "billing": {
     "title": "Pricing",

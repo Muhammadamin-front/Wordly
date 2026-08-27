@@ -7,10 +7,11 @@ reuses the existing per-skill services rather than duplicating them.
 """
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user, require_premium
+from app.core.config import get_settings
 from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.ielts_mock import MOCK_SKILLS
@@ -21,7 +22,7 @@ from app.schemas.ielts_mock import (
     MockSessionListItem,
     MockSessionOut,
 )
-from app.services import ielts_mock
+from app.services import ielts_mock, listening_audio, tts
 
 router = APIRouter(
     prefix="/ielts/mock",
@@ -109,3 +110,33 @@ async def complete_leg(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     await db.commit()
     return session
+
+
+@router.get(
+    "/listening/{slug}/section/{section}/audio",
+    dependencies=[Depends(require_premium), Depends(rate_limit("mock_listening_audio"))],
+)
+async def listening_section_audio(slug: str, section: int):
+    """Multi-voice ElevenLabs narration for one section (1-4) of a Full Mock
+    listening test (MP3). The slug/section pair is checked against a fixed,
+    checked-in content catalog — never arbitrary client text — so this can't
+    be used to burn synthesis credits on anything but our own scripts."""
+    if not get_settings().tts_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="TTS is not configured"
+        )
+    if section < 1 or section > 4:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown section")
+    try:
+        audio = await listening_audio.synthesize_section(slug, section)
+    except tts.TtsError:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY, detail="Speech synthesis failed"
+        )
+    if audio is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown test or section")
+    return Response(
+        content=audio,
+        media_type="audio/mpeg",
+        headers={"Cache-Control": "private, max-age=86400"},
+    )

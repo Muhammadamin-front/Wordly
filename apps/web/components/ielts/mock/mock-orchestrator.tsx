@@ -13,6 +13,7 @@ import {
   type MockSkill,
   type MockTrack,
 } from "@/lib/ielts-mock";
+import { LISTENING_FULL_TESTS } from "@/lib/listening-practice";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { MockIntro } from "./mock-intro";
 import { MockLegTransition } from "./mock-leg-transition";
@@ -54,6 +55,12 @@ export function MockOrchestrator({
   const readingTestId = useMemo(
     () => (session ? readingTestIdForTrack(session.id) : null),
     [session?.id, session?.track]
+  );
+
+  // Same deterministic-not-random reasoning as readingTestIdForTrack above.
+  const listeningTestSlug = useMemo(
+    () => (session ? listeningTestIdForTrack(session.id) : null),
+    [session?.id]
   );
 
   useEffect(() => {
@@ -200,11 +207,12 @@ export function MockOrchestrator({
     return <MockReport t={t} session={session} onRetake={() => setSession(null)} lang={lang} />;
   }
 
-  if (skill === "listening") {
+  if (skill === "listening" && listeningTestSlug) {
     return (
       <MockListeningLeg
         t={t}
         ieltsT={ieltsT}
+        slug={listeningTestSlug}
         session={session}
         onDone={(band, detail) => completeLeg("listening", band, detail)}
         onAbandon={abandon}
@@ -267,4 +275,16 @@ function readingTestIdForTrack(sessionId: string): string {
     hash = (hash * 31 + sessionId.charCodeAt(index)) >>> 0;
   }
   return academicIds[hash % academicIds.length];
+}
+
+/** Same deterministic-hash pattern as readingTestIdForTrack: a page reload
+ *  during the Listening leg must resolve to the same test/section state,
+ *  not a randomly re-picked one. */
+function listeningTestIdForTrack(sessionId: string): string {
+  const slugs = LISTENING_FULL_TESTS.map((entry) => entry.slug);
+  let hash = 0;
+  for (let index = 0; index < sessionId.length; index += 1) {
+    hash = (hash * 31 + sessionId.charCodeAt(index)) >>> 0;
+  }
+  return slugs[hash % slugs.length];
 }
