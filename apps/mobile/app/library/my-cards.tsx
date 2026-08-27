@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
@@ -20,23 +20,22 @@ export default function MyCards() {
 
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const timer = setTimeout(() => setQuery(search.trim()), search ? 300 : 0);
     return () => clearTimeout(timer);
   }, [search]);
 
-  useEffect(() => setPage(1), [query]);
-
-  const cards = useQuery({
-    queryKey: ["my-cards", query, page],
-    queryFn: () => request<CardPage>(`/cards?${new URLSearchParams({ page: String(page), page_size: String(pageSize), ...(query ? { q: query } : {}) })}`, { token }),
+  const cards = useInfiniteQuery({
+    queryKey: ["my-cards", query],
+    queryFn: ({ pageParam }) => request<CardPage>(`/cards?${new URLSearchParams({ page: String(pageParam), page_size: String(pageSize), ...(query ? { q: query } : {}) })}`, { token }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.page * lastPage.page_size < lastPage.total ? lastPage.page + 1 : undefined,
     enabled: Boolean(token),
   });
 
-  const items = cards.data?.items ?? [];
-  const total = cards.data?.total ?? 0;
+  const items = cards.data?.pages.flatMap((page) => page.items) ?? [];
+  const total = cards.data?.pages[0]?.total ?? 0;
   const [removed, setRemoved] = useState<Set<string>>(new Set());
   const visible = items.filter((c) => !removed.has(c.id));
   const deleteCard = useMutation({
@@ -122,8 +121,8 @@ export default function MyCards() {
         </View>
       )}
 
-      {items.length < total ? (
-        <Button variant="secondary" loading={cards.isFetching} onPress={() => setPage((p) => p + 1)}>
+      {cards.hasNextPage ? (
+        <Button variant="secondary" loading={cards.isFetchingNextPage} onPress={() => void cards.fetchNextPage()}>
           {`${t.loadMore} (${items.length}/${total})`}
         </Button>
       ) : null}
