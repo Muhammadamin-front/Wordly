@@ -149,6 +149,30 @@ class VocabularyUnlock(Base):
     unlocked_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
 
 
+class VoiceMinutesTransaction(Base):
+    """Append-only usage ledger for real-time voice speaking (GPT-5.6 Terra/
+    Gemini + ElevenLabs). Deliberately not a Wallet-style balance: the
+    monthly allowance resets every calendar month, so "remaining" is
+    computed lazily (allowance - sum of this month's rows) rather than
+    stored — nothing to reset via a cron job, nothing to get out of sync.
+
+    `seconds` must always come from the server's own measurement of the
+    actual STT input + TTS output audio for that turn — NEVER a
+    client-reported duration (see services.voice_minutes.debit)."""
+
+    __tablename__ = "voice_minutes_transactions"
+    __table_args__ = (Index("ix_voice_minutes_transactions_user_created", "user_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    seconds: Mapped[int] = mapped_column(Integer, nullable=False)  # always positive; a debit-only ledger
+    reason: Mapped[str] = mapped_column(String(32), nullable=False)  # "coach_turn"|"coin_purchase"|...
+    reference: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)  # e.g. a CoachSession id
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
 class Referral(Base):
     __tablename__ = "referrals"
     __table_args__ = (Index("ix_referrals_referrer", "referrer_id"),)

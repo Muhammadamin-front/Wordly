@@ -31,7 +31,7 @@ from app.schemas.ielts import (
     WritingTask,
 )
 from app.models.ielts import IeltsTest
-from app.services import ai_quota, coach, ielts, tts
+from app.services import ai_quota, coach, ielts, subscriptions, tts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
 from app.services.ielts_bank import bank_for
@@ -117,6 +117,16 @@ async def writing_score(
     db: AsyncSession = Depends(get_db),
     client: AiClient = Depends(require_ai_client),
 ):
+    if not await subscriptions.is_premium(db, user) and not await ielts.has_free_writing_quota(
+        db, user.id
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                f"Free plan limit reached ({ielts.FREE_WRITING_CHECKS_PER_WEEK}/week). "
+                "Upgrade to Premium for more."
+            ),
+        )
     score = await _guarded(
         db, user,
         lambda: ielts.score_writing(

@@ -13,13 +13,18 @@ async def learner(client, email="buyer@words.uz") -> dict:
 async def test_plans_listed(client):
     body = (await client.get("/api/v1/billing/plans")).json()
     codes = {p["code"] for p in body["plans"]}
-    assert codes == {"free", "premium_monthly", "premium_quarterly", "premium_yearly"}
+    assert codes == {
+        "free", "premium_monthly", "premium_quarterly", "premium_yearly",
+        "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+    }
     monthly = next(p for p in body["plans"] if p["code"] == "premium_monthly")
     assert monthly["price_som"] == 49000
     quarterly = next(p for p in body["plans"] if p["code"] == "premium_quarterly")
     assert quarterly["price_som"] == 125000
     yearly = next(p for p in body["plans"] if p["code"] == "premium_yearly")
     assert yearly["price_som"] == 441000
+    speaking_pro = next(p for p in body["plans"] if p["code"] == "speaking_pro_monthly")
+    assert speaking_pro["price_som"] == 145000
 
 
 async def test_public_billing_catalog_keeps_account_actions_protected(client):

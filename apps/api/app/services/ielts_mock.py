@@ -30,6 +30,24 @@ async def has_active_session(db: AsyncSession, user: User) -> bool:
     return existing is not None
 
 
+def _month_start(now: Optional[datetime] = None) -> datetime:
+    now = now or utcnow()
+    return now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+
+async def used_free_monthly_mock(db: AsyncSession, user: User) -> bool:
+    """A free user gets one Full Mock per calendar month at no charge — this
+    is true once they've already started ANY session (free or coin-paid)
+    this month, so the free slot is always the first attempt of the month,
+    never a separately-tracked flag that could drift out of sync."""
+    existing = await db.scalar(
+        select(MockSession.id).where(
+            MockSession.user_id == user.id, MockSession.started_at >= _month_start()
+        )
+    )
+    return existing is not None
+
+
 async def create_session(db: AsyncSession, user: User, *, track: str) -> MockSession:
     session = MockSession(user_id=user.id, track=track, current_leg=MOCK_SKILLS[0])
     db.add(session)

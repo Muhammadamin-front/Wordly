@@ -56,8 +56,12 @@ async def start_session(
         )
     # Checked (and, for a free user, charged) only once we know this request
     # will actually create a session — a request that fails the conflict
-    # check above must never be charged.
-    await charge_coins_or_require_premium(db, user, COIN_COST_MOCK_ATTEMPT, "mock_attempt")
+    # check above must never be charged. A free user's first mock each
+    # calendar month is free — skip the coin charge entirely rather than
+    # charge-then-refund, so a failed payment provider can never leave them
+    # stuck having "spent" their free slot for nothing.
+    if await ielts_mock.used_free_monthly_mock(db, user):
+        await charge_coins_or_require_premium(db, user, COIN_COST_MOCK_ATTEMPT, "mock_attempt")
     session = await ielts_mock.create_session(db, user, track=payload.track)
     await db.commit()
     return session

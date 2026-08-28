@@ -27,11 +27,47 @@ PLANS: Dict[str, Plan] = {
     # undercut a single solo yearly seat and ran near-zero margin per seat
     # at typical usage — see git history for the analysis.
     "family": Plan("family", "premium", 1_990_000, 365, 6),
+    # Real-time voice speaking (GPT-5.6 Terra/Gemini brain + ElevenLabs TTS)
+    # costs ~262 so'm/minute — dominated by ElevenLabs, not much room to cut.
+    # 300 min/mo (~85,000 so'm real cost) needs its own tier priced for that,
+    # not folded into premium_* at ~40% margin — lands right next to what
+    # rivals already charge for the same generosity (Cefrs Max: 134,199).
+    "speaking_pro_monthly": Plan("speaking_pro_monthly", "premium", 145_000, 30, 1),
+    # ~15% off 3x monthly (435,000 -> 369,750, rounded to a clean 370,000).
+    "speaking_pro_quarterly": Plan("speaking_pro_quarterly", "premium", 370_000, 90, 1),
+    # Exactly 25% off 12x monthly (1,740,000 * 0.75 = 1,305,000).
+    "speaking_pro_yearly": Plan("speaking_pro_yearly", "premium", 1_305_000, 365, 1),
 }
 
 PAID_PLANS = [p for p in PLANS.values() if p.tier == "premium"]
-PUBLIC_PLAN_CODES = ("free", "premium_monthly", "premium_quarterly", "premium_yearly")
-SELLABLE_PLAN_CODES = frozenset(("premium_monthly", "premium_quarterly", "premium_yearly"))
+PUBLIC_PLAN_CODES = (
+    "free",
+    "premium_monthly", "premium_quarterly", "premium_yearly",
+    "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+)
+SELLABLE_PLAN_CODES = frozenset((
+    "premium_monthly", "premium_quarterly", "premium_yearly",
+    "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+))
+
+# Real-time voice speaking allowance, in whole seconds, reset every calendar
+# month (see services.voice_minutes) — not a lifetime balance like coins.
+# "premium_*" plan codes are the Basic tier here; any code not listed gets 0
+# (free tier never reaches real-time voice at all — see services.voice_minutes).
+VOICE_SECONDS_PER_MONTH: Dict[str, int] = {
+    "premium_monthly": 60 * 60,
+    "premium_quarterly": 60 * 60,
+    "premium_yearly": 60 * 60,
+    "family": 60 * 60,
+    "speaking_pro_monthly": 300 * 60,
+    "speaking_pro_quarterly": 300 * 60,
+    "speaking_pro_yearly": 300 * 60,
+}
+
+# Coin price for extra real-time voice minutes beyond the monthly allowance
+# (either tier). ~262 so'm/min real cost, ~30 so'm/coin -> ~9 coins covers
+# cost; priced with margin, same logic as the other COIN_COST_* constants.
+COIN_COST_VOICE_MINUTE = 15
 
 
 @dataclass(frozen=True)
@@ -64,6 +100,14 @@ def public_plans() -> list[Plan]:
 
 def get_plan(code: str) -> Optional[Plan]:
     return PLANS.get(code)
+
+
+def voice_seconds_per_month(plan_code: Optional[str]) -> int:
+    """0 for free/unknown/None — real-time voice is never reachable without
+    an active Basic or Speaking Pro subscription."""
+    if not plan_code:
+        return 0
+    return VOICE_SECONDS_PER_MONTH.get(plan_code, 0)
 
 
 def public_coin_packs() -> list[CoinPack]:

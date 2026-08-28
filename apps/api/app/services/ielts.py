@@ -12,12 +12,14 @@ answer key.
 """
 import json
 from dataclasses import dataclass
+from datetime import timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.security import utcnow
 from app.models.ielts import IeltsResult, IeltsTest
 from app.models.user import User
 from app.services.ai_client import AiClient
@@ -734,6 +736,26 @@ class WritingScore:
 def _criterion(data: Any) -> Criterion:
     data = data if isinstance(data, dict) else {}
     return Criterion(band=_half_band(data.get("band")), comment=str(data.get("comment", "")).strip())
+
+
+FREE_WRITING_CHECKS_PER_WEEK = 3
+
+
+async def has_free_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
+    """Free tier: 3 writing checks per rolling 7 days — tighter than the
+    general daily AI-action quota, and specific to this one feature (Basic/
+    Speaking Pro get 5/day instead, checked separately, not through this).
+    Counted from IeltsResult rows rather than a separate counter, so there's
+    nothing to reset or drift out of sync with what actually happened."""
+    week_ago = utcnow() - timedelta(days=7)
+    count = await db.scalar(
+        select(func.count(IeltsResult.id)).where(
+            IeltsResult.user_id == user_id,
+            IeltsResult.skill == "writing",
+            IeltsResult.created_at >= week_ago,
+        )
+    )
+    return (count or 0) < FREE_WRITING_CHECKS_PER_WEEK
 
 
 async def score_writing(

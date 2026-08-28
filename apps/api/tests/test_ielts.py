@@ -282,6 +282,46 @@ async def test_writing_score_returns_bands(client):
         app.dependency_overrides.pop(require_ai_client, None)
 
 
+async def test_free_tier_writing_checks_capped_at_three_per_week(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="ieltsw-cap@words.uz")
+        for _ in range(3):
+            resp = await client.post(
+                "/api/v1/ielts/writing/score",
+                json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+                headers=headers,
+            )
+            assert resp.status_code == 200, resp.text
+
+        fourth = await client.post(
+            "/api/v1/ielts/writing/score",
+            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+            headers=headers,
+        )
+        assert fourth.status_code == 429
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_premium_is_not_capped_by_the_free_weekly_writing_limit(client):
+    use_fake()
+    try:
+        headers = await learner(client, email="ieltsw-premium@words.uz")
+        await client.post(
+            "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        )
+        for _ in range(4):  # one more than the free-tier weekly cap
+            resp = await client.post(
+                "/api/v1/ielts/writing/score",
+                json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+                headers=headers,
+            )
+            assert resp.status_code == 200, resp.text
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
 async def test_overview_recent_lists_graded_tests_newest_first(client):
     use_fake()
     try:

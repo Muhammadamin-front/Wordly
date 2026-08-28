@@ -16,10 +16,19 @@ async def premium_learner(client, email="mock-premium@words.uz") -> dict:
     return headers
 
 
-async def test_free_user_cannot_start_a_mock_session(client):
+async def test_free_user_gets_one_free_mock_per_month_then_needs_coins_or_premium(client):
     headers = await learner(client)
-    resp = await client.post("/api/v1/ielts/mock/sessions", json={}, headers=headers)
-    assert resp.status_code == 402
+    first = await client.post("/api/v1/ielts/mock/sessions", json={}, headers=headers)
+    assert first.status_code == 201, first.text  # the free monthly slot
+
+    abandoned = await client.post(
+        f"/api/v1/ielts/mock/sessions/{first.json()['id']}/abandon", headers=headers
+    )
+    assert abandoned.status_code == 200
+
+    second = await client.post("/api/v1/ielts/mock/sessions", json={}, headers=headers)
+    assert second.status_code == 402  # free slot already used this month
+    assert second.json()["detail"]["reason"] == "insufficient_coins"
 
 
 async def test_free_user_can_read_their_mock_history(client):
