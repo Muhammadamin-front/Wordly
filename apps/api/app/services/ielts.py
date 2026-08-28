@@ -54,27 +54,6 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
             },
         },
         {
-            "title": "Task 1 — Process",
-            "prompt": (
-                "The diagram below shows how rainwater is collected and purified for drinking in "
-                "a small town. Summarise the information by describing the main stages of the "
-                "process. Write at least 150 words."
-            ),
-            "visual": {
-                "kind": "process",
-                "title": "Rainwater collection and purification system",
-                "categories": [
-                    "Rain falls on house roofs",
-                    "Gutters collect the water",
-                    "Underground pipes carry it to a tank",
-                    "A filter removes solid material",
-                    "Water is treated with disinfectant",
-                    "Clean water returns to homes",
-                ],
-                "series": [],
-            },
-        },
-        {
             "title": "Task 1 — Line graph",
             "prompt": (
                 "The graph below shows average house prices in one European city between 2000 and "
@@ -174,30 +153,6 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                         {"name": "Public park", "kind": "green", "x": 81, "y": 8, "width": 15, "height": 29},
                     ]},
                 ],
-            },
-        },
-        {
-            "title": "Task 1 — Process (manufacturing)",
-            "prompt": (
-                "The diagram below shows the stages in the production of chocolate, from the "
-                "harvesting of cocoa pods to the packaging of finished bars. Summarise the "
-                "information by describing the main stages of the process. Write at least 150 "
-                "words."
-            ),
-            "visual": {
-                "kind": "process",
-                "title": "From cocoa pod to packaged chocolate bar",
-                "categories": [
-                    "Ripe cocoa pods are harvested",
-                    "Pods are split and beans removed",
-                    "Beans ferment under banana leaves",
-                    "Beans are dried in the sun",
-                    "Dried beans are roasted",
-                    "Shells are removed and nibs ground",
-                    "Cocoa is mixed, refined and moulded",
-                    "Finished bars are cooled and packaged",
-                ],
-                "series": [],
             },
         },
         {
@@ -512,6 +467,785 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "series": [],
             },
         },
+    # ============================== BAR (12) ==============================
+    {
+        "title": "Task 1 — Bar (internet usage by age)",
+        "prompt": ("The chart below shows the percentage of people in four age groups who used "
+                   "the internet daily in 2023. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "bar", "title": "Daily internet use by age group, 2023",
+            "y_label": "% of age group", "categories": ["16-24", "25-44", "45-64", "65+"],
+            "series": [{"name": "Daily users", "values": [96, 89, 68, 34]}]},
+    },
+    {
+        "title": "Task 1 — Bar (renewable energy by country)",
+        "prompt": ("The chart below shows the share of electricity generated from renewable "
+                   "sources in four countries in 2010 and 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "bar", "title": "Renewable electricity generation, 2010 vs 2023",
+            "y_label": "% of total electricity", "categories": ["Norway", "Germany", "China", "USA"],
+            "series": [{"name": "2010", "values": [58, 17, 9, 10]}, {"name": "2023", "values": [72, 46, 31, 22]}]},
+    },
+    {
+        "title": "Task 1 — Bar (university graduates by field)",
+        "prompt": ("The chart below shows the number of university graduates in five fields of "
+                   "study, by gender, in 2022. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "bar", "title": "University graduates by field and gender, 2022",
+            "y_label": "Thousands of graduates",
+            "categories": ["Engineering", "Medicine", "Law", "Education", "Business"],
+            "series": [{"name": "Men", "values": [42, 18, 16, 9, 30]}, {"name": "Women", "values": [15, 24, 19, 27, 28]}]},
+    },
+    {
+        "title": "Task 1 — Bar (public transport usage)",
+        "prompt": ("The chart below shows the percentage of commuters who used public transport "
+                   "to travel to work in five cities in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "bar", "title": "Commuters using public transport, 2023",
+            "y_label": "% of commuters",
+            "categories": ["Tokyo", "London", "New York", "Tashkent", "Los Angeles"],
+            "series": [{"name": "Public transport", "values": [61, 45, 32, 24, 11]}]},
+    },
+    {
+        "title": "Task 1 — Bar (average working hours)",
+        "prompt": ("The chart below shows the average number of hours worked per week by "
+                   "employees in five countries in 2023. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "bar", "title": "Average weekly working hours, 2023",
+            "y_label": "Hours per week",
+            "categories": ["Mexico", "South Korea", "USA", "UK", "Germany"],
+            "series": [{"name": "Hours", "values": [45, 42, 38, 36, 34]}]},
+    },
+    {
+        "title": "Task 1 — Bar (recycling rates by material)",
+        "prompt": ("The chart below shows the percentage of waste material recycled in a "
+                   "country in 2023, by material type. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "bar", "title": "Recycling rates by material, 2023",
+            "y_label": "% recycled",
+            "categories": ["Glass", "Paper", "Metal", "Plastic", "Electronics"],
+            "series": [{"name": "Recycled", "values": [76, 68, 71, 34, 22]}]},
+    },
+    {
+        "title": "Task 1 — Bar (smartphone ownership)",
+        "prompt": ("The chart below shows the percentage of people in four age groups who "
+                   "owned a smartphone in 2015 and 2023. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "bar", "title": "Smartphone ownership by age group, 2015 vs 2023",
+            "y_label": "% owning a smartphone", "categories": ["16-24", "25-44", "45-64", "65+"],
+            "series": [{"name": "2015", "values": [78, 74, 48, 15]}, {"name": "2023", "values": [98, 96, 87, 61]}]},
+    },
+    {
+        "title": "Task 1 — Bar (coffee consumption per capita)",
+        "prompt": ("The chart below shows average coffee consumption per person in four "
+                   "countries in 2023. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "bar", "title": "Coffee consumption per capita, 2023",
+            "y_label": "Kilograms per person per year",
+            "categories": ["Finland", "Norway", "Italy", "USA"],
+            "series": [{"name": "Coffee consumed", "values": [12.0, 9.9, 5.9, 4.2]}]},
+    },
+    {
+        "title": "Task 1 — Bar (water usage by sector)",
+        "prompt": ("The chart below shows water usage by sector in three countries in 2023. "
+                   "Summarise the information by selecting and reporting the main features, and "
+                   "make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "bar", "title": "Water usage by sector, 2023", "y_label": "% of total water use",
+            "categories": ["India", "Germany", "Australia"],
+            "series": [{"name": "Agriculture", "values": [78, 45, 65]}, {"name": "Industry", "values": [12, 42, 18]}, {"name": "Domestic", "values": [10, 13, 17]}]},
+    },
+    {
+        "title": "Task 1 — Bar (leisure time by gender)",
+        "prompt": ("The chart below shows the average number of hours per week spent on "
+                   "different leisure activities by men and women in 2023. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "bar", "title": "Weekly leisure time by activity and gender, 2023",
+            "y_label": "Hours per week",
+            "categories": ["Watching TV", "Sport", "Reading", "Socialising"],
+            "series": [{"name": "Men", "values": [9, 5, 2, 6]}, {"name": "Women", "values": [7, 3, 4, 7]}]},
+    },
+    {
+        "title": "Task 1 — Bar (crime rate by type)",
+        "prompt": ("The chart below shows the number of crimes reported in a city in 2000 and "
+                   "2020, by type of crime. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "bar", "title": "Reported crimes by type, 2000 vs 2020",
+            "y_label": "Cases per 10,000 people",
+            "categories": ["Theft", "Burglary", "Assault", "Vehicle crime"],
+            "series": [{"name": "2000", "values": [58, 34, 21, 40]}, {"name": "2020", "values": [31, 15, 18, 12]}]},
+    },
+    {
+        "title": "Task 1 — Bar (export values by product)",
+        "prompt": ("The chart below shows the value of exports from a country in 2023, by "
+                   "product category. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "bar", "title": "Export values by product category, 2023",
+            "y_label": "US$ billion",
+            "categories": ["Machinery", "Textiles", "Agriculture", "Minerals", "Chemicals"],
+            "series": [{"name": "Export value", "values": [45, 28, 22, 18, 12]}]},
+    },
+
+    # ============================== LINE (12) ==============================
+    {
+        "title": "Task 1 — Line (global temperature change)",
+        "prompt": ("The graph below shows the change in global average temperature, relative "
+                   "to the 1950 average, between 1950 and 2020. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "line", "title": "Global average temperature change, 1950-2020",
+            "y_label": "°C change from 1950", "categories": ["1950", "1970", "1990", "2010", "2020"],
+            "series": [{"name": "Temperature change", "values": [0, 0.1, 0.3, 0.7, 1.1]}]},
+    },
+    {
+        "title": "Task 1 — Line (unemployment rate)",
+        "prompt": ("The graph below shows the unemployment rate in three countries between "
+                   "2000 and 2020. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "line", "title": "Unemployment rate, 2000-2020", "y_label": "% of workforce",
+            "categories": ["2000", "2005", "2010", "2015", "2020"],
+            "series": [{"name": "Spain", "values": [11, 9, 20, 22, 15]}, {"name": "Germany", "values": [8, 11, 7, 5, 4]}]},
+    },
+    {
+        "title": "Task 1 — Line (tourist arrivals)",
+        "prompt": ("The graph below shows the number of international tourists visiting a "
+                   "country between 2000 and 2020. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "line", "title": "International tourist arrivals, 2000-2020", "y_label": "Millions of visitors",
+            "categories": ["2000", "2005", "2010", "2015", "2020"],
+            "series": [{"name": "Tourists", "values": [2.1, 3.4, 5.2, 8.7, 3.9]}]},
+    },
+    {
+        "title": "Task 1 — Line (city populations)",
+        "prompt": ("The graph below shows the population of three major cities between 1950 "
+                   "and 2020. Summarise the information by selecting and reporting the main "
+                   "features, and make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "line", "title": "Population of three cities, 1950-2020", "y_label": "Millions",
+            "categories": ["1950", "1970", "1990", "2010", "2020"],
+            "series": [{"name": "Tokyo", "values": [6.3, 11.4, 13.1, 13.2, 14.0]},
+                       {"name": "Lagos", "values": [0.3, 1.4, 4.8, 11.2, 14.4]},
+                       {"name": "London", "values": [8.2, 7.5, 6.8, 8.2, 9.0]}]},
+    },
+    {
+        "title": "Task 1 — Line (mobile vs landline subscriptions)",
+        "prompt": ("The graph below shows the number of mobile phone and landline telephone "
+                   "subscriptions per 100 people between 1990 and 2020. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "line", "title": "Mobile vs landline subscriptions, 1990-2020", "y_label": "Per 100 people",
+            "categories": ["1990", "2000", "2010", "2020"],
+            "series": [{"name": "Mobile", "values": [0, 12, 78, 108]}, {"name": "Landline", "values": [45, 48, 30, 11]}]},
+    },
+    {
+        "title": "Task 1 — Line (CO2 emissions by country)",
+        "prompt": ("The graph below shows carbon dioxide emissions in four countries between "
+                   "1990 and 2020. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "line", "title": "CO2 emissions, 1990-2020", "y_label": "Million tonnes",
+            "categories": ["1990", "2000", "2010", "2020"],
+            "series": [{"name": "China", "values": [2200, 3300, 8300, 10600]},
+                       {"name": "USA", "values": [5000, 5800, 5400, 4500]},
+                       {"name": "Germany", "values": [1000, 850, 800, 640]},
+                       {"name": "UK", "values": [590, 550, 480, 330]}]},
+    },
+    {
+        "title": "Task 1 — Line (life expectancy)",
+        "prompt": ("The graph below shows life expectancy at birth in three countries between "
+                   "1950 and 2020. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "line", "title": "Life expectancy at birth, 1950-2020", "y_label": "Years",
+            "categories": ["1950", "1970", "1990", "2010", "2020"],
+            "series": [{"name": "Japan", "values": [59, 72, 79, 83, 85]},
+                       {"name": "Uzbekistan", "values": [55, 63, 67, 71, 73]},
+                       {"name": "Nigeria", "values": [36, 42, 46, 51, 55]}]},
+    },
+    {
+        "title": "Task 1 — Line (print books vs e-books)",
+        "prompt": ("The graph below shows sales of print books and e-books in a country "
+                   "between 2005 and 2020. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "line", "title": "Print book vs e-book sales, 2005-2020", "y_label": "Million units sold",
+            "categories": ["2005", "2010", "2015", "2020"],
+            "series": [{"name": "Print books", "values": [320, 290, 260, 230]}, {"name": "E-books", "values": [0, 45, 95, 140]}]},
+    },
+    {
+        "title": "Task 1 — Line (household internet access)",
+        "prompt": ("The graph below shows the percentage of households with internet access "
+                   "in four countries between 2000 and 2020. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "line", "title": "Households with internet access, 2000-2020", "y_label": "% of households",
+            "categories": ["2000", "2005", "2010", "2015", "2020"],
+            "series": [{"name": "South Korea", "values": [19, 78, 95, 99, 99]},
+                       {"name": "Brazil", "values": [3, 14, 33, 51, 74]}]},
+    },
+    {
+        "title": "Task 1 — Line (house price vs income)",
+        "prompt": ("The graph below shows an index of average house prices and average income "
+                   "in a city between 1980 and 2020, where 1980 = 100. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "line", "title": "House price and income index, 1980-2020 (1980=100)", "y_label": "Index",
+            "categories": ["1980", "1990", "2000", "2010", "2020"],
+            "series": [{"name": "House prices", "values": [100, 165, 240, 310, 420]}, {"name": "Average income", "values": [100, 130, 155, 175, 195]}]},
+    },
+    {
+        "title": "Task 1 — Line (electric vehicle sales)",
+        "prompt": ("The graph below shows the number of new electric vehicles sold worldwide "
+                   "between 2015 and 2023. Summarise the information by selecting and reporting "
+                   "the main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "line", "title": "Global electric vehicle sales, 2015-2023", "y_label": "Million units",
+            "categories": ["2015", "2017", "2019", "2021", "2023"],
+            "series": [{"name": "EV sales", "values": [0.5, 1.2, 2.3, 6.8, 14.0]}]},
+    },
+    {
+        "title": "Task 1 — Line (teen social media use)",
+        "prompt": ("The graph below shows the average daily time teenagers spent on social "
+                   "media between 2010 and 2023. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "line", "title": "Average daily social media use by teenagers, 2010-2023", "y_label": "Minutes per day",
+            "categories": ["2010", "2013", "2016", "2019", "2023"],
+            "series": [{"name": "Minutes per day", "values": [45, 90, 135, 180, 210]}]},
+    },
+
+    # ============================== TABLE (13) ==============================
+    {
+        "title": "Task 1 — Table (household spending by category)",
+        "prompt": ("The table below shows the percentage of household income spent on four "
+                   "categories in four countries in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Household spending by category, 2023", "y_label": "% of income",
+            "categories": ["Housing", "Food", "Transport", "Leisure"],
+            "series": [{"name": "Japan", "values": [28, 20, 12, 9]}, {"name": "Egypt", "values": [18, 38, 10, 6]},
+                       {"name": "UK", "values": [32, 15, 14, 11]}, {"name": "Uzbekistan", "values": [20, 34, 11, 7]}]},
+    },
+    {
+        "title": "Task 1 — Table (literacy rate by region and gender)",
+        "prompt": ("The table below shows adult literacy rates by region and gender in 2023. "
+                   "Summarise the information by selecting and reporting the main features, and "
+                   "make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Adult literacy rate by region and gender, 2023", "y_label": "% literate",
+            "categories": ["East Asia", "Sub-Saharan Africa", "South Asia", "Europe"],
+            "series": [{"name": "Men", "values": [98, 72, 82, 99]}, {"name": "Women", "values": [96, 61, 71, 99]}]},
+    },
+    {
+        "title": "Task 1 — Table (commute time by transport mode)",
+        "prompt": ("The table below shows the average commuting time, in minutes, by mode of "
+                   "transport in three cities in 2023. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "table", "title": "Average commute time by mode, 2023", "y_label": "Minutes",
+            "categories": ["Car", "Bus", "Train", "Bicycle"],
+            "series": [{"name": "Jakarta", "values": [58, 62, 40, 35]}, {"name": "Berlin", "values": [28, 34, 24, 20]},
+                       {"name": "Toronto", "values": [32, 45, 38, 28]}]},
+    },
+    {
+        "title": "Task 1 — Table (university tuition fees)",
+        "prompt": ("The table below shows average annual university tuition fees, in US "
+                   "dollars, by country and degree level in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Average annual tuition fees, 2023", "y_label": "US$",
+            "categories": ["Bachelor's", "Master's", "PhD"],
+            "series": [{"name": "USA", "values": [28000, 34000, 22000]}, {"name": "UK", "values": [15000, 18000, 14000]},
+                       {"name": "Germany", "values": [1200, 1800, 800]}]},
+    },
+    {
+        "title": "Task 1 — Table (energy consumption by source)",
+        "prompt": ("The table below shows energy consumption by source in three countries in "
+                   "2023. Summarise the information by selecting and reporting the main "
+                   "features, and make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Energy consumption by source, 2023", "y_label": "% of total energy",
+            "categories": ["Coal", "Oil", "Gas", "Renewables", "Nuclear"],
+            "series": [{"name": "France", "values": [3, 28, 14, 20, 35]}, {"name": "Poland", "values": [41, 26, 17, 14, 0]},
+                       {"name": "Sweden", "values": [2, 20, 2, 51, 25]}]},
+    },
+    {
+        "title": "Task 1 — Table (hospital beds per country)",
+        "prompt": ("The table below shows the number of hospital beds per 1,000 people in "
+                   "five countries in 2000 and 2023. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "table", "title": "Hospital beds per 1,000 people", "y_label": "Beds per 1,000 people",
+            "categories": ["2000", "2023"],
+            "series": [{"name": "Japan", "values": [12.0, 13.0]}, {"name": "South Korea", "values": [4.4, 12.4]},
+                       {"name": "USA", "values": [3.7, 2.8]}, {"name": "Uzbekistan", "values": [8.3, 4.4]},
+                       {"name": "India", "values": [0.7, 0.5]}]},
+    },
+    {
+        "title": "Task 1 — Table (types of exercise)",
+        "prompt": ("The table below shows the percentage of adults who took part in different "
+                   "types of exercise at least once a week, in 2013 and 2023. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Adults exercising weekly by type, 2013 vs 2023", "y_label": "% of adults",
+            "categories": ["Walking", "Running", "Gym", "Swimming", "Cycling"],
+            "series": [{"name": "2013", "values": [42, 12, 15, 18, 10]}, {"name": "2023", "values": [55, 24, 31, 14, 22]}]},
+    },
+    {
+        "title": "Task 1 — Table (exports and imports by country)",
+        "prompt": ("The table below shows the value of exports and imports for three "
+                   "countries in 2023, in US$ billion. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "table", "title": "Exports and imports, 2023", "y_label": "US$ billion",
+            "categories": ["Exports", "Imports"],
+            "series": [{"name": "China", "values": [3380, 2560]}, {"name": "Germany", "values": [1650, 1420]},
+                       {"name": "Uzbekistan", "values": [19, 24]}]},
+    },
+    {
+        "title": "Task 1 — Table (average sleep hours by age)",
+        "prompt": ("The table below shows the average number of hours of sleep per night by "
+                   "age group, on weekdays and weekends, in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Average sleep hours by age group, 2023", "y_label": "Hours per night",
+            "categories": ["Weekday", "Weekend"],
+            "series": [{"name": "Teenagers (13-18)", "values": [6.8, 9.1]}, {"name": "Adults (25-64)", "values": [6.9, 7.6]},
+                       {"name": "Older adults (65+)", "values": [7.2, 7.4]}]},
+    },
+    {
+        "title": "Task 1 — Table (language test scores by nationality)",
+        "prompt": ("The table below shows average scores on an international English test, "
+                   "out of 9, for test-takers of five nationalities in 2023. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Average English test scores by nationality, 2023", "y_label": "Score (out of 9)",
+            "categories": ["Listening", "Reading", "Writing", "Speaking"],
+            "series": [{"name": "German test-takers", "values": [7.8, 7.5, 6.9, 7.2]}, {"name": "Uzbek test-takers", "values": [6.8, 6.5, 6.0, 6.2]},
+                       {"name": "Brazilian test-takers", "values": [7.0, 6.8, 6.4, 6.9]}]},
+    },
+    {
+        "title": "Task 1 — Table (water consumption by country and sector)",
+        "prompt": ("The table below shows total water consumption by sector in three "
+                   "countries in 2023, in billion cubic metres. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Water consumption by sector, 2023", "y_label": "Billion cubic metres",
+            "categories": ["Agriculture", "Industry", "Domestic"],
+            "series": [{"name": "India", "values": [688, 96, 56]}, {"name": "USA", "values": [175, 220, 65]},
+                       {"name": "Uzbekistan", "values": [51, 3, 2]}]},
+    },
+    {
+        "title": "Task 1 — Table (museum visitors by month)",
+        "prompt": ("The table below shows the number of visitors to a museum over six months "
+                   "in 2023. Summarise the information by selecting and reporting the main "
+                   "features, and make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Museum visitors by month, 2023", "y_label": "Number of visitors",
+            "categories": ["Jan", "Mar", "May", "Jul", "Sep", "Nov"],
+            "series": [{"name": "Visitors", "values": [4200, 5100, 6800, 9500, 5600, 4800]}]},
+    },
+    {
+        "title": "Task 1 — Table (employment rate by education level)",
+        "prompt": ("The table below shows the employment rate by education level and gender "
+                   "in 2023. Summarise the information by selecting and reporting the main "
+                   "features, and make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "table", "title": "Employment rate by education level and gender, 2023", "y_label": "% employed",
+            "categories": ["Below secondary", "Secondary", "Tertiary"],
+            "series": [{"name": "Men", "values": [58, 74, 86]}, {"name": "Women", "values": [41, 61, 79]}]},
+    },
+
+    # ============================== PIE-PAIR (14) ==============================
+    {
+        "title": "Task 1 — Pie (electricity sources)",
+        "prompt": ("The two pie charts below show the sources of electricity generation in a "
+                   "country in 2000 and in 2023. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Electricity generation sources, 2000 vs 2023", "categories": [], "series": [],
+            "pies": [{"title": "2000", "slices": [{"name": "Coal", "value": 52}, {"name": "Gas", "value": 24}, {"name": "Nuclear", "value": 18}, {"name": "Renewables", "value": 6}]},
+                     {"title": "2023", "slices": [{"name": "Coal", "value": 16}, {"name": "Gas", "value": 28}, {"name": "Nuclear", "value": 14}, {"name": "Renewables", "value": 42}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (student time use)",
+        "prompt": ("The two pie charts below show how a university student spent their time "
+                   "on a weekday and on a weekend day in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Student time use, weekday vs weekend", "categories": [], "series": [],
+            "pies": [{"title": "Weekday", "slices": [{"name": "Classes", "value": 25}, {"name": "Study", "value": 20}, {"name": "Sleep", "value": 33}, {"name": "Leisure", "value": 12}, {"name": "Other", "value": 10}]},
+                     {"title": "Weekend", "slices": [{"name": "Classes", "value": 0}, {"name": "Study", "value": 15}, {"name": "Sleep", "value": 38}, {"name": "Leisure", "value": 35}, {"name": "Other", "value": 12}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (traffic accident causes)",
+        "prompt": ("The two pie charts below show the main causes of traffic accidents in a "
+                   "city in 2010 and in 2020. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Causes of traffic accidents, 2010 vs 2020", "categories": [], "series": [],
+            "pies": [{"title": "2010", "slices": [{"name": "Speeding", "value": 34}, {"name": "Distraction", "value": 18}, {"name": "Alcohol", "value": 22}, {"name": "Weather", "value": 14}, {"name": "Other", "value": 12}]},
+                     {"title": "2020", "slices": [{"name": "Speeding", "value": 26}, {"name": "Distraction", "value": 38}, {"name": "Alcohol", "value": 13}, {"name": "Weather", "value": 12}, {"name": "Other", "value": 11}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (household waste composition)",
+        "prompt": ("The two pie charts below show the composition of household waste in "
+                   "urban and rural areas of a country in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Household waste composition, urban vs rural", "categories": [], "series": [],
+            "pies": [{"title": "Urban", "slices": [{"name": "Food waste", "value": 30}, {"name": "Plastic", "value": 22}, {"name": "Paper", "value": 20}, {"name": "Glass", "value": 10}, {"name": "Other", "value": 18}]},
+                     {"title": "Rural", "slices": [{"name": "Food waste", "value": 45}, {"name": "Plastic", "value": 12}, {"name": "Paper", "value": 14}, {"name": "Glass", "value": 8}, {"name": "Other", "value": 21}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (government spending)",
+        "prompt": ("The two pie charts below show government spending by sector in Country A "
+                   "and Country B in 2023. Summarise the information by selecting and reporting "
+                   "the main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "pie-pair", "title": "Government spending by sector, Country A vs Country B", "categories": [], "series": [],
+            "pies": [{"title": "Country A", "slices": [{"name": "Health", "value": 28}, {"name": "Education", "value": 22}, {"name": "Defence", "value": 15}, {"name": "Infrastructure", "value": 20}, {"name": "Other", "value": 15}]},
+                     {"title": "Country B", "slices": [{"name": "Health", "value": 18}, {"name": "Education", "value": 16}, {"name": "Defence", "value": 32}, {"name": "Infrastructure", "value": 14}, {"name": "Other", "value": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (university choice reasons)",
+        "prompt": ("The two pie charts below show the main reasons male and female students "
+                   "gave for choosing their university in a 2023 survey. Summarise the "
+                   "information by selecting and reporting the main features, and make "
+                   "comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Reasons for choosing a university, by gender", "categories": [], "series": [],
+            "pies": [{"title": "Male students", "slices": [{"name": "Reputation", "value": 35}, {"name": "Cost", "value": 20}, {"name": "Location", "value": 15}, {"name": "Course content", "value": 20}, {"name": "Other", "value": 10}]},
+                     {"title": "Female students", "slices": [{"name": "Reputation", "value": 28}, {"name": "Cost", "value": 22}, {"name": "Location", "value": 22}, {"name": "Course content", "value": 20}, {"name": "Other", "value": 8}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (commute mode)",
+        "prompt": ("The two pie charts below show how workers travel to their workplace in a "
+                   "city centre and in the suburbs in 2023. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Commute mode, city centre vs suburbs", "categories": [], "series": [],
+            "pies": [{"title": "City centre", "slices": [{"name": "Walking", "value": 22}, {"name": "Public transport", "value": 48}, {"name": "Car", "value": 20}, {"name": "Bicycle", "value": 10}]},
+                     {"title": "Suburbs", "slices": [{"name": "Walking", "value": 5}, {"name": "Public transport", "value": 25}, {"name": "Car", "value": 62}, {"name": "Bicycle", "value": 8}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (smartphone market share)",
+        "prompt": ("The two pie charts below show the global smartphone market share by "
+                   "brand in 2015 and in 2023. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Smartphone market share by brand, 2015 vs 2023", "categories": [], "series": [],
+            "pies": [{"title": "2015", "slices": [{"name": "Samsung", "value": 24}, {"name": "Apple", "value": 18}, {"name": "Huawei", "value": 8}, {"name": "Others", "value": 50}]},
+                     {"title": "2023", "slices": [{"name": "Samsung", "value": 20}, {"name": "Apple", "value": 21}, {"name": "Huawei", "value": 4}, {"name": "Others", "value": 55}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (deforestation causes)",
+        "prompt": ("The two pie charts below show the main causes of deforestation in two "
+                   "regions in 2023. Summarise the information by selecting and reporting the "
+                   "main features, and make comparisons where relevant. Write at least 150 "
+                   "words."),
+        "visual": {"kind": "pie-pair", "title": "Causes of deforestation by region, 2023", "categories": [], "series": [],
+            "pies": [{"title": "Region A", "slices": [{"name": "Agriculture", "value": 58}, {"name": "Logging", "value": 22}, {"name": "Mining", "value": 10}, {"name": "Fire", "value": 10}]},
+                     {"title": "Region B", "slices": [{"name": "Agriculture", "value": 34}, {"name": "Logging", "value": 40}, {"name": "Mining", "value": 16}, {"name": "Fire", "value": 10}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (charity income sources)",
+        "prompt": ("The two pie charts below show the sources of income for a charity "
+                   "organisation in 2010 and in 2023. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Charity income sources, 2010 vs 2023", "categories": [], "series": [],
+            "pies": [{"title": "2010", "slices": [{"name": "Individual donations", "value": 45}, {"name": "Government grants", "value": 30}, {"name": "Corporate sponsorship", "value": 15}, {"name": "Events", "value": 10}]},
+                     {"title": "2023", "slices": [{"name": "Individual donations", "value": 38}, {"name": "Government grants", "value": 18}, {"name": "Corporate sponsorship", "value": 24}, {"name": "Events", "value": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (preferred learning method)",
+        "prompt": ("The two pie charts below show students' preferred method of learning "
+                   "English, before 2020 and after 2020. Summarise the information by selecting "
+                   "and reporting the main features, and make comparisons where relevant. Write "
+                   "at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Preferred learning method, before vs after 2020", "categories": [], "series": [],
+            "pies": [{"title": "Before 2020", "slices": [{"name": "In-person classes", "value": 70}, {"name": "Online courses", "value": 15}, {"name": "Self-study apps", "value": 15}]},
+                     {"title": "After 2020", "slices": [{"name": "In-person classes", "value": 38}, {"name": "Online courses", "value": 34}, {"name": "Self-study apps", "value": 28}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (population age distribution)",
+        "prompt": ("The two pie charts below show the age distribution of a country's "
+                   "population in 1970 and in 2020. Summarise the information by selecting and "
+                   "reporting the main features, and make comparisons where relevant. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Population age distribution, 1970 vs 2020", "categories": [], "series": [],
+            "pies": [{"title": "1970", "slices": [{"name": "0-14", "value": 38}, {"name": "15-64", "value": 56}, {"name": "65+", "value": 6}]},
+                     {"title": "2020", "slices": [{"name": "0-14", "value": 17}, {"name": "15-64", "value": 63}, {"name": "65+", "value": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (reasons for resignation)",
+        "prompt": ("The two pie charts below show the main reasons men and women gave for "
+                   "resigning from their jobs in a 2023 survey. Summarise the information by "
+                   "selecting and reporting the main features, and make comparisons where "
+                   "relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Reasons for job resignation, by gender", "categories": [], "series": [],
+            "pies": [{"title": "Men", "slices": [{"name": "Low salary", "value": 38}, {"name": "Poor management", "value": 24}, {"name": "Lack of growth", "value": 22}, {"name": "Other", "value": 16}]},
+                     {"title": "Women", "slices": [{"name": "Low salary", "value": 26}, {"name": "Poor management", "value": 22}, {"name": "Lack of growth", "value": 20}, {"name": "Work-life balance", "value": 22}, {"name": "Other", "value": 10}]}]},
+    },
+    {
+        "title": "Task 1 — Pie (crime types reported)",
+        "prompt": ("The two pie charts below show the types of crime reported in two cities "
+                   "in 2023. Summarise the information by selecting and reporting the main "
+                   "features, and make comparisons where relevant. Write at least 150 words."),
+        "visual": {"kind": "pie-pair", "title": "Crime types reported, City A vs City B, 2023", "categories": [], "series": [],
+            "pies": [{"title": "City A", "slices": [{"name": "Theft", "value": 42}, {"name": "Burglary", "value": 20}, {"name": "Assault", "value": 18}, {"name": "Fraud", "value": 12}, {"name": "Other", "value": 8}]},
+                     {"title": "City B", "slices": [{"name": "Theft", "value": 30}, {"name": "Burglary", "value": 15}, {"name": "Assault", "value": 12}, {"name": "Fraud", "value": 32}, {"name": "Other", "value": 11}]}]},
+    },
+
+    # ============================== MAP-PAIR (14) ==============================
+    {
+        "title": "Task 1 — Map (town centre redevelopment)",
+        "prompt": ("The two maps below show the centre of a small town in 1990 and in 2020. "
+                   "Summarise the information by describing the main changes. Write at least "
+                   "150 words."),
+        "visual": {"kind": "map-pair", "title": "Town centre, 1990 and 2020", "categories": [], "series": [],
+            "maps": [{"title": "1990", "features": [
+                        {"name": "High Street", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 8},
+                        {"name": "Market square", "kind": "building", "x": 10, "y": 10, "width": 25, "height": 25},
+                        {"name": "Car park", "kind": "road", "x": 45, "y": 10, "width": 25, "height": 25},
+                        {"name": "Open field", "kind": "green", "x": 75, "y": 5, "width": 22, "height": 35},
+                        {"name": "Houses", "kind": "building", "x": 10, "y": 60, "width": 30, "height": 30}]},
+                     {"title": "2020", "features": [
+                        {"name": "High Street", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 8},
+                        {"name": "Market square", "kind": "building", "x": 10, "y": 10, "width": 25, "height": 25},
+                        {"name": "Shopping mall", "kind": "building", "x": 45, "y": 8, "width": 28, "height": 28},
+                        {"name": "Public park", "kind": "green", "x": 78, "y": 5, "width": 19, "height": 20},
+                        {"name": "Apartments", "kind": "building", "x": 78, "y": 28, "width": 19, "height": 12},
+                        {"name": "Houses", "kind": "building", "x": 10, "y": 60, "width": 30, "height": 30}]}]},
+    },
+    {
+        "title": "Task 1 — Map (university campus expansion)",
+        "prompt": ("The two maps below show a university campus in 2005 and in 2023. "
+                   "Summarise the information by describing the main changes. Write at least "
+                   "150 words."),
+        "visual": {"kind": "map-pair", "title": "University campus, 2005 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "2005", "features": [
+                        {"name": "Main building", "kind": "building", "x": 10, "y": 10, "width": 30, "height": 22},
+                        {"name": "Sports field", "kind": "green", "x": 50, "y": 10, "width": 40, "height": 30},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 8},
+                        {"name": "Car park", "kind": "road", "x": 10, "y": 65, "width": 25, "height": 20}]},
+                     {"title": "2023", "features": [
+                        {"name": "Main building", "kind": "building", "x": 10, "y": 10, "width": 30, "height": 22},
+                        {"name": "Library", "kind": "building", "x": 44, "y": 10, "width": 20, "height": 22},
+                        {"name": "Sports field", "kind": "green", "x": 68, "y": 10, "width": 22, "height": 22},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 8},
+                        {"name": "Student accommodation", "kind": "building", "x": 10, "y": 65, "width": 25, "height": 20},
+                        {"name": "New car park", "kind": "road", "x": 40, "y": 65, "width": 25, "height": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Map (coastal village and tourism)",
+        "prompt": ("The two maps below show a coastal village before and after the "
+                   "development of tourism. Summarise the information by describing the main "
+                   "changes. Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Coastal village, before and after tourism", "categories": [], "series": [],
+            "maps": [{"title": "Before", "features": [
+                        {"name": "Sea", "kind": "water", "x": 0, "y": 75, "width": 100, "height": 25},
+                        {"name": "Fishing huts", "kind": "building", "x": 10, "y": 55, "width": 25, "height": 15},
+                        {"name": "Coast road", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 6},
+                        {"name": "Farmland", "kind": "green", "x": 15, "y": 5, "width": 60, "height": 35}]},
+                     {"title": "After", "features": [
+                        {"name": "Sea", "kind": "water", "x": 0, "y": 75, "width": 100, "height": 25},
+                        {"name": "Marina", "kind": "water", "x": 10, "y": 58, "width": 20, "height": 12},
+                        {"name": "Coast road", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 6},
+                        {"name": "Hotels", "kind": "building", "x": 15, "y": 5, "width": 30, "height": 35},
+                        {"name": "Restaurants", "kind": "building", "x": 50, "y": 5, "width": 25, "height": 15},
+                        {"name": "Public beach garden", "kind": "green", "x": 50, "y": 24, "width": 25, "height": 16}]}]},
+    },
+    {
+        "title": "Task 1 — Map (city park redesign)",
+        "prompt": ("The two maps below show a city park before and after redevelopment. "
+                   "Summarise the information by describing the main changes. Write at least "
+                   "150 words."),
+        "visual": {"kind": "map-pair", "title": "City park, before and after redevelopment", "categories": [], "series": [],
+            "maps": [{"title": "Before", "features": [
+                        {"name": "Open grass area", "kind": "green", "x": 5, "y": 5, "width": 90, "height": 60},
+                        {"name": "Perimeter path", "kind": "road", "x": 0, "y": 70, "width": 100, "height": 6},
+                        {"name": "Small pond", "kind": "water", "x": 60, "y": 15, "width": 20, "height": 20}]},
+                     {"title": "After", "features": [
+                        {"name": "Playground", "kind": "building", "x": 5, "y": 5, "width": 22, "height": 22},
+                        {"name": "Lawn area", "kind": "green", "x": 30, "y": 5, "width": 30, "height": 40},
+                        {"name": "Enlarged pond", "kind": "water", "x": 63, "y": 5, "width": 30, "height": 30},
+                        {"name": "Cafe", "kind": "building", "x": 5, "y": 30, "width": 18, "height": 15},
+                        {"name": "Walking paths", "kind": "road", "x": 0, "y": 70, "width": 100, "height": 6}]}]},
+    },
+    {
+        "title": "Task 1 — Map (school campus renovation)",
+        "prompt": ("The two maps below show a school before and after renovation. Summarise "
+                   "the information by describing the main changes. Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "School campus, before and after renovation", "categories": [], "series": [],
+            "maps": [{"title": "Before", "features": [
+                        {"name": "Classroom block", "kind": "building", "x": 10, "y": 10, "width": 35, "height": 25},
+                        {"name": "Playground", "kind": "green", "x": 55, "y": 10, "width": 35, "height": 25},
+                        {"name": "Entrance road", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 6}]},
+                     {"title": "After", "features": [
+                        {"name": "Classroom block", "kind": "building", "x": 10, "y": 10, "width": 35, "height": 25},
+                        {"name": "New sports hall", "kind": "building", "x": 55, "y": 10, "width": 20, "height": 25},
+                        {"name": "Playground", "kind": "green", "x": 78, "y": 10, "width": 17, "height": 25},
+                        {"name": "Entrance road", "kind": "road", "x": 0, "y": 45, "width": 100, "height": 6},
+                        {"name": "Bicycle parking", "kind": "road", "x": 10, "y": 55, "width": 15, "height": 10}]}]},
+    },
+    {
+        "title": "Task 1 — Map (shopping district)",
+        "prompt": ("The two maps below show a shopping district in a town in 1995 and in "
+                   "2023. Summarise the information by describing the main changes. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Shopping district, 1995 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "1995", "features": [
+                        {"name": "Small shops", "kind": "building", "x": 10, "y": 10, "width": 50, "height": 15},
+                        {"name": "High Street", "kind": "road", "x": 0, "y": 30, "width": 100, "height": 6},
+                        {"name": "Car park", "kind": "road", "x": 10, "y": 40, "width": 30, "height": 25}]},
+                     {"title": "2023", "features": [
+                        {"name": "Shopping centre", "kind": "building", "x": 10, "y": 8, "width": 55, "height": 20},
+                        {"name": "High Street", "kind": "road", "x": 0, "y": 30, "width": 100, "height": 6},
+                        {"name": "Underground car park", "kind": "road", "x": 10, "y": 40, "width": 20, "height": 15},
+                        {"name": "Pedestrian plaza", "kind": "green", "x": 35, "y": 40, "width": 30, "height": 25}]}]},
+    },
+    {
+        "title": "Task 1 — Map (residential neighbourhood)",
+        "prompt": ("The two maps below show a residential neighbourhood in 2000 and in 2023. "
+                   "Summarise the information by describing the main changes. Write at least "
+                   "150 words."),
+        "visual": {"kind": "map-pair", "title": "Residential neighbourhood, 2000 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "2000", "features": [
+                        {"name": "Farmland", "kind": "green", "x": 5, "y": 5, "width": 90, "height": 40},
+                        {"name": "Country lane", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 6},
+                        {"name": "Old farmhouse", "kind": "building", "x": 10, "y": 60, "width": 15, "height": 15}]},
+                     {"title": "2023", "features": [
+                        {"name": "New houses", "kind": "building", "x": 5, "y": 5, "width": 40, "height": 40},
+                        {"name": "Community green space", "kind": "green", "x": 50, "y": 5, "width": 45, "height": 40},
+                        {"name": "Main road", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 6},
+                        {"name": "Old farmhouse", "kind": "building", "x": 10, "y": 60, "width": 15, "height": 15},
+                        {"name": "New primary school", "kind": "building", "x": 40, "y": 60, "width": 25, "height": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Map (airport expansion)",
+        "prompt": ("The two maps below show an airport in 2005 and following its expansion "
+                   "in 2023. Summarise the information by describing the main changes. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Airport, 2005 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "2005", "features": [
+                        {"name": "Terminal", "kind": "building", "x": 10, "y": 20, "width": 30, "height": 30},
+                        {"name": "Runway", "kind": "road", "x": 45, "y": 10, "width": 50, "height": 8},
+                        {"name": "Car park", "kind": "road", "x": 10, "y": 55, "width": 30, "height": 20}]},
+                     {"title": "2023", "features": [
+                        {"name": "Terminal 1", "kind": "building", "x": 10, "y": 20, "width": 25, "height": 30},
+                        {"name": "Terminal 2", "kind": "building", "x": 40, "y": 20, "width": 20, "height": 20},
+                        {"name": "Runway A", "kind": "road", "x": 65, "y": 10, "width": 30, "height": 6},
+                        {"name": "Runway B", "kind": "road", "x": 65, "y": 20, "width": 30, "height": 6},
+                        {"name": "Multi-storey car park", "kind": "building", "x": 10, "y": 55, "width": 20, "height": 25}]}]},
+    },
+    {
+        "title": "Task 1 — Map (hospital site redevelopment)",
+        "prompt": ("The two maps below show a hospital site in 2000 and in 2023. Summarise "
+                   "the information by describing the main changes. Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Hospital site, 2000 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "2000", "features": [
+                        {"name": "Main hospital building", "kind": "building", "x": 15, "y": 10, "width": 40, "height": 30},
+                        {"name": "Staff car park", "kind": "road", "x": 60, "y": 10, "width": 30, "height": 30},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 6}]},
+                     {"title": "2023", "features": [
+                        {"name": "Main hospital building", "kind": "building", "x": 15, "y": 10, "width": 40, "height": 30},
+                        {"name": "New outpatient wing", "kind": "building", "x": 60, "y": 10, "width": 20, "height": 30},
+                        {"name": "Multi-storey car park", "kind": "building", "x": 82, "y": 10, "width": 13, "height": 30},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 50, "width": 100, "height": 6},
+                        {"name": "Garden for patients", "kind": "green", "x": 15, "y": 58, "width": 30, "height": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Map (farm to housing estate)",
+        "prompt": ("The two maps below show a piece of farmland in 1990 and the same area in "
+                   "2023, after it was converted into a housing estate. Summarise the "
+                   "information by describing the main changes. Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Farmland converted to housing, 1990 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "1990", "features": [
+                        {"name": "Crop fields", "kind": "green", "x": 5, "y": 5, "width": 60, "height": 60},
+                        {"name": "Farmhouse", "kind": "building", "x": 70, "y": 10, "width": 15, "height": 15},
+                        {"name": "Farm track", "kind": "road", "x": 0, "y": 70, "width": 100, "height": 6}]},
+                     {"title": "2023", "features": [
+                        {"name": "Houses", "kind": "building", "x": 5, "y": 5, "width": 50, "height": 55},
+                        {"name": "Community park", "kind": "green", "x": 60, "y": 5, "width": 25, "height": 55},
+                        {"name": "Estate road", "kind": "road", "x": 0, "y": 65, "width": 100, "height": 6},
+                        {"name": "New shop", "kind": "building", "x": 88, "y": 5, "width": 10, "height": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Map (riverside regeneration)",
+        "prompt": ("The two maps below show a riverside area in a city in 1980 and in 2023. "
+                   "Summarise the information by describing the main changes. Write at least "
+                   "150 words."),
+        "visual": {"kind": "map-pair", "title": "Riverside area, 1980 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "1980", "features": [
+                        {"name": "River", "kind": "water", "x": 0, "y": 0, "width": 20, "height": 100},
+                        {"name": "Warehouses", "kind": "building", "x": 25, "y": 10, "width": 35, "height": 40},
+                        {"name": "Rail yard", "kind": "road", "x": 25, "y": 55, "width": 60, "height": 20}]},
+                     {"title": "2023", "features": [
+                        {"name": "River", "kind": "water", "x": 0, "y": 0, "width": 20, "height": 100},
+                        {"name": "Riverside walkway", "kind": "road", "x": 20, "y": 0, "width": 8, "height": 100},
+                        {"name": "Apartments", "kind": "building", "x": 30, "y": 10, "width": 30, "height": 35},
+                        {"name": "Public green space", "kind": "green", "x": 30, "y": 50, "width": 60, "height": 25},
+                        {"name": "Offices", "kind": "building", "x": 65, "y": 10, "width": 25, "height": 35}]}]},
+    },
+    {
+        "title": "Task 1 — Map (town transport network)",
+        "prompt": ("The two maps below show the transport network of a town in 2000 and in "
+                   "2023. Summarise the information by describing the main changes. Write at "
+                   "least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Town transport network, 2000 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "2000", "features": [
+                        {"name": "Town centre", "kind": "building", "x": 40, "y": 40, "width": 20, "height": 20},
+                        {"name": "Main road", "kind": "road", "x": 0, "y": 47, "width": 100, "height": 6},
+                        {"name": "Residential area", "kind": "building", "x": 10, "y": 10, "width": 20, "height": 20}]},
+                     {"title": "2023", "features": [
+                        {"name": "Town centre", "kind": "building", "x": 40, "y": 40, "width": 20, "height": 20},
+                        {"name": "Main road", "kind": "road", "x": 0, "y": 47, "width": 100, "height": 6},
+                        {"name": "New ring road", "kind": "road", "x": 5, "y": 5, "width": 90, "height": 5},
+                        {"name": "Tram line", "kind": "road", "x": 45, "y": 0, "width": 6, "height": 100},
+                        {"name": "Residential area", "kind": "building", "x": 10, "y": 10, "width": 20, "height": 20}]}]},
+    },
+    {
+        "title": "Task 1 — Map (library redesign)",
+        "prompt": ("The two maps below show the ground floor of a public library before and "
+                   "after redesign. Summarise the information by describing the main changes. "
+                   "Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Library ground floor, before and after redesign", "categories": [], "series": [],
+            "maps": [{"title": "Before", "features": [
+                        {"name": "Book shelves", "kind": "building", "x": 5, "y": 5, "width": 90, "height": 50},
+                        {"name": "Reception desk", "kind": "building", "x": 5, "y": 60, "width": 20, "height": 15},
+                        {"name": "Entrance", "kind": "road", "x": 40, "y": 85, "width": 20, "height": 10}]},
+                     {"title": "After", "features": [
+                        {"name": "Book shelves", "kind": "building", "x": 5, "y": 5, "width": 50, "height": 50},
+                        {"name": "Reading lounge", "kind": "green", "x": 60, "y": 5, "width": 35, "height": 25},
+                        {"name": "Computer area", "kind": "building", "x": 60, "y": 33, "width": 35, "height": 22},
+                        {"name": "Reception desk", "kind": "building", "x": 5, "y": 60, "width": 20, "height": 15},
+                        {"name": "Children's corner", "kind": "green", "x": 30, "y": 60, "width": 25, "height": 15},
+                        {"name": "Entrance", "kind": "road", "x": 40, "y": 85, "width": 20, "height": 10}]}]},
+    },
+    {
+        "title": "Task 1 — Map (industrial area to business park)",
+        "prompt": ("The two maps below show an industrial area in 1985 and the same area in "
+                   "2023, after it was converted into a business park. Summarise the "
+                   "information by describing the main changes. Write at least 150 words."),
+        "visual": {"kind": "map-pair", "title": "Industrial area converted to a business park, 1985 and 2023", "categories": [], "series": [],
+            "maps": [{"title": "1985", "features": [
+                        {"name": "Factories", "kind": "building", "x": 10, "y": 10, "width": 70, "height": 40},
+                        {"name": "Storage yard", "kind": "road", "x": 10, "y": 55, "width": 70, "height": 20},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 80, "width": 100, "height": 6}]},
+                     {"title": "2023", "features": [
+                        {"name": "Office buildings", "kind": "building", "x": 10, "y": 10, "width": 35, "height": 40},
+                        {"name": "Tech campus", "kind": "building", "x": 50, "y": 10, "width": 30, "height": 40},
+                        {"name": "Landscaped grounds", "kind": "green", "x": 10, "y": 55, "width": 70, "height": 20},
+                        {"name": "Access road", "kind": "road", "x": 0, "y": 80, "width": 100, "height": 6}]}]},
+    },
     ],
     "task2": [
         {
