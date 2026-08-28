@@ -125,6 +125,14 @@ services:
     image: cloudflare/cloudflared:2026.8.2
     profiles: ["production"]
     restart: unless-stopped
+    # This tunnel's public-hostname ingress rules are configured remotely in
+    # the Cloudflare dashboard (token-based tunnel, no local config.yml) and
+    # point at http://localhost:3000 / http://localhost:8000 — on the
+    # default bridge network "localhost" is this container's own loopback,
+    # not the host's, so cloudflared could never actually reach web/api that
+    # way (silent 502s on every request). host networking makes "localhost"
+    # resolve to the same host web/api already publish their ports on.
+    network_mode: host
     command: ["tunnel", "--no-autoupdate", "--loglevel", "info", "run"]
     environment:
       # Environment form keeps the token out of process listings.
