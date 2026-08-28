@@ -30,6 +30,11 @@ export const CHARACTER_THEMES: Record<CharacterKey, CharacterTheme> = {
     accent: "ring-brand-400",
     bubble: "bg-brand-50 dark:bg-brand-950/45",
   },
+  raj: {
+    gradient: "from-accent-500 to-brand-700",
+    accent: "ring-accent-500",
+    bubble: "bg-accent-50 dark:bg-brand-950/45",
+  },
 };
 
 export const FRIENDSHIP_TITLES = [

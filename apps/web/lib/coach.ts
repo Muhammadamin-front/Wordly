@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api";
 
-export type CharacterKey = "gordon" | "mochi" | "alex" | "examiner";
+export type CharacterKey = "gordon" | "mochi" | "alex" | "examiner" | "raj";
 export type CoachMode = "chat" | "ielts";
 
 export interface Character {

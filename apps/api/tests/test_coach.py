@@ -159,11 +159,11 @@ async def test_stream_turn_without_ai_emits_error_event(client, monkeypatch):
     assert '"type": "error"' in resp.text
 
 
-async def test_characters_lists_four_personas(client):
+async def test_characters_lists_five_personas(client):
     headers = await learner(client)
     body = (await client.get("/api/v1/coach/characters", headers=headers)).json()
     keys = {c["key"] for c in body}
-    assert keys == {"gordon", "mochi", "alex", "examiner"}
+    assert keys == {"gordon", "mochi", "alex", "examiner", "raj"}
     gordon = next(c for c in body if c["key"] == "gordon")
     assert gordon["pitch"] and gordon["rate"]  # voice hints present
 
