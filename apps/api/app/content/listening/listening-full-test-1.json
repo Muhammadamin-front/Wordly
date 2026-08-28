@@ -1,0 +1,311 @@
+{
+  "slug": "listening-full-test-1",
+  "title": "IELTS Listening Practice Test 1",
+  "sections": [
+    {
+      "number": 1,
+      "turns": [
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Good afternoon, Riverside Leisure Centre, this is Emma speaking. How can I help you?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "Hi, I'm calling to ask about your membership options. I'm new to the area."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Of course. We have three types of membership: Standard, which is thirty-two pounds a month; Premium, which includes the pool and spa for forty-five pounds; and there's also an Off-Peak membership for twenty-two pounds, but that's only valid before ten a.m. and after seven p.m."
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "The Premium one sounds good. Does that include classes as well?"
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Yes, all group classes are included, apart from personal training sessions, which are booked separately."
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "Great. Can I sign up over the phone?"
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "I can take some details now and then you can come in to complete the registration. Could I have your full name, please?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "Yes, it's Daniel Osei. That's O-S-E-I."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Thank you. And a contact phone number?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "It's zero seven nine one two, double three four, five six seven."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "And your address, please, just so we can post your membership card."
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "Fourteen Chestnut Avenue, Milton Park."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Is that flat fourteen, or house number fourteen?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "House number, no flat."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Perfect. Now, when would you like your membership to start?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "As soon as possible — could I start this Saturday?"
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "That should be fine. I'll also need to give you an induction session before you can use the gym equipment. Would Saturday morning at nine work?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "Saturday at nine is perfect."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "One last thing — do you have any medical conditions we should know about, like a heart condition or asthma?"
+        },
+        {
+          "speaker": "Daniel",
+          "role": "b",
+          "text": "No, nothing like that."
+        },
+        {
+          "speaker": "Emma",
+          "role": "a",
+          "text": "Great, that's everything. We look forward to seeing you on Saturday."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "turns": [
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "Good morning everyone, and welcome to Northgate Community Sports Park. I'm going to give you a quick overview of what's on offer before you explore on your own."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "The park covers around fifteen hectares and opened to the public just last spring. We've divided it into four main zones."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "As you come through the main entrance, the first zone you'll reach is the Family Zone, which has a large adventure playground and a splash pad for younger children — that's open from May to September only."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "Beyond that is the Sports Zone, home to six tennis courts, two full-size football pitches, and a running track that circles the whole area — that track is one point two kilometres long."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "If you continue past the Sports Zone, you'll reach the Wellness Zone. This includes an outdoor gym with free weights and resistance equipment, plus a series of yoga platforms set among the trees — those are particularly popular at sunrise."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "Finally, right at the back of the park, furthest from the entrance, is the Wildlife Zone — a protected wetland area with a boardwalk and two bird-watching hides. Dogs aren't permitted in this zone, to protect the nesting birds."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "A few practical points: the park is free to enter, but the outdoor gym in the Wellness Zone requires a small day-pass, which you can buy from the kiosk near the main entrance for two pounds fifty."
+        },
+        {
+          "speaker": "Guide",
+          "role": "a",
+          "text": "The park closes at dusk, and there's no lighting after that, so please make sure you're back at the car park before the light goes. Right, let's head out and take a look."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "turns": [
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "Come in, Sarah. So, how's the research project on urban bee populations coming along?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "It's going well, thanks. I've finished the literature review, but I'm still deciding on my methodology for the fieldwork."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "What are you considering?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "I was going to do a survey of five parks across the city, but my supervisor suggested I focus on just two parks instead, and study them in much greater depth."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "That's sensible advice, actually — with limited time, depth is usually more valuable than breadth for this kind of study. Which two parks are you thinking of?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "Riverside Park, because it has a lot of wildflowers, and then somewhere more urban, maybe Central Square, to compare a green space with a paved, built-up area."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "Good contrast. How will you actually count the bees?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "I'll do timed observations — ten minutes at each site, twice a day, over four weeks."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "Four weeks might not be quite long enough to capture seasonal variation. Could you extend it to six?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "I could, if I start a bit earlier. I'll speak to my supervisor about moving the start date forward."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "Good idea. Now, have you thought about how you'll present your findings? A written report, obviously, but will there be a presentation too?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "Yes, there's a short presentation to the department in the final week of term."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "And are you using any specific software for the data analysis?"
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "I was planning to use a simple spreadsheet, but a classmate mentioned a specialist ecology software package that might handle the statistics better."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "That's worth looking into — I can send you a link to a free version. One more thing: have you applied for ethical approval yet? Even observational fieldwork like this usually needs sign-off."
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "Not yet — I didn't realise I needed it for something this simple."
+        },
+        {
+          "speaker": "Tutor",
+          "role": "a",
+          "text": "You do, because you'll be working in public parks. It's a quick form, but it can take the ethics committee up to two weeks to respond, so submit it as soon as possible."
+        },
+        {
+          "speaker": "Sarah",
+          "role": "b",
+          "text": "I'll do that today."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "turns": [
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Today I want to look at one of the most transformative inventions in human history: the printing press, and specifically the version developed by Johannes Gutenberg in the German city of Mainz, around fourteen forty."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Before Gutenberg, books in Europe were copied out entirely by hand, usually by monks working in monastery scriptoriums. A single copy of the Bible could take a scribe over a year to complete, which meant books were extremely rare and hugely expensive — realistically, only wealthy institutions like churches or universities could afford them."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Gutenberg's key innovation wasn't printing itself — woodblock printing already existed in parts of Asia — but rather movable metal type. He created individual, reusable letters cast from a metal alloy, which could be arranged into words, inked, and pressed onto paper, then rearranged for the next page."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "This meant that once the type was set, a printer could produce hundreds of identical copies in the time it previously took to produce one by hand. By fourteen fifty-five, Gutenberg had completed his most famous work, a printed edition of the Bible, now known as the Gutenberg Bible — around one hundred and eighty copies were made, an enormous number for the time."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "The effects spread remarkably quickly. Within fifty years, printing presses had been established in over two hundred cities across Europe, and it's estimated that some twenty million books had been printed by the year fifteen hundred — compare that to the mere thousands that existed in the whole of Europe before Gutenberg."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "This explosion in book production had enormous social consequences. Literacy rates began to rise, because books were, for the first time, affordable to the emerging middle classes, not just the aristocracy and clergy."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "It also played a critical role in the Reformation. Martin Luther's writings, criticising the Catholic Church, were printed and distributed across Germany within weeks — something that would have been unthinkable in the age of hand-copied manuscripts. Some historians argue the printing press was just as important to the Reformation's success as Luther's ideas themselves."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Science benefited too. Standardised, identical texts meant that scholars in different countries could refer to the exact same page and diagram when discussing a scientific work, which made accurate collaboration and correction possible in a way it simply hadn't been before."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Finally, I want to mention one lasting linguistic effect: the standardisation of spelling. Before printing, spelling varied enormously from region to region and even scribe to scribe. Printers, wanting consistency across their print runs, began to fix standard spellings — and many of the conventions we still use in English today can be traced directly back to decisions made by early printers in London."
+        },
+        {
+          "speaker": "Lecturer",
+          "role": "a",
+          "text": "Next week, we'll look at the second major printing revolution: the steam-powered press of the early nineteenth century."
+        }
+      ]
+    }
+  ]
+}
