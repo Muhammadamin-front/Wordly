@@ -7,7 +7,7 @@ from app.core.config import get_settings
 from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.vocabulary import Word
-from app.services import tts
+from app.services import examiner_script, tts
 
 router = APIRouter(tags=["tts"])
 
@@ -74,4 +74,36 @@ async def pronounce_public_word(
         content=audio,
         media_type="audio/mpeg",
         headers={"Cache-Control": "public, max-age=86400, immutable"},
+    )
+
+
+@router.get(
+    "/tts/examiner/{phrase_id}",
+    dependencies=[Depends(get_current_user), Depends(rate_limit("tts"))],
+)
+async def examiner_phrase(phrase_id: str):
+    """Audio for one of the examiner's scripted lines (MP3).
+
+    Addressed by id rather than by text so every learner hits the same
+    services.tts cache entry: the ceremony is identical in every test, so it
+    is synthesized once for the whole product and never re-bought. Arbitrary
+    text is deliberately not accepted here — that is what `/tts` is for.
+    """
+    settings = get_settings()
+    if not settings.tts_enabled:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="TTS is not configured"
+        )
+    text = examiner_script.get_phrase(phrase_id)
+    if text is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Unknown examiner phrase"
+        )
+    audio = await _synthesize_or_502(text)
+    return Response(
+        content=audio,
+        media_type="audio/mpeg",
+        # Shared, not per-user: the same bytes for everyone, so it can sit in
+        # any cache along the way rather than only in this learner's browser.
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
     )
