@@ -2,11 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import * as Speech from "expo-speech";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { request, type GameAnswerResult, type GameQuestion, type GameSession } from "@/api/client";
 import { CrosswordGame, buildCrossword, type Crossword } from "@/components/games/crossword-game";
+import { boardPlayableTotal } from "@/components/games/board-progress";
 import { HangmanRound } from "@/components/games/hangman-game";
 import { MatchGame } from "@/components/games/match-game";
 import { MemoryGame, buildMemoryTiles, type Tile } from "@/components/games/memory-game";
@@ -16,6 +17,7 @@ import { metaFor, GAME_TYPES, type GameType } from "./index";
 import { BackButton, Button, ErrorNote, Heading, Loader, Paper, Screen, Stamp } from "@/components/ui";
 import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
+import { useSoundEffects } from "@/sound/sound-provider";
 import { colors, fonts } from "@/theme/tokens";
 
 type Source = { key: string; label: string; query: string };
@@ -54,25 +56,39 @@ function shuffle<T>(items: T[]) { return [...items].sort(() => Math.random() - 0
  *  only drives the on-screen score; the server grades `answer` for XP/SRS. */
 function useAnswerQueue({ token, sessionId, type, queryClient }: { token: string | null | undefined; sessionId: string | undefined; type: GameType; queryClient: QueryClient }) {
   const queue = useRef(Promise.resolve());
-  const submit = (cardId: string, answer: string) => {
-    queue.current = queue.current
-      .then(() => request<GameAnswerResult>("/games/answer", { method: "POST", token, body: { session_id: sessionId, card_id: cardId, game_type: type, answer, duration_ms: 3000 } }))
-      .then(() => {
-        void queryClient.invalidateQueries({ queryKey: ["stats"] });
-        void queryClient.invalidateQueries({ queryKey: ["daily-quests"] });
-        void queryClient.invalidateQueries({ queryKey: ["queue"] });
-        void queryClient.invalidateQueries({ queryKey: ["mastery-map"] });
-        void queryClient.invalidateQueries({ queryKey: ["statistics"] });
-        void queryClient.invalidateQueries({ queryKey: ["mistakes"] });
-      })
-      .catch(() => {});
+  const failed = useRef<Array<{ cardId: string; answer: string; durationMs: number }>>([]);
+  const send = async ({ cardId, answer, durationMs }: { cardId: string; answer: string; durationMs: number }) => {
+    await request<GameAnswerResult>("/games/answer", { method: "POST", token, body: { session_id: sessionId, card_id: cardId, game_type: type, answer, duration_ms: Math.min(600_000, Math.max(0, durationMs)) } });
+    void queryClient.invalidateQueries({ queryKey: ["stats"] });
+    void queryClient.invalidateQueries({ queryKey: ["daily-quests"] });
+    void queryClient.invalidateQueries({ queryKey: ["queue"] });
+    void queryClient.invalidateQueries({ queryKey: ["mastery-map"] });
+    void queryClient.invalidateQueries({ queryKey: ["statistics"] });
+    void queryClient.invalidateQueries({ queryKey: ["mistakes"] });
   };
-  return { submit, flush: () => queue.current };
+  const submit = (cardId: string, answer: string, durationMs: number) => {
+    const payload = { cardId, answer, durationMs };
+    queue.current = queue.current
+      .then(() => send(payload))
+      .catch(() => { failed.current.push(payload); });
+  };
+  const flush = async () => {
+    await queue.current;
+    const retry = failed.current;
+    failed.current = [];
+    for (const payload of retry) {
+      try { await send(payload); }
+      catch { failed.current.push(payload); }
+    }
+    return failed.current.length === 0;
+  };
+  return { submit, flush };
 }
 
 export default function GamePlayer() {
   const { type: rawType } = useLocalSearchParams<{ type?: string }>();
   const { token, user } = useAuth();
+  const { play } = useSoundEffects();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = labels[locale];
   const queryClient = useQueryClient();
@@ -101,6 +117,7 @@ export default function GamePlayer() {
     mutationFn: (answer: string) => request<GameAnswerResult>("/games/answer", { method: "POST", token, body: { session_id: session?.session_id, card_id: question?.card_id, game_type: type, answer, duration_ms: Math.min(600_000, Math.max(0, Date.now() - startedAt.current)) } }),
     onSuccess: (result) => {
       setFeedback(result);
+      play(result.rating === "again" ? "error" : "success");
       if (result.rating !== "again") setScore((value) => value + 1);
       void queryClient.invalidateQueries({ queryKey: ["stats"] });
       void queryClient.invalidateQueries({ queryKey: ["daily-quests"] });
@@ -189,8 +206,10 @@ function BoardScreen({
   const [score, setScore] = useState(0);
   const [answered, setAnswered] = useState(0);
   const [done, setDone] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
+  const { play } = useSoundEffects();
   const { submit, flush } = useAnswerQueue({ token, sessionId: session.session_id, type, queryClient });
-  const total = session.questions.length;
 
   // BoardScreen is remounted fresh per session (see the `key` on it in the
   // parent), so this only ever runs once per attempt regardless of the
@@ -200,19 +219,32 @@ function BoardScreen({
     wordSearch: type === "word_search" ? buildWordSearch(session.questions) : { size: 0, grid: [], targets: [] },
     crossword: type === "crossword" ? buildCrossword(session.questions) : { rows: 0, cols: 0, solution: [], placements: [] },
   }), [session.questions, type]);
+  const total = boardPlayableTotal(type, session.questions.length, {
+    wordSearchTargets: board.wordSearch.targets.length,
+    crosswordPlacements: board.crossword.placements.length,
+  });
 
-  function onAnswer(cardId: string, correct: boolean, _durationMs: number, submitted: string) {
+  function onAnswer(cardId: string, correct: boolean, durationMs: number, submitted: string) {
     setAnswered((v) => v + 1);
     if (correct) setScore((v) => v + 1);
-    submit(cardId, submitted);
+    play(correct ? "success" : "error");
+    submit(cardId, submitted, durationMs);
   }
 
-  function onComplete() {
-    setDone(true);
-    void flush();
+  async function onComplete() {
+    if (saving) return;
+    setSaving(true);
+    setSaveError(false);
+    const saved = await flush();
+    setSaving(false);
+    if (saved) setDone(true);
+    else setSaveError(true);
   }
 
-  if (done) return <GameComplete locale={locale} score={score} session={session} onAgain={onAgain} onChange={onChange} />;
+  if (!total) return <Screen appHeader><BackButton label={backLabel} onPress={() => router.back()} /><Heading sub={t.needWordsBody}>{t.needWords}</Heading><Button variant="secondary" onPress={onChange}>{t.change}</Button></Screen>;
+  if (saving) return <Screen appHeader><Loader label={t.loading} /></Screen>;
+  if (saveError) return <Screen appHeader><BackButton label={backLabel} onPress={() => router.back()} /><Heading>{t.error}</Heading><ErrorNote message={t.error} /><Button icon="refresh" onPress={() => void onComplete()}>{t.retry}</Button></Screen>;
+  if (done) return <GameComplete locale={locale} score={score} session={session} total={total} onAgain={onAgain} onChange={onChange} />;
 
   return (
     <Screen appHeader>
@@ -232,10 +264,12 @@ function BoardScreen({
   );
 }
 
-function GameComplete({ locale, score, session, onAgain, onChange }: { locale: Locale; score: number; session: GameSession; onAgain: () => void; onChange: () => void }) {
+function GameComplete({ locale, score, session, total = session.questions.length, onAgain, onChange }: { locale: Locale; score: number; session: GameSession; total?: number; onAgain: () => void; onChange: () => void }) {
   const t = labels[locale];
-  const xp = session.questions.length ? Math.round((score / session.questions.length) * 100) : 0;
-  return <Screen appHeader><Stamp tone="teal">{t.complete}</Stamp><Heading sub={t.completeBody}>{t.complete}</Heading><Paper style={styles.complete}><Ionicons name="trophy-outline" size={34} color={colors.rust} /><Text style={styles.finalScore}>{score}/{session.questions.length}</Text><Text style={styles.body}>{t.score} · {xp}%</Text></Paper><Button icon="refresh" onPress={onAgain}>{t.again}</Button><Button variant="secondary" onPress={onChange}>{t.change}</Button></Screen>;
+  const { play } = useSoundEffects();
+  useEffect(() => play("complete"), [play]);
+  const xp = total ? Math.round((score / total) * 100) : 0;
+  return <Screen appHeader><Stamp tone="teal">{t.complete}</Stamp><Heading sub={t.completeBody}>{t.complete}</Heading><Paper style={styles.complete}><Ionicons name="trophy-outline" size={34} color={colors.rust} /><Text style={styles.finalScore}>{score}/{total}</Text><Text style={styles.body}>{t.score} · {xp}%</Text></Paper><Button icon="refresh" onPress={onAgain}>{t.again}</Button><Button variant="secondary" onPress={onChange}>{t.change}</Button></Screen>;
 }
 
 const styles = StyleSheet.create({
@@ -243,7 +277,7 @@ const styles = StyleSheet.create({
   source: { minHeight: 46, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 11, paddingHorizontal: 13, backgroundColor: colors.cream },
   sourceActive: { borderColor: colors.brand600, backgroundColor: colors.brand600 },
   sourceText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.ink },
-  sourceTextActive: { color: colors.raised },
+  sourceTextActive: { color: colors.onAccent },
   pressed: { opacity: 0.7, transform: [{ translateY: 1 }] },
   topline: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   score: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.muted },

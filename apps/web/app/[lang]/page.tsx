@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   ArrowRight,
   BookOpenText,
@@ -17,7 +18,6 @@ import {
   Target,
   TrendingUp,
   Trophy,
-  Users,
   Volume2,
   type LucideIcon,
 } from "lucide-react";
@@ -28,11 +28,12 @@ import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
 import { HomeHero, type HomeHeroCopy } from "@/components/site/home-hero";
 import { Reveal } from "@/components/site/reveal";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
 import { getWordsLabel } from "@/lib/nav-labels";
 import { fetchCatalogMeta } from "@/lib/vocab";
-import { getDictionary, hasLocale } from "./dictionaries";
+import { ALL_LESSONS } from "@/lib/grammar";
+import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 const LEVELS = [
   { slug: "a1", level: "A1", tone: "bg-brand-400" },
@@ -40,6 +41,29 @@ const LEVELS = [
   { slug: "b1", level: "B1", tone: "bg-accent-500" },
   { slug: "b2", level: "B2", tone: "bg-brand-800" },
 ] as const;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  if (!hasLocale(lang)) return {};
+  const dict = await getDictionary(lang);
+  return {
+    title: `${dict.common.appName} — ${dict.common.tagline}`,
+    description: dict.landing.heroSubtitle,
+    alternates: {
+      canonical: `/${lang}`,
+      languages: Object.fromEntries(locales.map((locale) => [locale, `/${locale}`])),
+    },
+    openGraph: {
+      url: `/${lang}`,
+      title: `${dict.common.appName} — ${dict.common.tagline}`,
+      description: dict.landing.heroSubtitle,
+    },
+  };
+}
 
 export default async function LandingPage({
   params,
@@ -76,13 +100,13 @@ export default async function LandingPage({
     { icon: Mic2, slug: "speaking", title: copy.skillSpeakingTitle, body: copy.skillSpeakingBody },
   ];
 
-  // Placeholder figures — swap for real analytics once usage tracking is
-  // wired up; kept round and modest rather than guessed-precise.
+  // Product facts derived from the shipped curriculum — no invented user,
+  // country, engagement, or rating claims.
   const statBand: { icon: LucideIcon; value: string; label: string }[] = [
-    { icon: Users, value: "10,000+", label: copy.statLearners },
-    { icon: BrainCircuit, value: "500,000+", label: copy.statWords },
-    { icon: Globe2, value: "50+", label: copy.statCountries },
-    { icon: Star, value: "4.9/5", label: copy.statRating },
+    { icon: GraduationCap, value: String(ALL_LESSONS.length), label: copy.statLearners },
+    { icon: Languages, value: "6", label: copy.statWords },
+    { icon: Globe2, value: "3", label: copy.statCountries },
+    { icon: Target, value: "4", label: copy.statRating },
   ];
 
   const heroNav = [
@@ -217,11 +241,12 @@ export default async function LandingPage({
                     );
                   })}
                 </div>
-                <Link href={`/${lang}/ielts`} className="mt-auto pt-8">
-                  <Button className="border-brand-950 bg-sand-100 text-brand-950 hover:bg-brand-50" variant="secondary">
-                    {copy.openIelts}
-                    <ArrowRight className="size-4" aria-hidden />
-                  </Button>
+                <Link
+                  href={`/${lang}/ielts`}
+                  className={`${buttonVariants({ variant: "secondary" })} mt-auto border-brand-950 bg-sand-100 text-brand-950 hover:bg-brand-50`}
+                >
+                  {copy.openIelts}
+                  <ArrowRight className="size-4" aria-hidden />
                 </Link>
               </div>
             </div>
@@ -286,7 +311,7 @@ export default async function LandingPage({
                 </div>
                 <Link
                   href={`/${lang}/ielts`}
-                  className="inline-flex shrink-0 items-center gap-2 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
+                  className="inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-black text-brand-800 transition-colors hover:text-brand-600 dark:text-brand-200"
                 >
                   {copy.openIelts}
                   <ArrowRight className="size-4" aria-hidden />
@@ -370,10 +395,10 @@ export default async function LandingPage({
           <span>
             © {new Date().getFullYear()} {common.appName}. {landing.footerRights}
           </span>
-          <nav className="flex items-center gap-4 text-xs font-semibold" aria-label="Legal">
-            <Link href={`/${lang}/legal/privacy`}>Privacy</Link>
-            <Link href={`/${lang}/legal/terms`}>Terms</Link>
-            <Link href={`/${lang}/support`}>Support</Link>
+          <nav className="flex items-center gap-1 text-xs font-semibold" aria-label="Legal">
+            <Link className="inline-flex min-h-11 items-center px-2" href={`/${lang}/legal/privacy`}>Privacy</Link>
+            <Link className="inline-flex min-h-11 items-center px-2" href={`/${lang}/legal/terms`}>Terms</Link>
+            <Link className="inline-flex min-h-11 items-center px-2" href={`/${lang}/support`}>Support</Link>
           </nav>
         </div>
       </footer>
@@ -504,10 +529,10 @@ const homeCopy: Record<
     step4Title: "Natijani ko'ring",
     step4Body: "Kunlik seriya, statistika va yutuqlar bilan haqiqiy taraqqiyotingizni kuzating.",
     statsKicker: "Vocora raqamlarda",
-    statLearners: "Faol o'quvchi",
-    statWords: "O'rganilgan so'z",
-    statCountries: "Davlat",
-    statRating: "Foydalanuvchi bahosi",
+    statLearners: "grammatika darsi",
+    statWords: "CEFR darajasi",
+    statCountries: "interfeys tili",
+    statRating: "IELTS ko'nikmasi",
     ieltsSkillsKicker: "IELTS tayyorgarlik",
     ieltsSkillsTitle: "4 ta ko'nikma, bitta tizim",
     ieltsSkillsBody:
@@ -587,10 +612,10 @@ const homeCopy: Record<
     step4Title: "Смотрите результат",
     step4Body: "Следите за реальным прогрессом через серии, статистику и достижения.",
     statsKicker: "Vocora в цифрах",
-    statLearners: "Активных учеников",
-    statWords: "Изученных слов",
-    statCountries: "Стран",
-    statRating: "Оценка пользователей",
+    statLearners: "уроков грамматики",
+    statWords: "уровней CEFR",
+    statCountries: "языка интерфейса",
+    statRating: "навыка IELTS",
     ieltsSkillsKicker: "Подготовка к IELTS",
     ieltsSkillsTitle: "4 навыка — одна система",
     ieltsSkillsBody:
@@ -670,10 +695,10 @@ const homeCopy: Record<
     step4Title: "See it add up",
     step4Body: "Track real progress with daily streaks, stats, and achievements.",
     statsKicker: "Vocora by the numbers",
-    statLearners: "Active learners",
-    statWords: "Words learned",
-    statCountries: "Countries",
-    statRating: "User rating",
+    statLearners: "grammar lessons",
+    statWords: "CEFR levels",
+    statCountries: "interface languages",
+    statRating: "IELTS skills",
     ieltsSkillsKicker: "IELTS preparation",
     ieltsSkillsTitle: "4 skills, one system",
     ieltsSkillsBody:

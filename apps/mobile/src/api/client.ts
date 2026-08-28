@@ -144,4 +144,5 @@ export const authApi = {
 
 export const pushTokenApi = {
   register: (body: PushTokenRegister, token: string) => request<{ message: string }>("/users/me/push-tokens", { method: "POST", token, body }),
+  unregister: (pushToken: string, token: string) => request<{ message: string }>("/users/me/push-tokens", { method: "DELETE", token, body: { provider: "expo", token: pushToken } }),
 };

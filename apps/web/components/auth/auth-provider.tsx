@@ -58,6 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
+    // Google keeps its own account-selection state outside Vocora's session.
+    // Clear auto-selection whenever the learner signs out so a later Google
+    // button press cannot silently restore the account they just left.
+    if (typeof window !== "undefined") {
+      window.google?.accounts.id.disableAutoSelect?.();
+    }
     try {
       await authApi.logout();
     } finally {

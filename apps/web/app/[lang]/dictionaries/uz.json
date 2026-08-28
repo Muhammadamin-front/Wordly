@@ -22,6 +22,8 @@
     "login": "Kirish",
     "register": "Ro'yxatdan o'tish",
     "dashboard": "Boshqaruv paneli",
+    "account": "Akkaunt",
+    "switchAccount": "Akkauntni almashtirish",
     "logout": "Chiqish",
     "decks": "Kartalar",
     "games": "O'yinlar",
@@ -72,7 +74,7 @@
     "loginSubtitle": "Ingliz tili safaringizni davom ettirish uchun kiring",
     "registerTitle": "Vocora'ga qo'shiling",
     "registerSubtitle": "Bir daqiqada boshlang — bepul",
-    "email": "Email yoki foydalanuvchi nomi",
+    "email": "Email",
     "password": "Parol",
     "passwordHint": "Kamida 8 ta belgi",
     "displayName": "Ismingiz",
@@ -85,6 +87,7 @@
     "socialDivider": "yoki quyidagilar orqali",
     "socialLoading": "Ulanmoqda...",
     "googleUnavailable": "Google orqali kirish hozircha ishlamayapti. Boshqa usuldan foydalaning yoki keyinroq urinib ko'ring.",
+    "switchAccountNotice": "Siz akkauntdan chiqdingiz. Endi boshqa Google, Telegram yoki email akkauntini tanlang.",
     "forgotLink": "Parolni unutdingizmi?",
     "noAccount": "Hisobingiz yo'qmi?",
     "haveAccount": "Hisobingiz bormi?",
@@ -938,7 +941,10 @@
     "rewarded": "mukofotlangan",
     "referLink": "Taklif qilish",
     "notConfigured": "To'lov tizimi hozircha sozlanmagan.",
-    "error": "Xatolik yuz berdi."
+    "error": "Xatolik yuz berdi.",
+    "loadError": "Narxlar va to'lov holatini yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
+    "signInToChoose": "Kirish va tanlash"
   },
   "teacher": {
     "title": "O'qituvchi paneli",
@@ -1189,6 +1195,8 @@
     "aiDefineNotRecognized": "Bu haqiqiy inglizcha so'zga o'xshamayapti — imlosini tekshirib, qayta urinib ko'ring.",
     "aiDefineError": "AI qidiruviga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
     "aiDefineQuotaExceeded": "Bugungi AI qidiruv limiti tugadi. Premium oling yoki ertaga urinib ko'ring.",
+    "loadError": "Kutubxona ma'lumotlarini yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "retry": "Qayta urinish",
     "shelves": {
       "a1": {
         "name": "A1 · Boshlang'ich",
@@ -1307,7 +1315,10 @@
     "mistakes": "Ko'p uchraydigan xatolar",
     "nativeNotes": "Native so'zlovchi izohlari",
     "addToCards": "Kartalarga qo'shish",
-    "addedToCards": "Kartalarga qo'shildi"
+    "addedToCards": "Kartalarga qo'shildi",
+    "loadError": "Iboralarni yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
+    "detailLoadError": "Ibora tafsilotlarini ochib bo'lmadi. Qayta urinib ko'ring.",
+    "retry": "Qayta urinish"
   },
   "speakingPractice": {
     "eyebrow": "IELTS Speaking amaliyoti",

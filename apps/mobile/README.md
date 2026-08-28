@@ -24,7 +24,7 @@ The API `GOOGLE_CLIENT_ID`, web `NEXT_PUBLIC_GOOGLE_CLIENT_ID`, and mobile `EXPO
 For local development, copy `.env.example` to `.env`. For cloud builds, save these three `EXPO_PUBLIC_*` values in the EAS `production` environment:
 
 ```sh
-eas env:set --name EXPO_PUBLIC_API_URL --value https://vocora.uz --environment production --visibility plaintext
+eas env:set --name EXPO_PUBLIC_API_URL --value https://api.vocora.uz --environment production --visibility plaintext
 eas env:set --name EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID --value YOUR_WEB_CLIENT_ID --environment production --visibility plaintext
 eas env:set --name EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID --value YOUR_IOS_CLIENT_ID --environment production --visibility plaintext
 eas env:list --environment production
@@ -32,7 +32,7 @@ eas env:list --environment production
 
 `app.config.ts` derives the required reversed iOS URL scheme from the iOS client ID during the native build.
 
-The API client appends `/api/v1` itself. If production serves that path through `https://vocora.uz/api/v1`, use `https://vocora.uz` as shown above; do not include `/api/v1` in the variable.
+The API client appends `/api/v1` itself. Production must therefore use `https://api.vocora.uz` without a trailing `/api/v1`, matching the release guard in `app.config.ts`.
 
 For native Sign in with Apple, enable the capability for `uz.vocora.mobile` in Apple Developer and set the API production variable `APPLE_CLIENT_ID=uz.vocora.mobile`. No Apple private key or secret belongs in the mobile app.
 

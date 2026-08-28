@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { request, type MistakeNotebook } from "@/api/client";
 import { Button, ErrorState, Heading, Loader, Paper, Screen, Stamp } from "@/components/ui";
+import { Protected } from "@/components/protected";
 import { localeFrom } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
@@ -15,11 +16,15 @@ const copy = {
 } as const;
 
 export default function MistakesScreen() {
+  return <Protected><MistakesContent /></Protected>;
+}
+
+function MistakesContent() {
   const { token, user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = copy[locale];
   const notebook = useQuery({ queryKey: ["mistakes"], queryFn: () => request<MistakeNotebook>("/me/mistakes", { token }), enabled: !!token });
-  if (notebook.isLoading) return <Screen appHeader><Loader /></Screen>;
+  if (notebook.isLoading) return <Screen appHeader><Loader label={t.title} /></Screen>;
   if (notebook.isError || !notebook.data) return <ErrorState appHeader title={t.load} body={t.load} retryLabel={t.retry} onRetry={() => void notebook.refetch()} />;
   return <Screen appHeader>
     <Heading sub={t.subtitle}>{t.title}</Heading>

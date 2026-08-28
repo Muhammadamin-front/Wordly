@@ -44,6 +44,36 @@ export class ApiError extends Error {
   }
 }
 
+export class ApiTimeoutError extends Error {
+  constructor(public timeoutMs: number) {
+    super(`API request timed out after ${timeoutMs}ms`);
+    this.name = "ApiTimeoutError";
+  }
+}
+
+export const DEFAULT_API_TIMEOUT_MS = 15_000;
+
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs = DEFAULT_API_TIMEOUT_MS
+): Promise<Response> {
+  const controller = new AbortController();
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } catch (error) {
+    if (timedOut) throw new ApiTimeoutError(timeoutMs);
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // Access token lives in memory only; the refresh token is an httpOnly cookie
 // scoped to the API's auth path, so a page reload silently re-authenticates
 // via /auth/refresh.
@@ -92,7 +122,7 @@ export function waitForAccessToken(timeoutMs = 3000): Promise<string | null> {
  *  means at most one refresh is ever in flight application-wide. */
 export function refreshSession(): Promise<TokenPair | null> {
   if (sessionRefresh) return sessionRefresh;
-  sessionRefresh = fetch(`${API_URL}/api/v1/auth/refresh`, {
+  sessionRefresh = fetchWithTimeout(`${API_URL}/api/v1/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: "{}",
@@ -118,6 +148,7 @@ export async function apiFetch<T>(
     body?: unknown;
     auth?: boolean;
     headers?: Record<string, string>;
+    timeoutMs?: number;
   } = {}
 ): Promise<T> {
   const headers: Record<string, string> = {
@@ -127,12 +158,12 @@ export async function apiFetch<T>(
   if (options.auth && accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
   const request = () =>
-    fetch(`${API_URL}/api/v1${path}`, {
+    fetchWithTimeout(`${API_URL}/api/v1${path}`, {
       method: options.method ?? "GET",
       headers,
       body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
       credentials: "include",
-    });
+    }, options.timeoutMs);
 
   let response: Response | null = null;
   let networkError: unknown = null;

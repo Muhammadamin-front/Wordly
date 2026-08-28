@@ -15,7 +15,7 @@ export function Logo({
     <Link
       href={`/${lang}`}
       aria-label="Vocora home"
-      className={cn("inline-flex items-center gap-2.5 text-xl font-black tracking-tight", className)}
+      className={cn("inline-flex min-h-11 items-center gap-2.5 text-xl font-black tracking-tight", className)}
     >
       <span
         aria-hidden

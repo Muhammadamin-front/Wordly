@@ -62,14 +62,9 @@ export async function generateMetadata({
       template: `%s · ${dict.common.appName}`,
     },
     description: dict.landing.heroSubtitle,
-    alternates: {
-      canonical: `/${lang}`,
-      languages: Object.fromEntries(locales.map((locale) => [locale, `/${locale}`])),
-    },
     openGraph: {
       type: "website",
       locale: lang,
-      url: `/${lang}`,
       siteName: dict.common.appName,
       title: `${dict.common.appName} - ${dict.common.tagline}`,
       description: dict.landing.heroSubtitle,

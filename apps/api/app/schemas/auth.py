@@ -119,6 +119,11 @@ class PushTokenRegister(BaseModel):
     app_version: Optional[str] = Field(default=None, max_length=40)
 
 
+class PushTokenUnregister(BaseModel):
+    provider: Literal["expo"] = "expo"
+    token: str = Field(min_length=20, max_length=512)
+
+
 class AccountDeletionRequest(BaseModel):
     """Deliberate confirmation for irreversible account deactivation."""
 

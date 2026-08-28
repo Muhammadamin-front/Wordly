@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { billingApi, type ReferralInfo, type Subscription } from "@/lib/billing";
@@ -17,6 +18,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
   const [sub, setSub] = useState<Subscription | null>(null);
   const [referral, setReferral] = useState<ReferralInfo | null>(null);
   const [copied, setCopied] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
   const [cancelling, setCancelling] = useState(false);
 
@@ -31,16 +33,30 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
       if (cancelled) return;
       setSub(s);
       setReferral(r);
+      setLoadError(false);
+    }).catch(() => {
+      if (!cancelled) setLoadError(true);
     });
     return () => {
       cancelled = true;
     };
   }, [ready, user, reloadKey]);
 
-  if (!ready || !user || sub === null || referral === null) {
+  if (!ready || !user || (!loadError && (sub === null || referral === null))) {
     return (
       <main className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+      </main>
+    );
+  }
+
+  if (loadError || sub === null || referral === null) {
+    return (
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+        <Alert tone="error">{t.loadError}</Alert>
+        <Button className="mt-4" variant="secondary" onClick={() => setReloadKey((n) => n + 1)}>
+          {t.retry}
+        </Button>
       </main>
     );
   }

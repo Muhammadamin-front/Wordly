@@ -1,13 +1,15 @@
 import * as SecureStore from "expo-secure-store";
+import { useQueryClient } from "@tanstack/react-query";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Platform } from "react-native";
-import { ApiError, authApi, installAuthBridge, type TokenPair, type User } from "@/api/client";
+import { ApiError, authApi, installAuthBridge, pushTokenApi, type TokenPair, type User } from "@/api/client";
 import { clearGoogleSignInSession } from "@/auth/google-session";
 
 const ACCESS_KEY = "vocora.access";
 const REFRESH_KEY = "vocora.refresh";
 const EXPIRES_AT_KEY = "vocora.expiresAt";
 const USER_KEY = "vocora.user";
+const PUSH_TOKEN_KEY = "vocora.expoPushToken";
 
 const credentialStore = {
   getItemAsync: async (key: string) => Platform.OS === "web" ? globalThis.localStorage?.getItem(key) ?? null : SecureStore.getItemAsync(key),
@@ -34,6 +36,7 @@ type AuthValue = {
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const queryClient = useQueryClient();
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -50,14 +53,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const clearCredentials = useCallback(async () => {
     if (timer.current) clearTimeout(timer.current);
     await Promise.all([
+      queryClient.cancelQueries(),
       credentialStore.deleteItemAsync(ACCESS_KEY),
       credentialStore.deleteItemAsync(REFRESH_KEY),
       credentialStore.deleteItemAsync(EXPIRES_AT_KEY),
       credentialStore.deleteItemAsync(USER_KEY),
     ]);
+    queryClient.clear();
     setToken(null);
     setUser(null);
-  }, []);
+  }, [queryClient]);
 
   const accept = useCallback(async (pair: TokenPair) => {
     const refreshToken = pair.refresh_token ?? await credentialStore.getItemAsync(REFRESH_KEY);
@@ -103,10 +108,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     sessionGeneration.current += 1;
-    const refreshToken = await credentialStore.getItemAsync(REFRESH_KEY);
+    refreshInFlight.current = null;
+    const [refreshToken, pushToken] = await Promise.all([
+      credentialStore.getItemAsync(REFRESH_KEY),
+      Platform.OS === "web" ? Promise.resolve(null) : SecureStore.getItemAsync(PUSH_TOKEN_KEY),
+    ]);
     await Promise.all([clearCredentials(), clearGoogleSignInSession()]);
-    if (refreshToken) await authApi.logout(refreshToken).catch(() => undefined);
-  }, [clearCredentials]);
+    if (token && pushToken) void pushTokenApi.unregister(pushToken, token).catch(() => undefined);
+    if (refreshToken) void authApi.logout(refreshToken).catch(() => undefined);
+  }, [clearCredentials, token]);
 
   const updateUser = useCallback((updated: User) => {
     setUser(updated);
@@ -124,40 +134,58 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    const generation = sessionGeneration.current;
+
     void (async () => {
       try {
         const [access, cachedUserRaw] = await Promise.all([
           credentialStore.getItemAsync(ACCESS_KEY),
           credentialStore.getItemAsync(USER_KEY),
         ]);
+        if (!active || generation !== sessionGeneration.current) return;
         let cachedUser: User | null = null;
         try { cachedUser = cachedUserRaw ? JSON.parse(cachedUserRaw) as User : null; } catch { cachedUser = null; }
+        if (access && cachedUser) {
+          const storedExpiry = Number(await credentialStore.getItemAsync(EXPIRES_AT_KEY));
+          if (!active || generation !== sessionGeneration.current) return;
+          setUser(cachedUser);
+          setToken(access);
+          setReady(true);
+          if (Number.isFinite(storedExpiry) && storedExpiry > 0) scheduleAt(storedExpiry);
+        }
         if (access) {
           try {
             const restoredUser = await authApi.me(access);
+            if (!active || generation !== sessionGeneration.current) return;
             const currentAccess = await credentialStore.getItemAsync(ACCESS_KEY);
             const storedExpiry = Number(await credentialStore.getItemAsync(EXPIRES_AT_KEY));
+            if (!active || generation !== sessionGeneration.current || !currentAccess) return;
             setUser(restoredUser);
-            setToken(currentAccess ?? access);
+            setToken(currentAccess);
             void credentialStore.setItemAsync(USER_KEY, JSON.stringify(restoredUser));
             if (Number.isFinite(storedExpiry) && storedExpiry > 0) scheduleAt(storedExpiry);
             else void refresh();
-          } catch {
-            const refreshed = await refresh();
-            const retainedAccess = await credentialStore.getItemAsync(ACCESS_KEY);
-            if (!refreshed && retainedAccess && cachedUser) {
-              setUser(cachedUser);
-              setToken(retainedAccess);
+          } catch (error) {
+            if (!active || generation !== sessionGeneration.current) return;
+            if (error instanceof ApiError && error.status === 401) {
+              await refresh();
+            } else if (cachedUser) {
+              // Keep the offline account usable and retry authentication shortly.
               scheduleAt(Date.now() + 90_000);
+            } else {
+              await refresh();
             }
           }
         } else {
           await refresh();
         }
       } finally {
-        setReady(true);
+        if (active && generation === sessionGeneration.current) setReady(true);
       }
     })();
+
+    return () => { active = false; };
   }, [refresh, scheduleAt]);
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);

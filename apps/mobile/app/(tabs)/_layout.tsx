@@ -19,19 +19,19 @@ const icons: Record<string, keyof typeof Ionicons.glyphMap> = {
 
 export default function TabsLayout() {
   const { user } = useAuth();
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const locale = localeFrom(user?.profile.ui_locale);
-  const t = primaryTabLabels(locale, width < COMPACT_TAB_WIDTH);
-  const tabFrameWidth = Math.min(width - 16, 760);
-  const tabInset = Math.max(8, (width - tabFrameWidth) / 2);
+  const t = primaryTabLabels(locale, width < COMPACT_TAB_WIDTH || fontScale > 1.1);
+  const full = primaryTabLabels(locale, false);
+  const tabInset = Math.max(8, insets.left, insets.right, (width - 760) / 2);
 
   return (
     <Protected>
       <Tabs
         screenOptions={({ route }: { route: { name: string } }) => ({
           headerShown: false,
-          tabBarActiveTintColor: colors.raised,
+          tabBarActiveTintColor: colors.onAccent,
           tabBarInactiveTintColor: colors.muted,
           tabBarActiveBackgroundColor: colors.brand600,
           tabBarStyle: {
@@ -61,11 +61,11 @@ export default function TabsLayout() {
           ),
         })}
       >
-        <Tabs.Screen name="index" options={{ title: t.home }} />
-        <Tabs.Screen name="review" options={{ title: t.learn }} />
-        <Tabs.Screen name="library" options={{ title: t.library }} />
-        <Tabs.Screen name="ielts" options={{ title: t.ielts }} />
-        <Tabs.Screen name="progress" options={{ title: t.progress }} />
+        <Tabs.Screen name="index" options={{ title: t.home, tabBarAccessibilityLabel: full.home }} />
+        <Tabs.Screen name="review" options={{ title: t.learn, tabBarAccessibilityLabel: full.learn }} />
+        <Tabs.Screen name="library" options={{ title: t.library, tabBarAccessibilityLabel: full.library }} />
+        <Tabs.Screen name="ielts" options={{ title: t.ielts, tabBarAccessibilityLabel: full.ielts }} />
+        <Tabs.Screen name="progress" options={{ title: t.progress, tabBarAccessibilityLabel: full.progress }} />
         <Tabs.Screen name="profile" options={{ href: null }} />
       </Tabs>
     </Protected>

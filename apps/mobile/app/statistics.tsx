@@ -5,6 +5,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { request, type Statistics } from "@/api/client";
 import { Button, ErrorState, Heading, Loader, Paper, Screen } from "@/components/ui";
+import { Protected } from "@/components/protected";
 import { localeFrom } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
@@ -22,12 +23,16 @@ function duration(ms: number, locale: string) {
 }
 
 export default function StatisticsScreen() {
+  return <Protected><StatisticsContent /></Protected>;
+}
+
+function StatisticsContent() {
   const { token, user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = copy[locale];
   const stats = useQuery({ queryKey: ["statistics"], queryFn: () => request<Statistics>("/me/statistics", { token }), enabled: !!token });
 
-  if (stats.isLoading) return <Screen appHeader><Loader /></Screen>;
+  if (stats.isLoading) return <Screen appHeader><Loader label={t.title} /></Screen>;
   if (stats.isError || !stats.data) return <ErrorState appHeader title={t.load} body={t.load} retryLabel={t.retry} onRetry={() => void stats.refetch()} />;
   const data = stats.data;
   const states = [

@@ -46,9 +46,9 @@ export interface ReferralInfo {
 }
 
 export const billingApi = {
-  plans: () => apiFetch<{ plans: Plan[] }>("/billing/plans", { auth: true }),
+  plans: () => apiFetch<{ plans: Plan[] }>("/billing/plans"),
 
-  status: () => apiFetch<BillingStatus>("/billing/status", { auth: true }),
+  status: () => apiFetch<BillingStatus>("/billing/status"),
 
   subscription: () => apiFetch<Subscription>("/billing/subscription", { auth: true }),
 

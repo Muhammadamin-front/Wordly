@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { GameQuestion } from "@/api/client";
+import { useTimeoutRegistry } from "@/hooks/use-timeout-registry";
 import { colors, fonts } from "@/theme/tokens";
 
 export interface Tile {
@@ -41,6 +42,7 @@ export function MemoryGame({
   const [flipped, setFlipped] = useState<string[]>([]);
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [busy, setBusy] = useState(false);
+  const timeouts = useTimeoutRegistry();
 
   function flip(tile: Tile) {
     if (busy || matched.has(tile.cardId) || flipped.includes(tile.key)) return;
@@ -51,17 +53,17 @@ export function MemoryGame({
     setBusy(true);
     const [a, b] = next.map((key) => tiles.find((t) => t.key === key)!);
     if (a.cardId === b.cardId) {
-      setTimeout(() => {
+      timeouts.schedule(() => {
         const done = new Set(matched).add(a.cardId);
         setMatched(done);
         setFlipped([]);
         setBusy(false);
         const translation = tiles.find((t) => t.key === a.cardId + ":t")?.text ?? a.text;
         onAnswer(a.cardId, true, 2500, translation);
-        if (done.size === pairCount) setTimeout(onComplete, 400);
+        if (done.size === pairCount) timeouts.schedule(onComplete, 400);
       }, 450);
     } else {
-      setTimeout(() => {
+      timeouts.schedule(() => {
         setFlipped([]);
         setBusy(false);
       }, 900);
@@ -92,7 +94,7 @@ export function MemoryGame({
                   <Text numberOfLines={3} style={styles.tileText}>{tile.text}</Text>
                   {isMatched && (
                     <View style={styles.checkBadge}>
-                      <Ionicons name="checkmark" size={11} color={colors.raised} />
+                      <Ionicons name="checkmark" size={11} color={colors.onAccent} />
                     </View>
                   )}
                 </View>

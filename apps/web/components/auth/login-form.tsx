@@ -14,7 +14,15 @@ import { authErrorMessage } from "@/lib/auth-errors";
 import { trackEvent } from "@/lib/analytics";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth"] }) {
+export function LoginForm({
+  lang,
+  auth,
+  switchingAccount = false,
+}: {
+  lang: string;
+  auth: Dictionary["auth"];
+  switchingAccount?: boolean;
+}) {
   const router = useRouter();
   const { applySession, user, ready } = useAuth();
   const [error, setError] = useState<string | null>(null);
@@ -52,6 +60,9 @@ export function LoginForm({ lang, auth }: { lang: string; auth: Dictionary["auth
 
   return (
     <form onSubmit={onSubmit}>
+      {switchingAccount && !error && (
+        <Alert className="mb-5">{auth.switchAccountNotice}</Alert>
+      )}
       {error && (
         <Alert tone="error" className="mb-5">
           {error}

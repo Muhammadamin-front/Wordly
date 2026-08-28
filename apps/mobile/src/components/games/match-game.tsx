@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { GameQuestion } from "@/api/client";
+import { useTimeoutRegistry } from "@/hooks/use-timeout-registry";
 import { colors, fonts } from "@/theme/tokens";
 
 function shuffle<T>(items: T[]): T[] {
@@ -26,6 +27,7 @@ export function MatchGame({
   const [matched, setMatched] = useState<Set<string>>(new Set());
   const [missed, setMissed] = useState<Set<string>>(new Set());
   const [wrong, setWrong] = useState<string | null>(null);
+  const timeouts = useTimeoutRegistry();
 
   function pickWord(cardId: string) {
     if (matched.has(cardId)) return;
@@ -42,11 +44,11 @@ export function MatchGame({
       const translation = left.find((q) => q.card_id === cardId)?.answer ?? "";
       onAnswer(cardId, matchedOk, 3000, matchedOk ? translation : "");
       setSelected(null);
-      if (next.size === left.length) setTimeout(onComplete, 500);
+      if (next.size === left.length) timeouts.schedule(onComplete, 500);
     } else {
       setMissed((m) => new Set(m).add(selected));
       setWrong(cardId);
-      setTimeout(() => setWrong(null), 500);
+      timeouts.schedule(() => setWrong(null), 500);
     }
   }
 

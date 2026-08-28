@@ -27,11 +27,11 @@ export default function SkillsHub() {
   const { user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = content[locale];
-  return <Screen appHeader><View style={styles.hero}><Ionicons name="sparkles-outline" size={27} color={colors.raised} /><Heading sub={t.subtitle}>{t.title}</Heading></View><View style={styles.list}>{t.skills.map((skill) => <Pressable key={skill.key} accessibilityRole="button" accessibilityLabel={skill.name} onPress={() => router.push((skill.key === "grammar" ? "/skills/grammar" : "/(tabs)/ielts") as never)} style={({ pressed }) => [styles.item, pressed && styles.pressed]}><View style={[styles.icon, { backgroundColor: `${skill.color}1A`, borderColor: `${skill.color}80` }]}><Ionicons name={skill.icon} size={22} color={skill.color} /></View><View style={styles.copy}><Text style={styles.name}>{skill.name}</Text><Text style={styles.description}>{skill.description}</Text></View><Ionicons name="chevron-forward" size={18} color={colors.muted} /></Pressable>)}</View></Screen>;
+  return <Screen appHeader><View style={styles.hero}><Ionicons name="sparkles-outline" size={27} color={colors.onAccent} /><Heading sub={t.subtitle}>{t.title}</Heading></View><View style={styles.list}>{t.skills.map((skill) => <Pressable key={skill.key} accessibilityRole="button" accessibilityLabel={skill.name} onPress={() => router.push((skill.key === "grammar" ? "/skills/grammar" : "/(tabs)/ielts") as never)} style={({ pressed }) => [styles.item, pressed && styles.pressed]}><View style={[styles.icon, { backgroundColor: `${skill.color}1A`, borderColor: `${skill.color}80` }]}><Ionicons name={skill.icon} size={22} color={skill.color} /></View><View style={styles.copy}><Text style={styles.name}>{skill.name}</Text><Text style={styles.description}>{skill.description}</Text></View><Ionicons name="chevron-forward" size={18} color={colors.muted} /></Pressable>)}</View></Screen>;
 }
 
 const styles = StyleSheet.create({
-  hero: { gap: 12, padding: 20, borderWidth: 1.5, borderColor: colors.brand950, borderRadius: 16, backgroundColor: colors.brand950, shadowColor: colors.brown, shadowOpacity: 0.24, shadowRadius: 9, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
+  hero: { gap: 12, padding: 20, borderWidth: 1.5, borderColor: colors.brand950, borderRadius: 16, backgroundColor: colors.inkSurface, shadowColor: colors.brown, shadowOpacity: 0.24, shadowRadius: 9, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
   list: { gap: 10 },
   item: { minHeight: 86, flexDirection: "row", alignItems: "center", gap: 12, padding: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 14, backgroundColor: colors.cream },
   pressed: { opacity: 0.72, transform: [{ translateY: 1 }] },

@@ -18,6 +18,30 @@ const APPLE_REDIRECT_URI = process.env.NEXT_PUBLIC_APPLE_REDIRECT_URI;
 const GITHUB_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
 const TELEGRAM_BOT_ID = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID;
 
+type GoogleCredentialResponse = { credential: string };
+type GoogleIdentityApi = NonNullable<Window["google"]>["accounts"]["id"];
+
+let initializedGoogleClientId: string | null = null;
+let activeGoogleCredentialHandler: ((response: GoogleCredentialResponse) => void) | null = null;
+
+function initializeGoogleIdentity(
+  identity: GoogleIdentityApi,
+  clientId: string,
+  handler: (response: GoogleCredentialResponse) => void
+) {
+  activeGoogleCredentialHandler = handler;
+  if (initializedGoogleClientId === clientId) return;
+  identity.initialize({
+    client_id: clientId,
+    callback: (response: GoogleCredentialResponse) => activeGoogleCredentialHandler?.(response),
+    auto_select: false,
+    button_auto_select: false,
+    use_fedcm_for_button: false,
+    cancel_on_tap_outside: true,
+  });
+  initializedGoogleClientId = clientId;
+}
+
 type AppleAuthorization = {
   authorization: { id_token: string };
   user?: { name?: { firstName?: string; lastName?: string } };
@@ -36,6 +60,7 @@ declare global {
         id: {
           initialize: (config: object) => void;
           renderButton: (el: HTMLElement, options: object) => void;
+          disableAutoSelect?: () => void;
         };
       };
     };
@@ -122,12 +147,11 @@ export function SocialLoginButtons({
   useEffect(() => {
     if (!googleReady || !GOOGLE_CLIENT_ID || !googleContainer.current || !window.google) return;
     const container = googleContainer.current;
-    window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: handleGoogleCredential,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
+    // The auth page is an explicit account-selection surface. Reset Google's
+    // remembered auto-select state before rendering so both login and register
+    // always let the learner choose another active Google account.
+    window.google.accounts.id.disableAutoSelect?.();
+    initializeGoogleIdentity(window.google.accounts.id, GOOGLE_CLIENT_ID, handleGoogleCredential);
 
     // Icon-only, to sit inside the square tile. Google requires that the button
     // is rendered by their script rather than reimplemented.

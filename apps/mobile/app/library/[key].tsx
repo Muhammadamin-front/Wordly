@@ -97,7 +97,7 @@ export default function Shelf() {
           autoCapitalize="none"
           onChangeText={setSearch}
           placeholder={t.libSearchPlaceholder}
-          placeholderTextColor="rgba(108,73,53,0.62)"
+          placeholderTextColor={colors.muted}
           style={styles.searchInput}
           value={search}
         />
@@ -130,5 +130,5 @@ const styles = StyleSheet.create({
   fill: { height: "100%", borderRadius: 3 },
   searchRow: { position: "relative", justifyContent: "center" },
   searchIcon: { position: "absolute", left: 14, zIndex: 1 },
-  searchInput: { height: 46, paddingLeft: 38, paddingRight: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.cream, fontFamily: fonts.ui, fontSize: 14, color: colors.ink },
+  searchInput: { minHeight: 48, paddingLeft: 38, paddingRight: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.cream, fontFamily: fonts.ui, fontSize: 16, color: colors.ink },
 });

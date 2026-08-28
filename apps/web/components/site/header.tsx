@@ -13,22 +13,24 @@ import {
   LogOut,
   Map,
   Menu,
+  RefreshCw,
   Sparkles,
   Trophy,
+  UserRound,
   Users,
   X,
   type LucideIcon,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { LocaleSwitcher } from "@/components/site/locale-switcher";
 import { Logo } from "@/components/site/logo";
 import { ThemeToggle } from "@/components/site/theme-toggle";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { getHomeLabel, getWordsLabel } from "@/lib/nav-labels";
@@ -87,6 +89,7 @@ function isActive(pathname: string, lang: string, href: string): boolean {
 export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
   const { user, ready, logout } = useAuth();
   const pathname = usePathname() ?? "";
+  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const authed = ready && !!user;
@@ -163,28 +166,28 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
             <LocaleSwitcher current={lang} />
           </div>
           {authed ? (
-            // Desktop had no way to sign out at all — the only logout lived in
-            // the mobile drawer, which never opens at lg and above.
-            <Button
-              variant="ghost"
-              size="sm"
-              className="hidden lg:inline-flex"
-              onClick={async () => {
+            <AccountMenu
+              nav={nav}
+              userName={user.profile.display_name}
+              onSwitchAccount={async () => {
                 await logout();
+                router.replace(`/${lang}/auth/login?switch=1`);
               }}
-            >
-              <LogOut className="size-4" aria-hidden />
-              {nav.logout}
-            </Button>
+              onLogout={async () => {
+                await logout();
+                router.replace(`/${lang}`);
+              }}
+            />
           ) : (
             <>
-              <Link href={`/${lang}/auth/login`} className="hidden sm:block">
-                <Button variant="ghost" size="sm">
-                  {nav.login}
-                </Button>
+              <Link
+                href={`/${lang}/auth/login`}
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "hidden sm:inline-flex")}
+              >
+                {nav.login}
               </Link>
-              <Link href={`/${lang}/auth/register`}>
-                <Button size="sm">{nav.register}</Button>
+              <Link href={`/${lang}/auth/register`} className={buttonVariants({ size: "sm" })}>
+                {nav.register}
               </Link>
             </>
           )}
@@ -198,9 +201,111 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         pathname={pathname}
         open={open}
         onClose={() => setOpen(false)}
+        onSwitchAccount={async () => {
+          await logout();
+          router.replace(`/${lang}/auth/login?switch=1`);
+        }}
+        onLogout={async () => {
+          await logout();
+          router.replace(`/${lang}`);
+        }}
       />
       {authed && <MobileBottomNav lang={lang} nav={nav} pathname={pathname} />}
     </header>
+  );
+}
+
+function AccountMenu({
+  nav,
+  userName,
+  onSwitchAccount,
+  onLogout,
+}: {
+  nav: Dictionary["nav"];
+  userName: string;
+  onSwitchAccount: () => Promise<void>;
+  onLogout: () => Promise<void>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [busy, setBusy] = useState<"switch" | "logout" | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!expanded) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setExpanded(false);
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setExpanded(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [expanded]);
+
+  async function run(action: "switch" | "logout") {
+    if (busy) return;
+    setBusy(action);
+    try {
+      await (action === "switch" ? onSwitchAccount() : onLogout());
+    } finally {
+      setExpanded(false);
+      setBusy(null);
+    }
+  }
+
+  return (
+    <div ref={rootRef} className="relative hidden lg:block">
+      <Button
+        variant="ghost"
+        size="sm"
+        aria-haspopup="menu"
+        aria-expanded={expanded}
+        aria-label={nav.account}
+        onClick={() => setExpanded((value) => !value)}
+      >
+        <UserRound className="size-4" aria-hidden />
+        <span className="hidden max-w-28 truncate xl:inline">{userName}</span>
+        <ChevronDown
+          className={cn("size-3.5 transition-transform", expanded && "rotate-180")}
+          aria-hidden
+        />
+      </Button>
+      <div
+        role="menu"
+        className={cn(
+          "surface-panel invisible pointer-events-none absolute! right-0 top-[calc(100%+8px)] z-50 w-60 translate-y-1 rounded-lg p-2 opacity-0 shadow-raised transition-all duration-200",
+          expanded && "visible pointer-events-auto translate-y-0 opacity-100"
+        )}
+      >
+        <p className="truncate border-b border-line px-3 pb-2 pt-1 text-xs font-bold text-ink-soft">
+          {userName}
+        </p>
+        <button
+          type="button"
+          role="menuitem"
+          disabled={busy !== null}
+          onClick={() => void run("switch")}
+          className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35 disabled:opacity-60"
+        >
+          <RefreshCw className={cn("size-4", busy === "switch" && "animate-spin")} aria-hidden />
+          {nav.switchAccount}
+        </button>
+        <button
+          type="button"
+          role="menuitem"
+          disabled={busy !== null}
+          onClick={() => void run("logout")}
+          className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink-soft transition-colors hover:bg-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35 disabled:opacity-60"
+        >
+          <LogOut className="size-4" aria-hidden />
+          {nav.logout}
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -211,6 +316,8 @@ function MobileSidebar({
   pathname,
   open,
   onClose,
+  onSwitchAccount,
+  onLogout,
 }: {
   lang: Locale;
   nav: Dictionary["nav"];
@@ -218,8 +325,10 @@ function MobileSidebar({
   pathname: string;
   open: boolean;
   onClose: () => void;
+  onSwitchAccount: () => Promise<void>;
+  onLogout: () => Promise<void>;
 }) {
-  const { logout } = useAuth();
+  const [busy, setBusy] = useState<"switch" | "logout" | null>(null);
 
   if (!open) return null;
 
@@ -305,35 +414,53 @@ function MobileSidebar({
             <ThemeToggle lang={lang} />
           </div>
           {authed ? (
-            <Button
-              variant="ghost"
-              size="sm"
-              fullWidth
-              onClick={async () => {
-                onClose();
-                // Was fire-and-forget (`void logout()`): `user` stayed
-                // briefly stale after a tap, so navigating to the login
-                // page quickly enough hit its own "already signed in"
-                // redirect and bounced straight back in — no credentials
-                // entered, looked like Login silently re-authenticated the
-                // old session. Awaiting means `user` is really cleared
-                // before this tap can lead anywhere else.
-                await logout();
-              }}
-            >
-              {nav.logout}
-            </Button>
+            <div className="grid gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                fullWidth
+                loading={busy === "switch"}
+                disabled={busy !== null}
+                onClick={async () => {
+                  setBusy("switch");
+                  onClose();
+                  await onSwitchAccount();
+                }}
+              >
+                <RefreshCw className="size-4" aria-hidden />
+                {nav.switchAccount}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                fullWidth
+                loading={busy === "logout"}
+                disabled={busy !== null}
+                onClick={async () => {
+                  setBusy("logout");
+                  onClose();
+                  await onLogout();
+                }}
+              >
+                <LogOut className="size-4" aria-hidden />
+                {nav.logout}
+              </Button>
+            </div>
           ) : (
             <div className="grid grid-cols-2 gap-2">
-              <Link href={`/${lang}/auth/login`} onClick={onClose}>
-                <Button variant="ghost" size="sm" fullWidth>
-                  {nav.login}
-                </Button>
+              <Link
+                href={`/${lang}/auth/login`}
+                onClick={onClose}
+                className={buttonVariants({ variant: "ghost", size: "sm", fullWidth: true })}
+              >
+                {nav.login}
               </Link>
-              <Link href={`/${lang}/auth/register`} onClick={onClose}>
-                <Button size="sm" fullWidth>
-                  {nav.register}
-                </Button>
+              <Link
+                href={`/${lang}/auth/register`}
+                onClick={onClose}
+                className={buttonVariants({ size: "sm", fullWidth: true })}
+              >
+                {nav.register}
               </Link>
             </div>
           )}

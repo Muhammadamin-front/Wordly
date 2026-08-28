@@ -3,7 +3,7 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 
 import { cn } from "@/lib/utils";
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   "tactile-action relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border font-bold transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] disabled:pointer-events-none disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 motion-reduce:transition-none cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-focus/35 focus-visible:outline-none",
   {
     variants: {

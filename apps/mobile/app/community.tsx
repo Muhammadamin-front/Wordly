@@ -6,6 +6,7 @@ import { Alert, Share, StyleSheet, Text, View } from "react-native";
 
 import { request, type Friend, type Leaderboard, type LeaderboardEntry, type PendingFriend } from "@/api/client";
 import { Button, ErrorNote, Field, Heading, Loader, Paper, Screen, Stamp } from "@/components/ui";
+import { Protected } from "@/components/protected";
 import { localeFrom } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
@@ -19,6 +20,10 @@ const copy = {
 type Message = { message: string };
 
 export default function CommunityScreen() {
+  return <Protected><CommunityContent /></Protected>;
+}
+
+function CommunityContent() {
   const { token, user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = copy[locale];
@@ -36,7 +41,7 @@ export default function CommunityScreen() {
   const decide = useMutation({ mutationFn: ({ id, action }: { id: string; action: "accept" | "decline" }) => request<Message>(`/friends/${id}/${action}`, { method: "POST", token }), onSuccess: invalidate });
   const remove = useMutation({ mutationFn: (id: string) => request<Message>(`/friends/${id}`, { method: "DELETE", token }), onSuccess: invalidate });
 
-  if (leaderboard.isLoading || friends.isLoading || pending.isLoading || friendBoard.isLoading) return <Screen appHeader><Loader /></Screen>;
+  if (leaderboard.isLoading || friends.isLoading || pending.isLoading || friendBoard.isLoading) return <Screen appHeader><Loader label={t.title} /></Screen>;
   if (leaderboard.isError || friends.isError || pending.isError || friendBoard.isError || !leaderboard.data || !friends.data || !pending.data || !friendBoard.data) return <Screen appHeader><Heading>{t.load}</Heading><Button icon="refresh" onPress={refresh}>{t.retry}</Button></Screen>;
 
   return <Screen appHeader>

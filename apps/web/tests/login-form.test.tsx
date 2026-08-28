@@ -81,6 +81,16 @@ describe("LoginForm", () => {
     );
   });
 
+  it("explains that another provider account can be selected after switching", () => {
+    render(
+      <AuthProvider>
+        <LoginForm lang="en" auth={en.auth} switchingAccount />
+      </AuthProvider>
+    );
+
+    expect(screen.getByRole("status")).toHaveTextContent(en.auth.switchAccountNotice);
+  });
+
   it("shows a localized error on 401", async () => {
     mockFetch((url) => {
       if (url.includes("/auth/refresh")) return json(401, { detail: "No refresh token" });

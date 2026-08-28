@@ -16,6 +16,7 @@ type MenuItem = {
   key: string;
   icon: keyof typeof Ionicons.glyphMap;
   label: string;
+  accessibilityLabel?: string;
   href?: Href;
   webPath?: string;
   matches?: (pathname: string) => boolean;
@@ -25,7 +26,7 @@ type MenuItem = {
 // Android touch target. The shared value is also used by Screen padding and
 // Expo Router's tab bar.
 export const BOTTOM_NAV_HEIGHT = 82;
-export const COMPACT_TAB_WIDTH = 360;
+export const COMPACT_TAB_WIDTH = 400;
 
 const compactTabLabels = {
   uz: { home: "Bosh", learn: "Dars", library: "Kartalar", ielts: "IELTS", progress: "Natija" },
@@ -156,7 +157,8 @@ export function Brand({ onPress }: { onPress?: () => void }) {
 
 export function AppHeader() {
   const { width } = useWindowDimensions();
-  const frameWidth = Math.min(width - 16, 760);
+  const insets = useSafeAreaInsets();
+  const frameWidth = Math.min(Math.max(0, width - insets.left - insets.right - 16), 760);
   const { user, token, logout, updateUser } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const locale = localeFrom(user?.profile.ui_locale);
@@ -239,7 +241,7 @@ export function AppHeader() {
 
   return (
     <>
-      <SafeAreaView edges={["top"]} style={styles.headerSafe}>
+      <SafeAreaView edges={["top", "left", "right"]} style={styles.headerSafe}>
         <View style={[styles.headerBar, { width: frameWidth, marginHorizontal: 0, alignSelf: "center" }]}>
           <Pressable
             accessibilityRole="button"
@@ -258,7 +260,7 @@ export function AppHeader() {
       <Modal animationType="fade" onRequestClose={() => setOpen(false)} statusBarTranslucent transparent visible={open}>
         <View style={styles.modalRoot}>
           <Pressable accessibilityRole="button" accessibilityLabel={t.closeMenu} onPress={() => setOpen(false)} style={styles.backdrop} />
-          <SafeAreaView edges={["top", "bottom"]} style={styles.drawer}>
+          <SafeAreaView edges={["top", "right", "bottom", "left"]} style={styles.drawer}>
             <View style={styles.drawerHeader}>
               <Brand onPress={() => { setOpen(false); router.navigate("/(tabs)"); }} />
               <Pressable
@@ -320,35 +322,36 @@ export function AppHeader() {
 }
 
 export function AppBottomNav() {
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const { user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
-  const tab = primaryTabLabels(locale, width < COMPACT_TAB_WIDTH);
+  const tab = primaryTabLabels(locale, width < COMPACT_TAB_WIDTH || fontScale > 1.1);
+  const fullTab = primaryTabLabels(locale, false);
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
   const items: MenuItem[] = [
-    { key: "dashboard", href: "/(tabs)", icon: "home-outline", label: tab.home, matches: (path) => path === "/" },
-    { key: "today", href: "/(tabs)/review", icon: "repeat-outline", label: tab.learn, matches: (path) => path.startsWith("/review") },
-    { key: "decks", href: "/(tabs)/library", icon: "book-outline", label: tab.library, matches: (path) => path.startsWith("/library") || path.startsWith("/words") },
-    { key: "ielts", href: "/(tabs)/ielts", icon: "school-outline", label: tab.ielts, matches: (path) => path.startsWith("/ielts") || path.startsWith("/expressions") },
-    { key: "mastery", href: "/(tabs)/progress", icon: "map-outline", label: tab.progress, matches: (path) => path.startsWith("/progress") },
+    { key: "dashboard", href: "/(tabs)", icon: "home-outline", label: tab.home, accessibilityLabel: fullTab.home, matches: (path) => path === "/" },
+    { key: "today", href: "/(tabs)/review", icon: "repeat-outline", label: tab.learn, accessibilityLabel: fullTab.learn, matches: (path) => path.startsWith("/review") },
+    { key: "decks", href: "/(tabs)/library", icon: "book-outline", label: tab.library, accessibilityLabel: fullTab.library, matches: (path) => path.startsWith("/library") || path.startsWith("/words") },
+    { key: "ielts", href: "/(tabs)/ielts", icon: "school-outline", label: tab.ielts, accessibilityLabel: fullTab.ielts, matches: (path) => path.startsWith("/ielts") || path.startsWith("/expressions") },
+    { key: "mastery", href: "/(tabs)/progress", icon: "map-outline", label: tab.progress, accessibilityLabel: fullTab.progress, matches: (path) => path.startsWith("/progress") },
   ];
 
   return (
-    <View accessibilityRole="tablist" style={[styles.bottomNav, { bottom: Math.max(insets.bottom, 8), left: Math.max(8, (width - Math.min(width - 16, 760)) / 2), right: Math.max(8, (width - Math.min(width - 16, 760)) / 2) }]}>
+    <View accessibilityRole="tablist" style={[styles.bottomNav, { bottom: Math.max(insets.bottom, 8), left: Math.max(8, insets.left, (width - 760) / 2), right: Math.max(8, insets.right, (width - 760) / 2) }]}>
       {items.map((item) => {
         const active = item.matches?.(pathname) ?? false;
         return (
           <Pressable
             key={item.key}
             accessibilityRole="tab"
-            accessibilityLabel={item.label}
+            accessibilityLabel={item.accessibilityLabel ?? item.label}
             accessibilityState={{ selected: active }}
             onPress={() => item.href && router.navigate(item.href)}
             style={({ pressed }) => [styles.bottomNavItem, active && styles.bottomNavItemActive, pressed && styles.pressed]}
           >
-            <Ionicons name={item.icon} size={19} color={active ? colors.raised : colors.muted} />
-            <Text numberOfLines={1} style={[styles.bottomNavLabel, active && styles.bottomNavLabelActive]}>{item.label}</Text>
+            <Ionicons name={item.icon} size={19} color={active ? colors.onAccent : colors.muted} />
+            <Text maxFontSizeMultiplier={1.35} numberOfLines={1} style={[styles.bottomNavLabel, active && styles.bottomNavLabelActive]}>{item.label}</Text>
           </Pressable>
         );
       })}
@@ -379,7 +382,7 @@ const styles = StyleSheet.create({
   bottomNavItem: { flex: 1, minWidth: 0, minHeight: 66, alignItems: "center", justifyContent: "center", gap: 4, marginHorizontal: 2, borderRadius: 10 },
   bottomNavItemActive: { backgroundColor: colors.brand600 },
   bottomNavLabel: { width: "100%", minWidth: 0, paddingHorizontal: 1, fontFamily: fonts.uiBold, fontSize: 10, lineHeight: 13, textAlign: "center", color: colors.muted },
-  bottomNavLabelActive: { color: colors.raised },
+  bottomNavLabelActive: { color: colors.onAccent },
   headerSafe: { backgroundColor: colors.paper },
   headerBar: {
     height: 56,
@@ -466,7 +469,7 @@ const styles = StyleSheet.create({
   localeChipActive: { backgroundColor: colors.brand600 },
   localeChipPressed: { opacity: 0.58 },
   localeText: { fontFamily: fonts.uiBold, fontSize: 11, color: colors.muted },
-  localeTextActive: { color: colors.raised },
+  localeTextActive: { color: colors.onAccent },
   themeButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 10, backgroundColor: colors.cream },
   localeError: { fontFamily: fonts.uiMedium, fontSize: 11, lineHeight: 16, color: colors.danger },
   logoutButton: {

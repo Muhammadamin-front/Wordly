@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { fetchCategories, fetchWords, CEFR_LEVELS, type Category } from "@/lib/vocab";
 import type { Locale } from "@/lib/locales";
+import { publicPageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 import { getDictionary, hasLocale } from "../dictionaries";
 
@@ -36,7 +37,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
-  return { title: dict.vocab.title, description: dict.vocab.subtitle };
+  return publicPageMetadata({
+    lang,
+    path: "/vocabulary",
+    title: dict.vocab.title,
+    description: dict.vocab.subtitle,
+  });
 }
 
 export default async function VocabularyPage({

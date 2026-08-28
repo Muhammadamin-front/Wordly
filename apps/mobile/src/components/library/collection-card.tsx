@@ -51,7 +51,7 @@ export function CollectionCard({
           onPress={() => router.push({ pathname: "/(tabs)/review", params: { deckId: deck.id } })}
           style={({ pressed }) => [styles.reviewButton, pressed && styles.pressed]}
         >
-          <Ionicons name="play" size={13} color={colors.raised} />
+          <Ionicons name="play" size={13} color={colors.onAccent} />
           <Text style={styles.reviewText}>{labels.review}</Text>
         </Pressable>
         <Pressable
@@ -93,8 +93,8 @@ const styles = StyleSheet.create({
   statDueLabel: { color: colors.brand600 },
   statValue: { marginTop: 2, fontFamily: fonts.uiBold, fontSize: 17, color: colors.ink },
   actions: { marginTop: 12, flexDirection: "row", gap: 8 },
-  reviewButton: { flex: 1, minHeight: 36, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.brand600 },
-  reviewText: { fontFamily: fonts.uiBold, fontSize: 11, color: colors.raised },
-  deleteButton: { width: 36, height: 36, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 9, backgroundColor: "rgba(220,38,38,0.10)" },
+  reviewButton: { flex: 1, minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.brand600 },
+  reviewText: { fontFamily: fonts.uiBold, fontSize: 11, color: colors.onAccent },
+  deleteButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 9, backgroundColor: "rgba(220,38,38,0.10)" },
   pressed: { opacity: 0.8 },
 });

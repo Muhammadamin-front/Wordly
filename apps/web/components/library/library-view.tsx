@@ -112,6 +112,7 @@ export function LibraryView({
   const [reloadKey, setReloadKey] = useState(0);
   const [report, setReport] = useState<DeckImportReport | null>(null);
   const [creating, setCreating] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const importTarget = useRef<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -141,7 +142,10 @@ export function LibraryView({
       setShelves(shelfMap);
       setDecks(deckList);
       setQueue(q);
-    }).catch(() => {});
+      setLoadError(false);
+    }).catch(() => {
+      if (!cancelled) setLoadError(true);
+    });
     return () => {
       cancelled = true;
     };
@@ -166,7 +170,7 @@ export function LibraryView({
     reload();
   }
 
-  if (!ready || !user || shelves === null || decks === null) {
+  if (!ready || !user || (!loadError && (shelves === null || decks === null))) {
     return (
       <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
         <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
@@ -176,6 +180,17 @@ export function LibraryView({
             <Skeleton key={i} className="aspect-4/5 rounded-2xl" />
           ))}
         </div>
+      </main>
+    );
+  }
+
+  if (loadError || shelves === null || decks === null) {
+    return (
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+        <Alert tone="error">{t.loadError}</Alert>
+        <Button className="mt-4" variant="secondary" onClick={reload}>
+          {t.retry}
+        </Button>
       </main>
     );
   }

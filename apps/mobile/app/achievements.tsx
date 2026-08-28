@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { request, type Achievement, type Stats } from "@/api/client";
 import { ErrorState, Loader, Screen } from "@/components/ui";
+import { Protected } from "@/components/protected";
 import { localeFrom, type Locale } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
 import { colors, fonts } from "@/theme/tokens";
@@ -79,6 +80,10 @@ const labels: Record<Locale, {
 const fallbackAchievement: AchievementCopy = { title: "Achievement", description: "Keep learning to unlock this badge.", icon: "medal-outline" };
 
 export default function AchievementsScreen() {
+  return <Protected><AchievementsContent /></Protected>;
+}
+
+function AchievementsContent() {
   const { token, user } = useAuth();
   const locale = localeFrom(user?.profile.ui_locale);
   const t = labels[locale];
@@ -91,7 +96,7 @@ export default function AchievementsScreen() {
     enabled: Boolean(token),
   });
 
-  if (achievements.isLoading) return <Screen appHeader><Loader /></Screen>;
+  if (achievements.isLoading) return <Screen appHeader><Loader label={t.title} /></Screen>;
   if (achievements.isError || !achievements.data) return <ErrorState appHeader title={t.loadError} body={t.loadError} retryLabel={t.retry} onRetry={() => void achievements.refetch()} />;
 
   const [items, stats] = achievements.data;

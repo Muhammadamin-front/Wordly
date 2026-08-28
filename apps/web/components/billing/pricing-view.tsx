@@ -46,6 +46,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
@@ -53,20 +54,24 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   }, [lang]);
 
   useEffect(() => {
-    if (ready && !user) router.replace(`/${lang}/auth/login`);
-  }, [ready, user, router, lang]);
-
-  useEffect(() => {
-    if (!ready || !user) return;
+    if (!ready) return;
     let cancelled = false;
-    Promise.all([billingApi.plans(), billingApi.subscription(), billingApi.status()]).then(
+    Promise.all([
+      billingApi.plans(),
+      user ? billingApi.subscription() : Promise.resolve(null),
+      billingApi.status(),
+    ]).then(
       ([p, s, status]) => {
         if (cancelled) return;
         setPlans(p.plans);
         setSub(s);
         setPaymentStatus(status);
+        setLoadError(false);
       }
-    );
+    ).catch(() => {
+      if (cancelled) return;
+      setLoadError(true);
+    });
     return () => {
       cancelled = true;
     };
@@ -105,10 +110,21 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     }
   }
 
-  if (!ready || !user || plans === null || paymentStatus === null) {
+  if (!ready || (!loadError && (plans === null || paymentStatus === null))) {
     return (
       <main className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+      </main>
+    );
+  }
+
+  if (loadError || plans === null || paymentStatus === null) {
+    return (
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+        <Alert tone="error">{t.loadError}</Alert>
+        <Button className="mt-4" variant="secondary" onClick={() => setReloadKey((n) => n + 1)}>
+          {t.retry}
+        </Button>
       </main>
     );
   }
@@ -167,8 +183,9 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
           const perUnit =
             plan.code === "premium_monthly" ? t.perMonth : plan.code === "free" ? "" : t.perYear;
           const canPurchase =
-            (paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled) &&
-            (plan.code !== "family" || paymentStatus.family_plan_available);
+            !user ||
+            ((paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled) &&
+              (plan.code !== "family" || paymentStatus.family_plan_available));
           return (
             <div
               key={plan.code}
@@ -273,10 +290,14 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                         plan_code: plan.code,
                         checkout_enabled: paymentStatus.checkout_enabled,
                       });
+                      if (!user) {
+                        router.push(`/${lang}/auth/login`);
+                        return;
+                      }
                       setSelected(plan.code);
                     }}
                   >
-                    {t.choosePlan}
+                    {user ? t.choosePlan : t.signInToChoose}
                   </Button>
                 ))}
             </div>

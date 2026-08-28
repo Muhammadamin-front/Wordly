@@ -21,6 +21,7 @@ from app.schemas.auth import (
     OnboardingRequest,
     ProfileUpdate,
     PushTokenRegister,
+    PushTokenUnregister,
     UserOut,
 )
 from app.services import auth as auth_service
@@ -81,6 +82,27 @@ async def register_push_token(
     db.add(existing)
     await db.commit()
     return MessageOut(message="Push token saved")
+
+
+@router.delete("/me/push-tokens", response_model=MessageOut)
+async def unregister_push_token(
+    payload: PushTokenUnregister,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    existing = await db.scalar(
+        select(DevicePushToken).where(
+            DevicePushToken.user_id == user.id,
+            DevicePushToken.provider == payload.provider,
+            DevicePushToken.token == payload.token,
+        )
+    )
+    if existing is not None:
+        existing.is_active = False
+        existing.last_seen_at = utcnow()
+        db.add(existing)
+        await db.commit()
+    return MessageOut(message="Push token disabled")
 
 
 @router.get("/me/export", dependencies=[Depends(rate_limit("export"))])

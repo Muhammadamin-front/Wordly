@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { GameQuestion } from "@/api/client";
+import { useTimeoutRegistry } from "@/hooks/use-timeout-registry";
 import { colors, fonts } from "@/theme/tokens";
 
 interface Target {
@@ -99,6 +100,7 @@ export function WordSearchGame({
 }) {
   const [start, setStart] = useState<[number, number] | null>(null);
   const [found, setFound] = useState<Set<string>>(new Set());
+  const timeouts = useTimeoutRegistry();
 
   const foundCells = new Set(search.targets.filter((t) => found.has(t.cardId)).flatMap((t) => t.cells));
 
@@ -121,7 +123,7 @@ export function WordSearchGame({
       const next = new Set(found).add(match.cardId);
       setFound(next);
       onAnswer(match.cardId, true, 3000, match.word);
-      if (next.size === search.targets.length) setTimeout(onComplete, 500);
+      if (next.size === search.targets.length) timeouts.schedule(onComplete, 500);
     }
   }
 
@@ -180,7 +182,7 @@ const styles = StyleSheet.create({
   cellStart: { backgroundColor: colors.brand600 },
   cellText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.ink },
   cellTextFound: { color: colors.teal },
-  cellTextStart: { color: colors.raised },
+  cellTextStart: { color: colors.onAccent },
   targets: { marginTop: 12, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 6 },
   targetPill: { flexDirection: "row", alignItems: "center", gap: 4, borderRadius: 999, backgroundColor: colors.line, paddingHorizontal: 10, paddingVertical: 5 },
   targetPillFound: { backgroundColor: "rgba(70,120,120,0.14)" },

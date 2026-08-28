@@ -22,6 +22,8 @@
     "login": "Log in",
     "register": "Sign up",
     "dashboard": "Dashboard",
+    "account": "Account",
+    "switchAccount": "Switch account",
     "logout": "Log out",
     "decks": "Cards",
     "games": "Games",
@@ -72,7 +74,7 @@
     "loginSubtitle": "Log in to continue your English journey",
     "registerTitle": "Create your account",
     "registerSubtitle": "Start in a minute — it's free",
-    "email": "Email or username",
+    "email": "Email",
     "password": "Password",
     "passwordHint": "At least 8 characters",
     "displayName": "Your name",
@@ -85,6 +87,7 @@
     "socialDivider": "or continue with",
     "socialLoading": "Connecting...",
     "googleUnavailable": "Google sign-in isn't working right now. Try another method, or try again later.",
+    "switchAccountNotice": "You are signed out. Choose another Google, Telegram, or email account.",
     "forgotLink": "Forgot password?",
     "noAccount": "Don't have an account?",
     "haveAccount": "Already have an account?",
@@ -938,7 +941,10 @@
     "rewarded": "rewarded",
     "referLink": "Referrals",
     "notConfigured": "Payments are not configured yet.",
-    "error": "Something went wrong."
+    "error": "Something went wrong.",
+    "loadError": "We couldn't load plans and payment status. Check your connection and try again.",
+    "retry": "Try again",
+    "signInToChoose": "Sign in to choose"
   },
   "teacher": {
     "title": "Teacher panel",
@@ -1189,6 +1195,8 @@
     "aiDefineNotRecognized": "That doesn't look like a real English word — check the spelling and try again.",
     "aiDefineError": "Couldn't reach the AI lookup. Check your connection and try again.",
     "aiDefineQuotaExceeded": "You've used today's AI lookups. Upgrade to Premium for more, or try again tomorrow.",
+    "loadError": "We couldn't load your library. Check your connection and try again.",
+    "retry": "Try again",
     "shelves": {
       "a1": {
         "name": "A1 · Beginner",
@@ -1307,7 +1315,10 @@
     "mistakes": "Common mistakes",
     "nativeNotes": "Native speaker notes",
     "addToCards": "Add to cards",
-    "addedToCards": "Added to cards"
+    "addedToCards": "Added to cards",
+    "loadError": "We couldn't load expressions. Check your connection and try again.",
+    "detailLoadError": "We couldn't open the expression details. Please try again.",
+    "retry": "Try again"
   },
   "speakingPractice": {
     "eyebrow": "IELTS Speaking Practice",

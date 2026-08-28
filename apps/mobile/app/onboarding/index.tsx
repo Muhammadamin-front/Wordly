@@ -128,6 +128,6 @@ const styles = StyleSheet.create({
   selected: { backgroundColor: colors.rust, borderColor: colors.ink },
   choiceTitle: { fontFamily: fonts.uiBold, color: colors.ink, fontSize: 15 },
   choiceText: { fontFamily: fonts.ui, color: colors.muted, fontSize: 12, lineHeight: 17 },
-  selectedText: { color: colors.raised },
+  selectedText: { color: colors.onAccent },
   actions: { gap: 10 },
 });

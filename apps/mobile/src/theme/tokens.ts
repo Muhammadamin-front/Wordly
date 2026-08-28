@@ -5,6 +5,12 @@ export type AppTheme = "light" | "dark";
 export const colors = {
   paper: "#F3E6CB",
   raised: "#FFF8EA",
+  // Foreground for rust/teal/espresso controls. Keep it separate from
+  // `raised`: raised becomes a dark surface in dark mode, onAccent must not.
+  onAccent: "#FFF8EB",
+  // A deliberately separate dark surface token. `brand950` shares its value
+  // with the light-theme ink foreground and is therefore swapped in dark mode.
+  inkSurface: "#24130D",
   cream: "#FAF1DD",
   ink: "#24130C",
   brown: "#54250F",

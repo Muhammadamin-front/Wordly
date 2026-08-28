@@ -19,6 +19,7 @@ import { ProgressBar } from "@/components/library/progress-bar";
 import { WordCard } from "@/components/library/word-card";
 import { WordDetailModal } from "@/components/library/word-detail-modal";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 import { libraryApi, type Shelf, type ShelfMeta } from "@/lib/library";
@@ -48,6 +49,8 @@ export function LevelView({
   const [added, setAdded] = useState<Set<string>>(new Set());
   const [studying, setStudying] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [wordReloadKey, setWordReloadKey] = useState(0);
   const [openWord, setOpenWord] = useState<WordListItem | null>(null);
   const [wordDetail, setWordDetail] = useState<Word | null>(null);
   const [wordDetailLoading, setWordDetailLoading] = useState(false);
@@ -85,18 +88,30 @@ export function LevelView({
         setWords((prev) => (page === 1 ? result.items : [...prev, ...result.items]));
         setTotal(result.total);
         setLoading(false);
-      }).catch(() => {});
+        setLoadError(false);
+      }).catch(() => {
+        if (cancelled) return;
+        setLoadError(true);
+        setLoading(false);
+      });
     }, query ? 300 : 0);
     return () => {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [ready, user, meta.level, meta.category, page, query]);
+  }, [ready, user, meta.level, meta.category, page, query, wordReloadKey]);
 
   const onSearch = (value: string) => {
     setQuery(value);
     setPage(1);
     setLoading(true);
+    setLoadError(false);
+  };
+
+  const retryWords = () => {
+    setLoadError(false);
+    setLoading(true);
+    setWordReloadKey((current) => current + 1);
   };
 
   const onStudy = async () => {
@@ -222,6 +237,7 @@ export function LevelView({
         <div className="relative w-full sm:max-w-sm">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-soft" />
           <input
+            aria-label={t.searchPlaceholder}
             value={query}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={t.searchPlaceholder}
@@ -234,7 +250,14 @@ export function LevelView({
       </div>
 
       {/* Word grid */}
-      {loading ? (
+      {loadError ? (
+        <div className="mx-auto flex max-w-lg flex-col items-center py-16 text-center">
+          <Alert tone="error">{t.loadError}</Alert>
+          <Button className="mt-4" variant="secondary" onClick={retryWords}>
+            {t.retry}
+          </Button>
+        </div>
+      ) : loading ? (
         <div className="flex justify-center py-16">
           <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
         </div>

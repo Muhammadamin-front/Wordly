@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.brand950,
     borderRadius: 16,
-    backgroundColor: colors.brand950,
+    backgroundColor: colors.inkSurface,
     padding: 12,
     shadowColor: "rgba(84,37,15,0.55)",
     shadowOpacity: 1,

@@ -151,7 +151,7 @@ export default function Library() {
         <View aria-hidden style={styles.heroRingA} />
         <View aria-hidden style={styles.heroRingB} />
         <View style={styles.heroBadge}>
-          <Ionicons name="library-outline" size={12} color={colors.raised} />
+          <Ionicons name="library-outline" size={12} color={colors.onAccent} />
           <Text style={styles.heroBadgeText}>VOCORA LIBRARY</Text>
         </View>
         <Text style={styles.heroTitle}>{g.libTitle}</Text>
@@ -214,7 +214,7 @@ export default function Library() {
         </View>
 
         <Pressable accessibilityRole="button" accessibilityLabel={t.expressionsOpen} onPress={() => router.push("/expressions")} style={({ pressed }) => [styles.expressionHero, pressed && styles.pressed]}>
-          <View style={styles.expressionIcon}><Ionicons name="chatbubbles-outline" size={22} color={colors.raised} /></View>
+          <View style={styles.expressionIcon}><Ionicons name="chatbubbles-outline" size={22} color={colors.onAccent} /></View>
           <View style={styles.expressionHeroCopy}>
             <Text style={styles.expressionHeroTitle}>{t.expressionsTitle}</Text>
             <Text style={styles.expressionHeroSub}>{t.expressionsSubtitle}</Text>
@@ -304,13 +304,13 @@ export default function Library() {
           onChangeText={setSearch}
           onSubmitEditing={submitSearch}
           placeholder={t.placeholder}
-          placeholderTextColor="rgba(108,73,53,0.62)"
+          placeholderTextColor={colors.muted}
           returnKeyType="search"
           style={styles.searchInput}
           value={search}
         />
         <Pressable accessibilityRole="button" accessibilityLabel={t.search} onPress={submitSearch} style={({ pressed }) => [styles.searchButton, pressed && styles.pressed]}>
-          <Ionicons name="search" size={18} color={colors.raised} />
+          <Ionicons name="search" size={18} color={colors.onAccent} />
           <Text style={styles.searchButtonText}>{t.search}</Text>
         </Pressable>
       </View>
@@ -387,43 +387,43 @@ function ExpressionPreviewCard({ item, onPress }: { item: ExpressionListItem; on
 }
 
 const styles = StyleSheet.create({
-  hero: { position: "relative", overflow: "hidden", borderWidth: 2, borderColor: colors.brand950, borderRadius: 20, backgroundColor: colors.brand950, padding: 18 },
+  hero: { position: "relative", overflow: "hidden", borderWidth: 2, borderColor: colors.brand950, borderRadius: 20, backgroundColor: colors.inkSurface, padding: 18 },
   heroRingA: { position: "absolute", left: -60, top: -60, width: 180, height: 180, borderRadius: 90, borderWidth: 24, borderColor: "rgba(70,120,120,0.35)" },
   heroRingB: { position: "absolute", right: -40, bottom: -30, width: 140, height: 140, borderRadius: 8, backgroundColor: "rgba(185,78,40,0.5)", transform: [{ rotate: "12deg" }] },
-  heroBadge: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderColor: "rgba(255,248,234,0.4)", borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: "rgba(255,248,234,0.1)" },
-  heroBadgeText: { fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.6, color: colors.raised },
-  heroTitle: { marginTop: 14, fontFamily: fonts.display, fontSize: 28, lineHeight: 30, letterSpacing: 0.4, color: colors.raised, textTransform: "uppercase" },
-  heroSubtitle: { marginTop: 8, fontFamily: fonts.ui, fontSize: 13, lineHeight: 20, color: "rgba(255,248,234,0.82)" },
+  heroBadge: { alignSelf: "flex-start", flexDirection: "row", alignItems: "center", gap: 6, borderWidth: 1, borderColor: colors.brand200, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: "transparent" },
+  heroBadgeText: { fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.6, color: colors.onAccent },
+  heroTitle: { marginTop: 14, fontFamily: fonts.display, fontSize: 28, lineHeight: 30, letterSpacing: 0.4, color: colors.onAccent, textTransform: "uppercase" },
+  heroSubtitle: { marginTop: 8, fontFamily: fonts.ui, fontSize: 13, lineHeight: 20, color: colors.brand200 },
   statsRow: { marginTop: 16, flexDirection: "row", gap: 8 },
-  statTile: { flex: 1, borderWidth: 1, borderColor: "rgba(255,248,234,0.25)", borderRadius: 12, backgroundColor: colors.brand900, paddingHorizontal: 10, paddingVertical: 10 },
-  statValue: { marginTop: 6, fontFamily: fonts.display, fontSize: 22, letterSpacing: 0.3, color: colors.raised },
-  statLabel: { marginTop: 2, fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.3, color: "rgba(255,248,234,0.66)", textTransform: "uppercase" },
+  statTile: { flex: 1, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.brand900, paddingHorizontal: 10, paddingVertical: 10 },
+  statValue: { marginTop: 6, fontFamily: fonts.display, fontSize: 22, letterSpacing: 0.3, color: colors.onAccent },
+  statLabel: { marginTop: 2, fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.3, color: colors.brand200, textTransform: "uppercase" },
   ringCard: { marginTop: 14, flexDirection: "row", alignItems: "center", gap: 12, alignSelf: "flex-start", borderWidth: 2, borderColor: colors.brand950, borderRadius: 16, backgroundColor: colors.raised, paddingVertical: 10, paddingHorizontal: 14 },
   ringText: {},
   ringPercent: { fontFamily: fonts.display, fontSize: 26, color: colors.ink },
   ringLabel: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.muted },
-  myCards: { flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 2, borderColor: colors.brand800, borderRadius: 16, backgroundColor: colors.brand950, padding: 14 },
-  myCardsIcon: { width: 46, height: 46, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: "rgba(255,248,234,0.12)" },
-  myCardsTitle: { fontFamily: fonts.display, fontSize: 18, color: colors.raised },
-  myCardsTrack: { marginTop: 8, height: 6, borderRadius: 3, overflow: "hidden", backgroundColor: "rgba(255,255,255,0.14)" },
+  myCards: { flexDirection: "row", alignItems: "center", gap: 12, borderWidth: 2, borderColor: colors.brand800, borderRadius: 16, backgroundColor: colors.inkSurface, padding: 14 },
+  myCardsIcon: { width: 46, height: 46, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.brand200, borderRadius: 12, backgroundColor: "transparent" },
+  myCardsTitle: { fontFamily: fonts.display, fontSize: 18, color: colors.onAccent },
+  myCardsTrack: { marginTop: 8, height: 6, borderRadius: 3, overflow: "hidden", backgroundColor: colors.line },
   myCardsFill: { height: "100%", borderRadius: 3, backgroundColor: colors.raised },
-  myCardsSub: { marginTop: 6, fontFamily: fonts.ui, fontSize: 11, color: "rgba(255,248,234,0.8)" },
-  myCardsStrong: { fontFamily: fonts.uiBold, color: colors.raised },
+  myCardsSub: { marginTop: 6, fontFamily: fonts.ui, fontSize: 11, color: colors.brand200 },
+  myCardsStrong: { fontFamily: fonts.uiBold, color: colors.onAccent },
   section: { gap: 10 },
   sectionHeaderRow: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
   sectionHeaderCopy: { flex: 1, minWidth: 0, gap: 6 },
   sectionTitle: { fontFamily: fonts.uiBold, fontSize: 19, color: colors.ink },
   sectionSub: { marginTop: -6, fontFamily: fonts.ui, fontSize: 12, color: colors.muted },
-  openAllButton: { minHeight: 34, flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, borderWidth: 1, borderColor: colors.line, borderRadius: 999, backgroundColor: colors.raised },
+  openAllButton: { minHeight: 48, flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 13, borderWidth: 1, borderColor: colors.line, borderRadius: 999, backgroundColor: colors.raised },
   openAllText: { fontFamily: fonts.uiBold, fontSize: 10.5, color: colors.brand600 },
-  expressionHero: { minHeight: 88, flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderWidth: 2, borderColor: colors.brand950, borderRadius: 17, backgroundColor: colors.brand950 },
+  expressionHero: { minHeight: 88, flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderWidth: 2, borderColor: colors.brand950, borderRadius: 17, backgroundColor: colors.inkSurface },
   expressionIcon: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: colors.brand600 },
   expressionHeroCopy: { flex: 1, minWidth: 0 },
-  expressionHeroTitle: { fontFamily: fonts.display, fontSize: 22, lineHeight: 24, color: colors.raised, textTransform: "uppercase" },
-  expressionHeroSub: { marginTop: 5, fontFamily: fonts.ui, fontSize: 11.5, lineHeight: 17, color: "rgba(255,248,234,0.78)" },
-  expressionCount: { minWidth: 76, alignItems: "center", padding: 8, borderWidth: 1, borderColor: "rgba(255,248,234,0.28)", borderRadius: 12, backgroundColor: "rgba(255,248,234,0.1)" },
+  expressionHeroTitle: { fontFamily: fonts.display, fontSize: 22, lineHeight: 24, color: colors.onAccent, textTransform: "uppercase" },
+  expressionHeroSub: { marginTop: 5, fontFamily: fonts.ui, fontSize: 11.5, lineHeight: 17, color: colors.brand200 },
+  expressionCount: { minWidth: 76, alignItems: "center", padding: 8, borderWidth: 1, borderColor: colors.brand200, borderRadius: 12, backgroundColor: "transparent" },
   expressionCountValue: { fontFamily: fonts.display, fontSize: 24, color: colors.gold300 },
-  expressionCountLabel: { fontFamily: fonts.uiBold, fontSize: 8.5, color: "rgba(255,248,234,0.72)", textTransform: "uppercase" },
+  expressionCountLabel: { fontFamily: fonts.uiBold, fontSize: 8.5, color: colors.brand200, textTransform: "uppercase" },
   expressionError: { flexDirection: "row", alignItems: "center", gap: 7, paddingHorizontal: 11, paddingVertical: 9, borderWidth: 1, borderColor: "rgba(185,78,40,0.22)", borderRadius: 11, backgroundColor: "rgba(185,78,40,0.08)" },
   expressionErrorText: { flex: 1, fontFamily: fonts.uiMedium, fontSize: 12, color: colors.rustDark },
   expressionGrid: { gap: 10 },
@@ -443,14 +443,14 @@ const styles = StyleSheet.create({
   searchRow: { flexDirection: "row", gap: 9 },
   searchInput: { minWidth: 0, flex: 1, height: 48, paddingHorizontal: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.cream, fontFamily: fonts.ui, fontSize: 15, color: colors.ink },
   searchButton: { minWidth: 94, height: 48, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, paddingHorizontal: 13, borderRadius: 12, backgroundColor: colors.brand600 },
-  searchButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.raised },
+  searchButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.onAccent },
   filterGroup: { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 },
-  chip: { minHeight: 34, justifyContent: "center", paddingHorizontal: 13, borderWidth: 1, borderColor: colors.line, borderRadius: 17, backgroundColor: "transparent" },
-  chipQuiet: { minHeight: 31, paddingHorizontal: 10, borderColor: "transparent" },
+  chip: { minHeight: 48, justifyContent: "center", paddingHorizontal: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 24, backgroundColor: "transparent" },
+  chipQuiet: { minHeight: 48, paddingHorizontal: 12, borderColor: "transparent" },
   chipActive: { borderColor: colors.brand600, backgroundColor: colors.brand600 },
   chipText: { fontFamily: fonts.uiMedium, fontSize: 11, color: colors.muted },
   chipQuietText: { fontSize: 10.5 },
-  chipActiveText: { color: colors.raised },
+  chipActiveText: { color: colors.onAccent },
   chipPressed: { opacity: 0.65 },
   resultCount: { marginTop: 5, fontFamily: fonts.ui, fontSize: 13, color: colors.muted },
   resultNumber: { color: colors.ink },

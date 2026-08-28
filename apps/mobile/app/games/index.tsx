@@ -67,7 +67,7 @@ export default function GamesHub() {
   return (
     <Screen appHeader>
       <View style={styles.hero}>
-        <Ionicons name="game-controller-outline" size={28} color={colors.raised} />
+        <Ionicons name="game-controller-outline" size={28} color={colors.onAccent} />
         <Heading sub={copy.subtitle}>{copy.title}</Heading>
       </View>
       <View style={styles.grid}>
@@ -85,7 +85,7 @@ export default function GamesHub() {
 }
 
 const styles = StyleSheet.create({
-  hero: { gap: 12, padding: 20, borderWidth: 1.5, borderColor: colors.brand950, borderRadius: 16, backgroundColor: colors.brand950, shadowColor: colors.brown, shadowOpacity: 0.24, shadowRadius: 9, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
+  hero: { gap: 12, padding: 20, borderWidth: 1.5, borderColor: colors.brand950, borderRadius: 16, backgroundColor: colors.inkSurface, shadowColor: colors.brown, shadowOpacity: 0.24, shadowRadius: 9, shadowOffset: { width: 0, height: 5 }, elevation: 4 },
   grid: { gap: 10 },
   game: { minHeight: 82, flexDirection: "row", alignItems: "center", gap: 12, padding: 13, borderWidth: 1, borderColor: colors.line, borderRadius: 14, backgroundColor: colors.cream },
   gamePressed: { opacity: 0.72, transform: [{ translateY: 1 }] },

@@ -16,6 +16,7 @@ declare global {
         id: {
           initialize: (config: object) => void;
           renderButton: (el: HTMLElement, options: object) => void;
+          disableAutoSelect?: () => void;
         };
       };
     };
@@ -48,9 +49,13 @@ export function GoogleButton({ lang, divider }: { lang: string; divider: string 
 
   useEffect(() => {
     if (!scriptReady || !GOOGLE_CLIENT_ID || !container.current || !window.google) return;
+    window.google.accounts.id.disableAutoSelect?.();
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: handleCredential,
+      auto_select: false,
+      button_auto_select: false,
+      use_fedcm_for_button: false,
     });
     window.google.accounts.id.renderButton(container.current, {
       theme: "outline",

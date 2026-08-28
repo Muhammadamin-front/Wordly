@@ -5,7 +5,26 @@ import { SiteHeader } from "@/components/site/header";
 import { ALL_LESSONS, lessonBySlug } from "@/lib/grammar";
 import { localiseLesson } from "@/lib/grammar/localise";
 import type { Locale } from "@/lib/locales";
+import { publicPageMetadata } from "@/lib/seo";
 import { getDictionary, hasLocale } from "../../dictionaries";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string; slug: string }>;
+}) {
+  const { lang, slug } = await params;
+  if (!hasLocale(lang)) return {};
+  const lesson = lessonBySlug(slug);
+  if (!lesson) return {};
+  const localized = localiseLesson(lesson, lang);
+  return publicPageMetadata({
+    lang,
+    path: `/grammar/${slug}`,
+    title: localized.title,
+    description: localized.introduction ?? localized.explanation[0] ?? localized.titleUz,
+  });
+}
 
 export function generateStaticParams() {
   return ALL_LESSONS.map((lesson) => ({ slug: lesson.slug }));

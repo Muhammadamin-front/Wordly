@@ -8,6 +8,8 @@ import { request, type Queue } from "@/api/client";
 import { Button, ErrorNote, ErrorState, Heading, Loader, Paper, Screen, Stamp } from "@/components/ui";
 import { copy, localeFrom } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
+import { clearDailyReviewReminder } from "@/notifications/bootstrap";
+import { useSoundEffects } from "@/sound/sound-provider";
 import { colors, fonts } from "@/theme/tokens";
 
 type Rating = "again" | "hard" | "good" | "easy";
@@ -16,6 +18,7 @@ const makeIdempotencyKey = () => `${Date.now()}-${Math.random().toString(36).sli
 export default function Review() {
   const { deckId } = useLocalSearchParams<{ deckId?: string }>();
   const { token, user } = useAuth();
+  const { play } = useSoundEffects();
   const queryClient = useQueryClient();
   const [revealed, setRevealed] = useState(false);
   const [submittedCardId, setSubmittedCardId] = useState<string | null>(null);
@@ -40,9 +43,11 @@ export default function Review() {
       },
       headers: { "Idempotency-Key": idempotencyKey },
     }),
-    onSuccess: () => {
+    onSuccess: (_result, rating) => {
       setRevealed(false);
       setSubmittedCardId(card?.id ?? null);
+      if (rating === "good" || rating === "easy") play("success");
+      if (rating === "again") play("error");
       void queryClient.invalidateQueries({ queryKey: ["queue"] });
       void queryClient.invalidateQueries({ queryKey: ["stats"] });
       void queryClient.invalidateQueries({ queryKey: ["daily-quests"] });
@@ -62,6 +67,12 @@ export default function Review() {
   // The current card ID is the session boundary; mutation identity is intentionally excluded.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card?.id]);
+
+  useEffect(() => {
+    if (!queue.isLoading && !queue.isError && queue.data && !queue.data.cards.length) {
+      void clearDailyReviewReminder();
+    }
+  }, [queue.data, queue.isError, queue.isLoading]);
 
   if (queue.isLoading) return <Screen appHeader><Loader label={t.loading} /></Screen>;
   if (queue.isError) return <ErrorState appHeader title={t.reviewLoadError} body={t.networkError} retryLabel={t.retry} onRetry={() => void queue.refetch()} />;
@@ -124,7 +135,7 @@ export default function Review() {
 }
 
 const styles = StyleSheet.create({
-  listenButton: { alignSelf: "center", minHeight: 40, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, paddingHorizontal: 12, borderWidth: 1, borderColor: colors.teal, borderRadius: 10, backgroundColor: "rgba(70,120,120,0.10)" },
+  listenButton: { alignSelf: "center", minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 7, paddingHorizontal: 14, borderWidth: 1, borderColor: colors.teal, borderRadius: 10, backgroundColor: "rgba(70,120,120,0.10)" },
   listenText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.teal },
   listenPressed: { opacity: 0.68, transform: [{ translateY: 1 }] },
 });

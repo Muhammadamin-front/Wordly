@@ -8,13 +8,13 @@ import {
   FlatList,
   Modal,
   Pressable,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   API_URL,
@@ -283,7 +283,7 @@ export function ListeningPracticeNative({ locale, token, onBack }: { locale: Loc
         <View style={styles.aiIcon}><Ionicons name="sparkles" size={21} color={colors.rust} /></View>
         <View style={styles.flexOne}><Text style={styles.aiTitle}>{t.aiUnlimited}</Text><Text style={styles.aiBody}>{t.aiUnlimitedDesc}</Text></View>
         <Pressable accessibilityRole="button" disabled={!token || loadingId !== null} onPress={() => void start("ai")} style={({ pressed }) => [styles.startSmall, pressed && styles.pressed, (!token || loadingId !== null) && styles.disabled]}>
-          {loadingId === "ai" ? <ActivityIndicator color={colors.raised} size="small" /> : <Text style={styles.startSmallText}>{t.start}</Text>}
+          {loadingId === "ai" ? <ActivityIndicator color={colors.onAccent} size="small" /> : <Text style={styles.startSmallText}>{t.start}</Text>}
         </Pressable>
       </View>
 
@@ -297,7 +297,7 @@ export function ListeningPracticeNative({ locale, token, onBack }: { locale: Loc
               <View style={styles.bankMeta}><Text style={styles.bandBadge}>{t.band} {item.band.toFixed(1)}</Text><Text style={styles.bankMetaText}>{item.word_count} {t.words} · {item.question_count} {t.questions}</Text></View>
             </View>
             <Pressable accessibilityRole="button" disabled={loadingId !== null} onPress={() => void start(item.id)} style={({ pressed }) => [styles.bankButton, item.done && styles.bankButtonDone, pressed && styles.pressed]}>
-              {loadingId === item.id ? <ActivityIndicator color={colors.raised} size="small" /> : <Text style={[styles.bankButtonText, item.done && styles.bankButtonTextDone]}>{item.done ? t.tryAgain : t.start}</Text>}
+              {loadingId === item.id ? <ActivityIndicator color={colors.onAccent} size="small" /> : <Text style={[styles.bankButtonText, item.done && styles.bankButtonTextDone]}>{item.done ? t.tryAgain : t.start}</Text>}
             </Pressable>
           </View>
         ))}
@@ -380,13 +380,13 @@ function ActiveListeningTest({ locale, token, test, answers, setAnswers, result,
   }
 
   return (
-    <SafeAreaView style={styles.testSafe}>
+    <SafeAreaView edges={["top", "right", "bottom", "left"]} style={styles.testSafe}>
       <View style={styles.testHeader}>
         <Pressable accessibilityRole="button" onPress={onClose} style={styles.testBack}><Ionicons name="arrow-back" size={18} color={colors.muted} /><Text style={styles.testBackText}>{t.leaveTest}</Text></Pressable>
         {!result ? <View style={[styles.timerBadge, secondsLeft < 60 && styles.timerDanger]}><Ionicons name="time-outline" size={16} color={secondsLeft < 60 ? colors.danger : colors.rustDark} /><Text style={[styles.timerText, secondsLeft < 60 && styles.timerDangerText]}>{formatTime(secondsLeft)}</Text></View> : null}
       </View>
       <View style={styles.audioExamCard}>
-        <Pressable accessibilityRole="button" accessibilityLabel={status.playing ? t.pause : t.play} disabled={audioFinished && !result} onPress={toggleAudio} style={[styles.audioRoundButton, audioFinished && !result && styles.disabled]}><Ionicons name={status.playing ? "pause" : "play"} size={22} color={colors.raised} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel={status.playing ? t.pause : t.play} disabled={audioFinished && !result} onPress={toggleAudio} style={[styles.audioRoundButton, audioFinished && !result && styles.disabled]}><Ionicons name={status.playing ? "pause" : "play"} size={22} color={colors.onAccent} /></Pressable>
         <View style={styles.flexOne}>
           <View style={styles.audioTitleRow}><Text numberOfLines={1} style={styles.audioExamTitle}>{test.title}</Text>{status.duration > 0 ? <Text style={styles.audioTime}>{formatTime(status.currentTime)} / {formatTime(status.duration)}</Text> : status.isBuffering ? <ActivityIndicator color={colors.rust} size="small" /> : null}</View>
           <View accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: 100, now: Math.round(played * 100) }} style={styles.progressTrack}><View style={[styles.progressFill, { width: `${played * 100}%` }]} /></View>
@@ -426,7 +426,7 @@ function ConversationPlayer({ track, playLabel, pauseLabel }: { track: Listening
   const played = status.duration > 0 ? Math.min(1, status.currentTime / status.duration) : 0;
   return (
     <View style={styles.libraryPlayer}>
-      <Pressable accessibilityRole="button" accessibilityLabel={status.playing ? pauseLabel : playLabel} onPress={() => status.playing ? player.pause() : player.play()} style={styles.audioRoundButton}><Ionicons name={status.playing ? "pause" : "play"} size={22} color={colors.raised} /></Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel={status.playing ? pauseLabel : playLabel} onPress={() => status.playing ? player.pause() : player.play()} style={styles.audioRoundButton}><Ionicons name={status.playing ? "pause" : "play"} size={22} color={colors.onAccent} /></Pressable>
       <View style={styles.flexOne}>
         <View style={styles.audioTitleRow}><Text style={styles.audioTime}>{formatTime(status.currentTime)} / {formatTime(status.duration)}</Text>{status.isBuffering ? <ActivityIndicator color={colors.rust} size="small" /> : null}</View>
         <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${played * 100}%` }]} /></View>
@@ -521,8 +521,8 @@ const styles = StyleSheet.create({
   aiIcon: { width: 42, height: 42, alignItems: "center", justifyContent: "center", borderRadius: 12, backgroundColor: colors.raised },
   aiTitle: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.ink },
   aiBody: { marginTop: 2, fontFamily: fonts.ui, fontSize: 10.5, lineHeight: 15, color: colors.muted },
-  startSmall: { minHeight: 39, minWidth: 72, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.rust },
-  startSmallText: { fontFamily: fonts.uiBold, fontSize: 10, textAlign: "center", color: colors.raised },
+  startSmall: { minHeight: 48, minWidth: 72, alignItems: "center", justifyContent: "center", paddingHorizontal: 10, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.rust },
+  startSmallText: { fontFamily: fonts.uiBold, fontSize: 10, textAlign: "center", color: colors.onAccent },
   bankHeading: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   bankTitle: { fontFamily: fonts.uiBold, fontSize: 12, letterSpacing: 0.45, textTransform: "uppercase", color: colors.muted },
   retryCard: { flexDirection: "row", alignItems: "center", gap: 8, padding: 13, borderWidth: 1, borderColor: colors.line, borderRadius: 11, backgroundColor: colors.cream },
@@ -532,9 +532,9 @@ const styles = StyleSheet.create({
   bankMeta: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 7, marginTop: 5 },
   bandBadge: { paddingHorizontal: 7, paddingVertical: 3, borderRadius: 7, backgroundColor: "rgba(70,120,120,0.10)", fontFamily: fonts.uiBold, fontSize: 9, color: colors.teal },
   bankMetaText: { fontFamily: fonts.uiMedium, fontSize: 9.5, color: colors.muted },
-  bankButton: { minHeight: 39, minWidth: 72, alignItems: "center", justifyContent: "center", paddingHorizontal: 9, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.rust },
+  bankButton: { minHeight: 48, minWidth: 72, alignItems: "center", justifyContent: "center", paddingHorizontal: 9, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.rust },
   bankButtonDone: { borderColor: colors.line, backgroundColor: colors.raised },
-  bankButtonText: { fontFamily: fonts.uiBold, fontSize: 9.5, textAlign: "center", color: colors.raised },
+  bankButtonText: { fontFamily: fonts.uiBold, fontSize: 9.5, textAlign: "center", color: colors.onAccent },
   bankButtonTextDone: { color: colors.ink },
   sectionNav: { gap: 7, paddingVertical: 2 },
   sectionPill: { maxWidth: 230, justifyContent: "center", paddingHorizontal: 12, paddingVertical: 9, borderWidth: 1, borderColor: colors.line, borderRadius: 9, backgroundColor: "rgba(255,248,234,0.66)" },
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   groupChip: { justifyContent: "center", paddingHorizontal: 10, paddingVertical: 7, borderWidth: 1, borderColor: colors.line, borderRadius: 16, backgroundColor: colors.raised },
   groupChipActive: { borderColor: colors.rust, backgroundColor: colors.rust },
   groupChipText: { fontFamily: fonts.uiBold, fontSize: 9.5, color: colors.muted },
-  groupChipTextActive: { color: colors.raised },
+  groupChipTextActive: { color: colors.onAccent },
   trackList: { height: 390 },
   trackListContent: { gap: 3, paddingRight: 3 },
   trackRow: { minHeight: 53, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 9, paddingVertical: 7, borderWidth: 1, borderColor: "transparent", borderRadius: 10 },
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   optionLetterCorrect: { borderColor: colors.teal, backgroundColor: colors.teal },
   optionLetterWrong: { borderColor: colors.danger, backgroundColor: colors.danger },
   optionLetterText: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.muted },
-  optionLetterTextActive: { color: colors.raised },
+  optionLetterTextActive: { color: colors.onAccent },
   optionText: { flex: 1, fontFamily: fonts.ui, fontSize: 11.5, lineHeight: 17, color: colors.ink },
   correctText: { color: colors.teal },
   wrongText: { color: colors.danger },

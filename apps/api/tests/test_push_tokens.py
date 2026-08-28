@@ -31,3 +31,16 @@ async def test_mobile_can_register_and_refresh_push_token(client):
     assert tokens[0].user_id.hex == pair["user"]["id"].replace("-", "")
     assert tokens[0].platform == "ios"
     assert tokens[0].is_active is True
+
+    disabled = await client.request(
+        "DELETE",
+        "/api/v1/users/me/push-tokens",
+        json={"provider": "expo", "token": payload["token"]},
+        headers=headers,
+    )
+    assert disabled.status_code == 200, disabled.text
+
+    async with db_session.get_session_factory()() as session:
+        token = await session.scalar(select(DevicePushToken))
+    assert token is not None
+    assert token.is_active is False

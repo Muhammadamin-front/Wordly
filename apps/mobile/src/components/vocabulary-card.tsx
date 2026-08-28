@@ -76,7 +76,7 @@ export function VocabularyCard({
                 style={({ pressed }) => [styles.detailButton, pressed && styles.detailPressed]}
               >
                 <Text numberOfLines={1} style={styles.detailText}>{t.detail}</Text>
-                <Ionicons name="arrow-up-outline" size={14} color={colors.raised} style={{ transform: [{ rotate: "45deg" }] }} />
+                <Ionicons name="arrow-up-outline" size={14} color={colors.onAccent} style={{ transform: [{ rotate: "45deg" }] }} />
               </Pressable>
               {onDelete ? (
                 <Pressable
@@ -104,6 +104,7 @@ export function VocabularyCard({
                   accessibilityHint={addError ? t.retry : undefined}
                   accessibilityState={{ disabled: added || adding, busy: adding }}
                   disabled={added || adding}
+                  hitSlop={{ top: 2, bottom: 2, left: 4, right: 0 }}
                   onPress={onAdd}
                   style={({ pressed }) => [styles.addButton, added && styles.addButtonDone, addError && styles.addButtonError, pressed && !added && !adding && styles.detailPressed]}
                 >
@@ -113,6 +114,7 @@ export function VocabularyCard({
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`${t.listen}: ${word.headword}`}
+                hitSlop={{ top: 2, bottom: 2, left: 0, right: 4 }}
                 onPress={() => { Speech.stop(); Speech.speak(word.headword, { language: "en-US", rate: 0.9 }); }}
                 style={({ pressed }) => [styles.audioButton, pressed && styles.detailPressed]}
               ><Ionicons name="volume-medium-outline" size={16} color={colors.ink} /></Pressable>
@@ -163,7 +165,7 @@ const styles = StyleSheet.create({
   levelStamp: { minWidth: 31, minHeight: 26, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.brand600, borderRadius: 6, backgroundColor: "rgba(185,78,40,0.12)" },
   levelText: { fontFamily: fonts.uiMedium, fontSize: 9, color: colors.brand600 },
   pos: { minWidth: 0, flex: 1, fontFamily: fonts.uiBold, fontSize: 9, color: colors.rustDark },
-  audioButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
+  audioButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 9, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
   headword: { marginTop: 13, fontFamily: fonts.display, fontSize: 23, lineHeight: 27, letterSpacing: 0.4, color: colors.ink, textTransform: "uppercase" },
   example: { marginTop: "auto", paddingLeft: 6, borderLeftWidth: 1, borderLeftColor: colors.brand400, fontFamily: fonts.uiMedium, fontSize: 9, lineHeight: 13, color: colors.brown },
   backHeadword: { fontFamily: fonts.uiMedium, fontSize: 9, color: colors.rustDark, textTransform: "uppercase" },
@@ -173,11 +175,11 @@ const styles = StyleSheet.create({
   categoryEmoji: { fontSize: 10 },
   categoryText: { flexShrink: 1, fontFamily: fonts.uiBold, fontSize: 8, letterSpacing: 0.45, color: colors.teal, textTransform: "uppercase" },
   backActions: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 8 },
-  detailButton: { flex: 1, minHeight: 34, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: colors.brand950, borderRadius: 7, backgroundColor: colors.brand600, shadowColor: colors.brown, shadowOpacity: 0.75, shadowRadius: 0, shadowOffset: { width: 2, height: 3 }, elevation: 2 },
-  deleteButton: { width: 34, height: 34, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 7, backgroundColor: "rgba(220,38,38,0.10)" },
+  detailButton: { flex: 1, minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, borderWidth: 1, borderColor: colors.brand950, borderRadius: 9, backgroundColor: colors.brand600, shadowColor: colors.brown, shadowOpacity: 0.75, shadowRadius: 0, shadowOffset: { width: 2, height: 3 }, elevation: 2 },
+  deleteButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 9, backgroundColor: "rgba(220,38,38,0.10)" },
   detailPressed: { transform: [{ translateX: 1 }, { translateY: 1 }] },
-  detailText: { flexShrink: 1, fontFamily: fonts.uiBold, fontSize: 9, color: colors.raised },
-  addButton: { width: 29, height: 29, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 7, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
+  detailText: { flexShrink: 1, fontFamily: fonts.uiBold, fontSize: 10, color: colors.onAccent },
+  addButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 9, backgroundColor: colors.cream, shadowColor: colors.brown, shadowOpacity: 0.18, shadowRadius: 0, shadowOffset: { width: 2, height: 2 }, elevation: 2 },
   addButtonDone: { borderColor: colors.gold500, backgroundColor: "rgba(70,120,120,0.14)" },
   addButtonError: { borderColor: "rgba(220,38,38,0.50)", backgroundColor: "rgba(220,38,38,0.08)" },
 });

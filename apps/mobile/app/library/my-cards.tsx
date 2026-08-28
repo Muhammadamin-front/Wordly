@@ -81,7 +81,7 @@ export default function MyCards() {
           autoCapitalize="none"
           onChangeText={setSearch}
           placeholder={t.libSearchMyCards}
-          placeholderTextColor="rgba(108,73,53,0.62)"
+          placeholderTextColor={colors.muted}
           style={styles.searchInput}
           value={search}
         />
@@ -141,7 +141,7 @@ function srsTone(state: string) {
 const styles = StyleSheet.create({
   searchRow: { position: "relative", justifyContent: "center" },
   searchIcon: { position: "absolute", left: 14, zIndex: 1 },
-  searchInput: { height: 46, paddingLeft: 38, paddingRight: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.cream, fontFamily: fonts.ui, fontSize: 14, color: colors.ink },
+  searchInput: { minHeight: 48, paddingLeft: 38, paddingRight: 14, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.cream, fontFamily: fonts.ui, fontSize: 16, color: colors.ink },
   count: { fontFamily: fonts.ui, fontSize: 13, color: colors.muted },
   countStrong: { fontFamily: fonts.uiBold, color: colors.ink },
   emptyText: { fontFamily: fonts.ui, fontSize: 14, lineHeight: 22, color: colors.muted, textAlign: "center" },
@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
   translation: { marginTop: 2, fontFamily: fonts.ui, fontSize: 12, color: colors.muted },
   srsBadge: { alignSelf: "flex-start", marginTop: 6, borderWidth: 1, borderRadius: 6, paddingHorizontal: 7, paddingVertical: 2 },
   srsText: { fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.3, color: colors.ink, textTransform: "uppercase" },
-  deleteButton: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 9, backgroundColor: "rgba(220,38,38,0.10)" },
+  deleteButton: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: "rgba(220,38,38,0.35)", borderRadius: 11, backgroundColor: "rgba(220,38,38,0.10)" },
   pressed: { opacity: 0.7 }, deleteDisabled: { opacity: 0.48 },
 });

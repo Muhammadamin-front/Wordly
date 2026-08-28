@@ -163,7 +163,7 @@ export default function AuthScreen() {
   }
 
   return (
-    <SafeAreaView edges={[]} style={localStyles.safe}>
+    <SafeAreaView edges={["left", "right"]} style={localStyles.safe}>
       <ImageBackground source={require("../../assets/images/vocora-auth-poster.png")} resizeMode="cover" style={localStyles.background}>
         <View style={localStyles.scrim} />
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={localStyles.keyboard}>
@@ -419,7 +419,7 @@ function AppleSignIn({ label, errorMessage, disabled, onError }: { label: string
 }
 
 const localStyles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.brand950 },
+  safe: { flex: 1, backgroundColor: colors.inkSurface },
   background: { flex: 1 },
   scrim: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(36,19,12,0.42)" },
   keyboard: { flex: 1 },
@@ -427,15 +427,15 @@ const localStyles = StyleSheet.create({
   sheet: { width: "100%", maxWidth: 480, alignSelf: "center", gap: 24, padding: 25, borderWidth: 1.5, borderColor: colors.line, borderRadius: 18, backgroundColor: colors.cream, ...authSheetShadow },
   topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 12 },
   languageRow: { flexDirection: "row", overflow: "hidden", borderWidth: 1, borderColor: colors.line, borderRadius: 9, backgroundColor: colors.raised },
-  languageButton: { minWidth: 40, minHeight: 44, alignItems: "center", justifyContent: "center" },
-  languageSelected: { margin: 2, minWidth: 38, minHeight: 40, borderRadius: 7, backgroundColor: colors.brand600 },
+  languageButton: { minWidth: 44, minHeight: 48, alignItems: "center", justifyContent: "center" },
+  languageSelected: { margin: 2, minWidth: 40, minHeight: 44, borderRadius: 7, backgroundColor: colors.brand600 },
   languageText: { fontFamily: fonts.uiMedium, color: colors.muted, fontSize: 12 },
-  languageTextSelected: { color: colors.raised },
+  languageTextSelected: { color: colors.onAccent },
   heading: { alignItems: "center", gap: 10 },
   title: { fontFamily: fonts.display, fontSize: 40, lineHeight: 43, letterSpacing: 0.7, color: colors.ink, textAlign: "center", textTransform: "uppercase" },
   subtitle: { maxWidth: 290, fontFamily: fonts.ui, fontSize: 13, lineHeight: 21, color: colors.muted, textAlign: "center" },
   form: { gap: 15 },
-  forgotButton: { minHeight: 44, alignSelf: "flex-end", justifyContent: "center", marginTop: -10, paddingLeft: 14 },
+  forgotButton: { minHeight: 48, alignSelf: "flex-end", justifyContent: "center", marginTop: -10, paddingLeft: 14 },
   forgotText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.rustDark },
   successNote: { fontFamily: fonts.uiMedium, fontSize: 12, lineHeight: 18, color: colors.teal },
   divider: { flexDirection: "row", alignItems: "center", gap: 14 },
@@ -450,7 +450,7 @@ const localStyles = StyleSheet.create({
   socialDisabled: { opacity: 0.48 },
   setupNote: { marginTop: -15, fontFamily: fonts.ui, fontSize: 10, lineHeight: 15, color: colors.muted, textAlign: "center" },
   bottomDivider: { height: 1, backgroundColor: colors.line },
-  modeToggle: { minHeight: 44, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 },
+  modeToggle: { minHeight: 48, alignItems: "center", justifyContent: "center", paddingHorizontal: 8 },
   modeText: { fontFamily: fonts.ui, fontSize: 12, color: colors.muted, textAlign: "center" },
   modeLink: { fontFamily: fonts.uiBold, color: colors.ink },
   pressed: { opacity: 0.7, transform: [{ translateY: 1 }] },

@@ -13,10 +13,11 @@ import {
   Volume2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
+import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   CEFR_COLOR,
@@ -44,6 +45,8 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
   const [cefr, setCefr] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [open, setOpen] = useState<ExpressionDetail | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [detailError, setDetailError] = useState(false);
 
   const addToCards = useCallback(
     async (e: ExpressionDetail | ExpressionListItem) => {
@@ -94,6 +97,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
 
   const load = useCallback(() => {
     setItems(null);
+    setLoadError(false);
     expressionsApi
       .list({
         page,
@@ -106,7 +110,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
         setItems(res.items);
         setTotal(res.total);
       })
-      .catch(() => setItems([]));
+      .catch(() => setLoadError(true));
   }, [page, category, cefr, q, lang]);
 
   useEffect(() => {
@@ -149,6 +153,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
               aria-hidden
             />
             <input
+              aria-label={t.searchPlaceholder}
               value={q}
               onChange={(e) => reset(() => setQ(e.target.value))}
               placeholder={t.searchPlaceholder}
@@ -168,6 +173,12 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
         </div>
       </section>
 
+      {detailError && (
+        <Alert tone="error" className="mt-5">
+          {t.detailLoadError}
+        </Alert>
+      )}
+
       {meta && meta.categories.length > 0 && (
         <div className="mt-5 flex flex-wrap gap-1.5">
           <Chip active={!category} onClick={() => reset(() => setCategory(null))}>
@@ -186,7 +197,18 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
       )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {items === null
+        {loadError ? (
+          <div className="surface-panel col-span-full rounded-lg p-6 text-center">
+            <Alert tone="error">{t.loadError}</Alert>
+            <button
+              type="button"
+              onClick={load}
+              className="mt-4 min-h-11 rounded-lg border border-line bg-raised px-4 text-sm font-black text-ink transition-colors hover:border-brand-500"
+            >
+              {t.retry}
+            </button>
+          </div>
+        ) : items === null
           ? Array.from({ length: 9 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-lg" />)
           : items.map((e, i) => (
               <motion.button
@@ -195,7 +217,10 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(i * 0.02, 0.3) }}
-                onClick={() => expressionsApi.detail(e.slug, lang).then(setOpen).catch(() => {})}
+                onClick={() => {
+                  setDetailError(false);
+                  expressionsApi.detail(e.slug, lang).then(setOpen).catch(() => setDetailError(true));
+                }}
                 className="premium-card group flex min-h-36 flex-col rounded-lg p-4 text-left"
               >
                 <div className="flex items-start justify-between gap-3">
@@ -214,7 +239,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
             ))}
       </div>
 
-      {items && items.length === 0 && (
+      {!loadError && items && items.length === 0 && (
         <p className="surface-panel mt-10 rounded-lg p-6 text-center text-ink-soft">{t.empty}</p>
       )}
 
@@ -274,7 +299,7 @@ function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-lg border px-3 py-1.5 text-xs font-black transition-all",
+        "min-h-11 min-w-11 rounded-lg border px-3 py-1.5 text-xs font-black transition-all",
         active
           ? "border-brand-400 bg-brand-600/12 text-brand-600 shadow-[0_10px_26px_rgba(40,135,115,0.1)] dark:text-brand-200"
           : "border-line bg-card/42 text-ink-soft hover:-translate-y-0.5 hover:text-ink"
@@ -317,6 +342,47 @@ function DetailModal({
   onAdd: () => void;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const focusable = () =>
+      Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), a[href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      );
+    (focusable()[0] ?? dialog).focus();
+
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const elements = focusable();
+      if (elements.length === 0) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", trapFocus);
+    return () => {
+      document.removeEventListener("keydown", trapFocus);
+      previouslyFocused?.focus();
+    };
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -326,6 +392,8 @@ function DetailModal({
       className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-brand-950/60 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl dark:bg-black/72 sm:items-center sm:p-6"
     >
       <motion.div
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={expr.expression}
@@ -346,7 +414,7 @@ function DetailModal({
                   onClick={() => speak(expr.expression)}
                   aria-label={t.listen}
                   title={t.listen}
-                  className="icon-tile flex size-8 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
+                  className="icon-tile flex size-11 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-brand-600"
                 >
                   <Volume2 className="size-4" aria-hidden />
                 </button>
@@ -360,7 +428,7 @@ function DetailModal({
               onClick={onClose}
               aria-label={t.close}
               title={t.close}
-              className="icon-tile flex size-9 shrink-0 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-ink"
+              className="icon-tile flex size-11 shrink-0 items-center justify-center rounded-lg text-ink-soft transition-colors hover:text-ink"
             >
               <X className="size-4" aria-hidden />
             </button>

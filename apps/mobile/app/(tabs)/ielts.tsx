@@ -37,7 +37,7 @@ export default function Ielts() {
         <Text style={styles.heroBody}>{t.subtitle}</Text>
         <View style={styles.heroActions}>
           <Pressable accessibilityRole="button" accessibilityLabel={t.words} onPress={() => router.push({ pathname: "/library/[key]", params: { key: "ielts", name: t.words } })} style={({ pressed }) => [styles.primaryButton, pressed && styles.pressed]}>
-            <Text style={styles.primaryButtonText}>{t.words}</Text><Ionicons name="arrow-forward" size={16} color={colors.raised} />
+            <Text style={styles.primaryButtonText}>{t.words}</Text><Ionicons name="arrow-forward" size={16} color={colors.onAccent} />
           </Pressable>
           <Pressable accessibilityRole="button" accessibilityLabel={t.writingCta} onPress={() => router.push({ pathname: "/ielts/[skill]", params: { skill: "writing" } })} style={({ pressed }) => [styles.secondaryButton, pressed && styles.pressed]}>
             <Text style={styles.secondaryButtonText}>{t.writingCta}</Text><Ionicons name="arrow-forward" size={16} color={colors.ink} />
@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
   heroTitle: { maxWidth: 310, fontFamily: fonts.display, fontSize: 34, lineHeight: 38, letterSpacing: 0.6, color: colors.ink, textTransform: "uppercase" },
   heroBody: { maxWidth: 315, fontFamily: fonts.ui, fontSize: 14, lineHeight: 22, color: colors.muted },
   heroActions: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
-  primaryButton: { alignSelf: "flex-start", minHeight: 46, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 17, borderWidth: 1, borderColor: colors.brand800, borderRadius: 11, backgroundColor: colors.brand600, shadowColor: colors.brown, shadowOpacity: 0.72, shadowRadius: 0, shadowOffset: { width: 3, height: 4 }, elevation: 3 },
-  primaryButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.raised },
-  secondaryButton: { alignSelf: "flex-start", minHeight: 46, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 17, borderWidth: 1, borderColor: colors.line, borderRadius: 11, backgroundColor: colors.raised, shadowColor: colors.brown, shadowOpacity: 0.15, shadowRadius: 0, shadowOffset: { width: 2, height: 3 }, elevation: 2 },
+  primaryButton: { alignSelf: "flex-start", minHeight: 48, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 17, borderWidth: 1, borderColor: colors.brand800, borderRadius: 11, backgroundColor: colors.brand600, shadowColor: colors.brown, shadowOpacity: 0.72, shadowRadius: 0, shadowOffset: { width: 3, height: 4 }, elevation: 3 },
+  primaryButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.onAccent },
+  secondaryButton: { alignSelf: "flex-start", minHeight: 48, flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 17, borderWidth: 1, borderColor: colors.line, borderRadius: 11, backgroundColor: colors.raised, shadowColor: colors.brown, shadowOpacity: 0.15, shadowRadius: 0, shadowOffset: { width: 2, height: 3 }, elevation: 2 },
   secondaryButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.ink },
   stats: { flexDirection: "row", gap: 7, padding: 7, borderWidth: 1.5, borderColor: colors.line, borderRadius: 13, backgroundColor: colors.cream },
   stat: { flex: 1, minHeight: 72, alignItems: "center", justifyContent: "center", padding: 7, borderRadius: 9, backgroundColor: colors.raised },
@@ -117,16 +117,16 @@ const styles = StyleSheet.create({
   statLabel: { marginTop: 2, fontFamily: fonts.uiBold, fontSize: 8.5, lineHeight: 12, textAlign: "center", textTransform: "uppercase", color: colors.muted },
   brandNote: { marginHorizontal: -19, marginBottom: -19, marginTop: 3, minHeight: 48, flexDirection: "row", alignItems: "center", gap: 9, paddingHorizontal: 19, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.brand50 },
   brandText: { flex: 1, fontFamily: fonts.uiBold, fontSize: 10.5, lineHeight: 16, color: colors.brand800 },
-  mockCard: { position: "relative", gap: 8, overflow: "hidden", padding: 19, borderWidth: 1, borderColor: colors.brand950, borderRadius: 17, backgroundColor: colors.brand950, shadowColor: colors.brown, shadowOpacity: .35, shadowRadius: 0, shadowOffset: { width: 4, height: 5 }, elevation: 4 },
+  mockCard: { position: "relative", gap: 8, overflow: "hidden", padding: 19, borderWidth: 1, borderColor: colors.brand950, borderRadius: 17, backgroundColor: colors.inkSurface, shadowColor: colors.brown, shadowOpacity: .35, shadowRadius: 0, shadowOffset: { width: 4, height: 5 }, elevation: 4 },
   mockWatermark: { position: "absolute", right: 8, top: -30, fontFamily: fonts.display, fontSize: 150, lineHeight: 165, color: "rgba(255,248,234,.055)" },
   mockTop: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   mockIcon: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderRadius: 13, backgroundColor: "rgba(70,120,120,.28)" },
   mockTime: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 9, paddingVertical: 6, borderRadius: 8, backgroundColor: "rgba(255,248,234,.08)" },
   mockTimeText: { fontFamily: fonts.uiBold, fontSize: 10, color: colors.gold300 },
   mockKicker: { marginTop: 4, fontFamily: fonts.uiBold, fontSize: 10, letterSpacing: .8, textTransform: "uppercase", color: colors.gold300 },
-  mockTitle: { fontFamily: fonts.display, fontSize: 30, lineHeight: 33, letterSpacing: .4, color: colors.raised },
+  mockTitle: { fontFamily: fonts.display, fontSize: 30, lineHeight: 33, letterSpacing: .4, color: colors.onAccent },
   mockBody: { maxWidth: 310, fontFamily: fonts.ui, fontSize: 13, lineHeight: 20, color: colors.brand200 },
-  mockAction: { alignSelf: "flex-start", minHeight: 44, flexDirection: "row", alignItems: "center", gap: 7, marginTop: 4, paddingHorizontal: 14, borderRadius: 10, backgroundColor: colors.gold300 },
+  mockAction: { alignSelf: "flex-start", minHeight: 48, flexDirection: "row", alignItems: "center", gap: 7, marginTop: 4, paddingHorizontal: 14, borderRadius: 10, backgroundColor: colors.gold300 },
   mockActionText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.brand950 },
   sectionIntro: { gap: 4, marginTop: 6 },
   kicker: { fontFamily: fonts.uiBold, fontSize: 10, letterSpacing: 0.8, textTransform: "uppercase", color: colors.gold500 },

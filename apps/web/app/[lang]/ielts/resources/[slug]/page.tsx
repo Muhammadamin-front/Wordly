@@ -7,7 +7,25 @@ import {
   vocabularyResourceBySlug,
 } from "@/lib/ielts-resources";
 import type { Locale } from "@/lib/locales";
+import { publicPageMetadata } from "@/lib/seo";
 import { getDictionary, hasLocale } from "../../../dictionaries";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string; slug: string }>;
+}) {
+  const { lang, slug } = await params;
+  if (!hasLocale(lang)) return {};
+  const resource = vocabularyResourceBySlug(slug, lang);
+  if (!resource) return {};
+  return publicPageMetadata({
+    lang,
+    path: `/ielts/resources/${slug}`,
+    title: resource.title,
+    description: resource.description,
+  });
+}
 
 export function generateStaticParams() {
   return IELTS_VOCABULARY_RESOURCES.flatMap((resource) =>

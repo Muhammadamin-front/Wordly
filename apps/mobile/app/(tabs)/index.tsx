@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { Text, View } from "react-native";
-import { request, type DailyQuests, type Stats } from "@/api/client";
+import { request, type DailyQuests, type Queue, type Stats } from "@/api/client";
 import { Button, ErrorState, Heading, Loader, Paper, Screen, Stamp } from "@/components/ui";
 import { copy, format, localeFrom } from "@/i18n";
 import { useAuth } from "@/providers/auth-provider";
@@ -11,15 +11,16 @@ export default function Today() {
   const { token, user } = useAuth();
   const t = copy[localeFrom(user?.profile.ui_locale)];
   const stats = useQuery({ queryKey: ["stats"], queryFn: () => request<Stats>("/me/stats", { token }), enabled: !!token });
+  const queue = useQuery({ queryKey: ["queue"], queryFn: () => request<Queue>("/review/queue", { token }), enabled: !!token });
   const quests = useQuery({ queryKey: ["daily-quests"], queryFn: () => request<DailyQuests>("/me/daily-quests", { token }), enabled: !!token });
-  const refresh = () => { void stats.refetch(); void quests.refetch(); };
+  const refresh = () => { void stats.refetch(); void queue.refetch(); void quests.refetch(); };
 
-  if (stats.isLoading) return <Screen appHeader><Loader label={t.loading} /></Screen>;
-  if (stats.isError) return <ErrorState appHeader title={t.todayLoadError} body={t.networkError} retryLabel={t.retry} onRetry={() => void stats.refetch()} />;
+  if (stats.isLoading || queue.isLoading) return <Screen appHeader><Loader label={t.loading} /></Screen>;
+  if (stats.isError || queue.isError) return <ErrorState appHeader title={t.todayLoadError} body={t.networkError} retryLabel={t.retry} onRetry={refresh} />;
 
-  const due = Math.max(0, (stats.data?.daily_goal ?? 10) - (stats.data?.reviews_today ?? 0));
+  const due = Math.max(0, (queue.data?.due_count ?? 0) + (queue.data?.new_count ?? 0));
   return (
-    <Screen appHeader refreshing={stats.isRefetching || quests.isRefetching} onRefresh={refresh}>
+    <Screen appHeader refreshing={stats.isRefetching || queue.isRefetching || quests.isRefetching} onRefresh={refresh}>
       <Stamp tone="teal">{format(t.streak, { level: user?.profile.cefr_level ?? "A1", count: stats.data?.current_streak ?? 0 })}</Stamp>
       <Heading sub={t.todaySubtitle}>{format(t.todayGreeting, { name: user?.profile.display_name ?? t.profile })}</Heading>
       <Paper>

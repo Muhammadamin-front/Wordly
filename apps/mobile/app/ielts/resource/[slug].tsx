@@ -60,7 +60,7 @@ export default function IeltsResourceScreen() {
         </View>
       ))}
       <View style={styles.footerActions}>
-        <Pressable accessibilityRole="button" accessibilityLabel={t.cards} onPress={() => router.push({ pathname: "/library/[key]", params: { key: "ielts", name: t.cards } })} style={({ pressed }) => [styles.cardsButton, pressed && styles.pressed]}><Text style={styles.cardsButtonText}>{t.cards}</Text><Ionicons name="arrow-forward" size={17} color={colors.raised} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel={t.cards} onPress={() => router.push({ pathname: "/library/[key]", params: { key: "ielts", name: t.cards } })} style={({ pressed }) => [styles.cardsButton, pressed && styles.pressed]}><Text style={styles.cardsButtonText}>{t.cards}</Text><Ionicons name="arrow-forward" size={17} color={colors.onAccent} /></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={t.expressions} onPress={() => router.push("/expressions")} style={({ pressed }) => [styles.expressionsButton, pressed && styles.pressed]}><Text style={styles.expressionsButtonText}>{t.expressions}</Text><Ionicons name="arrow-forward" size={17} color={colors.ink} /></Pressable>
       </View>
     </Screen>
@@ -93,10 +93,10 @@ const styles = StyleSheet.create({
   example: { gap: 5, paddingHorizontal: 15, paddingVertical: 12, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.raised },
   exampleLabel: { fontFamily: fonts.uiBold, fontSize: 9, letterSpacing: 0.6, textTransform: "uppercase", color: colors.brand600 },
   exampleText: { fontFamily: fonts.ui, fontSize: 12, lineHeight: 18, color: colors.muted },
-  findButton: { minHeight: 46, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, paddingHorizontal: 15, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.cream },
+  findButton: { minHeight: 48, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, paddingHorizontal: 15, borderTopWidth: 1, borderTopColor: colors.line, backgroundColor: colors.cream },
   findButtonText: { fontFamily: fonts.uiBold, fontSize: 11.5, color: colors.brand600 },
   cardsButton: { minHeight: 50, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingHorizontal: 16, borderWidth: 1, borderColor: colors.brand950, borderRadius: 11, backgroundColor: colors.brand600, shadowColor: colors.brown, shadowOpacity: 0.72, shadowRadius: 0, shadowOffset: { width: 3, height: 4 }, elevation: 3 },
-  cardsButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.raised },
+  cardsButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.onAccent },
   footerActions: { gap: 10 },
   expressionsButton: { minHeight: 50, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingHorizontal: 16, borderWidth: 1.5, borderColor: colors.line, borderRadius: 11, backgroundColor: colors.raised },
   expressionsButtonText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.ink },

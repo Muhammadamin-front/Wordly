@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   blankLetter: { fontFamily: fonts.uiBold, fontSize: 19, color: colors.ink },
   reveal: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.danger },
   keyboard: { marginTop: 14, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 6 },
-  key: { width: 32, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.cream },
+  key: { width: 48, height: 48, alignItems: "center", justifyContent: "center", borderRadius: 9, borderWidth: 1, borderColor: colors.line, backgroundColor: colors.cream },
   keyHit: { borderColor: "rgba(70,120,120,0.4)", backgroundColor: "rgba(70,120,120,0.18)" },
   keyMiss: { borderColor: "rgba(220,38,38,0.35)", backgroundColor: "rgba(220,38,38,0.13)" },
   keyText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.ink },

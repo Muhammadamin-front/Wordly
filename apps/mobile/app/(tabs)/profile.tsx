@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { type Href, router } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, AppState, Image, Linking, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 
 import {
   authApi,
@@ -19,7 +19,9 @@ import { Button, ErrorNote, Field, Paper, Screen } from "@/components/ui";
 import { ALL_LESSONS, loadGrammarProgress, type MobileGrammarProgress } from "@/grammar/catalog";
 import { syncGrammarProgress } from "@/grammar/progress-sync";
 import { copy, localeFrom, type Locale } from "@/i18n";
+import { getVocoraNotificationsEnabled, setVocoraNotificationsEnabled } from "@/notifications/bootstrap";
 import { useAuth } from "@/providers/auth-provider";
+import { useSoundEffects } from "@/sound/sound-provider";
 import { colors, fonts } from "@/theme/tokens";
 
 const labels = {
@@ -83,6 +85,14 @@ const labels = {
     bioPlaceholder: "Maqsadingiz yoki o‘rganish rejangiz...",
     partialError: "Ayrim statistikalarni yuklab bo‘lmadi. Pastga tortib qayta urinishingiz mumkin.",
     loading: "Yangilanmoqda…",
+    preferences: "Bildirishnoma va tovush",
+    notifications: "Kunlik eslatmalar",
+    notificationsHint: "Har kuni soat 20:00 da vocabulary review eslatmasini oling.",
+    sounds: "App ichidagi tovushlar",
+    soundsHint: "O‘yin javoblari, review va yutuqlar uchun qisqa feedback tovushlari.",
+    notificationDeniedTitle: "Notification ruxsati o‘chiq",
+    notificationDeniedBody: "Vocora notificationlarini qurilma sozlamalaridan yoqing.",
+    openSettings: "Sozlamalarni ochish",
     account: "Account va maxfiylik",
   },
   ru: {
@@ -145,6 +155,14 @@ const labels = {
     bioPlaceholder: "Ваша цель или учебный план...",
     partialError: "Часть статистики не загрузилась. Потяните вниз, чтобы повторить.",
     loading: "Обновление…",
+    preferences: "Уведомления и звук",
+    notifications: "Ежедневные напоминания",
+    notificationsHint: "Получайте напоминание о повторении слов каждый день в 20:00.",
+    sounds: "Звуки в приложении",
+    soundsHint: "Короткие звуки для ответов в играх, повторений и достижений.",
+    notificationDeniedTitle: "Уведомления отключены",
+    notificationDeniedBody: "Разрешите уведомления Vocora в настройках устройства.",
+    openSettings: "Открыть настройки",
     account: "Аккаунт и конфиденциальность",
   },
   en: {
@@ -207,6 +225,14 @@ const labels = {
     bioPlaceholder: "Your goal or learning plan...",
     partialError: "Some statistics could not load. Pull down to try again.",
     loading: "Updating…",
+    preferences: "Notifications and sound",
+    notifications: "Daily reminders",
+    notificationsHint: "Get a vocabulary review reminder every day at 20:00.",
+    sounds: "In-app sounds",
+    soundsHint: "Short feedback sounds for game answers, reviews, and achievements.",
+    notificationDeniedTitle: "Notifications are off",
+    notificationDeniedBody: "Allow Vocora notifications in your device settings.",
+    openSettings: "Open settings",
     account: "Account and privacy",
   },
 } as const;
@@ -255,20 +281,23 @@ function recentActivity(rows: Statistics["reviews_by_day"]) {
 
 export default function Profile() {
   const { user, token, logout, updateUser } = useAuth();
+  const { enabled: soundsEnabled, setEnabled: setSoundsEnabled } = useSoundEffects();
   const savedLocale = localeFrom(user?.profile.ui_locale);
   const [name, setName] = useState(user?.profile.display_name ?? "");
   const [bio, setBio] = useState(user?.profile.bio ?? "");
   const [locale, setLocale] = useState<Locale>(savedLocale);
   const [editing, setEditing] = useState(false);
   const [grammarProgress, setGrammarProgress] = useState<MobileGrammarProgress>({});
+  const [notificationsEnabled, setNotificationsEnabledState] = useState(false);
+  const [notificationBusy, setNotificationBusy] = useState(false);
   const t = labels[locale];
   const common = copy[locale];
   const changed = name.trim() !== (user?.profile.display_name ?? "") || bio.trim() !== (user?.profile.bio ?? "") || locale !== savedLocale;
 
-  const stats = useQuery({ queryKey: ["profile", "stats"], queryFn: () => request<Stats>("/me/stats", { token }), enabled: !!token });
-  const statistics = useQuery({ queryKey: ["profile", "statistics"], queryFn: () => request<Statistics>("/me/statistics", { token }), enabled: !!token });
-  const mastery = useQuery({ queryKey: ["profile", "mastery"], queryFn: () => request<MasteryMap>("/me/mastery-map", { token }), enabled: !!token });
-  const ielts = useQuery({ queryKey: ["profile", "ielts"], queryFn: () => request<IeltsOverview>("/ielts/overview", { token }), enabled: !!token });
+  const stats = useQuery({ queryKey: ["stats"], queryFn: () => request<Stats>("/me/stats", { token }), enabled: !!token });
+  const statistics = useQuery({ queryKey: ["statistics"], queryFn: () => request<Statistics>("/me/statistics", { token }), enabled: !!token });
+  const mastery = useQuery({ queryKey: ["mastery-map"], queryFn: () => request<MasteryMap>("/me/mastery-map", { token }), enabled: !!token });
+  const ielts = useQuery({ queryKey: ["ielts-overview"], queryFn: () => request<IeltsOverview>("/ielts/overview", { token }), enabled: !!token });
   const mocks = useQuery({ queryKey: ["profile", "mocks"], queryFn: () => request<IeltsMockSessionListItem[]>("/ielts/mock/sessions", { token }), enabled: !!token, retry: false });
   const latestFinishedMock = mocks.data?.find((item) => item.status === "finished");
   const latestMock = useQuery({
@@ -285,6 +314,20 @@ export default function Profile() {
     setGrammarProgress(progress);
   }, [token, user]);
   useEffect(() => { void loadLocalGrammar(); }, [loadLocalGrammar]);
+  useEffect(() => {
+    const refreshNotificationState = () => {
+      void getVocoraNotificationsEnabled().then(setNotificationsEnabledState).catch(() => setNotificationsEnabledState(false));
+    };
+    refreshNotificationState();
+    const timer = setTimeout(refreshNotificationState, 1_600);
+    const subscription = AppState.addEventListener("change", (state) => {
+      if (state === "active") refreshNotificationState();
+    });
+    return () => {
+      clearTimeout(timer);
+      subscription.remove();
+    };
+  }, []);
 
   const [savePending, setSavePending] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -371,6 +414,25 @@ export default function Profile() {
     ]);
   }
 
+  async function toggleNotifications(next: boolean) {
+    setNotificationBusy(true);
+    try {
+      const enabled = await setVocoraNotificationsEnabled(next, locale, token);
+      setNotificationsEnabledState(enabled);
+      if (next && !enabled) {
+        Alert.alert(t.notificationDeniedTitle, t.notificationDeniedBody, [
+          { text: common.cancel, style: "cancel" },
+          { text: t.openSettings, onPress: () => void Linking.openSettings() },
+        ]);
+      }
+    } catch {
+      setNotificationsEnabledState(false);
+      Alert.alert(t.notificationDeniedTitle, t.notificationDeniedBody);
+    } finally {
+      setNotificationBusy(false);
+    }
+  }
+
   return (
     <Screen appHeader refreshing={refreshing} onRefresh={refresh}>
       <ProfileHero user={user} locale={locale} streak={stats.data?.current_streak ?? 0} />
@@ -434,6 +496,25 @@ export default function Profile() {
         <DetailRow icon="flag-outline" label={t.goal} value={GOAL_LABELS[locale][user?.profile.learning_goal ?? "general"] ?? user?.profile.learning_goal ?? "—"} />
         <DetailRow icon="sparkles-outline" label={t.interests} value={interests} />
         {user?.profile.bio ? <DetailRow icon="person-outline" label={t.bio} value={user.profile.bio} /> : null}
+      </Paper>
+
+      <SectionTitle title={t.preferences} />
+      <Paper style={styles.preferencePanel}>
+        <PreferenceRow
+          icon="notifications-outline"
+          title={t.notifications}
+          body={t.notificationsHint}
+          enabled={notificationsEnabled}
+          disabled={notificationBusy}
+          onChange={(next) => void toggleNotifications(next)}
+        />
+        <PreferenceRow
+          icon="volume-high-outline"
+          title={t.sounds}
+          body={t.soundsHint}
+          enabled={soundsEnabled}
+          onChange={setSoundsEnabled}
+        />
       </Paper>
 
       <Pressable accessibilityRole="button" onPress={() => setEditing((value) => !value)} style={({ pressed }) => [styles.editToggle, pressed && styles.pressed]}>
@@ -574,12 +655,16 @@ function DetailRow({ icon, label, value, tone }: { icon: keyof typeof Ionicons.g
   return <View style={styles.detailRow}><Ionicons name={icon} size={18} color={tone === "teal" ? colors.teal : tone === "rust" ? colors.rust : colors.muted} /><View style={styles.detailCopy}><Text style={styles.detailLabel}>{label}</Text><Text selectable style={[styles.detailValue, tone === "teal" && styles.tealText, tone === "rust" && styles.rustText]}>{value}</Text></View></View>;
 }
 
+function PreferenceRow({ icon, title, body, enabled, disabled = false, onChange }: { icon: keyof typeof Ionicons.glyphMap; title: string; body: string; enabled: boolean; disabled?: boolean; onChange: (enabled: boolean) => void }) {
+  return <View style={styles.preferenceRow}><View style={styles.preferenceIcon}><Ionicons name={icon} size={19} color={colors.teal} /></View><View style={styles.preferenceCopy}><Text style={styles.preferenceTitle}>{title}</Text><Text style={styles.preferenceBody}>{body}</Text></View><Switch accessibilityLabel={title} accessibilityState={{ disabled, checked: enabled }} disabled={disabled} ios_backgroundColor={colors.brand200} onValueChange={onChange} thumbColor={colors.raised} trackColor={{ false: colors.brand200, true: colors.teal }} value={enabled} /></View>;
+}
+
 const styles = StyleSheet.create({
   hero: { gap: 16, overflow: "hidden", padding: 18, borderWidth: 1, borderColor: colors.line, borderRadius: 18, backgroundColor: colors.cream, shadowColor: colors.brand950, shadowOpacity: 0.1, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 3 },
   heroTop: { flexDirection: "row", alignItems: "center", gap: 14 },
   avatar: { width: 68, height: 68, alignItems: "center", justifyContent: "center", borderRadius: 18, backgroundColor: colors.brand600 },
   avatarImage: { width: 68, height: 68, borderRadius: 18, backgroundColor: colors.brand100 },
-  avatarText: { fontFamily: fonts.display, fontSize: 27, color: colors.raised },
+  avatarText: { fontFamily: fonts.display, fontSize: 27, color: colors.onAccent },
   identity: { flex: 1, minWidth: 0, gap: 4 },
   heroTitle: { fontFamily: fonts.display, fontSize: 30, lineHeight: 33, letterSpacing: 0.4, color: colors.ink, textTransform: "uppercase" },
   email: { fontFamily: fonts.uiMedium, fontSize: 12, color: colors.muted },
@@ -599,8 +684,8 @@ const styles = StyleSheet.create({
   sectionTitle: { fontFamily: fonts.display, fontSize: 24, lineHeight: 28, color: colors.ink },
   sectionSubtitle: { maxWidth: 350, fontFamily: fonts.ui, fontSize: 12.5, lineHeight: 19, color: colors.muted },
   snapshot: { gap: 14, padding: 0, overflow: "hidden" },
-  snapshotLead: { padding: 18, backgroundColor: colors.brand950 },
-  snapshotValue: { fontFamily: fonts.display, fontSize: 49, lineHeight: 52, color: colors.raised },
+  snapshotLead: { padding: 18, backgroundColor: colors.inkSurface },
+  snapshotValue: { fontFamily: fonts.display, fontSize: 49, lineHeight: 52, color: colors.onAccent },
   snapshotLabel: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.brand200 },
   snapshotSupporting: { marginTop: 5, fontFamily: fonts.uiMedium, fontSize: 11, color: colors.gold300 },
   snapshotRows: { gap: 2, paddingHorizontal: 16 },
@@ -631,19 +716,19 @@ const styles = StyleSheet.create({
   progressMeta: { flexDirection: "row", justifyContent: "space-between", gap: 10 },
   progressDetail: { fontFamily: fonts.uiMedium, fontSize: 11, color: colors.muted },
   ieltsSection: { gap: 10 },
-  mockPanel: { gap: 16, padding: 17, borderRadius: 15, backgroundColor: colors.brand950 },
+  mockPanel: { gap: 16, padding: 17, borderRadius: 15, backgroundColor: colors.inkSurface },
   mockHeading: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", gap: 12 },
   mockLabel: { fontFamily: fonts.uiBold, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.6, color: colors.gold300 },
   mockDate: { marginTop: 4, fontFamily: fonts.uiMedium, fontSize: 10.5, color: colors.brand200 },
   mockBest: { marginTop: 4, fontFamily: fonts.uiBold, fontSize: 10, color: colors.gold300 },
   mockBody: { flexDirection: "row", alignItems: "stretch", gap: 15 },
   overallBand: { width: 104, minHeight: 126, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.gold400, borderRadius: 14, backgroundColor: colors.brand900 },
-  overallBandValue: { fontFamily: fonts.display, fontSize: 46, lineHeight: 49, color: colors.raised },
+  overallBandValue: { fontFamily: fonts.display, fontSize: 46, lineHeight: 49, color: colors.onAccent },
   overallBandLabel: { fontFamily: fonts.uiBold, fontSize: 9.5, textTransform: "uppercase", color: colors.gold300 },
   bandList: { flex: 1, gap: 2 },
   bandRow: { minHeight: 30, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, borderBottomWidth: 1, borderBottomColor: "rgba(232,201,154,.22)" },
   bandLabel: { fontFamily: fonts.uiMedium, fontSize: 10.5, color: colors.brand200 },
-  bandValue: { fontFamily: fonts.display, fontSize: 18, color: colors.raised },
+  bandValue: { fontFamily: fonts.display, fontSize: 18, color: colors.onAccent },
   bestPanel: { gap: 12 },
   bestTitle: { fontFamily: fonts.uiBold, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, color: colors.muted },
   bestGrid: { flexDirection: "row", gap: 6 },
@@ -661,6 +746,12 @@ const styles = StyleSheet.create({
   detailValue: { fontFamily: fonts.uiBold, fontSize: 12.5, lineHeight: 18, color: colors.ink },
   tealText: { color: colors.teal },
   rustText: { color: colors.rustDark },
+  preferencePanel: { gap: 0, paddingVertical: 2 },
+  preferenceRow: { minHeight: 76, flexDirection: "row", alignItems: "center", gap: 11, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: colors.line },
+  preferenceIcon: { width: 38, height: 38, alignItems: "center", justifyContent: "center", borderRadius: 10, backgroundColor: "rgba(70,120,120,.09)" },
+  preferenceCopy: { flex: 1, minWidth: 0, gap: 3 },
+  preferenceTitle: { fontFamily: fonts.uiBold, fontSize: 12.5, color: colors.ink },
+  preferenceBody: { fontFamily: fonts.ui, fontSize: 10.5, lineHeight: 16, color: colors.muted },
   editToggle: { minHeight: 50, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, borderWidth: 1, borderColor: colors.line, borderRadius: 12, backgroundColor: colors.raised },
   editToggleText: { fontFamily: fonts.uiBold, fontSize: 13, color: colors.rustDark },
   editPanel: { gap: 14 },
@@ -670,7 +761,7 @@ const styles = StyleSheet.create({
   language: { minHeight: 48, flex: 1, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: colors.line, borderRadius: 10, backgroundColor: colors.raised },
   languageSelected: { borderColor: colors.brand600, backgroundColor: colors.brand600 },
   languageText: { fontFamily: fonts.uiBold, fontSize: 12, color: colors.ink },
-  languageTextSelected: { color: colors.raised },
+  languageTextSelected: { color: colors.onAccent },
   dangerPanel: { gap: 12, borderColor: colors.danger },
   dangerCopy: { gap: 5 },
   dangerTitle: { fontFamily: fonts.uiBold, fontSize: 14, color: colors.danger },

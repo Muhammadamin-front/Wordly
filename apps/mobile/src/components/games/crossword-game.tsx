@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Button } from "@/components/ui";
 import type { GameQuestion } from "@/api/client";
+import { useTimeoutRegistry } from "@/hooks/use-timeout-registry";
 import { colors, fonts } from "@/theme/tokens";
 
 export type Dir = "across" | "down";
@@ -173,6 +174,7 @@ export function CrosswordGame({
   const [input, setInput] = useState("");
   const [wrongId, setWrongId] = useState<string | null>(null);
   const startedAt = useRef(Date.now());
+  const timeouts = useTimeoutRegistry();
 
   const revealed: (string | null)[][] = solution.map((line) => line.map(() => null));
   for (const p of placements) {
@@ -192,10 +194,10 @@ export function CrosswordGame({
       setActiveId(null);
       setInput("");
       startedAt.current = Date.now();
-      if (solvedIds.size + 1 === placements.length) setTimeout(onComplete, 500);
+      if (solvedIds.size + 1 === placements.length) timeouts.schedule(onComplete, 500);
     } else {
       setWrongId(placement.cardId);
-      setTimeout(() => setWrongId(null), 700);
+      timeouts.schedule(() => setWrongId(null), 700);
     }
   }
 
@@ -302,7 +304,7 @@ function ClueList({
               <Text numberOfLines={2} style={[styles.clueText, solved && styles.clueTextSolved]}>{p.prompt}</Text>
               {solved && (
                 <View style={styles.clueDone}>
-                  <Ionicons name="checkmark" size={12} color={colors.raised} />
+                  <Ionicons name="checkmark" size={12} color={colors.onAccent} />
                 </View>
               )}
             </Pressable>

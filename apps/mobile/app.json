@@ -20,7 +20,7 @@
         "expo-notifications",
         {
           "color": "#B94E28",
-          "defaultChannel": "vocora-daily-review"
+          "defaultChannel": "vocora-daily-review-v2"
         }
       ],
       "@react-native-google-signin/google-signin"
