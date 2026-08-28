@@ -726,7 +726,7 @@
     "report": "Report an issue",
     "reported": "Thanks, we'll review it.",
     "aiLabel": "AI-generated",
-    "premiumUpsell": "Go Premium for unlimited AI",
+    "premiumUpsell": "Go Premium for 200 AI actions a day",
     "error": "Something went wrong. Please try again."
   },
   "coach": {
@@ -908,15 +908,15 @@
     "currentPlan": "Current plan",
     "choosePlan": "Choose",
     "mostPopular": "Most popular",
-    "freeFeatures": "Core learning loop · 5 AI actions/day · 3 games",
-    "premiumFeatures": "Unlimited AI · all games · offline mode · statistics · no ads",
-    "familyFeatures": "Premium for 6 people · all features",
+    "freeFeatures": "5 AI actions/day · 1 full mock exam/month · 3 writing checks/week · 3 games",
+    "premiumFeatures": "Live AI speaking — 10 min/week · AI writing checks — 5/day · Unlimited full mock exams · All games",
+    "familyFeatures": "Premium for 6 people · Each member gets their own allowance",
     "honestTitle": "Premium should unlock depth, not block learning",
     "honestBody": "Core vocabulary, review and beginner progress stay free. Premium is for serious learners who want deeper analytics, more practice variety and future offline access.",
     "freeIncludes": "Free includes",
     "premiumAdds": "Premium adds",
-    "freeIncludesList": "CEFR word library · SRS reviews · starter path · core games",
-    "premiumAddsList": "Deep statistics · all games · advanced review modes · priority IELTS packs",
+    "freeIncludesList": "CEFR word library · SRS reviews · Text-based speaking practice",
+    "premiumAddsList": "200 AI actions/day · Per-criterion band feedback · Deep progress analytics",
     "paymentGate": "Payments are shown only when Payme or Click is configured. No fake urgency, no hidden paywall.",
     "familyUnavailable": "Family plan will open after seat management is ready.",
     "payWith": "Pay with",
@@ -948,7 +948,9 @@
     "retry": "Try again",
     "signInToChoose": "Sign in to choose",
     "premiumQuarterly": "Premium (3 months)",
-    "perQuarter": "/3mo"
+    "perQuarter": "/3mo",
+    "saveLabel": "off",
+    "regularPrice": "Regular price"
   },
   "teacher": {
     "title": "Teacher panel",

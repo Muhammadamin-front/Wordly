@@ -123,9 +123,16 @@ async def writing_score(
     db: AsyncSession = Depends(get_db),
     client: AiClient = Depends(require_ai_client),
 ):
-    if not await subscriptions.is_premium(db, user) and not await ielts.has_free_writing_quota(
-        db, user.id
-    ):
+    if await subscriptions.is_premium(db, user):
+        if not await ielts.has_premium_writing_quota(db, user.id):
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail=(
+                    f"Daily writing limit reached ({ielts.PREMIUM_WRITING_CHECKS_PER_DAY}/day). "
+                    "Your allowance refills over the next 24 hours."
+                ),
+            )
+    elif not await ielts.has_free_writing_quota(db, user.id):
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail=(

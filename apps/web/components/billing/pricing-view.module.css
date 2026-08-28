@@ -264,9 +264,38 @@
   font-weight: 700;
 }
 
+/* Sits above the price, so it must cancel the shared `.priceBlock span`
+   top margin that spaces the per-unit caption below it. */
+.priceBlock .regularPrice {
+  margin-top: 0;
+  margin-bottom: 5px;
+  color: var(--plan-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0.75;
+}
+
+.priceBlock .regularPrice s {
+  text-decoration-thickness: 1px;
+}
+
 .priceBlockHidden {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Replaces the "most popular" pill on discounted plans, so it inherits that
+   pill's box from `.planHeading > span` and only restates the emphasis. */
+/* Tinted with the card's own accent rather than filled with it: the accent is
+   cream on the dark card and teal or brown on the light ones, so a fixed text
+   colour would be unreadable on one of them. */
+.planHeading > span.saveBadge {
+  max-width: none;
+  background: color-mix(in srgb, var(--plan-accent) 15%, transparent);
+  font-size: 0.72rem;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .actionDock {

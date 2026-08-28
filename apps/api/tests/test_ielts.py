@@ -2,7 +2,7 @@ from typing import Any
 
 from app.api.v1.ielts import require_ai_client
 from app.main import app
-from app.services.ielts import band_from_ratio
+from app.services.ielts import PREMIUM_WRITING_CHECKS_PER_DAY, band_from_ratio
 from tests.conftest import register_user
 
 QUESTIONS = [
@@ -326,6 +326,34 @@ async def test_premium_is_not_capped_by_the_free_weekly_writing_limit(client):
                 headers=headers,
             )
             assert resp.status_code == 200, resp.text
+    finally:
+        app.dependency_overrides.pop(require_ai_client, None)
+
+
+async def test_premium_writing_checks_capped_at_five_per_day(client):
+    """Premium is not unlimited: each check is a long, expensive model call,
+    so the paid tiers advertise — and enforce — five a day."""
+    use_fake()
+    try:
+        headers = await learner(client, email="ieltsw-premium-cap@words.uz")
+        await client.post(
+            "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        )
+        for _ in range(5):
+            resp = await client.post(
+                "/api/v1/ielts/writing/score",
+                json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+                headers=headers,
+            )
+            assert resp.status_code == 200, resp.text
+
+        sixth = await client.post(
+            "/api/v1/ielts/writing/score",
+            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60},
+            headers=headers,
+        )
+        assert sixth.status_code == 429
+        assert str(PREMIUM_WRITING_CHECKS_PER_DAY) in sixth.json()["detail"]
     finally:
         app.dependency_overrides.pop(require_ai_client, None)
 

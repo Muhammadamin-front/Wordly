@@ -34,7 +34,7 @@ async def test_debit_reduces_remaining_and_sums_across_many_short_turns(client):
         await db.commit()
 
     async with db_session.get_session_factory()() as db:
-        used = await voice_minutes.used_seconds_this_month(db, user_id)
+        used = await voice_minutes.used_seconds_this_week(db, user_id)
         assert used == 300  # 10 * 30s, not rounded/truncated per-turn
         assert await voice_minutes.remaining_seconds(db, user_id, ALLOWANCE) == ALLOWANCE - 300
 
@@ -60,7 +60,7 @@ async def test_debit_always_succeeds_even_past_the_allowance(client):
         await db.commit()
 
     async with db_session.get_session_factory()() as db:
-        assert await voice_minutes.used_seconds_this_month(db, user_id) == ALLOWANCE + 45
+        assert await voice_minutes.used_seconds_this_week(db, user_id) == ALLOWANCE + 45
         assert await voice_minutes.remaining_seconds(db, user_id, ALLOWANCE) == 0
 
 
@@ -73,15 +73,15 @@ async def test_debit_rejects_non_positive_seconds(client):
             await voice_minutes.debit(db, user_id, -5, reason="coach_turn")
 
 
-async def test_usage_from_a_previous_month_does_not_count_against_this_month(client):
-    """The allowance resets every calendar month — no cron job, no stored
-    balance to reset; "remaining" is only ever this month's rows."""
+async def test_usage_from_a_previous_week_does_not_count_against_this_week(client):
+    """The allowance resets every calendar week — no cron job, no stored
+    balance to reset; "remaining" is only ever this week's rows."""
     user_id = await _user_id(client, email="voice6@words.uz")
     async with db_session.get_session_factory()() as db:
-        last_month = voice_minutes._month_start() - timedelta(days=1)
+        last_week = voice_minutes._week_start() - timedelta(days=1)
         db.add(
             VoiceMinutesTransaction(
-                user_id=user_id, seconds=ALLOWANCE, reason="coach_turn", created_at=last_month,
+                user_id=user_id, seconds=ALLOWANCE, reason="coach_turn", created_at=last_week,
             )
         )
         await db.commit()
