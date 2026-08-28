@@ -15,14 +15,17 @@ class Plan:
 
 PLANS: Dict[str, Plan] = {
     "free": Plan("free", "free", 0, 0, 1),
-    "premium_monthly": Plan("premium_monthly", "premium", 29_000, 30, 1),
-    "premium_yearly": Plan("premium_yearly", "premium", 199_000, 365, 1),
+    "premium_monthly": Plan("premium_monthly", "premium", 49_000, 30, 1),
+    # ~15% off 3x monthly (147,000 -> 124,950, rounded to a clean 125,000).
+    "premium_quarterly": Plan("premium_quarterly", "premium", 125_000, 90, 1),
+    # Exactly 25% off 12x monthly (588,000 * 0.75 = 441,000).
+    "premium_yearly": Plan("premium_yearly", "premium", 441_000, 365, 1),
     "family": Plan("family", "premium", 349_000, 365, 6),
 }
 
 PAID_PLANS = [p for p in PLANS.values() if p.tier == "premium"]
-PUBLIC_PLAN_CODES = ("free", "premium_monthly", "premium_yearly")
-SELLABLE_PLAN_CODES = frozenset(("premium_monthly", "premium_yearly"))
+PUBLIC_PLAN_CODES = ("free", "premium_monthly", "premium_quarterly", "premium_yearly")
+SELLABLE_PLAN_CODES = frozenset(("premium_monthly", "premium_quarterly", "premium_yearly"))
 
 
 @dataclass(frozen=True)

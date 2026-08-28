@@ -13,9 +13,13 @@ async def learner(client, email="buyer@words.uz") -> dict:
 async def test_plans_listed(client):
     body = (await client.get("/api/v1/billing/plans")).json()
     codes = {p["code"] for p in body["plans"]}
-    assert codes == {"free", "premium_monthly", "premium_yearly"}
+    assert codes == {"free", "premium_monthly", "premium_quarterly", "premium_yearly"}
     monthly = next(p for p in body["plans"] if p["code"] == "premium_monthly")
-    assert monthly["price_som"] == 29000
+    assert monthly["price_som"] == 49000
+    quarterly = next(p for p in body["plans"] if p["code"] == "premium_quarterly")
+    assert quarterly["price_som"] == 125000
+    yearly = next(p for p in body["plans"] if p["code"] == "premium_yearly")
+    assert yearly["price_som"] == 441000
 
 
 async def test_public_billing_catalog_keeps_account_actions_protected(client):
@@ -68,7 +72,7 @@ async def test_checkout_creates_order_and_url(client):
         )
         assert response.status_code == 201, response.text
         body = response.json()
-        assert body["amount_som"] == 29000
+        assert body["amount_som"] == 49000
         assert body["checkout_url"].startswith(settings.PAYME_CHECKOUT_URL)
         assert body["order_id"]
     finally:
@@ -183,7 +187,7 @@ async def test_uzum_checkout_registers_hosted_page_and_reuses_idempotency(client
         assert len(calls) == 1
         path, payload, language = calls[0]
         assert path == "/payment/register"
-        assert payload["amount"] == 2_900_000
+        assert payload["amount"] == 4_900_000
         assert payload["orderNumber"] == first.json()["order_id"]
         assert payload["paymentParams"] == {"operationType": "PAYMENT", "payType": "ONE_STEP", "force3ds": True}
         assert language == "uz-UZ"
@@ -214,7 +218,7 @@ async def test_uzum_callback_verifies_remote_completion_before_granting(client, 
             "orderId": "uzum-order-2",
             "merchantOrderId": order_id,
             "status": "COMPLETED",
-            "amount": 2_900_000,
+            "amount": 4_900_000,
         }
 
     monkeypatch.setattr(uzum, "_post", fake_post)
@@ -264,7 +268,7 @@ async def test_uzum_declined_payment_never_grants_premium_even_with_success_call
             "orderId": "uzum-order-declined",
             "merchantOrderId": order_id,
             "status": "DECLINED",
-            "amount": 2_900_000,
+            "amount": 4_900_000,
         }
 
     monkeypatch.setattr(uzum, "_post", fake_post)
@@ -372,7 +376,7 @@ async def _make_order(client, headers, provider="payme") -> tuple[str, int]:
         headers=headers,
     )
     body = response.json()
-    return body["order_id"], 29000 * 100  # tiyin
+    return body["order_id"], 49000 * 100  # tiyin
 
 
 async def test_payme_rejects_bad_auth(client):
@@ -518,7 +522,7 @@ async def test_click_prepare_and_complete(client):
 
         prepare_params = {
             "click_trans_id": "111", "service_id": "svc1", "merchant_trans_id": order_id,
-            "amount": "29000.00", "action": "0", "sign_time": "2026-07-09 10:00:00",
+            "amount": "49000.00", "action": "0", "sign_time": "2026-07-09 10:00:00",
         }
         prepare_params["sign_string"] = make_prepare_sign(prepare_params)
         prep = await client.post("/api/v1/payments/click/prepare", data=prepare_params)
@@ -527,7 +531,7 @@ async def test_click_prepare_and_complete(client):
 
         complete_params = {
             "click_trans_id": "111", "service_id": "svc1", "merchant_trans_id": order_id,
-            "merchant_prepare_id": prepare_id, "amount": "29000.00", "action": "1",
+            "merchant_prepare_id": prepare_id, "amount": "49000.00", "action": "1",
             "error": "0", "sign_time": "2026-07-09 10:01:00",
         }
         complete_params["sign_string"] = make_complete_sign(complete_params)

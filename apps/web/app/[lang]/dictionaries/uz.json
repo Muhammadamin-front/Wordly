@@ -944,7 +944,9 @@
     "error": "Xatolik yuz berdi.",
     "loadError": "Narxlar va to'lov holatini yuklab bo'lmadi. Ulanishni tekshirib, qayta urinib ko'ring.",
     "retry": "Qayta urinish",
-    "signInToChoose": "Kirish va tanlash"
+    "signInToChoose": "Kirish va tanlash",
+    "premiumQuarterly": "Premium (3 oylik)",
+    "perQuarter": "/3oy"
   },
   "teacher": {
     "title": "O'qituvchi paneli",

@@ -3503,7 +3503,7 @@ export interface components {
              * Plan Code
              * @enum {string}
              */
-            plan_code: "premium_monthly" | "premium_yearly";
+            plan_code: "premium_monthly" | "premium_quarterly" | "premium_yearly";
             /**
              * Extra Days
              * @default 0

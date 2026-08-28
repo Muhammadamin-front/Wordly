@@ -944,7 +944,9 @@
     "error": "Something went wrong.",
     "loadError": "We couldn't load plans and payment status. Check your connection and try again.",
     "retry": "Try again",
-    "signInToChoose": "Sign in to choose"
+    "signInToChoose": "Sign in to choose",
+    "premiumQuarterly": "Premium (3 months)",
+    "perQuarter": "/3mo"
   },
   "teacher": {
     "title": "Teacher panel",
