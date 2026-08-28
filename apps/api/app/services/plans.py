@@ -51,17 +51,23 @@ SELLABLE_PLAN_CODES = frozenset((
 ))
 
 # Real-time voice speaking allowance, in whole seconds, reset every calendar
-# month (see services.voice_minutes) — not a lifetime balance like coins.
+# week (see services.voice_minutes) — not a lifetime balance like coins.
 # "premium_*" plan codes are the Basic tier here; any code not listed gets 0
 # (free tier never reaches real-time voice at all — see services.voice_minutes).
-VOICE_SECONDS_PER_MONTH: Dict[str, int] = {
-    "premium_monthly": 60 * 60,
-    "premium_quarterly": 60 * 60,
-    "premium_yearly": 60 * 60,
-    "family": 60 * 60,
-    "speaking_pro_monthly": 300 * 60,
-    "speaking_pro_quarterly": 300 * 60,
-    "speaking_pro_yearly": 300 * 60,
+#
+# Weekly rather than monthly because it is what the plans advertise, and it
+# paces the spend: a learner cannot burn a whole month's voice cost in one
+# sitting and then churn, and a quiet week costs nothing to carry.
+VOICE_SECONDS_PER_WEEK: Dict[str, int] = {
+    "premium_monthly": 10 * 60,
+    "premium_quarterly": 10 * 60,
+    "premium_yearly": 10 * 60,
+    "family": 10 * 60,
+    # ~70/week keeps Speaking Pro at the ~300 minutes a month it was priced
+    # against (~262 so'm/minute real cost) now that the window is weekly.
+    "speaking_pro_monthly": 70 * 60,
+    "speaking_pro_quarterly": 70 * 60,
+    "speaking_pro_yearly": 70 * 60,
 }
 
 # Coin price for extra real-time voice minutes beyond the monthly allowance
@@ -110,12 +116,12 @@ def get_plan(code: str) -> Optional[Plan]:
     return PLANS.get(code)
 
 
-def voice_seconds_per_month(plan_code: Optional[str]) -> int:
+def voice_seconds_per_week(plan_code: Optional[str]) -> int:
     """0 for free/unknown/None — real-time voice is never reachable without
     an active Basic or Speaking Pro subscription."""
     if not plan_code:
         return 0
-    return VOICE_SECONDS_PER_MONTH.get(plan_code, 0)
+    return VOICE_SECONDS_PER_WEEK.get(plan_code, 0)
 
 
 def public_coin_packs() -> list[CoinPack]:

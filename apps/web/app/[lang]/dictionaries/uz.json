@@ -726,7 +726,7 @@
     "report": "Xato haqida xabar berish",
     "reported": "Rahmat, tekshiramiz.",
     "aiLabel": "AI tomonidan yaratilgan",
-    "premiumUpsell": "Cheksiz AI uchun Premium oling",
+    "premiumUpsell": "Kuniga 200 AI amali uchun Premium oling",
     "error": "Xatolik yuz berdi. Qayta urinib ko'ring."
   },
   "coach": {
@@ -908,15 +908,15 @@
     "currentPlan": "Joriy reja",
     "choosePlan": "Tanlash",
     "mostPopular": "Eng ommabop",
-    "freeFeatures": "Asosiy o'rganish tsikli · 5 AI amali/kun · 3 o'yin",
-    "premiumFeatures": "Cheksiz AI · barcha o'yinlar · oflayn rejim · statistika · reklama yo'q",
-    "familyFeatures": "6 kishi uchun Premium · barcha imkoniyatlar",
+    "freeFeatures": "Kuniga 5 AI amali · Oyiga 1 ta to'liq mock imtihon · Haftasiga 3 writing tekshiruvi · 3 ta o'yin",
+    "premiumFeatures": "Jonli AI speaking — haftasiga 10 daqiqa · AI writing tekshiruvi — kuniga 5 marta · Cheksiz to'liq mock imtihon · Barcha o'yinlar",
+    "familyFeatures": "6 kishi uchun Premium · Har bir a'zoga o'z limiti",
     "honestTitle": "Premium o'rganishni to'smasin, chuqurlik qo'shsin",
     "honestBody": "Asosiy vocabulary, takrorlash va boshlang'ich progress bepul qoladi. Premium jiddiy o'rganuvchilar uchun chuqur statistika, ko'proq mashq va kelajakdagi offline imkoniyatlarni ochadi.",
     "freeIncludes": "Bepul ichida",
     "premiumAdds": "Premium qo'shadi",
-    "freeIncludesList": "CEFR so'z kutubxonasi · SRS takrorlash · starter path · asosiy o'yinlar",
-    "premiumAddsList": "Chuqur statistika · barcha o'yinlar · advanced review mode · priority IELTS packlar",
+    "freeIncludesList": "CEFR so'z kutubxonasi · SRS takrorlash · Matnli speaking mashqi",
+    "premiumAddsList": "Kuniga 200 AI amali · Har bir mezon bo'yicha band izohi · Chuqur statistika va tahlil",
     "paymentGate": "To'lov faqat Payme yoki Click sozlanganda ko'rsatiladi. Soxta shoshiltirish va yashirin paywall yo'q.",
     "familyUnavailable": "Oilaviy reja seat management tayyor bo'lgandan keyin ochiladi.",
     "payWith": "To'lov usuli",
@@ -948,7 +948,9 @@
     "retry": "Qayta urinish",
     "signInToChoose": "Kirish va tanlash",
     "premiumQuarterly": "Premium (3 oylik)",
-    "perQuarter": "/3oy"
+    "perQuarter": "/3oy",
+    "saveLabel": "chegirma",
+    "regularPrice": "Oddiy narx"
   },
   "teacher": {
     "title": "O'qituvchi paneli",

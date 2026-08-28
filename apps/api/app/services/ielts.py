@@ -54,21 +54,21 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
             },
         },
         {
-            "title": "Task 1 — Line graph",
+            "title": 'Task 1 — Line (house prices in three cities)',
             "prompt": (
-                "The graph below shows average house prices in one European city between 2000 and "
-                "2020, compared with average salaries over the same period. Summarise the "
-                "information by selecting and reporting the main features, and make comparisons "
-                "where relevant. Write at least 150 words."
+                'The graph below shows the average house price in three European cities between 2000 '
+                'and 2020. Summarise the information by selecting and reporting the main features, and '
+                'make comparisons where relevant. Write at least 150 words.'
             ),
             "visual": {
                 "kind": "line",
-                "title": "Average house prices and salaries, 2000–2020",
-                "y_label": "£ thousands",
-                "categories": ["2000", "2005", "2010", "2015", "2020"],
+                "title": 'Average house prices in three European cities, 2000–2020',
+                "y_label": '£ thousands',
+                "categories": ['2000', '2004', '2008', '2012', '2016', '2020'],
                 "series": [
-                    {"name": "Average house price", "values": [145, 168, 214, 252, 305]},
-                    {"name": "Average annual salary", "values": [24, 27, 31, 35, 39]},
+                    {"name": 'Dublin', "values": [145, 205, 268, 178, 232, 305]},
+                    {"name": 'Berlin', "values": [112, 128, 139, 158, 214, 289]},
+                    {"name": 'Lisbon', "values": [98, 124, 151, 132, 168, 236]},
                 ],
             },
         },
@@ -624,35 +624,63 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
             "series": [{"name": "Export value", "values": [45, 28, 22, 18, 12]}]},
     },
         {
-        "title": "Task 1 — Line (global temperature change)",
-        "prompt": ("The graph below shows the change in global average temperature, relative "
-                   "to the 1950 average, between 1950 and 2020. Summarise the information by "
-                   "selecting and reporting the main features, and make comparisons where "
-                   "relevant. Write at least 150 words."),
-        "visual": {"kind": "line", "title": "Global average temperature change, 1950-2020",
-            "y_label": "°C change from 1950", "categories": ["1950", "1970", "1990", "2010", "2020"],
-            "series": [{"name": "Temperature change", "values": [0, 0.1, 0.3, 0.7, 1.1]}]},
-    },
+            "title": 'Task 1 — Line (temperature change by region)',
+            "prompt": (
+                'The graph below shows the change in average temperature in three regions, relative to '
+                'their 1950 average, between 1950 and 2020. Summarise the information by selecting and '
+                'reporting the main features, and make comparisons where relevant. Write at least 150 '
+                'words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Change in average temperature by region, 1950–2020',
+                "y_label": '°C change from 1950',
+                "categories": ['1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'],
+                "series": [
+                    {"name": 'Arctic', "values": [0, 0.1, 0.2, 0.4, 0.7, 1.2, 1.9, 2.7]},
+                    {"name": 'Global average', "values": [0, 0.05, 0.1, 0.25, 0.4, 0.6, 0.85, 1.1]},
+                    {"name": 'Tropics', "values": [0, 0.03, 0.08, 0.15, 0.28, 0.42, 0.6, 0.78]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (unemployment rate)",
-        "prompt": ("The graph below shows the unemployment rate in three countries between "
-                   "2000 and 2020. Summarise the information by selecting and reporting the "
-                   "main features, and make comparisons where relevant. Write at least 150 "
-                   "words."),
-        "visual": {"kind": "line", "title": "Unemployment rate, 2000-2020", "y_label": "% of workforce",
-            "categories": ["2000", "2005", "2010", "2015", "2020"],
-            "series": [{"name": "Spain", "values": [11, 9, 20, 22, 15]}, {"name": "Germany", "values": [8, 11, 7, 5, 4]}]},
-    },
+            "title": 'Task 1 — Line (unemployment rate)',
+            "prompt": (
+                'The graph below shows the unemployment rate in three countries between 2000 and 2020. '
+                'Summarise the information by selecting and reporting the main features, and make '
+                'comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Unemployment rate in three countries, 2000–2020',
+                "y_label": '% of workforce',
+                "categories": ['2000', '2004', '2008', '2012', '2016', '2020'],
+                "series": [
+                    {"name": 'Spain', "values": [11.9, 11.0, 11.3, 24.8, 19.6, 15.5]},
+                    {"name": 'France', "values": [9.0, 8.9, 7.4, 9.8, 10.1, 8.0]},
+                    {"name": 'Germany', "values": [7.9, 10.7, 7.5, 5.4, 4.1, 3.8]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (tourist arrivals)",
-        "prompt": ("The graph below shows the number of international tourists visiting a "
-                   "country between 2000 and 2020. Summarise the information by selecting and "
-                   "reporting the main features, and make comparisons where relevant. Write at "
-                   "least 150 words."),
-        "visual": {"kind": "line", "title": "International tourist arrivals, 2000-2020", "y_label": "Millions of visitors",
-            "categories": ["2000", "2005", "2010", "2015", "2020"],
-            "series": [{"name": "Tourists", "values": [2.1, 3.4, 5.2, 8.7, 3.9]}]},
-    },
+            "title": 'Task 1 — Line (tourist arrivals)',
+            "prompt": (
+                'The graph below shows the number of international tourists arriving in three countries '
+                'between 2000 and 2020. Summarise the information by selecting and reporting the main '
+                'features, and make comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'International tourist arrivals, 2000–2020',
+                "y_label": 'Millions of arrivals',
+                "categories": ['2000', '2005', '2010', '2015', '2019', '2020'],
+                "series": [
+                    {"name": 'Spain', "values": [46.4, 55.9, 52.7, 68.5, 83.5, 19.0]},
+                    {"name": 'Turkey', "values": [9.6, 20.3, 31.4, 39.5, 51.2, 15.9]},
+                    {"name": 'Japan', "values": [4.8, 6.7, 8.6, 19.7, 31.9, 4.1]},
+                ],
+            },
+        },
         {
         "title": "Task 1 — Line (city populations)",
         "prompt": ("The graph below shows the population of three major cities between 1950 "
@@ -665,15 +693,25 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                        {"name": "London", "values": [8.2, 7.5, 6.8, 8.2, 9.0]}]},
     },
         {
-        "title": "Task 1 — Line (mobile vs landline subscriptions)",
-        "prompt": ("The graph below shows the number of mobile phone and landline telephone "
-                   "subscriptions per 100 people between 1990 and 2020. Summarise the "
-                   "information by selecting and reporting the main features, and make "
-                   "comparisons where relevant. Write at least 150 words."),
-        "visual": {"kind": "line", "title": "Mobile vs landline subscriptions, 1990-2020", "y_label": "Per 100 people",
-            "categories": ["1990", "2000", "2010", "2020"],
-            "series": [{"name": "Mobile", "values": [0, 12, 78, 108]}, {"name": "Landline", "values": [45, 48, 30, 11]}]},
-    },
+            "title": 'Task 1 — Line (telecoms subscriptions)',
+            "prompt": (
+                'The graph below shows the number of mobile phone, landline telephone and fixed '
+                'broadband subscriptions per 100 people between 1990 and 2020. Summarise the '
+                'information by selecting and reporting the main features, and make comparisons where '
+                'relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Telecoms subscriptions per 100 people, 1990–2020',
+                "y_label": 'Subscriptions per 100 people',
+                "categories": ['1990', '1995', '2000', '2005', '2010', '2015', '2020'],
+                "series": [
+                    {"name": 'Mobile', "values": [0.2, 1.6, 12.1, 34.0, 78.0, 97.0, 108.0]},
+                    {"name": 'Landline', "values": [45, 47, 48, 42, 30, 19, 11]},
+                    {"name": 'Fixed broadband', "values": [0, 0, 0.6, 4.2, 10.5, 15.8, 17.2]},
+                ],
+            },
+        },
         {
         "title": "Task 1 — Line (CO2 emissions by country)",
         "prompt": ("The graph below shows carbon dioxide emissions in four countries between "
@@ -700,56 +738,102 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                        {"name": "Nigeria", "values": [36, 42, 46, 51, 55]}]},
     },
         {
-        "title": "Task 1 — Line (print books vs e-books)",
-        "prompt": ("The graph below shows sales of print books and e-books in a country "
-                   "between 2005 and 2020. Summarise the information by selecting and "
-                   "reporting the main features, and make comparisons where relevant. Write at "
-                   "least 150 words."),
-        "visual": {"kind": "line", "title": "Print book vs e-book sales, 2005-2020", "y_label": "Million units sold",
-            "categories": ["2005", "2010", "2015", "2020"],
-            "series": [{"name": "Print books", "values": [320, 290, 260, 230]}, {"name": "E-books", "values": [0, 45, 95, 140]}]},
-    },
+            "title": 'Task 1 — Line (book sales by format)',
+            "prompt": (
+                'The graph below shows sales of print books, e-books and audiobooks in one country '
+                'between 2005 and 2020. Summarise the information by selecting and reporting the main '
+                'features, and make comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Book sales by format, 2005–2020',
+                "y_label": 'Million units sold',
+                "categories": ['2005', '2008', '2011', '2014', '2017', '2020'],
+                "series": [
+                    {"name": 'Print books', "values": [320, 305, 288, 264, 245, 230]},
+                    {"name": 'E-books', "values": [0, 12, 58, 102, 124, 140]},
+                    {"name": 'Audiobooks', "values": [4, 7, 13, 24, 48, 86]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (household internet access)",
-        "prompt": ("The graph below shows the percentage of households with internet access "
-                   "in four countries between 2000 and 2020. Summarise the information by "
-                   "selecting and reporting the main features, and make comparisons where "
-                   "relevant. Write at least 150 words."),
-        "visual": {"kind": "line", "title": "Households with internet access, 2000-2020", "y_label": "% of households",
-            "categories": ["2000", "2005", "2010", "2015", "2020"],
-            "series": [{"name": "South Korea", "values": [19, 78, 95, 99, 99]},
-                       {"name": "Brazil", "values": [3, 14, 33, 51, 74]}]},
-    },
+            "title": 'Task 1 — Line (household internet access)',
+            "prompt": (
+                'The graph below shows the percentage of households with internet access in four '
+                'countries between 2000 and 2020. Summarise the information by selecting and reporting '
+                'the main features, and make comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Households with internet access, 2000–2020',
+                "y_label": '% of households',
+                "categories": ['2000', '2004', '2008', '2012', '2016', '2020'],
+                "series": [
+                    {"name": 'South Korea', "values": [19, 71, 88, 96, 99, 99]},
+                    {"name": 'Germany', "values": [16, 52, 75, 85, 92, 96]},
+                    {"name": 'Brazil', "values": [3, 12, 27, 45, 61, 81]},
+                    {"name": 'India', "values": [1, 3, 7, 13, 25, 47]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (house price vs income)",
-        "prompt": ("The graph below shows an index of average house prices and average income "
-                   "in a city between 1980 and 2020, where 1980 = 100. Summarise the "
-                   "information by selecting and reporting the main features, and make "
-                   "comparisons where relevant. Write at least 150 words."),
-        "visual": {"kind": "line", "title": "House price and income index, 1980-2020 (1980=100)", "y_label": "Index",
-            "categories": ["1980", "1990", "2000", "2010", "2020"],
-            "series": [{"name": "House prices", "values": [100, 165, 240, 310, 420]}, {"name": "Average income", "values": [100, 130, 155, 175, 195]}]},
-    },
+            "title": 'Task 1 — Line (housing costs vs income)',
+            "prompt": (
+                'The graph below shows an index of average house prices, average rents and average '
+                'income in one city between 1980 and 2020. Summarise the information by selecting and '
+                'reporting the main features, and make comparisons where relevant. Write at least 150 '
+                'words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'House prices, rents and income, 1980–2020 (1980 = 100)',
+                "y_label": 'Index (1980 = 100)',
+                "categories": ['1980', '1988', '1996', '2004', '2012', '2020'],
+                "series": [
+                    {"name": 'House prices', "values": [100, 152, 198, 286, 318, 420]},
+                    {"name": 'Rents', "values": [100, 138, 172, 215, 258, 312]},
+                    {"name": 'Average income', "values": [100, 126, 148, 168, 180, 195]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (electric vehicle sales)",
-        "prompt": ("The graph below shows the number of new electric vehicles sold worldwide "
-                   "between 2015 and 2023. Summarise the information by selecting and reporting "
-                   "the main features, and make comparisons where relevant. Write at least 150 "
-                   "words."),
-        "visual": {"kind": "line", "title": "Global electric vehicle sales, 2015-2023", "y_label": "Million units",
-            "categories": ["2015", "2017", "2019", "2021", "2023"],
-            "series": [{"name": "EV sales", "values": [0.5, 1.2, 2.3, 6.8, 14.0]}]},
-    },
+            "title": 'Task 1 — Line (electric vehicle sales)',
+            "prompt": (
+                'The graph below shows the number of new electric vehicles sold in three regions '
+                'between 2015 and 2023. Summarise the information by selecting and reporting the main '
+                'features, and make comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'New electric vehicle sales by region, 2015–2023',
+                "y_label": 'Million vehicles sold',
+                "categories": ['2015', '2017', '2019', '2021', '2022', '2023'],
+                "series": [
+                    {"name": 'China', "values": [0.2, 0.6, 1.2, 3.4, 5.9, 8.1]},
+                    {"name": 'Europe', "values": [0.2, 0.3, 0.6, 2.3, 2.7, 3.2]},
+                    {"name": 'North America', "values": [0.1, 0.2, 0.4, 0.7, 1.0, 1.6]},
+                ],
+            },
+        },
         {
-        "title": "Task 1 — Line (teen social media use)",
-        "prompt": ("The graph below shows the average daily time teenagers spent on social "
-                   "media between 2010 and 2023. Summarise the information by selecting and "
-                   "reporting the main features, and make comparisons where relevant. Write at "
-                   "least 150 words."),
-        "visual": {"kind": "line", "title": "Average daily social media use by teenagers, 2010-2023", "y_label": "Minutes per day",
-            "categories": ["2010", "2013", "2016", "2019", "2023"],
-            "series": [{"name": "Minutes per day", "values": [45, 90, 135, 180, 210]}]},
-    },
+            "title": 'Task 1 — Line (social media use by age group)',
+            "prompt": (
+                'The graph below shows the average time per day that three age groups spent on social '
+                'media between 2010 and 2023. Summarise the information by selecting and reporting the '
+                'main features, and make comparisons where relevant. Write at least 150 words.'
+            ),
+            "visual": {
+                "kind": "line",
+                "title": 'Average daily social media use by age group, 2010–2023',
+                "y_label": 'Minutes per day',
+                "categories": ['2010', '2013', '2016', '2019', '2021', '2023'],
+                "series": [
+                    {"name": 'Aged 16–18', "values": [52, 98, 148, 192, 218, 231]},
+                    {"name": 'Aged 13–15', "values": [38, 82, 128, 171, 196, 204]},
+                    {"name": 'Aged 8–12', "values": [12, 26, 48, 74, 95, 112]},
+                ],
+            },
+        },
         {
         "title": "Task 1 — Table (household spending by category)",
         "prompt": ("The table below shows the percentage of household income spent on four "
@@ -1415,23 +1499,41 @@ def _criterion(data: Any) -> Criterion:
 
 
 FREE_WRITING_CHECKS_PER_WEEK = 3
+PREMIUM_WRITING_CHECKS_PER_DAY = 5
 
 
-async def has_free_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
-    """Free tier: 3 writing checks per rolling 7 days — tighter than the
-    general daily AI-action quota, and specific to this one feature (Basic/
-    Speaking Pro get 5/day instead, checked separately, not through this).
-    Counted from IeltsResult rows rather than a separate counter, so there's
-    nothing to reset or drift out of sync with what actually happened."""
-    week_ago = utcnow() - timedelta(days=7)
+async def _writing_checks_since(db: AsyncSession, user_id: UUID, since) -> int:
+    """Counted from IeltsResult rows rather than a separate counter, so
+    there's nothing to reset or drift out of sync with what actually
+    happened."""
     count = await db.scalar(
         select(func.count(IeltsResult.id)).where(
             IeltsResult.user_id == user_id,
             IeltsResult.skill == "writing",
-            IeltsResult.created_at >= week_ago,
+            IeltsResult.created_at >= since,
         )
     )
-    return (count or 0) < FREE_WRITING_CHECKS_PER_WEEK
+    return count or 0
+
+
+async def has_free_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
+    """Free tier: 3 writing checks per rolling 7 days — tighter than the
+    general daily AI-action quota, and specific to this one feature."""
+    since = utcnow() - timedelta(days=7)
+    return await _writing_checks_since(db, user_id, since) < FREE_WRITING_CHECKS_PER_WEEK
+
+
+async def has_premium_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
+    """Paid tiers: 5 writing checks per rolling 24 hours — what the plans
+    advertise. Each check is a long, expensive model call, so this is a real
+    cost ceiling, not a taste-then-upsell boundary; it sits well above what
+    a learner drafting full essays gets through in a day.
+
+    Rolling rather than midnight-to-midnight for the same reason the free
+    window is: no timezone to plumb through, and no burst of ten checks
+    across a midnight boundary."""
+    since = utcnow() - timedelta(days=1)
+    return await _writing_checks_since(db, user_id, since) < PREMIUM_WRITING_CHECKS_PER_DAY
 
 
 async def score_writing(

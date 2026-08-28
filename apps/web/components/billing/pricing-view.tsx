@@ -50,6 +50,22 @@ function featureList(code: string, t: Dictionary["billing"]): string[] {
   return [...new Set(`${primary} · ${secondary}`.split("·").map((item) => item.trim()).filter(Boolean))].slice(0, 7);
 }
 
+/** What the same period would cost at the monthly rate, and how much the
+ *  longer plan saves against it.
+ *
+ *  Derived from the monthly plan the API actually returns rather than a
+ *  hardcoded "was" price — the quarterly and yearly plans are genuinely
+ *  priced below 3x and 12x monthly, so this is the real saving, not a
+ *  decorative strikethrough invented to manufacture urgency. */
+function discount(plan: Plan, monthly: Plan | undefined) {
+  if (!monthly || plan.code === monthly.code || plan.price_som <= 0) return null;
+  const months = Math.round(plan.duration_days / 30);
+  if (months < 2) return null;
+  const regular = monthly.price_som * months;
+  if (regular <= plan.price_som) return null;
+  return { regular, percent: Math.round((1 - plan.price_som / regular) * 100) };
+}
+
 export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"] }) {
   const { user, ready } = useAuth();
   const router = useRouter();
@@ -144,6 +160,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
   const planOrder = ["free", "premium_monthly", "premium_quarterly", "premium_yearly"];
   const checkoutEnabled = paymentStatus.checkout_enabled;
+  const monthlyPlan = plans.find((plan) => plan.code === "premium_monthly");
   const displayPlans = plans
     .filter((plan) => planOrder.includes(plan.code))
     .sort((a, b) => planOrder.indexOf(a.code) - planOrder.indexOf(b.code));
@@ -185,6 +202,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
               : sub?.plan_code === plan.code && sub?.is_premium;
             const isSelecting = selected === plan.code;
             const popular = plan.code === "premium_yearly";
+            const saving = discount(plan, monthlyPlan);
             const perUnit =
               isFree
                 ? ""
@@ -227,7 +245,13 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                 <div className={styles.planContent}>
                   <div className={styles.planHeading}>
                     <h2>{planName(plan.code, t)}</h2>
-                    {popular && <span>{t.mostPopular}</span>}
+                    {saving ? (
+                      <span className={styles.saveBadge}>
+                        −{saving.percent}%<span className="sr-only"> {t.saveLabel}</span>
+                      </span>
+                    ) : (
+                      popular && <span>{t.mostPopular}</span>
+                    )}
                   </div>
                   <ul className={styles.featureList}>
                     {featureList(plan.code, t).map((feature) => (
@@ -240,6 +264,12 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                 </div>
 
                 <div className={cn(styles.priceBlock, isSelecting && styles.priceBlockHidden)}>
+                  {saving && (
+                    <span className={styles.regularPrice}>
+                      <span className="sr-only">{t.regularPrice}: </span>
+                      <s>{formatSom(saving.regular)} {t.som}</s>
+                    </span>
+                  )}
                   <strong>{formatSom(plan.price_som)}</strong>
                   <span>{t.som}{perUnit}</span>
                 </div>
