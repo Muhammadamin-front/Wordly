@@ -349,6 +349,169 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 ],
             },
         },
+        {
+            "title": "Task 1 — Process (bamboo fabric)",
+            "prompt": (
+                "The diagram below shows how bamboo fabric is made. Summarise the information by "
+                "describing the main stages of the process. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "How bamboo fabric is made",
+                "categories": [
+                    "Bamboo plants are planted in spring",
+                    "The bamboo is harvested in autumn",
+                    "The stems are cut into strips",
+                    "The strips are crushed to make a liquid pulp",
+                    "The liquid-fibre slurry is filtered to separate the long fibres",
+                    "Water and amine oxide are added to soften the fibres",
+                    "The softened fibres are spun into yarn",
+                    "The yarn is woven into fabric",
+                    "The fabric is made into clothing, such as T-shirts and socks",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (plastic recycling)",
+            "prompt": (
+                "The diagram below shows the process of recycling plastic bottles. Summarise the "
+                "information by describing the main stages of the process. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "Plastic bottle recycling process",
+                "categories": [
+                    "Plastic bottles are collected in recycling bins",
+                    "The bottles are transported to a recycling centre",
+                    "Workers sort the bottles into recyclable and non-recyclable items",
+                    "The recyclable bottles are compacted into bales",
+                    "The bales are crushed and shredded",
+                    "The shredded plastic is washed",
+                    "The plastic is melted to form a raw material",
+                    "The melted plastic is processed into pellets",
+                    "The pellets are bagged and used to produce end products such as clothing and containers",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (coffee production)",
+            "prompt": (
+                "The diagram below shows how coffee is produced, from planting to the final "
+                "product. Summarise the information by describing the main stages of the process. "
+                "Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "How coffee is produced",
+                "categories": [
+                    "Coffee seedlings are planted and grown for four to five years",
+                    "Ripe coffee cherries are hand-picked during harvesting",
+                    "The cherries are depulped and fermented in a tank",
+                    "The beans are spread out and dried in the sun",
+                    "The dried beans are milled, hulled, and graded by size and colour",
+                    "The graded green coffee beans are bagged and palletised",
+                    "The beans are roasted and ground",
+                    "The ground coffee is brewed using various extraction methods",
+                    "The brewed coffee is sold as a final product, such as instant or ground coffee",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (book publishing)",
+            "prompt": (
+                "The diagram below shows the various stages involved in publishing a book. "
+                "Summarise the information by selecting and reporting the main features, and make "
+                "comparisons where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "How a book is published",
+                "categories": [
+                    "An author writes the manuscript",
+                    "The manuscript is sent to a publisher",
+                    "The publisher conducts an editorial review of the manuscript",
+                    "The author signs a contract with the publisher",
+                    "The book's layout is designed",
+                    "A final layout decision is made",
+                    "The book is printed",
+                    "The printed pages are bound together",
+                    "The finished books are distributed to bookstores",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (orange juice production)",
+            "prompt": (
+                "The diagram below shows how orange juice is produced and packaged. Summarise the "
+                "information by describing the main stages of the process. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "Orange juice production process",
+                "categories": [
+                    "Fresh oranges are delivered to the factory by truck",
+                    "The oranges are washed",
+                    "The juice is extracted from the oranges",
+                    "The leftover waste solid is used as animal feed",
+                    "The fresh juice is either packaged directly or turned into concentrate",
+                    "To make concentrate, the juice is evaporated and reduced",
+                    "The concentrate is stored in tanks and moved by refrigerated truck",
+                    "Water is added back to the concentrate before canning or bottling",
+                    "The finished juice is stored in a warehouse before being sent to shops",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (glass recycling)",
+            "prompt": (
+                "The diagram below shows the process of recycling glass bottles. Summarise the "
+                "information by describing the main stages of the process. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "Glass bottle recycling process",
+                "categories": [
+                    "Waste glass bottles are collected at a collection point",
+                    "The bottles are transported to a recycling facility",
+                    "The glass is cleaned using high-pressure water",
+                    "The clean glass is sorted by colour into brown, green, and clear pieces",
+                    "The sorted glass pieces are sent to a factory",
+                    "The glass is melted and used to produce new bottles",
+                    "The new bottles are filled with products at the factory",
+                    "The bottled products are sent to supermarkets and sold",
+                    "Empty bottles are collected again, continuing the cycle",
+                ],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (coconut oil production)",
+            "prompt": (
+                "The diagram below shows how coconut oil is produced. Summarise the information by "
+                "describing the main stages of the process. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process",
+                "title": "Coconut oil production process",
+                "categories": [
+                    "Coconuts are harvested, with timing affecting quality",
+                    "The coconuts are dehusked and split open",
+                    "The coconut flesh is grated",
+                    "The grated coconut is weighed",
+                    "The grated coconut is spread out and dried in the sun",
+                    "The dried coconut is pressed to extract the oil",
+                    "The extracted oil is clarified to remove impurities",
+                    "The oil is filtered",
+                    "The filtered oil is packaged into bottles and jars and shipped",
+                ],
+                "series": [],
+            },
+        },
     ],
     "task2": [
         {
