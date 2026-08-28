@@ -627,6 +627,36 @@ async def grade_test(
 
 
 # --- Writing scoring ---------------------------------------------------------
+# Condensed from the official IELTS Writing Band Descriptors (ielts.org, updated
+# May 2023) — Task 1 here is the Academic module only (this app's Task 1 bank is
+# all charts/graphs/tables/maps/processes, never General Training letters), so
+# the General Training bullet variants are dropped. Kept verbatim in substance,
+# trimmed of pure formatting scaffolding, so the model grades against the real
+# public criteria instead of a paraphrase of them.
+_TASK1_BAND_DESCRIPTORS = """
+Band 9 — TA: all requirements fully and appropriately satisfied; extremely rare lapses. CC: message followed effortlessly; cohesion very rarely attracts attention; paragraphing skilfully managed. LR: full flexibility and precise use; wide vocabulary used accurately and naturally; spelling/word-formation errors extremely rare. GRA: wide range of structures with full flexibility and control; punctuation and grammar appropriate throughout; minor errors extremely rare.
+Band 8 — TA: covers all requirements appropriately, relevantly, sufficiently; key features skilfully selected and clearly presented/highlighted/illustrated; occasional omissions or lapses. CC: followed with ease; logically sequenced; cohesion well managed; occasional lapses; paragraphing sufficient and appropriate. LR: wide resource, fluent and flexible, precise meanings; skilful uncommon/idiomatic use despite occasional inaccuracies; occasional spelling/word-formation errors, minimal impact. GRA: wide range, flexible and accurate; majority of sentences error-free; punctuation well managed; occasional non-systematic errors, minimal impact.
+Band 7 — TA: covers the requirements; relevant and accurate, a few omissions/lapses; appropriate format; key features covered and clearly highlighted but could be more fully/appropriately illustrated; clear overview, data appropriately categorised, main trends/differences identified. CC: logically organised, clear progression, a few minor lapses; cohesive devices used flexibly with some inaccuracies or over/under-use. LR: sufficient for some flexibility/precision; some ability with less common/idiomatic items; awareness of style/collocation, though inappropriacies occur; only a few spelling/word-formation errors, don't detract from clarity. GRA: variety of complex structures with some flexibility/accuracy; grammar/punctuation generally well controlled, frequent error-free sentences; a few persisting errors don't impede communication.
+Band 6 — TA: focuses on the requirements, appropriate format; key features covered and adequately highlighted; a relevant overview attempted; information appropriately selected/supported with data; some irrelevant, inaccurate, or excessive/missing detail may occur. CC: generally coherent, clear overall progression; cohesive devices used to good effect but may be faulty or mechanical (misuse/overuse/omission); reference/substitution may lack flexibility, causing some repetition or error. LR: generally adequate and appropriate; meaning generally clear despite restricted range or imprecision; risk-takers show wider range but more inaccuracy; some spelling/word-formation errors, don't impede communication. GRA: mix of simple and complex forms, limited flexibility; complex structures less accurate than simple ones; errors occur but rarely impede communication.
+Band 5 — TA: generally addresses the requirements, format may be inappropriate in places; key features not adequately covered, recounting mainly mechanical, may lack data to support the description; tendency to focus on details without the bigger picture; irrelevant/inaccurate material detracts; limited detail extending/illustrating points. CC: organisation evident but not wholly logical, lacks overall progression though an underlying coherence remains; ideas can be followed but aren't fluently linked; limited or overused cohesive devices with inaccuracy; repetitive due to inadequate reference/substitution. LR: limited but minimally adequate; simple vocabulary used accurately but little variation; frequent lapses in word-choice appropriacy, simplifications/repetitions; noticeable spelling/word-formation errors may cause difficulty for the reader. GRA: limited, repetitive range; complex sentences attempted but tend to be faulty, greatest accuracy on simple sentences; frequent grammatical errors cause some difficulty; punctuation may be faulty.
+Band 4 — TA: an attempt to address the task; few key features selected; format may be inappropriate; features presented may be irrelevant, repetitive, inaccurate, or inappropriate. CC: evident but not arranged coherently, no clear progression; relationships between ideas unclear or inadequately marked; some basic cohesive devices, possibly inaccurate/repetitive; inaccurate or lacking substitution/referencing. LR: limited, inadequate for or unrelated to the task; basic, repetitive vocabulary; inappropriate use of memorised/formulaic lexical chunks; word-choice, word-formation, or spelling errors may impede meaning. GRA: very limited range; subordinate clauses rare, simple sentences predominate; some structures accurate but grammatical errors frequent and may impede meaning; punctuation often faulty or inadequate.
+Bands 3-2 — Task not adequately addressed or misunderstood; largely irrelevant or repetitive content; little/no logical organisation; resource inadequate (often significantly underlength) with possible over-dependence on input material; word-choice/spelling control very limited, errors predominate and may severely impede meaning; little evidence of sentence-form control.
+Band 1 — Responses of 20 words or fewer are automatically Band 1; content wholly unrelated to the task; no rateable language evident beyond isolated words.
+Band 0 — Only for no attempt, a response entirely in another language, or proven fully memorised content.
+""".strip()
+
+_TASK2_BAND_DESCRIPTORS = """
+Band 9 — TR: prompt appropriately addressed and explored in depth; clear, fully developed position directly answering the question(s); ideas relevant, fully extended, well supported; lapses extremely rare. CC: message followed effortlessly; cohesion very rarely attracts attention; paragraphing skilfully managed. LR: full flexibility and precise use widely evident; wide vocabulary used accurately and naturally; spelling/word-formation errors extremely rare. GRA: wide range of structures with full flexibility and control; punctuation and grammar appropriate throughout; minor errors extremely rare.
+Band 8 — TR: prompt appropriately and sufficiently addressed; clear, well-developed position; ideas relevant, well extended and supported; occasional omissions or lapses. CC: followed with ease; logically sequenced; cohesion well managed; occasional lapses; paragraphing sufficient and appropriate. LR: wide resource, fluent and flexible, precise meanings; skilful uncommon/idiomatic use despite occasional inaccuracies; occasional spelling/word-formation errors, minimal impact. GRA: wide range, flexible and accurate; majority of sentences error-free; punctuation well managed; occasional non-systematic errors, minimal impact.
+Band 7 — TR: main parts of the prompt appropriately addressed; clear, developed position; main ideas extended and supported but may over-generalise or lack focus/precision in supporting material. CC: logically organised, clear progression, a few minor lapses; cohesive devices used flexibly with some inaccuracies or over/under-use; paragraphing generally effective, logical sequencing within paragraphs. LR: sufficient for some flexibility/precision; some ability with less common/idiomatic items; awareness of style/collocation, though inappropriacies occur; only a few spelling/word-formation errors, don't detract from clarity. GRA: variety of complex structures with some flexibility/accuracy; grammar/punctuation generally well controlled, frequent error-free sentences; a few persisting errors don't impede communication.
+Band 6 — TR: main parts addressed, though some more fully than others, appropriate format; position directly relevant but conclusions may be unclear, unjustified, or repetitive; main ideas relevant but some insufficiently developed or unclear, supporting arguments/evidence sometimes less relevant or inadequate. CC: generally coherent, clear overall progression; cohesive devices to good effect but may be faulty or mechanical; reference/substitution may lack flexibility; paragraphing not always logical or the central topic not always clear. LR: generally adequate and appropriate; meaning generally clear despite restricted range or imprecision; risk-takers show wider range but more inaccuracy; some spelling/word-formation errors, don't impede communication. GRA: mix of simple and complex forms, limited flexibility; complex structures less accurate than simple ones; errors occur but rarely impede communication.
+Band 5 — TR: main parts incompletely addressed, format may be inappropriate in places; a position is expressed but development not always clear; main ideas limited and insufficiently developed, possible irrelevant detail or repetition. CC: organisation evident but not wholly logical, lacks overall progression though an underlying coherence remains; ideas can be followed but aren't fluently linked; limited or overused cohesive devices with inaccuracy; repetitive; paragraphing may be inadequate or missing. LR: limited but minimally adequate; simple vocabulary used accurately but little variation; frequent lapses in word-choice appropriacy, simplifications/repetitions; noticeable spelling/word-formation errors may cause difficulty for the reader. GRA: limited, repetitive range; complex sentences attempted but tend to be faulty, greatest accuracy on simple sentences; frequent grammatical errors cause some difficulty; punctuation may be faulty.
+Band 4 — TR: prompt tackled minimally, or the answer is tangential, possibly from misunderstanding it; format may be inappropriate; a position is discernible but requires careful reading to find; main ideas difficult to identify and may lack relevance, clarity, or support; large parts may be repetitive. CC: evident but not arranged coherently, no clear progression; relationships between ideas unclear or inadequately marked; some basic cohesive devices, possibly inaccurate/repetitive; inaccurate or lacking substitution/referencing; may lack paragraphing or a clear main topic. LR: limited, inadequate for or unrelated to the task; basic, repetitive vocabulary; inappropriate use of memorised/formulaic lexical chunks; word-choice, word-formation, or spelling errors may impede meaning. GRA: very limited range; subordinate clauses rare, simple sentences predominate; some structures accurate but grammatical errors frequent and may impede meaning; punctuation often faulty or inadequate.
+Bands 3-2 — No part of the prompt adequately addressed or it's misunderstood; no relevant position identifiable; few, possibly irrelevant or underdeveloped ideas; little/no logical organisation; resource inadequate (often significantly underlength) with possible over-dependence on input material; word-choice/spelling control very limited, errors predominate and may severely impede meaning; little evidence of sentence-form control.
+Band 1 — Responses of 20 words or fewer are automatically Band 1; content wholly unrelated to the prompt; no rateable language evident beyond isolated words.
+Band 0 — Only for no attempt, a response entirely in another language, or proven fully memorised content.
+""".strip()
+
 _CRITERION = {
     "type": "object",
     "properties": {"band": {"type": "number"}, "comment": {"type": "string"}},
@@ -713,22 +743,26 @@ async def score_writing(
     """Professional Writing review: strict band scores per criterion, a full
     error list with corrections, strengths, and a band-8 model rewrite."""
     criteria = "Task Achievement" if task_type == "task1" else "Task Response"
+    descriptors = _TASK1_BAND_DESCRIPTORS if task_type == "task1" else _TASK2_BAND_DESCRIPTORS
     feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
     system = (
         "You are a certified IELTS Writing examiner and an experienced writing tutor. "
         "Score strictly and fairly on the 0-9 band scale in 0.5 steps against the four "
-        "criteria: {crit}, Coherence & Cohesion, Lexical Resource, and Grammatical Range "
-        "& Accuracy; band_overall is their average rounded to the nearest 0.5 — do not "
-        "inflate scores. Each criterion gets a 1-2 sentence 'comment'. 'errors' lists "
-        "every significant mistake (up to 12, most damaging first): 'quote' copies the "
-        "exact fragment from the response, 'fix' is the corrected fragment, 'note' "
-        "explains the rule in one short sentence. 'strengths' names 2-3 concrete things "
-        "the candidate did well. 'feedback' is a 2-4 sentence overall summary with the "
-        "single most important next step. 'improved' rewrites the WHOLE response as a "
-        "band-8 model answer that keeps the candidate's ideas and structure. Write all "
-        "comments, notes, strengths and feedback in {lang}; quotes, fixes and the "
-        "improved response stay in English."
-    ).format(crit=criteria, lang=feedback_lang)
+        "official IELTS criteria: {crit}, Coherence & Cohesion, Lexical Resource, and "
+        "Grammatical Range & Accuracy — using the real public band descriptors below, "
+        "not your own impression of the scale. A response must fully fit a band's "
+        "positive features to be placed there; do not inflate scores.\n\n"
+        "{descriptors}\n\n"
+        "band_overall is the average of the four criteria, rounded to the nearest 0.5. "
+        "Each criterion gets a 1-2 sentence 'comment'. 'errors' lists every significant "
+        "mistake (up to 12, most damaging first): 'quote' copies the exact fragment from "
+        "the response, 'fix' is the corrected fragment, 'note' explains the rule in one "
+        "short sentence. 'strengths' names 2-3 concrete things the candidate did well. "
+        "'feedback' is a 2-4 sentence overall summary with the single most important next "
+        "step. 'improved' rewrites the WHOLE response as a band-8 model answer that keeps "
+        "the candidate's ideas and structure. Write all comments, notes, strengths and "
+        "feedback in {lang}; quotes, fixes and the improved response stay in English."
+    ).format(crit=criteria, descriptors=descriptors, lang=feedback_lang)
     user_prompt = (
         "IELTS Writing {tt}.\n\nPROMPT:\n{p}\n\nCANDIDATE RESPONSE:\n{e}"
     ).format(tt=task_type.upper(), p=prompt, e=essay)

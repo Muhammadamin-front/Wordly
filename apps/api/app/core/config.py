@@ -112,6 +112,14 @@ class Settings(BaseSettings):
     # Unset = every role collapses onto ELEVENLABS_VOICE_ID (single-voice
     # fallback), so this stays optional without breaking anything.
     ELEVENLABS_VOICE_ID_B: Optional[str] = "EXAVITQu4vr4xnSDxMaL"  # "Bella"
+    # One voice per AI Speaking Coach character (real-time voice mode). Unset
+    # = that character falls back to ELEVENLABS_VOICE_ID, same graceful-
+    # degradation pattern as ELEVENLABS_VOICE_ID_B above.
+    ELEVENLABS_VOICE_ID_GORDON: Optional[str] = None
+    ELEVENLABS_VOICE_ID_MOCHI: Optional[str] = None
+    ELEVENLABS_VOICE_ID_ALEX: Optional[str] = None
+    ELEVENLABS_VOICE_ID_EXAMINER: Optional[str] = None
+    ELEVENLABS_VOICE_ID_RAJ: Optional[str] = None
     ELEVENLABS_MODEL: str = "eleven_flash_v2_5"
     ELEVENLABS_OUTPUT_FORMAT: str = "mp3_44100_128"
     ELEVENLABS_STABILITY: float = 0.42
