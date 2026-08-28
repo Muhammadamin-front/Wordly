@@ -22,6 +22,13 @@ export { MASTERY_THRESHOLDS, masteryStatus, type GrammarMasteryStatus } from "./
 
 export const GRAMMAR_LEVELS: CefrGrammarLevel[] = ["A1", "A2", "B1", "B2", "C1"];
 
+/** Levels a free learner can study. Mirrors FREE_GRAMMAR_LEVELS in
+ *  apps/api/app/services/plans.py, which is what actually enforces this on
+ *  /skills/grammar — this copy only drives the lock UI, and the two must be
+ *  kept in step. Lesson text ships inside the client bundle, so treat the
+ *  lock as signposting, not as protection for the content itself. */
+export const FREE_GRAMMAR_LEVELS: CefrGrammarLevel[] = ["A1"];
+
 export const LESSONS_BY_LEVEL = buildCurriculum({
   A1: A1_LESSONS,
   A2: A2_LESSONS,

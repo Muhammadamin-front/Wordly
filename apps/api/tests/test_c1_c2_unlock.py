@@ -1,5 +1,7 @@
-"""C1/C2 vocabulary is free to browse but costs coins (or premium) to add
-as a flashcard — a permanent, one-time unlock, not a per-word charge."""
+"""Vocabulary above A2 is free to browse but costs coins (or premium) to
+add as a flashcard — a permanent, one-time unlock, not a per-word charge.
+The stored tier keeps its original "c1_c2" id so unlocks already bought
+keep working; it now covers B1 and B2 too."""
 import app.db.session as db_session
 from app.services import coins
 from tests.conftest import register_user
@@ -75,3 +77,33 @@ async def test_add_by_level_bulk_endpoint_is_gated_the_same_way(client):
         "/api/v1/cards/add-by-level", json={"cefr_level": "C1", "limit": 10}, headers=headers
     )
     assert resp.status_code == 402
+
+
+async def test_free_study_stops_after_a2(client):
+    """A2 is the last free level; B1 and B2 are paywalled the same way C1/C2
+    always were, so the boundary is one rule, not two."""
+    headers = await learner(client, email="c1c2-a2-boundary@words.uz")
+    a2 = await seed_word(client, headword="garden-a2", cefr_level="A2")
+    assert (
+        await client.post("/api/v1/cards", json={"word_id": a2["id"]}, headers=headers)
+    ).status_code == 201
+
+    for level in ("B1", "B2"):
+        word = await seed_word(client, headword=f"word-{level.lower()}", cefr_level=level)
+        resp = await client.post("/api/v1/cards", json={"word_id": word["id"]}, headers=headers)
+        assert resp.status_code == 402, (level, resp.text)
+
+
+async def test_one_unlock_covers_every_level_above_a2(client):
+    """Someone who paid the unlock gets B1 and B2 as well as C1/C2 — the
+    purchase only ever widened."""
+    headers = await learner(client, email="c1c2-widened@words.uz")
+    await _credit(client, headers, 1000)
+    b1 = await seed_word(client, headword="reluctant-b1", cefr_level="B1")
+    assert (
+        await client.post("/api/v1/cards", json={"word_id": b1["id"]}, headers=headers)
+    ).status_code == 201
+
+    c2 = await seed_word(client, headword="ineffable-c2", cefr_level="C2")
+    resp = await client.post("/api/v1/cards", json={"word_id": c2["id"]}, headers=headers)
+    assert resp.status_code == 201, resp.text  # not charged a second time

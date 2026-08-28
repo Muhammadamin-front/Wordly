@@ -83,6 +83,17 @@ COIN_COST_VOICE_MINUTE = 15
 # boundary is actually about; never part of the discussed premium split.
 FREE_GAME_TYPES = frozenset(("word_match", "speed_quiz", "fill_blank", "listening", "speaking"))
 
+# CEFR levels a free learner can study without paying. Everything above needs
+# Premium or the one-off coin unlock (see services.vocabulary_unlocks).
+#
+# Two separate ceilings because the two libraries are different sizes and sit
+# at different points in the funnel: the word list runs A1-C2 and A1+A2 is
+# already thousands of words — enough to judge the product — while the grammar
+# curriculum only runs A1-B2, so giving away two of its four levels would be
+# giving away half the course.
+FREE_VOCABULARY_LEVELS = frozenset(("A1", "A2"))
+FREE_GRAMMAR_LEVELS = frozenset(("A1",))
+
 
 @dataclass(frozen=True)
 class CoinPack:

@@ -17,8 +17,9 @@ from app.schemas.skills import (
     ReadingSubmit,
     WritingPromptsOut,
 )
-from app.services import skills
+from app.services import skills, subscriptions
 from app.services.grammar import nearest_available_level
+from app.services.plans import FREE_GRAMMAR_LEVELS
 
 router = APIRouter(
     prefix="/skills",
@@ -27,6 +28,19 @@ router = APIRouter(
 )
 
 CEFR_PATTERN = "^(A1|A2|B1|B2|C1|C2)$"
+
+
+async def _require_grammar_level(db: AsyncSession, user: User, level: str) -> None:
+    """Free study stops after A1. The curriculum only runs A1-B2, so this
+    is one level of four, not a token sample."""
+    if level in FREE_GRAMMAR_LEVELS:
+        return
+    if await subscriptions.is_premium(db, user):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_402_PAYMENT_REQUIRED,
+        detail="This grammar level requires Premium",
+    )
 
 
 @router.get("/reading", response_model=List[PassageListItem])
@@ -90,7 +104,10 @@ async def writing_prompts(level: str = Query("A1", pattern=CEFR_PATTERN)):
 async def grammar_round(
     level: str = Query("A1", pattern=CEFR_PATTERN),
     count: int = Query(10, ge=1, le=20),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
+    await _require_grammar_level(db, user, level)
     return [GrammarQuestionOut(**q) for q in skills.grammar_round(level, count)]
 
 
@@ -100,6 +117,9 @@ async def grammar_submit(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
+    # Gated as well as the question route: grading awards XP, so leaving it
+    # open would let a free learner bank progress on a level they cannot study.
+    await _require_grammar_level(db, user, payload.level)
     results, reward = await skills.score_grammar(
         db, user, payload.level, [a.model_dump() for a in payload.answers]
     )

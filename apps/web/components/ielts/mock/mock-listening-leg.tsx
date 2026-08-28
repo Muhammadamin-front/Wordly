@@ -179,8 +179,16 @@ export function MockListeningLeg({
         </span>
       </div>
 
-      <p className="mt-3 text-sm font-bold text-ink-soft">
+      <p className="mt-3 flex flex-wrap items-center gap-x-2 text-sm font-bold text-ink-soft">
         {t.listeningSectionOf.replace("{n}", String(section.number))}
+        {/* Numbers only, so it needs no translation: makes the length of the
+            whole test visible from section 1, which "Section 1 of 4" alone
+            does not — a learner cannot otherwise tell 10 questions from 40. */}
+        <span className="tabular-nums opacity-70">
+          {section.questions[0]?.number}–{section.questions[section.questions.length - 1]?.number}
+          {" / "}
+          {test.sections.reduce((sum, s) => sum + s.questions.length, 0)}
+        </span>
       </p>
       <p className="mt-1 text-sm text-ink-soft">{section.title}</p>
 
@@ -244,7 +252,15 @@ export function MockListeningLeg({
           {ieltsT.submitTest}
         </Button>
       ) : (
-        <Button fullWidth className="mt-5" disabled={!audioFinished} onClick={goToNextSection}>
+        // Also enabled when the audio failed: the recording gates the section
+        // the way the real exam does, but a failed fetch must never strand the
+        // learner on section 1 with no way forward but the leg timer expiring.
+        <Button
+          fullWidth
+          className="mt-5"
+          disabled={!audioFinished && !audioFailed}
+          onClick={goToNextSection}
+        >
           {t.listeningContinueSection}
         </Button>
       )}

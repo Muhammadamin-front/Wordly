@@ -8,6 +8,7 @@ import {
   Clock3,
   GraduationCap,
   Layers3,
+  Lock,
   Search,
   Sparkles,
   Target,
@@ -16,7 +17,9 @@ import Link from "next/link";
 import { useMemo, useState, useSyncExternalStore } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { usePremiumStatus } from "@/components/billing/use-premium-status";
 import {
+  FREE_GRAMMAR_LEVELS,
   GRAMMAR_LEVELS,
   GRAMMAR_PROGRESS_EVENT,
   PROGRESS_STORAGE_KEY,
@@ -61,6 +64,7 @@ const COPY = {
     noResults: "Bu filtr bo‘yicha dars topilmadi.",
     minutes: "daq",
     statuses: { "not-started": "Boshlanmagan", weak: "Zaif", "needs-review": "Takrorlash kerak", good: "Yaxshi", mastered: "O‘zlashtirilgan" },
+    premiumLocked: "Premium kerak",
   },
   ru: {
     search: "Найти тему грамматики...",
@@ -72,6 +76,7 @@ const COPY = {
     noResults: "По этим фильтрам уроки не найдены.",
     minutes: "мин",
     statuses: { "not-started": "Не начато", weak: "Слабо", "needs-review": "Повторить", good: "Хорошо", mastered: "Освоено" },
+    premiumLocked: "Нужен Премиум",
   },
   en: {
     search: "Search grammar topics...",
@@ -83,6 +88,7 @@ const COPY = {
     noResults: "No lessons match these filters.",
     minutes: "min",
     statuses: { "not-started": "Not started", weak: "Weak", "needs-review": "Needs review", good: "Good", mastered: "Mastered" },
+    premiumLocked: "Premium required",
   },
 } as const;
 
@@ -118,6 +124,7 @@ function parseProgress(snapshot: string): Record<string, GrammarProgressEntry> {
 export function GrammarHub({ lang, t, lessons }: { lang: string; t: T; lessons: GrammarLessonSummary[] }) {
   const copy = COPY[lang === "ru" ? "ru" : lang === "en" ? "en" : "uz"];
   const [level, setLevel] = useState<CefrGrammarLevel>("A1");
+  const isPremium = usePremiumStatus();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState<StatusFilter>("all");
@@ -177,6 +184,12 @@ export function GrammarHub({ lang, t, lessons }: { lang: string; t: T; lessons: 
         {GRAMMAR_LEVELS.map((item) => {
           const levelItems = lessons.filter((lesson) => lesson.level === item);
           const mastered = levelItems.filter((lesson) => masteryStatus(progressBySlug[lesson.slug]?.bestScore) === "mastered").length;
+          // Only lock once the subscription check has actually answered, so a
+          // premium learner never sees a lock flash and then vanish.
+          const locked = isPremium === false && !FREE_GRAMMAR_LEVELS.includes(item);
+          if (locked) {
+            return <Link key={item} href={`/${lang}/pricing`} role="tab" aria-selected={false} aria-label={`${item} — ${copy.premiumLocked}`} className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border border-line bg-card/40 px-4 py-2 text-sm font-extrabold text-ink-soft opacity-70 transition hover:opacity-100 active:translate-y-px">{item}<Lock className="size-3.5" aria-hidden /></Link>;
+          }
           return <button key={item} type="button" role="tab" aria-selected={item === level} onClick={() => { setLevel(item); setCategory("all"); }} className={cn("min-h-11 shrink-0 rounded-lg border px-4 py-2 text-sm font-extrabold transition active:translate-y-px", item === level ? `${LEVEL_ACCENT[item]} shadow-lg` : "border-line bg-card/60 text-ink-soft hover:text-ink")}>{item}<span className="ml-1.5 text-xs font-semibold opacity-70">{mastered}/{levelItems.length}</span></button>;
         })}
       </div>

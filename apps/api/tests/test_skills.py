@@ -124,7 +124,8 @@ async def test_speaking_session_targets_headwords(client):
 
 async def test_grammar_round_never_leaks_answers(client):
     headers = await auth_headers(client)
-    response = await client.get("/api/v1/skills/grammar?level=A2&count=10", headers=headers)
+    # A1 is the free level; anything above needs Premium (tested separately).
+    response = await client.get("/api/v1/skills/grammar?level=A1&count=10", headers=headers)
     assert response.status_code == 200
     questions = response.json()
     assert len(questions) == 10
@@ -170,3 +171,33 @@ async def test_grammar_submit_rejects_invented_and_repeated_prompts(client):
     body = response.json()
     assert body["results"] == [False, True, False]
     assert body["xp_gained"] == 5
+
+
+async def test_free_grammar_stops_after_a1(client):
+    """Free study covers A1 only — the curriculum runs A1-B2, so handing over
+    more would be handing over most of the course."""
+    headers = await auth_headers(client)
+    for level in ("A2", "B1", "B2"):
+        resp = await client.get(f"/api/v1/skills/grammar?level={level}&count=5", headers=headers)
+        assert resp.status_code == 402, (level, resp.text)
+
+
+async def test_free_grammar_submit_is_gated_too(client):
+    """Grading awards XP, so it cannot stay open on a level you cannot study."""
+    headers = await auth_headers(client)
+    resp = await client.post(
+        "/api/v1/skills/grammar/submit",
+        headers=headers,
+        json={"level": "B1", "answers": [{"prompt": "anything", "answer": "x"}]},
+    )
+    assert resp.status_code == 402
+
+
+async def test_premium_reaches_every_grammar_level(client):
+    headers = await auth_headers(client)
+    await client.post(
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+    )
+    for level in ("A1", "A2", "B1", "B2"):
+        resp = await client.get(f"/api/v1/skills/grammar?level={level}&count=5", headers=headers)
+        assert resp.status_code == 200, (level, resp.text)
