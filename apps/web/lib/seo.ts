@@ -15,17 +15,22 @@ export function publicPageMetadata({
 }): Metadata {
   const normalizedPath = path === "" ? "" : path.startsWith("/") ? path : `/${path}`;
   const localizedPath = `/${lang}${normalizedPath}`;
+  const languageAlternates = Object.fromEntries(
+    PUBLIC_LOCALES.map((locale) => [locale, `/${locale}${normalizedPath}`])
+  );
   return {
     title,
     description,
     alternates: {
       canonical: localizedPath,
-      languages: Object.fromEntries(
-        PUBLIC_LOCALES.map((locale) => [locale, `/${locale}${normalizedPath}`])
-      ),
+      languages: { ...languageAlternates, "x-default": `/uz${normalizedPath}` },
     },
     openGraph: {
       url: localizedPath,
+      title,
+      description,
+    },
+    twitter: {
       title,
       description,
     },

@@ -4,17 +4,17 @@ import { PricingView } from "@/components/billing/pricing-view";
 import { SiteHeader } from "@/components/site/header";
 import type { Locale } from "@/lib/locales";
 import { publicPageMetadata } from "@/lib/seo";
+import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale } from "../dictionaries";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
-  const dict = await getDictionary(lang);
+  const seo = getSeoCopy(lang, "pricing");
   return publicPageMetadata({
     lang,
     path: "/pricing",
-    title: dict.billing.title,
-    description: dict.billing.honestBody,
+    ...seo,
   });
 }
 

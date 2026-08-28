@@ -12,6 +12,7 @@ function validRoot() {
     SECRET_KEY: "aB3dE5gH7jK9mN2pQ4sT6vW8yZ1cD3fG5hJ7kL9mN2pQ4sT6vW8yZ1cD3fG5hJ7",
     FRONTEND_ORIGIN: "https://vocora.uz",
     NEXT_PUBLIC_API_URL: "https://api.vocora.uz",
+    NEXT_PUBLIC_SITE_URL: "https://vocora.uz",
     COOKIE_SECURE: "true",
     PAYMENTS_SANDBOX: "false",
     EMAIL_PROVIDER: "resend",

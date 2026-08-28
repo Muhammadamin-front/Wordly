@@ -5,17 +5,17 @@ import { SiteHeader } from "@/components/site/header";
 import { LESSON_SUMMARIES } from "@/lib/grammar";
 import type { Locale } from "@/lib/locales";
 import { publicPageMetadata } from "@/lib/seo";
+import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale } from "../dictionaries";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
-  const dict = await getDictionary(lang);
+  const seo = getSeoCopy(lang, "grammar");
   return publicPageMetadata({
     lang,
     path: "/grammar",
-    title: dict.grammar.title,
-    description: dict.grammar.subtitle,
+    ...seo,
   });
 }
 

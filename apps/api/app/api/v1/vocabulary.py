@@ -17,6 +17,8 @@ from app.schemas.auth import MessageOut
 from app.schemas.vocabulary import (
     CategoryOut,
     CatalogMeta,
+    CatalogSitemap,
+    CatalogSitemapEntry,
     ImportReport,
     WordCreate,
     WordListItem,
@@ -85,6 +87,28 @@ async def catalog_meta(request: Request, db: AsyncSession = Depends(get_db)):
 
     return await cached_response(
         request, "catalog-meta", get_settings().CACHE_TTL_CATEGORIES, produce
+    )
+
+
+@router.get("/catalog/sitemap", response_model=CatalogSitemap)
+async def catalog_sitemap(request: Request, db: AsyncSession = Depends(get_db)):
+    """Return only canonical, published word URLs for the web XML sitemap."""
+
+    async def produce():
+        rows = await db.execute(
+            select(Word.slug, Word.updated_at)
+            .where(Word.status == "published")
+            .order_by(Word.slug)
+        )
+        return CatalogSitemap(
+            items=[
+                CatalogSitemapEntry(slug=slug, updated_at=updated_at)
+                for slug, updated_at in rows.all()
+            ]
+        )
+
+    return await cached_response(
+        request, "catalog-sitemap", get_settings().CACHE_TTL_CATEGORIES, produce
     )
 
 

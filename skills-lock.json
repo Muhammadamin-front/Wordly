@@ -145,6 +145,12 @@
       "skillPath": "skills/productivity/teach/SKILL.md",
       "computedHash": "68999bb1a241384b2f921f3321d779b7d05eb6089077b70d88cee2aee3d75ccc"
     },
+    "text-to-speech": {
+      "source": "elevenlabs/skills",
+      "sourceType": "github",
+      "skillPath": "text-to-speech/SKILL.md",
+      "computedHash": "698867fecd89d2f814b54f71dfd549f1d324cd53c7bf95d8c59830ac6bac68bf"
+    },
     "to-questionnaire": {
       "source": "mattpocock/skills",
       "sourceType": "github",

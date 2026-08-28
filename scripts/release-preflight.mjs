@@ -52,6 +52,9 @@ export function validateReleaseEnv(root, mobile, { checkMobile = true } = {}) {
   if (root.PAYMENTS_SANDBOX?.toLowerCase() !== "false") errors.push("root .env: PAYMENTS_SANDBOX must be false");
   if (!exactHttpsOrigin(root.FRONTEND_ORIGIN)) errors.push("root .env: FRONTEND_ORIGIN must be an exact HTTPS origin");
   if (!exactHttpsOrigin(root.NEXT_PUBLIC_API_URL)) errors.push("root .env: NEXT_PUBLIC_API_URL must be an exact HTTPS origin");
+  if (root.NEXT_PUBLIC_SITE_URL !== "https://vocora.uz") {
+    errors.push("root .env: NEXT_PUBLIC_SITE_URL must be https://vocora.uz");
+  }
   if (root.FRONTEND_ORIGIN && root.FRONTEND_ORIGIN !== "https://vocora.uz") {
     errors.push("root .env: FRONTEND_ORIGIN must be https://vocora.uz");
   }

@@ -9,6 +9,7 @@ import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
 import { ThemeProvider } from "@/components/site/theme-provider";
+import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 export const viewport: Viewport = {
@@ -55,22 +56,35 @@ export async function generateMetadata({
   if (!hasLocale(lang)) return {};
   const dict = await getDictionary(lang);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vocora.uz";
+  const seo = getSeoCopy(lang, "home");
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${dict.common.appName} — ${dict.common.tagline}`,
+      default: seo.title,
       template: `%s · ${dict.common.appName}`,
     },
-    description: dict.landing.heroSubtitle,
+    description: seo.description,
     openGraph: {
       type: "website",
       locale: lang,
       siteName: dict.common.appName,
-      title: `${dict.common.appName} - ${dict.common.tagline}`,
-      description: dict.landing.heroSubtitle,
-      images: [{ url: "/images/vocora-cat-tutor-poster.png", width: 1122, height: 1402 }],
+      title: seo.title,
+      description: seo.description,
+      images: [
+        {
+          url: "/images/vocora-cat-tutor-poster.png",
+          width: 1122,
+          height: 1402,
+          alt: `${dict.common.appName} — ${dict.common.tagline}`,
+        },
+      ],
     },
-    twitter: { card: "summary_large_image" },
+    twitter: {
+      card: "summary_large_image",
+      title: seo.title,
+      description: seo.description,
+      images: ["/images/vocora-cat-tutor-poster.png"],
+    },
     appleWebApp: {
       capable: true,
       title: dict.common.appName,

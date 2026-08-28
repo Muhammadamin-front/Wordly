@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site/header";
 import { Card, CardTitle } from "@/components/ui/card";
 import { fetchWord, type Word } from "@/lib/vocab";
 import type { Locale } from "@/lib/locales";
+import { publicPageMetadata } from "@/lib/seo";
 import { getDictionary, hasLocale } from "../../dictionaries";
 
 export const dynamic = "force-dynamic";
@@ -19,12 +20,21 @@ export async function generateMetadata({
   if (!hasLocale(lang)) return {};
   const word = await fetchWord(slug);
   if (!word) return {};
-  const translation =
-    lang === "ru" ? word.senses[0]?.translation_ru : word.senses[0]?.translation_uz;
-  return {
-    title: `${word.headword} — ${translation ?? ""}`,
-    description: word.senses[0]?.definition_en,
-  };
+  const sense = word.senses[0];
+  const translation = lang === "ru" ? sense?.translation_ru : sense?.translation_uz;
+  const title =
+    lang === "ru"
+      ? `${word.headword}: перевод и примеры`
+      : lang === "en"
+        ? `${word.headword}: meaning, pronunciation, and examples`
+        : `${word.headword}: o'zbekcha tarjima va misollar`;
+  const description =
+    lang === "ru"
+      ? `${word.headword} — ${translation ?? "английское слово"}. Значение: ${sense?.definition_en ?? "словарная статья"}. Уровень ${word.cefr_level}, произношение и примеры употребления.`
+      : lang === "en"
+        ? `${word.headword}: ${sense?.definition_en ?? "English dictionary entry"}. See its ${word.cefr_level} level, pronunciation, translations, examples, and related words.`
+        : `${word.headword} — ${translation ?? "inglizcha so'z"}. Ma'nosi: ${sense?.definition_en ?? "lug'at izohi"}. ${word.cefr_level} daraja, talaffuz va qo'llanish misollari.`;
+  return publicPageMetadata({ lang, path: `/words/${slug}`, title, description });
 }
 
 function relationGroup(word: Word, type: string): string[] {

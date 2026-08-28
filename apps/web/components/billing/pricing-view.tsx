@@ -1,10 +1,12 @@
 "use client";
 
-import { CheckCircle2, Crown, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
+import { Logo } from "@/components/site/logo";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
@@ -18,23 +20,34 @@ import {
   type Subscription,
 } from "@/lib/billing";
 import { cn } from "@/lib/utils";
-import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+import styles from "./pricing-view.module.css";
 
 const FEATURE_KEY: Record<string, keyof Dictionary["billing"]> = {
   free: "freeFeatures",
   premium_monthly: "premiumFeatures",
+  premium_quarterly: "premiumFeatures",
   premium_yearly: "premiumFeatures",
   family: "familyFeatures",
 };
 
+const PLAN_NAME_KEY: Record<string, keyof Dictionary["billing"]> = {
+  free: "free",
+  premium_monthly: "premiumMonthly",
+  premium_quarterly: "premiumQuarterly",
+  premium_yearly: "premiumYearly",
+  family: "family",
+};
+
 function planName(code: string, t: Dictionary["billing"]): string {
-  return code === "free"
-    ? t.free
-    : code === "premium_monthly"
-      ? t.premiumMonthly
-      : code === "premium_yearly"
-        ? t.premiumYearly
-        : t.family;
+  const key = PLAN_NAME_KEY[code];
+  return key ? t[key] : code;
+}
+
+function featureList(code: string, t: Dictionary["billing"]): string[] {
+  const primary = t[FEATURE_KEY[code]];
+  const secondary = code === "free" ? t.freeIncludesList : t.premiumAddsList;
+  return [...new Set(`${primary} · ${secondary}`.split("·").map((item) => item.trim()).filter(Boolean))].slice(0, 7);
 }
 
 export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"] }) {
@@ -129,190 +142,157 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     );
   }
 
+  const planOrder = ["free", "premium_monthly", "premium_quarterly", "premium_yearly"];
+  const checkoutEnabled = paymentStatus.checkout_enabled;
+  const displayPlans = plans
+    .filter((plan) => planOrder.includes(plan.code))
+    .sort((a, b) => planOrder.indexOf(a.code) - planOrder.indexOf(b.code));
+
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
-      <section className="surface-panel relative overflow-hidden rounded-[18px] p-6 text-center sm:p-8">
-        <span aria-hidden className="absolute -right-8 -top-12 font-display text-[12rem] leading-none tracking-wide text-brand-600/7">VOCORA</span>
-        <span className="print-label relative mx-auto inline-flex items-center gap-2 border-accent-500 bg-accent-400/10 text-accent-600">
-          <Crown className="size-4" aria-hidden />
-          {t.title}
-        </span>
-        <h1 className="type-h1 relative mx-auto mt-5 max-w-3xl text-ink">
-          {t.honestTitle}
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
-          {t.honestBody}
-        </p>
-      </section>
-
-      {sub?.is_premium && (
-        <Alert tone="success" className="mx-auto mt-4 max-w-md">
-          ✨ {t.premiumActive}
-        </Alert>
-      )}
-      {error && (
-        <Alert tone="error" className="mx-auto mt-4 max-w-md">
-          {error}
-        </Alert>
-      )}
-      {!paymentStatus.checkout_enabled && !paymentStatus.sandbox_enabled && (
-        <Alert tone="info" className="mx-auto mt-4 max-w-md">
-          {t.notConfigured}
-        </Alert>
-      )}
-
-      <section className="mt-6 grid gap-3 md:grid-cols-2">
-        {[
-          [t.freeIncludes, t.freeIncludesList],
-          [t.premiumAdds, t.premiumAddsList],
-        ].map(([title, body]) => (
-          <div key={title} className="premium-card rounded-[14px] p-5">
-            <p className="flex items-center gap-2 text-sm font-black text-ink">
-              <CheckCircle2 className="size-5 text-accent-500" aria-hidden />
-              {title}
-            </p>
-            <p className="mt-3 text-sm leading-7 text-ink-soft">{body}</p>
+    <main className={styles.page}>
+      <section className={styles.board} aria-labelledby="pricing-title">
+        <header className={styles.boardHeader}>
+          <Logo
+            lang={lang}
+            tone="inverse"
+            className={cn(styles.boardLogo, "[&_.logo-mark]:size-8 [&_.logo-text]:sr-only")}
+          />
+          <div className={styles.headingGroup}>
+            <h1 id="pricing-title" className={styles.title}>{t.subtitle}</h1>
+            <p className={styles.subtitle}>{t.honestTitle}</p>
           </div>
-        ))}
-      </section>
+          <span className={styles.secureMark} title={t.paymentGate}>
+            <ShieldCheck aria-hidden />
+            <span className="sr-only">{t.paymentGate}</span>
+          </span>
+        </header>
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {plans.map((plan) => {
-          const isCurrent = sub?.plan_code === plan.code && sub?.is_premium;
-          const popular = plan.code === "premium_yearly";
-          const perUnit =
-            plan.code === "premium_monthly" ? t.perMonth : plan.code === "free" ? "" : t.perYear;
-          const canPurchase =
-            !user ||
-            ((paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled) &&
-              (plan.code !== "family" || paymentStatus.family_plan_available));
-          return (
-            <div
-              key={plan.code}
-              className={cn(
-                "relative flex flex-col rounded-2xl border-2 bg-card p-5 shadow-[3px_4px_0_rgb(84,37,15,0.14)]",
-                popular ? "border-brand-500 bg-brand-50 shadow-[6px_7px_0_#54250f]" : "border-line"
-              )}
-            >
-              {popular && (
-                <span className="print-label absolute -top-3 left-1/2 -translate-x-1/2 border-brand-950 bg-brand-600 text-white shadow-[2px_2px_0_#54250f]">
-                  {t.mostPopular}
-                </span>
-              )}
-              <h2 className="font-display text-3xl tracking-wide text-ink">{planName(plan.code, t)}</h2>
-              <p className="mt-2">
-                <span className="font-display text-4xl tracking-wide text-ink">
-                  {plan.price_som === 0 ? "0" : formatSom(plan.price_som)}
-                </span>
-                <span className="text-xs text-ink-soft">
-                  {" "}
-                  {t.som}
-                  {perUnit}
-                </span>
-              </p>
-              <p className="mt-3 flex-1 text-xs leading-relaxed text-ink-soft">
-                {t[FEATURE_KEY[plan.code]]}
-              </p>
-              {plan.code === "family" && !paymentStatus.family_plan_available && (
-                <p className="mt-3 rounded-md border border-line bg-line/25 px-3 py-2 text-xs font-bold text-ink-soft">
-                  {t.familyUnavailable}
-                </p>
-              )}
+        {(sub?.is_premium || error || (!paymentStatus.checkout_enabled && !paymentStatus.sandbox_enabled)) && (
+          <div className={styles.statusRail}>
+            {sub?.is_premium && <Alert tone="success">{t.premiumActive}</Alert>}
+            {error && <Alert tone="error">{error}</Alert>}
+            {!paymentStatus.checkout_enabled && !paymentStatus.sandbox_enabled && (
+              <Alert tone="info">{t.notConfigured}</Alert>
+            )}
+          </div>
+        )}
 
-              {plan.tier === "premium" &&
-                (isCurrent ? (
-                  <span className="mt-4 rounded-lg bg-success/10 py-2 text-center text-xs font-bold text-success">
-                    ✓ {t.currentPlan}
-                  </span>
-                ) : selected === plan.code ? (
-                  <div className="mt-4 space-y-2">
-                    {paymentStatus.checkout_enabled && (
-                      <div
-                        className={cn(
-                          "grid gap-2",
-                          [paymentStatus.providers.payme, paymentStatus.providers.click, paymentStatus.providers.uzum].filter(Boolean).length > 1
-                            ? "sm:grid-cols-2"
-                            : "grid-cols-1"
-                        )}
-                      >
-                        {paymentStatus.providers.payme && (
-                          <Button
-                            size="sm"
-                            loading={busy}
-                            onClick={() => void pay(plan.code, "payme")}
-                          >
-                            {t.payme}
-                          </Button>
-                        )}
-                        {paymentStatus.providers.click && (
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            loading={busy}
-                            onClick={() => void pay(plan.code, "click")}
-                          >
-                            {t.click}
-                          </Button>
-                        )}
-                        {paymentStatus.providers.uzum && (
-                          <Button
-                            size="sm"
-                            variant="secondary"
-                            loading={busy}
-                            onClick={() => void pay(plan.code, "uzum")}
-                          >
-                            Uzum Checkout
-                          </Button>
-                        )}
-                      </div>
-                    )}
-                    {paymentStatus.sandbox_enabled && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        fullWidth
-                        loading={busy}
-                        onClick={() => void demoActivate(plan.code)}
-                      >
-                        {t.sandboxActivate}
-                      </Button>
-                    )}
+        <div className={styles.planGrid}>
+          {displayPlans.map((plan) => {
+            const isFree = plan.code === "free";
+            const isCurrent = isFree
+              ? Boolean(user && !sub?.is_premium)
+              : sub?.plan_code === plan.code && sub?.is_premium;
+            const isSelecting = selected === plan.code;
+            const popular = plan.code === "premium_yearly";
+            const perUnit =
+              isFree
+                ? ""
+                : plan.code === "premium_monthly"
+                ? t.perMonth
+                : plan.code === "premium_quarterly"
+                  ? t.perQuarter
+                  : t.perYear;
+            const canPurchase =
+              isFree || !user || (paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled);
+            const tone =
+              isFree
+                ? styles.free
+                : plan.code === "premium_monthly"
+                ? styles.monthly
+                : plan.code === "premium_quarterly"
+                  ? styles.quarterly
+                  : styles.yearly;
+
+            function choose() {
+              trackEvent("premium_plan_selected", {
+                locale: lang,
+                plan_code: plan.code,
+                checkout_enabled: checkoutEnabled,
+              });
+              if (!user) {
+                router.push(`/${lang}/auth/login`);
+                return;
+              }
+              if (isFree) {
+                router.push(`/${lang}/library`);
+                return;
+              }
+              setSelected(plan.code);
+            }
+
+            return (
+              <article key={plan.code} className={cn(styles.planCard, tone, popular && styles.popular)}>
+                <div className={styles.gradientShape} aria-hidden />
+                <div className={styles.planContent}>
+                  <div className={styles.planHeading}>
+                    <h2>{planName(plan.code, t)}</h2>
+                    {popular && <span>{t.mostPopular}</span>}
                   </div>
-                ) : (
-                  <Button
-                    size="sm"
-                    className="mt-4"
-                    fullWidth
-                    disabled={!canPurchase}
-                    onClick={() => {
-                      trackEvent("premium_plan_selected", {
-                        locale: lang,
-                        plan_code: plan.code,
-                        checkout_enabled: paymentStatus.checkout_enabled,
-                      });
-                      if (!user) {
-                        router.push(`/${lang}/auth/login`);
-                        return;
-                      }
-                      setSelected(plan.code);
-                    }}
-                  >
-                    {user ? t.choosePlan : t.signInToChoose}
-                  </Button>
-                ))}
-            </div>
-          );
-        })}
-      </div>
+                  <ul className={styles.featureList}>
+                    {featureList(plan.code, t).map((feature) => (
+                      <li key={feature}>
+                        <Check aria-hidden />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-      <div className="mt-5 flex items-start gap-3 rounded-xl border border-line bg-card p-4 text-sm leading-6 text-ink-soft shadow-[2px_3px_0_rgb(84,37,15,0.12)]">
-        <ShieldCheck className="mt-0.5 size-5 shrink-0 text-brand-500" aria-hidden />
-        <p>{t.paymentGate}</p>
-      </div>
+                <div className={cn(styles.priceBlock, isSelecting && styles.priceBlockHidden)}>
+                  <strong>{formatSom(plan.price_som)}</strong>
+                  <span>{t.som}{perUnit}</span>
+                </div>
 
-      {paymentStatus.sandbox_enabled && (
-        <p className="mt-4 text-center text-xs text-ink-soft">{t.sandboxNote}</p>
-      )}
+                <div className={cn(styles.actionDock, isSelecting && styles.actionDockExpanded)}>
+                  {isCurrent ? (
+                    <span className={styles.currentPlan}>
+                      <Check aria-hidden /> {t.currentPlan}
+                    </span>
+                  ) : isFree && user ? (
+                    <span className={styles.currentPlan}>
+                      <Check aria-hidden /> {t.freeIncludes}
+                    </span>
+                  ) : isSelecting ? (
+                    <div className={styles.providerGrid}>
+                      <span className={styles.providerLabel} aria-live="polite">
+                        {busy ? t.redirecting : t.payWith}
+                      </span>
+                      {paymentStatus.checkout_enabled && (
+                        <>
+                          {paymentStatus.providers.payme && (
+                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "payme")}>{t.payme}</button>
+                          )}
+                          {paymentStatus.providers.click && (
+                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "click")}>{t.click}</button>
+                          )}
+                          {paymentStatus.providers.uzum && (
+                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "uzum")}>Uzum</button>
+                          )}
+                        </>
+                      )}
+                      {paymentStatus.sandbox_enabled && (
+                        <button aria-busy={busy} disabled={busy} onClick={() => void demoActivate(plan.code)}>{t.sandboxActivate}</button>
+                      )}
+                    </div>
+                  ) : (
+                    <button className={styles.chooseButton} disabled={!canPurchase} onClick={choose}>
+                      {user ? t.choosePlan : t.signInToChoose}
+                      <ArrowRight aria-hidden />
+                    </button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        <footer className={styles.boardFooter}>
+          <p>{t.honestBody}</p>
+          <p><ShieldCheck aria-hidden /> {t.paymentGate}</p>
+        </footer>
+        {paymentStatus.sandbox_enabled && <p className={styles.sandboxNote}>{t.sandboxNote}</p>}
+      </section>
     </main>
   );
 }

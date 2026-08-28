@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { fetchCategories, fetchWords, CEFR_LEVELS, type Category } from "@/lib/vocab";
 import type { Locale } from "@/lib/locales";
 import { publicPageMetadata } from "@/lib/seo";
+import { getSeoCopy } from "@/lib/seo-copy";
 import { cn } from "@/lib/utils";
 import { getDictionary, hasLocale } from "../dictionaries";
 
@@ -36,12 +37,11 @@ function filterHref(
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
-  const dict = await getDictionary(lang);
+  const seo = getSeoCopy(lang, "vocabulary");
   return publicPageMetadata({
     lang,
     path: "/vocabulary",
-    title: dict.vocab.title,
-    description: dict.vocab.subtitle,
+    ...seo,
   });
 }
 

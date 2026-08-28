@@ -119,6 +119,11 @@ async def test_public_list_hides_unpublished(client):
         "levels": {"A1": 1},
     }
 
+    sitemap = await client.get("/api/v1/catalog/sitemap")
+    assert sitemap.status_code == 200
+    assert [item["slug"] for item in sitemap.json()["items"]] == ["apple-noun"]
+    assert sitemap.json()["items"][0]["updated_at"]
+
     # Draft detail page 404s publicly but is visible to admin.
     assert (await client.get("/api/v1/words/banana-noun")).status_code == 404
     admin_list = await client.get("/api/v1/admin/words?status=draft", headers=headers)

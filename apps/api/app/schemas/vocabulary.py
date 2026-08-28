@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -155,6 +156,15 @@ class CatalogMeta(BaseModel):
     expression_total: int
     learning_item_total: int
     levels: Dict[str, int]
+
+
+class CatalogSitemapEntry(BaseModel):
+    slug: str
+    updated_at: datetime
+
+
+class CatalogSitemap(BaseModel):
+    items: List[CatalogSitemapEntry]
 
 
 class ImportReport(BaseModel):

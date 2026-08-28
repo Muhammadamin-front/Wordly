@@ -33,6 +33,7 @@ import type { Locale } from "@/lib/locales";
 import { getWordsLabel } from "@/lib/nav-labels";
 import { fetchCatalogMeta } from "@/lib/vocab";
 import { ALL_LESSONS } from "@/lib/grammar";
+import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
 
 const LEVELS = [
@@ -49,19 +50,23 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   if (!hasLocale(lang)) return {};
-  const dict = await getDictionary(lang);
+  const seo = getSeoCopy(lang, "home");
   return {
-    title: `${dict.common.appName} — ${dict.common.tagline}`,
-    description: dict.landing.heroSubtitle,
+    title: seo.title,
+    description: seo.description,
     alternates: {
       canonical: `/${lang}`,
-      languages: Object.fromEntries(locales.map((locale) => [locale, `/${locale}`])),
+      languages: {
+        ...Object.fromEntries(locales.map((locale) => [locale, `/${locale}`])),
+        "x-default": "/uz",
+      },
     },
     openGraph: {
       url: `/${lang}`,
-      title: `${dict.common.appName} — ${dict.common.tagline}`,
-      description: dict.landing.heroSubtitle,
+      title: seo.title,
+      description: seo.description,
     },
+    twitter: seo,
   };
 }
 
