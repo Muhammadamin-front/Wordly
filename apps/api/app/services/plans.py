@@ -20,7 +20,13 @@ PLANS: Dict[str, Plan] = {
     "premium_quarterly": Plan("premium_quarterly", "premium", 125_000, 90, 1),
     # Exactly 25% off 12x monthly (588,000 * 0.75 = 441,000).
     "premium_yearly": Plan("premium_yearly", "premium", 441_000, 365, 1),
-    "family": Plan("family", "premium", 349_000, 365, 6),
+    # Unlike streaming seats, each family seat is a real AI-consuming user
+    # (own 200/day quota) — marginal cost per seat is ~4,500 so'm/mo typical,
+    # not ~0. Priced at ~25% off 6x premium_yearly (2,646,000 -> 1,990,000),
+    # not a steep streaming-style bulk discount: was 349,000 total, which
+    # undercut a single solo yearly seat and ran near-zero margin per seat
+    # at typical usage — see git history for the analysis.
+    "family": Plan("family", "premium", 1_990_000, 365, 6),
 }
 
 PAID_PLANS = [p for p in PLANS.values() if p.tier == "premium"]
