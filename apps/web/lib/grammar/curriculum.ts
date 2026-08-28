@@ -165,7 +165,9 @@ export function buildCurriculum(legacyByLevel: Record<CefrGrammarLevel, GrammarL
   const result = {} as Record<CefrGrammarLevel, GrammarLesson[]>;
   for (const level of Object.keys(TARGET_LESSON_COUNTS) as CefrGrammarLevel[]) {
     const legacy = legacyByLevel[level].map((lesson, index) => enrichLegacy(lesson, level, index + 1));
-    const expanded = expansionLessons(level, legacy.length + 1);
+    const expanded = expansionLessons(level, legacy.length + 1).map((lesson, index) =>
+      enrichLegacy(lesson, level, legacy.length + index + 1)
+    );
     const combined = [...legacy, ...expanded];
     const slugs = new Set(combined.map((lesson) => lesson.slug));
     result[level] = combined.map((lesson, index) => ({
