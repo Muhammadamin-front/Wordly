@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -35,11 +36,14 @@ type MapFeature = {
   height: number;
 };
 export type WritingVisual = {
-  kind: "bar" | "line" | "table" | "process" | "pie-pair" | "map-pair" | "bar-line" | "bar-pie";
+  kind: "bar" | "line" | "table" | "process" | "image" | "pie-pair" | "map-pair" | "bar-line" | "bar-pie";
   title: string;
   y_label?: string;
   categories: string[];
   series: ChartSeries[];
+  // "image" only: a diagram or chart hosted on the web app, shown as-is.
+  image?: string;
+  image_alt?: string;
   pie?: PieSlice[];
   pies?: { title: string; slices: PieSlice[] }[];
   maps?: { title: string; features: MapFeature[] }[];
@@ -51,6 +55,9 @@ export type WritingVisual = {
   };
 };
 
+// Task 1 artwork is served by the web app, the same origin and env var the
+// billing hand-off and the listening audio already use.
+const WEB_URL = (process.env.EXPO_PUBLIC_WEB_URL ?? "https://vocora.uz").replace(/\/$/, "");
 const CHART_COLORS = [colors.teal, colors.rust, colors.brand300, colors.sage, colors.rustDark, colors.brand600];
 const WRITING_SECTIONS: Record<TaskType, Set<string>> = {
   task1: new Set(["task-1-visuals", "task-1-process", "score-analysis"]),
@@ -416,6 +423,26 @@ function MapPair({ maps, title }: { maps: NonNullable<WritingVisual["maps"]>; ti
   );
 }
 
+/** Diagrams and charts that ship as artwork rather than as data the app redraws.
+ *  They are served by the web app, the same origin the listening audio comes from. */
+function VisualImage({ path, alt }: { path?: string; alt: string }) {
+  const [ratio, setRatio] = useState(4 / 3);
+  if (!path) return null;
+  const uri = `${WEB_URL}${path}`;
+  return (
+    <Image
+      source={{ uri }}
+      accessibilityLabel={alt}
+      accessible
+      resizeMode="contain"
+      onLoad={({ nativeEvent: { source } }) =>
+        source.height > 0 ? setRatio(source.width / source.height) : undefined
+      }
+      style={[styles.visualImage, { aspectRatio: ratio }]}
+    />
+  );
+}
+
 export function WritingTaskVisual({ visual, locale }: { visual: WritingVisual; locale: Locale }) {
   const t = copy[locale];
   return (
@@ -431,6 +458,7 @@ export function WritingTaskVisual({ visual, locale }: { visual: WritingVisual; l
       {visual.kind === "bar" ? <BarChart visual={visual} /> : null}
       {visual.kind === "table" ? <DataTable visual={visual} seriesLabel={t.series} /> : null}
       {visual.kind === "process" ? <ProcessDiagram categories={visual.categories} /> : null}
+      {visual.kind === "image" ? <VisualImage path={visual.image} alt={visual.image_alt ?? visual.title} /> : null}
       {visual.kind === "pie-pair" ? <View style={styles.pieList}>{visual.pies?.map((pie) => <Pie key={pie.title} title={pie.title} slices={pie.slices} />)}</View> : null}
       {visual.kind === "map-pair" && visual.maps ? <MapPair maps={visual.maps} title={visual.title} /> : null}
       {visual.kind === "bar-line" ? (
@@ -732,6 +760,7 @@ const styles = StyleSheet.create({
   newPromptButton: { alignSelf: "flex-start", minHeight: 48, flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, borderWidth: 1, borderColor: colors.brand200, borderRadius: 9, backgroundColor: colors.raised },
   newPromptText: { fontFamily: fonts.uiBold, fontSize: 10.5, color: colors.rustDark },
   promptText: { fontFamily: fonts.ui, fontSize: 13, lineHeight: 21, color: colors.muted },
+  visualImage: { width: "100%", borderRadius: 10, backgroundColor: "#fff" },
   visualCard: { gap: 12, padding: 13, borderWidth: 1, borderColor: colors.brand200, borderRadius: 14, backgroundColor: "rgba(255,248,234,0.74)" },
   visualHeading: { flexDirection: "row", alignItems: "flex-start", gap: 8 },
   visualTitle: { marginTop: 3, fontFamily: fonts.uiBold, fontSize: 12.5, lineHeight: 18, color: colors.ink },

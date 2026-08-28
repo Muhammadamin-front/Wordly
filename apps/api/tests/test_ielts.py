@@ -92,14 +92,14 @@ async def test_writing_tasks_lists_both(client):
     visual_kinds = {task["visual"]["kind"] for task in body["task1"]}
     # map-pair pulled entirely (pending real illustrated-map content — plain
     # coloured rectangles read as "ugly", not a placeholder worth keeping).
-    # process-image: real illustrated diagrams the user supplied, shown as-is
-    # rather than redrawn as a schematic numbered-stage list.
-    assert {"bar", "line", "table", "process-image", "pie-pair", "bar-line"} <= visual_kinds
+    # image: real diagrams and charts supplied as artwork, shown as-is rather
+    # than redrawn from categories/series.
+    assert {"bar", "line", "table", "image", "pie-pair", "bar-line"} <= visual_kinds
     assert "map-pair" not in visual_kinds
     assert "process" not in visual_kinds
     assert all(task["visual"]["title"] for task in body["task1"])
     assert all(
-        task["visual"].get("image") for task in body["task1"] if task["visual"]["kind"] == "process-image"
+        task["visual"].get("image") for task in body["task1"] if task["visual"]["kind"] == "image"
     )
 
 

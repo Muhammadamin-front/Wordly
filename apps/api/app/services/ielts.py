@@ -280,7 +280,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "How bamboo fabric is made",
                 "image": "/images/writing-task1-process/bamboo-fabric.jpg",
                 "image_alt": (
@@ -299,7 +299,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "Plastic bottle recycling process",
                 "image": "/images/writing-task1-process/plastic-bottle-recycling.jpg",
                 "image_alt": (
@@ -319,7 +319,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "How coffee is produced",
                 "image": "/images/writing-task1-process/coffee-production.jpg",
                 "image_alt": (
@@ -339,7 +339,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "comparisons where relevant. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "How a book is published",
                 "image": "/images/writing-task1-process/book-publishing.jpg",
                 "image_alt": (
@@ -358,7 +358,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "Orange juice production process",
                 "image": "/images/writing-task1-process/orange-juice-production.jpg",
                 "image_alt": (
@@ -378,7 +378,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "Glass bottle recycling process",
                 "image": "/images/writing-task1-process/glass-bottle-recycling.jpg",
                 "image_alt": (
@@ -398,7 +398,7 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "Coconut oil production process",
                 "image": "/images/writing-task1-process/coconut-oil-production.jpg",
                 "image_alt": (
@@ -418,13 +418,79 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "make comparisons where relevant. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process-image",
+                "kind": "image",
                 "title": "The chocolate production process",
                 "image": "/images/writing-task1-process/chocolate-production.jpg",
                 "image_alt": (
                     "Nine-stage diagram: cacao pods are harvested and their beans fermented, "
                     "sun-dried, sacked, and transported to a factory, then roasted, crushed "
                     "and winnowed into nibs, and processed into chocolate."
+                ),
+                "categories": [],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Line (temperatures in three cities)",
+            "prompt": (
+                "The graph below shows the average monthly temperature in three cities — Oslo, "
+                "Cairo, and Tokyo — over the course of one year. Summarise the information by "
+                "selecting and reporting the main features, and make comparisons where relevant. "
+                "Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "image",
+                "title": "Average monthly temperature in three cities",
+                "image": "/images/writing-task1-line/city-temperatures.jpg",
+                "image_alt": (
+                    "Line graph of average monthly temperature in degrees Celsius from January "
+                    "to December for Oslo, Cairo, and Tokyo. Cairo peaks at 36 degrees in "
+                    "August, Oslo stays coldest and peaks at 20 degrees in July and August, and "
+                    "Tokyo falls to a low of 13 degrees in July before rising again."
+                ),
+                "categories": [],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Line (use of four digital services)",
+            "prompt": (
+                "The graph below shows the percentage of people using four different digital "
+                "services between 1982 and 2010. Summarise the information by selecting and "
+                "reporting the main features, and make comparisons where relevant. Write at "
+                "least 150 words."
+            ),
+            "visual": {
+                "kind": "image",
+                "title": "Use of four digital services, 1982–2010",
+                "image": "/images/writing-task1-line/digital-services-1982-2010.jpg",
+                "image_alt": (
+                    "Line graph showing the percentage of people using digital services A to D "
+                    "at four-year intervals from 1982 to 2010. Service A is highest throughout, "
+                    "peaking near 80 per cent in 1994; Service B rises steadily to 60 per cent; "
+                    "Service C climbs from 5 to 45 per cent; Service D stays below 10 per cent."
+                ),
+                "categories": [],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Line (books borrowed from four libraries)",
+            "prompt": (
+                "The graph below shows the number of books borrowed from four community "
+                "libraries between June and September. Summarise the information by selecting "
+                "and reporting the main features, and make comparisons where relevant. Write at "
+                "least 150 words."
+            ),
+            "visual": {
+                "kind": "image",
+                "title": "Books borrowed from four community libraries, June–September",
+                "image": "/images/writing-task1-line/community-library-books.jpg",
+                "image_alt": (
+                    "Line graph of books borrowed each month from June to September by four "
+                    "libraries. Eastgate falls from 300 to 160; Northview dips in August before "
+                    "recovering to 237; Westfield and Southpark both rise steadily, reaching "
+                    "200 and 149 respectively."
                 ),
                 "categories": [],
                 "series": [],
