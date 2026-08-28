@@ -235,7 +235,7 @@ function ProcessDiagram({ visual }: Props) {
   );
 }
 
-function ProcessImage({ visual }: Props) {
+function VisualImage({ visual }: Props) {
   if (!visual.image) return null;
   return (
     <figure className="mt-4">
@@ -342,7 +342,7 @@ export function WritingTaskVisual({ visual }: Props) {
       )}
       {visual.kind === "pie-pair" && <PiePair visual={visual} />}
       {visual.kind === "process" && <ProcessDiagram visual={visual} />}
-      {visual.kind === "process-image" && <ProcessImage visual={visual} />}
+      {visual.kind === "image" && <VisualImage visual={visual} />}
       {visual.kind === "map-pair" && <MapPair visual={visual} />}
       {visual.kind === "bar-line" && <BarLineCharts visual={visual} />}
     </section>
