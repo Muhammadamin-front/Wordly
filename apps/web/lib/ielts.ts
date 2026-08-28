@@ -61,7 +61,7 @@ export interface WritingSecondaryChart {
 }
 
 export interface WritingTaskVisual {
-  kind: "line" | "bar" | "table" | "bar-pie" | "pie-pair" | "process" | "map-pair" | "bar-line";
+  kind: "line" | "bar" | "table" | "bar-pie" | "pie-pair" | "process" | "process-image" | "map-pair" | "bar-line";
   title: string;
   y_label?: string;
   categories: string[];
@@ -70,6 +70,10 @@ export interface WritingTaskVisual {
   pies?: WritingPieChart[];
   maps?: WritingMap[];
   secondary?: WritingSecondaryChart;
+  // "process-image" only: a real illustrated diagram under /public, shown as-is
+  // instead of the schematic numbered-stage list "process" renders from categories.
+  image?: string;
+  image_alt?: string;
 }
 
 export interface WritingTask {

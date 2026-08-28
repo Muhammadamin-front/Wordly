@@ -2,6 +2,7 @@
 Coach). Generation and Writing scoring are AI calls (quota-guarded); grading a
 submitted Reading/Listening test is server-side and free."""
 import json
+import random
 from typing import Awaitable, Callable, Dict, List
 from uuid import UUID
 
@@ -105,8 +106,13 @@ async def overview(user: User = Depends(get_current_user), db: AsyncSession = De
 
 @router.get("/writing/tasks", response_model=Dict[str, List[WritingTask]])
 async def writing_tasks():
+    # Shuffled per request: the client always opens on index 0 and "New
+    # prompt" just walks forward from there, so a fixed order meant every
+    # learner saw the same first few prompts and some visual kinds (e.g.
+    # process diagrams, sitting later in the task1 list) were rarely seen.
     return {
-        key: [WritingTask(**t) for t in tasks] for key, tasks in ielts.WRITING_TASKS.items()
+        key: [WritingTask(**t) for t in random.sample(tasks, len(tasks))]
+        for key, tasks in ielts.WRITING_TASKS.items()
     }
 
 
