@@ -16,6 +16,28 @@ class PlansOut(BaseModel):
     plans: List[PlanOut]
 
 
+class CoinPackOut(BaseModel):
+    code: str
+    coins: int
+    price_som: int
+
+
+class CoinPacksOut(BaseModel):
+    packs: List[CoinPackOut]
+
+
+class CoinTransactionOut(BaseModel):
+    delta: int
+    reason: str
+    balance_after: int
+    created_at: datetime
+
+
+class WalletOut(BaseModel):
+    balance: int
+    recent_transactions: List[CoinTransactionOut]
+
+
 class BillingStatusOut(BaseModel):
     checkout_enabled: bool
     sandbox_enabled: bool
@@ -35,6 +57,8 @@ class SubscriptionOut(BaseModel):
 
 
 class CheckoutRequest(BaseModel):
+    # Accepts either a sellable Plan.code or a coin-pack code (e.g.
+    # "coins_small") — see api/v1/payments.py's _get_purchasable.
     plan_code: str = Field(min_length=1, max_length=24)
     provider: Literal["payme", "click", "uzum"]
     return_url: Optional[str] = Field(default=None, max_length=500)

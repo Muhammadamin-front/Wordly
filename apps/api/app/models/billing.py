@@ -97,6 +97,58 @@ class Payment(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
 
 
+class Wallet(Base):
+    """A user's coin balance. One row per user, created lazily on first
+    credit/debit (see services.coins) rather than at registration — most
+    users will never touch coins."""
+
+    __tablename__ = "wallets"
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False
+    )
+    balance: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, default=utcnow, onupdate=utcnow, nullable=False
+    )
+
+
+class CoinTransaction(Base):
+    """Append-only ledger entry. The balance on Wallet is a derived cache of
+    summing these — kept for fast reads, but this table is the source of
+    truth for support/audit ("why is my balance X")."""
+
+    __tablename__ = "coin_transactions"
+    __table_args__ = (Index("ix_coin_transactions_user_created", "user_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    delta: Mapped[int] = mapped_column(Integer, nullable=False)  # positive=credit, negative=debit
+    reason: Mapped[str] = mapped_column(String(32), nullable=False)  # "coin_pack_purchase"|"mock_attempt"|...
+    reference: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)  # e.g. a Payment id
+    balance_after: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
+class VocabularyUnlock(Base):
+    """A permanent, one-time unlock of a vocabulary tier (currently just
+    "c1_c2") paid for with coins — separate from Subscription because it
+    never expires and isn't tied to an active premium period."""
+
+    __tablename__ = "vocabulary_unlocks"
+    __table_args__ = (UniqueConstraint("user_id", "tier", name="uq_vocabulary_unlocks_user_tier"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    tier: Mapped[str] = mapped_column(String(16), nullable=False)
+    unlocked_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
 class Referral(Base):
     __tablename__ = "referrals"
     __table_args__ = (Index("ix_referrals_referrer", "referrer_id"),)

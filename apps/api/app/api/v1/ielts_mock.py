@@ -10,7 +10,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, require_premium
+from app.api.deps import charge_coins_or_require_premium, get_current_user
 from app.core.config import get_settings
 from app.core.rate_limit import rate_limit
 from app.db.session import get_db
@@ -23,6 +23,7 @@ from app.schemas.ielts_mock import (
     MockSessionOut,
 )
 from app.services import ielts_mock, listening_audio, tts
+from app.services.plans import COIN_COST_MOCK_ATTEMPT
 
 router = APIRouter(
     prefix="/ielts/mock",
@@ -42,7 +43,6 @@ async def _owned_session(db: AsyncSession, user: User, session_id: UUID):
     "/sessions",
     response_model=MockSessionOut,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(require_premium)],
 )
 async def start_session(
     payload: MockSessionCreate,
@@ -54,6 +54,10 @@ async def start_session(
             status_code=status.HTTP_409_CONFLICT,
             detail="You already have a mock exam in progress",
         )
+    # Checked (and, for a free user, charged) only once we know this request
+    # will actually create a session — a request that fails the conflict
+    # check above must never be charged.
+    await charge_coins_or_require_premium(db, user, COIN_COST_MOCK_ATTEMPT, "mock_attempt")
     session = await ielts_mock.create_session(db, user, track=payload.track)
     await db.commit()
     return session
@@ -74,7 +78,6 @@ async def get_session(
 @router.post(
     "/sessions/{session_id}/abandon",
     response_model=MockSessionOut,
-    dependencies=[Depends(require_premium)],
 )
 async def abandon_session(
     session_id: UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
@@ -90,7 +93,6 @@ async def abandon_session(
 @router.post(
     "/sessions/{session_id}/legs/{skill}/complete",
     response_model=MockSessionOut,
-    dependencies=[Depends(require_premium)],
 )
 async def complete_leg(
     session_id: UUID,
@@ -114,13 +116,20 @@ async def complete_leg(
 
 @router.get(
     "/listening/{slug}/section/{section}/audio",
-    dependencies=[Depends(require_premium), Depends(rate_limit("mock_listening_audio"))],
+    dependencies=[Depends(rate_limit("mock_listening_audio"))],
 )
 async def listening_section_audio(slug: str, section: int):
     """Multi-voice ElevenLabs narration for one section (1-4) of a Full Mock
     listening test (MP3). The slug/section pair is checked against a fixed,
     checked-in content catalog — never arbitrary client text — so this can't
-    be used to burn synthesis credits on anything but our own scripts."""
+    be used to burn synthesis credits on anything but our own scripts.
+
+    No premium/coin gate here on purpose: the real gate is paying to start
+    the session (start_session, below) — this route only re-serves the
+    narration for a session already paid for (including on a legitimate
+    retry after a failed fetch), and re-charging on every audio request
+    would double-bill for that. Router-level auth + the rate limit above
+    are the access control for this route specifically."""
     if not get_settings().tts_enabled:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="TTS is not configured"

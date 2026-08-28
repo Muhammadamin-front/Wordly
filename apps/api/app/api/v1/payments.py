@@ -16,15 +16,29 @@ from app.schemas.billing import (
     BillingStatusOut,
     CheckoutOut,
     CheckoutRequest,
+    CoinPackOut,
+    CoinPacksOut,
+    CoinTransactionOut,
     MessageOut,
     PlanOut,
     PlansOut,
     ReferralOut,
     SandboxActivateRequest,
     SubscriptionOut,
+    WalletOut,
 )
-from app.services import checkout, click, payme, referrals, subscriptions, uzum
-from app.services.plans import SELLABLE_PLAN_CODES, Plan, get_plan, public_plans, som_to_tiyin
+from app.models.billing import CoinTransaction
+from app.services import checkout, click, coins, payme, referrals, subscriptions, uzum
+from app.services.plans import (
+    SELLABLE_PLAN_CODES,
+    CoinPack,
+    Plan,
+    get_coin_pack,
+    get_plan,
+    public_coin_packs,
+    public_plans,
+    som_to_tiyin,
+)
 
 # --- Gateway callbacks (called by Payme/Click servers, not the browser) -----
 gateway_router = APIRouter(prefix="/payments", tags=["payments"])
@@ -60,8 +74,8 @@ async def uzum_callback(
     return await uzum.handle_callback(db, await request.json(), webhook_secret)
 
 
-# --- Authenticated billing surface (the app itself) -------------------------
-router = APIRouter(prefix="/billing", tags=["billing"], dependencies=[Depends(get_current_user)])
+# --- Billing surface (public catalogue + authenticated account actions) -----
+router = APIRouter(prefix="/billing", tags=["billing"])
 
 IDEMPOTENCY_KEY_PATTERN = re.compile(r"^[A-Za-z0-9._-]{16,64}$")
 
@@ -90,6 +104,37 @@ async def plans():
             )
             for p in public_plans()
         ]
+    )
+
+
+@router.get("/coin-packs", response_model=CoinPacksOut)
+async def coin_packs():
+    return CoinPacksOut(
+        packs=[
+            CoinPackOut(code=p.code, coins=p.coins, price_som=p.price_som)
+            for p in public_coin_packs()
+        ]
+    )
+
+
+@router.get("/wallet", response_model=WalletOut)
+async def wallet(user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    balance = await coins.balance(db, user.id)
+    recent = await db.scalars(
+        select(CoinTransaction)
+        .where(CoinTransaction.user_id == user.id)
+        .order_by(CoinTransaction.created_at.desc())
+        .limit(20)
+    )
+    return WalletOut(
+        balance=balance,
+        recent_transactions=[
+            CoinTransactionOut(
+                delta=t.delta, reason=t.reason, balance_after=t.balance_after,
+                created_at=t.created_at,
+            )
+            for t in recent
+        ],
     )
 
 
@@ -128,8 +173,18 @@ async def subscription(
     )
 
 
+def _get_purchasable(code: str) -> "Optional[Plan | CoinPack]":
+    """A checkout's `plan_code` is either a sellable subscription plan or a
+    coin pack — both are duck-typed with `.code`/`.price_som`, which is all
+    checkout.py/uzum.py's register_checkout ever read off it."""
+    plan = get_plan(code)
+    if plan is not None and plan.code in SELLABLE_PLAN_CODES:
+        return plan
+    return get_coin_pack(code)
+
+
 def _existing_checkout_response(
-    existing: Payment, payload: CheckoutRequest, plan: Plan, return_url: Optional[str]
+    existing: Payment, payload: CheckoutRequest, plan: "Plan | CoinPack", return_url: Optional[str]
 ) -> CheckoutOut:
     if existing.provider != payload.provider or existing.plan_code != plan.code:
         raise HTTPException(
@@ -157,8 +212,8 @@ async def create_checkout(
     idempotency_key: Optional[str] = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ):
-    plan = get_plan(payload.plan_code)
-    if plan is None or plan.code not in SELLABLE_PLAN_CODES:
+    plan = _get_purchasable(payload.plan_code)
+    if plan is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid plan")
 
     settings = get_settings()

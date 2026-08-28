@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.models.billing import Payment
-from app.services import referrals, subscriptions
+from app.services import checkout_fulfillment, referrals, subscriptions
 
 # Payme error codes
 ERR_AUTH = -32504
@@ -150,7 +150,7 @@ async def perform_transaction(db: AsyncSession, params: Dict[str, Any]) -> Dict[
     order.state = PERFORMED
     order.status = "succeeded"
     order.perform_time_ms = _now_ms()
-    await subscriptions.grant(db, order.user_id, order.plan_code, provider="payme")
+    await checkout_fulfillment.fulfill_order(db, order, provider="payme")
     await referrals.reward_on_first_payment(db, order.user_id)
     await db.flush()
     return {"perform_time": order.perform_time_ms, "transaction": str(order.id), "state": PERFORMED}

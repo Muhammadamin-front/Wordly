@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import get_settings
 from app.models.billing import Payment
-from app.services import referrals, subscriptions
+from app.services import checkout_fulfillment, referrals, subscriptions
 from app.services.plans import Plan, som_to_tiyin
 
 
@@ -164,16 +164,13 @@ async def handle_callback(db: AsyncSession, payload: Dict[str, Any], webhook_sec
         if order.status != "succeeded":
             order.state = 2
             order.status = "succeeded"
-            subscription = await subscriptions.grant(
-                db,
-                order.user_id,
-                order.plan_code,
-                provider="uzum",
-                external_subscription_id=remote_order_id,
+            subscription = await checkout_fulfillment.fulfill_order(
+                db, order, provider="uzum", external_subscription_id=remote_order_id,
             )
-            # Keep the transaction link on the entitlement so a later refund
-            # can only revoke access granted by this exact payment.
-            subscription.external_subscription_id = remote_order_id
+            if subscription is not None:
+                # Keep the transaction link on the entitlement so a later
+                # refund can only revoke access granted by this exact payment.
+                subscription.external_subscription_id = remote_order_id
             await referrals.reward_on_first_payment(db, order.user_id)
     elif remote_state in {"DECLINED", "CANCELLED", "REVERSED"}:
         order.state = -1
@@ -181,6 +178,9 @@ async def handle_callback(db: AsyncSession, payload: Dict[str, Any], webhook_sec
     elif remote_state == "REFUNDED":
         order.state = -2
         order.status = "refunded"
+        # Coin-pack refunds intentionally don't claw back credited coins —
+        # the user may have already spent them, and going negative needs a
+        # real policy decision (support review?) this doesn't try to guess.
         active = await subscriptions.active_subscription(db, order.user_id)
         if active and active.provider == "uzum" and active.external_subscription_id == remote_order_id:
             await subscriptions.cancel(db, order.user_id, revoke_now=True)

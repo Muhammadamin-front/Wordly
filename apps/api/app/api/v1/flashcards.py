@@ -32,6 +32,8 @@ from app.schemas.flashcards import (
     ReviewResult,
 )
 from app.schemas.gamification import RewardOut
+from app.services import coins, subscriptions, vocabulary_unlocks
+from app.services.plans import COIN_COST_C1_C2_UNLOCK
 from app.services.review import record_review
 from app.core.security import utcnow
 
@@ -39,6 +41,32 @@ router = APIRouter(
     tags=["flashcards"],
     dependencies=[Depends(get_current_user), Depends(rate_limit("default"))],
 )
+
+C1_C2_LEVELS = ("C1", "C2")
+
+
+async def _require_c1_c2_unlock(db: AsyncSession, user: User) -> None:
+    """C1/C2 is a permanent, one-time unlock (not a per-add charge): once a
+    free user has paid for it, or a premium user checks it while premium,
+    they're never re-charged. Premium users never get a VocabularyUnlock
+    row at all — their access stays tied to having an active subscription,
+    same as everywhere else premium is checked."""
+    if await vocabulary_unlocks.is_unlocked(db, user, vocabulary_unlocks.C1_C2_TIER):
+        return
+    if await subscriptions.is_premium(db, user):
+        return
+    try:
+        await coins.debit(db, user.id, COIN_COST_C1_C2_UNLOCK, reason="c1_c2_unlock")
+    except coins.InsufficientCoins as exc:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail={
+                "reason": "insufficient_coins",
+                "balance": exc.balance,
+                "required": exc.requested,
+            },
+        )
+    await vocabulary_unlocks.unlock(db, user, vocabulary_unlocks.C1_C2_TIER)
 
 
 async def get_own_deck(db: AsyncSession, user: User, deck_id: UUID) -> Deck:
@@ -231,6 +259,8 @@ async def create_card(
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT, detail="Word already in your cards"
             )
+        if word.cefr_level in C1_C2_LEVELS:
+            await _require_c1_c2_unlock(db, user)
 
     card = Card(
         user_id=user.id,
@@ -258,6 +288,8 @@ async def add_cards_by_level(
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             detail="Provide cefr_level or category_slug",
         )
+    if payload.cefr_level in C1_C2_LEVELS:
+        await _require_c1_c2_unlock(db, user)
     already = select(Card.word_id).where(Card.user_id == user.id, Card.word_id.isnot(None))
 
     # Count the user's own matching cards before insert. Deriving this from

@@ -10,7 +10,7 @@ from app.core.config import get_settings
 from app.core.roles import ADMIN_ROLES, CONTENT_ROLES, SUPPORT_ROLES, SUPER_ADMIN
 from app.db.session import get_db
 from app.models.user import User
-from app.services import subscriptions
+from app.services import coins, subscriptions
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -81,6 +81,53 @@ async def require_premium(
             detail="Premium subscription required",
         )
     return user
+
+
+async def charge_coins_or_require_premium(
+    db: AsyncSession, user: User, cost: int, reason: str
+) -> None:
+    """A premium user passes through free; a free user is charged `cost`
+    coins from their wallet. Raises 402 with a body distinguishable from
+    require_premium's (`{"reason": "insufficient_coins", "balance": n,
+    "required": cost}`) so the client can render a "buy coins" prompt
+    instead of a generic "upgrade" one.
+
+    Call this only at the point in a route where the paid action is
+    actually guaranteed to happen — an earlier failure in the same route
+    (a conflict check, a validation error) must not have already charged
+    the user. That's why this is a plain async function to call inline at
+    the right moment, not a FastAPI dependency: dependencies all resolve
+    before the route body runs, which would charge for a request that then
+    fails for an unrelated reason.
+    """
+    if await subscriptions.is_premium(db, user):
+        return
+    try:
+        await coins.debit(db, user.id, cost, reason=reason)
+    except coins.InsufficientCoins as exc:
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail={
+                "reason": "insufficient_coins",
+                "balance": exc.balance,
+                "required": exc.requested,
+            },
+        )
+
+
+def spend_coins_or_premium(cost: int, reason: str):
+    """Dependency-factory wrapper around charge_coins_or_require_premium, for
+    routes where there's no earlier failure point that must run first (e.g.
+    a route that does nothing but gate access to already-existing content —
+    see flashcards.py's C1/C2 unlock check)."""
+
+    async def dependency(
+        user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+    ) -> User:
+        await charge_coins_or_require_premium(db, user, cost, reason)
+        return user
+
+    return dependency
 
 
 async def require_trusted_origin(request: Request) -> None:

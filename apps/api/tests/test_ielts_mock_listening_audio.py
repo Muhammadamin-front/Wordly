@@ -13,10 +13,15 @@ FAKE_TURNS = [
 ]
 
 
-async def test_free_user_cannot_fetch_section_audio(client):
+async def test_free_user_can_fetch_section_audio_same_as_premium(client):
+    # No premium/coin gate on this route by design (see its docstring): the
+    # real gate is paying to start the session; a free user re-fetching
+    # narration for a session they already paid for must not be blocked or
+    # re-charged. Absent test TTS config, the only observable difference
+    # from a premium user is none — both get 503 (not 402).
     headers = await learner(client, email="listen-audio-free@words.uz")
     resp = await client.get("/api/v1/ielts/mock/listening/test-1/section/1/audio", headers=headers)
-    assert resp.status_code == 402
+    assert resp.status_code == 503
 
 
 async def test_tts_not_configured_returns_503(client):

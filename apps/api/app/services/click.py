@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import get_settings
 from app.core.security import utcnow
 from app.models.billing import Payment
-from app.services import referrals, subscriptions
+from app.services import checkout_fulfillment, referrals
 
 # Click error codes
 SUCCESS = 0
@@ -175,7 +175,7 @@ async def complete(db: AsyncSession, params: Dict[str, str]) -> Dict:
     order.state = 2
     order.status = "succeeded"
     order.perform_time_ms = int(utcnow().timestamp() * 1000)
-    await subscriptions.grant(db, order.user_id, order.plan_code, provider="click")
+    await checkout_fulfillment.fulfill_order(db, order, provider="click")
     await referrals.reward_on_first_payment(db, order.user_id)
     await db.flush()
     await db.commit()
