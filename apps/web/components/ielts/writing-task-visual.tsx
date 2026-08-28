@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import type { WritingChartSeries, WritingTaskVisual as WritingTaskVisualData } from "@/lib/ielts";
 
 const COLORS = ["#467878", "#B94E28", "#D69C63", "#6C9390", "#7E2D1C", "#A83A25"];
@@ -233,6 +235,24 @@ function ProcessDiagram({ visual }: Props) {
   );
 }
 
+function ProcessImage({ visual }: Props) {
+  if (!visual.image) return null;
+  return (
+    <figure className="mt-4">
+      <div className="relative overflow-hidden rounded-xl border border-line bg-white">
+        <Image
+          src={visual.image}
+          alt={visual.image_alt ?? visual.title}
+          width={1200}
+          height={900}
+          sizes="(max-width: 639px) 100vw, 640px"
+          className="h-auto w-full"
+        />
+      </div>
+    </figure>
+  );
+}
+
 const MAP_COLORS = {
   water: { fill: "#C9DDDA", stroke: "#467878" },
   road: { fill: "#E6D0AE", stroke: "#6C4935" },
@@ -322,6 +342,7 @@ export function WritingTaskVisual({ visual }: Props) {
       )}
       {visual.kind === "pie-pair" && <PiePair visual={visual} />}
       {visual.kind === "process" && <ProcessDiagram visual={visual} />}
+      {visual.kind === "process-image" && <ProcessImage visual={visual} />}
       {visual.kind === "map-pair" && <MapPair visual={visual} />}
       {visual.kind === "bar-line" && <BarLineCharts visual={visual} />}
     </section>

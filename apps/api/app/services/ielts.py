@@ -280,19 +280,15 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "How bamboo fabric is made",
-                "categories": [
-                    "Bamboo plants are planted in spring",
-                    "The bamboo is harvested in autumn",
-                    "The stems are cut into strips",
-                    "The strips are crushed to make a liquid pulp",
-                    "The liquid-fibre slurry is filtered to separate the long fibres",
-                    "Water and amine oxide are added to soften the fibres",
-                    "The softened fibres are spun into yarn",
-                    "The yarn is woven into fabric",
-                    "The fabric is made into clothing, such as T-shirts and socks",
-                ],
+                "image": "/images/writing-task1-process/bamboo-fabric.jpg",
+                "image_alt": (
+                    "Nine-stage diagram: bamboo is planted, harvested, and cut into strips, "
+                    "crushed into pulp, filtered, softened with water and amine oxide, spun "
+                    "into yarn, woven into fabric, and made into clothing."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -303,19 +299,15 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "Plastic bottle recycling process",
-                "categories": [
-                    "Plastic bottles are collected in recycling bins",
-                    "The bottles are transported to a recycling centre",
-                    "Workers sort the bottles into recyclable and non-recyclable items",
-                    "The recyclable bottles are compacted into bales",
-                    "The bales are crushed and shredded",
-                    "The shredded plastic is washed",
-                    "The plastic is melted to form a raw material",
-                    "The melted plastic is processed into pellets",
-                    "The pellets are bagged and used to produce end products such as clothing and containers",
-                ],
+                "image": "/images/writing-task1-process/plastic-bottle-recycling.jpg",
+                "image_alt": (
+                    "Nine-stage diagram: bottles are collected, transported, and sorted, then "
+                    "compacted into bales, crushed and washed, melted into raw material, and "
+                    "processed into pellets that are bagged and made into end products."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -327,19 +319,15 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "How coffee is produced",
-                "categories": [
-                    "Coffee seedlings are planted and grown for four to five years",
-                    "Ripe coffee cherries are hand-picked during harvesting",
-                    "The cherries are depulped and fermented in a tank",
-                    "The beans are spread out and dried in the sun",
-                    "The dried beans are milled, hulled, and graded by size and colour",
-                    "The graded green coffee beans are bagged and palletised",
-                    "The beans are roasted and ground",
-                    "The ground coffee is brewed using various extraction methods",
-                    "The brewed coffee is sold as a final product, such as instant or ground coffee",
-                ],
+                "image": "/images/writing-task1-process/coffee-production.jpg",
+                "image_alt": (
+                    "Nine-stage diagram: coffee is planted and grown, harvested, processed by "
+                    "the wet method, dried in the sun, milled and graded into green coffee, "
+                    "then roasted, ground, brewed, and enjoyed as a final product."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -351,19 +339,15 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "comparisons where relevant. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "How a book is published",
-                "categories": [
-                    "An author writes the manuscript",
-                    "The manuscript is sent to a publisher",
-                    "The publisher conducts an editorial review of the manuscript",
-                    "The author signs a contract with the publisher",
-                    "The book's layout is designed",
-                    "A final layout decision is made",
-                    "The book is printed",
-                    "The printed pages are bound together",
-                    "The finished books are distributed to bookstores",
-                ],
+                "image": "/images/writing-task1-process/book-publishing.jpg",
+                "image_alt": (
+                    "Nine-stage diagram: an author writes the manuscript, sends it to a "
+                    "publisher for editorial review, signs a contract, the layout is designed "
+                    "and finalised, the book is printed, bound, and distributed to bookstores."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -374,19 +358,16 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "Orange juice production process",
-                "categories": [
-                    "Fresh oranges are delivered to the factory by truck",
-                    "The oranges are washed",
-                    "The juice is extracted from the oranges",
-                    "The leftover waste solid is used as animal feed",
-                    "The fresh juice is either packaged directly or turned into concentrate",
-                    "To make concentrate, the juice is evaporated and reduced",
-                    "The concentrate is stored in tanks and moved by refrigerated truck",
-                    "Water is added back to the concentrate before canning or bottling",
-                    "The finished juice is stored in a warehouse before being sent to shops",
-                ],
+                "image": "/images/writing-task1-process/orange-juice-production.jpg",
+                "image_alt": (
+                    "Diagram: fresh oranges arrive at the factory, are washed and extracted "
+                    "into juice; the waste solid becomes animal feed while the juice is "
+                    "packaged directly or evaporated into concentrate, diluted with water, "
+                    "canned, warehoused, and sent to shops."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -397,19 +378,16 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "information by describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "Glass bottle recycling process",
-                "categories": [
-                    "Waste glass bottles are collected at a collection point",
-                    "The bottles are transported to a recycling facility",
-                    "The glass is cleaned using high-pressure water",
-                    "The clean glass is sorted by colour into brown, green, and clear pieces",
-                    "The sorted glass pieces are sent to a factory",
-                    "The glass is melted and used to produce new bottles",
-                    "The new bottles are filled with products at the factory",
-                    "The bottled products are sent to supermarkets and sold",
-                    "Empty bottles are collected again, continuing the cycle",
-                ],
+                "image": "/images/writing-task1-process/glass-bottle-recycling.jpg",
+                "image_alt": (
+                    "Three-stage diagram: waste glass bottles are collected and transported to "
+                    "a facility, cleaned with high-pressure water and sorted by colour, then "
+                    "bottled with products at a factory and sent to supermarkets, where the "
+                    "cycle begins again."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
@@ -420,19 +398,35 @@ WRITING_TASKS: Dict[str, List[Dict[str, Any]]] = {
                 "describing the main stages of the process. Write at least 150 words."
             ),
             "visual": {
-                "kind": "process",
+                "kind": "process-image",
                 "title": "Coconut oil production process",
-                "categories": [
-                    "Coconuts are harvested, with timing affecting quality",
-                    "The coconuts are dehusked and split open",
-                    "The coconut flesh is grated",
-                    "The grated coconut is weighed",
-                    "The grated coconut is spread out and dried in the sun",
-                    "The dried coconut is pressed to extract the oil",
-                    "The extracted oil is clarified to remove impurities",
-                    "The oil is filtered",
-                    "The filtered oil is packaged into bottles and jars and shipped",
-                ],
+                "image": "/images/writing-task1-process/coconut-oil-production.jpg",
+                "image_alt": (
+                    "Diagram: coconuts are harvested, dehusked, and grated, then weighed, "
+                    "dried in the sun, and pressed to extract oil, which is clarified, "
+                    "filtered, packaged into bottles and jars, and shipped."
+                ),
+                "categories": [],
+                "series": [],
+            },
+        },
+        {
+            "title": "Task 1 — Process (chocolate production)",
+            "prompt": (
+                "The diagram below shows the various stages involved in creating chocolate. "
+                "Summarise the information by selecting and reporting the main features, and "
+                "make comparisons where relevant. Write at least 150 words."
+            ),
+            "visual": {
+                "kind": "process-image",
+                "title": "The chocolate production process",
+                "image": "/images/writing-task1-process/chocolate-production.jpg",
+                "image_alt": (
+                    "Nine-stage diagram: cacao pods are harvested and their beans fermented, "
+                    "sun-dried, sacked, and transported to a factory, then roasted, crushed "
+                    "and winnowed into nibs, and processed into chocolate."
+                ),
+                "categories": [],
                 "series": [],
             },
         },
