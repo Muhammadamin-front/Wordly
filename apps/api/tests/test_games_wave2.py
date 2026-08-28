@@ -8,7 +8,10 @@ from tests.test_games import learner_with_cards
     ["hangman", "spelling_bee", "word_search", "crossword"],
 )
 async def test_new_games_build_sessions(client, game_type):
-    headers, _ = await learner_with_cards(client, count=6)
+    # hangman/spelling_bee/word_search/crossword are premium-only (see
+    # FREE_GAME_TYPES) — these tests are about game mechanics, not
+    # entitlement, so they always run premium.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     response = await client.get("/api/v1/games/{}".format(game_type), headers=headers)
     assert response.status_code == 200, response.text
     body = response.json()
@@ -17,7 +20,10 @@ async def test_new_games_build_sessions(client, game_type):
 
 
 async def test_crossword_uses_definition_without_revealing_answer(client):
-    headers, _ = await learner_with_cards(client, count=6)
+    # hangman/spelling_bee/word_search/crossword are premium-only (see
+    # FREE_GAME_TYPES) — these tests are about game mechanics, not
+    # entitlement, so they always run premium.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
 
     response = await client.get("/api/v1/games/crossword", headers=headers)
     assert response.status_code == 200, response.text
@@ -28,21 +34,30 @@ async def test_crossword_uses_definition_without_revealing_answer(client):
 
 
 async def test_hangman_answer_is_headword(client):
-    headers, _ = await learner_with_cards(client, count=6)
+    # hangman/spelling_bee/word_search/crossword are premium-only (see
+    # FREE_GAME_TYPES) — these tests are about game mechanics, not
+    # entitlement, so they always run premium.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     body = (await client.get("/api/v1/games/hangman", headers=headers)).json()
     # learner_with_cards seeds headwords "word0"..; the answer should be one.
     assert all(q["answer"].startswith("word") for q in body["questions"])
 
 
 async def test_spelling_bee_carries_audio(client):
-    headers, _ = await learner_with_cards(client, count=6)
+    # hangman/spelling_bee/word_search/crossword are premium-only (see
+    # FREE_GAME_TYPES) — these tests are about game mechanics, not
+    # entitlement, so they always run premium.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     body = (await client.get("/api/v1/games/spelling_bee", headers=headers)).json()
     assert all(q["audio_text"] for q in body["questions"])
 
 
 async def test_sentence_builder_needs_examples(client):
     # learner_with_cards seeds examples ("I use word{i} today."), so it works.
-    headers, _ = await learner_with_cards(client, count=6)
+    # hangman/spelling_bee/word_search/crossword are premium-only (see
+    # FREE_GAME_TYPES) — these tests are about game mechanics, not
+    # entitlement, so they always run premium.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     body = (await client.get("/api/v1/games/sentence_builder", headers=headers)).json()
     # answer is a full sentence.
     assert all(" " in q["answer"] for q in body["questions"])

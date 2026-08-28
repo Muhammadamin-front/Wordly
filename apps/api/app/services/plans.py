@@ -69,6 +69,14 @@ VOICE_SECONDS_PER_MONTH: Dict[str, int] = {
 # cost; priced with margin, same logic as the other COIN_COST_* constants.
 COIN_COST_VOICE_MINUTE = 15
 
+# Free tier only reaches these games directly — the rest need Basic/Speaking
+# Pro (see api.v1.games). All games cost the same to serve (no AI involved),
+# so this is a taste-then-upsell boundary, not a cost-control one. Includes
+# "listening"/"speaking" — the M11 skill drills that share GAME_TYPES' route
+# plumbing but are a different product surface than the vocabulary games this
+# boundary is actually about; never part of the discussed premium split.
+FREE_GAME_TYPES = frozenset(("word_match", "speed_quiz", "fill_blank", "listening", "speaking"))
+
 
 @dataclass(frozen=True)
 class CoinPack:

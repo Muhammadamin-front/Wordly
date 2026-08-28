@@ -670,7 +670,9 @@
     "recentAccuracy": "So'nggi aniqlik",
     "guided": "Yo'naltirilgan",
     "balanced": "Muvozanatli",
-    "challenge": "Murakkab"
+    "challenge": "Murakkab",
+    "premiumLocked": "Premium",
+    "unlockPremium": "Premium bilan oching"
   },
   "stats": {
     "title": "Statistika",

@@ -4,9 +4,15 @@ from tests.conftest import register_user
 from tests.test_vocabulary import WORD_PAYLOAD, make_admin
 
 
-async def learner_with_cards(client, count: int = 6) -> tuple[dict, list[str]]:
+async def learner_with_cards(
+    client, count: int = 6, *, premium: bool = False
+) -> tuple[dict, list[str]]:
     """Seed `count` published words with distinct translations + examples that
-    contain the headword (so fill_blank can blank it), then add them as cards."""
+    contain the headword (so fill_blank can blank it), then add them as cards.
+
+    `premium=True` activates a subscription first — needed for any game type
+    outside FREE_GAME_TYPES (word_match/speed_quiz/fill_blank); these tests
+    are about game mechanics, not entitlement, which has its own tests."""
     # Seed more published words than we add, so multiple-choice distractors can
     # be drawn from words the learner doesn't have.
     admin_headers = await make_admin(client)
@@ -29,6 +35,10 @@ async def learner_with_cards(client, count: int = 6) -> tuple[dict, list[str]]:
 
     data = await register_user(client, email="learner@words.uz")
     headers = {"Authorization": "Bearer " + data["access_token"]}
+    if premium:
+        await client.post(
+            "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        )
     await client.post(
         "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": count}, headers=headers
     )
@@ -60,7 +70,10 @@ async def test_game_needs_minimum_cards(client):
     "game_type", ["word_match", "speed_quiz", "fill_blank", "audio_guess", "typing_race", "memory"]
 )
 async def test_each_game_builds_a_session(client, game_type):
-    headers, _ = await learner_with_cards(client, count=6)
+    # audio_guess/typing_race/memory are premium-only (see FREE_GAME_TYPES) —
+    # this test is about game mechanics, not entitlement, so it always runs
+    # premium to reach every type; test_games_entitlement.py covers the gate.
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     response = await client.get("/api/v1/games/{}".format(game_type), headers=headers)
     assert response.status_code == 200, response.text
     body = response.json()
@@ -111,13 +124,13 @@ async def test_high_accuracy_unlocks_challenge_sessions(client):
 
 
 async def test_audio_guess_carries_audio_text(client):
-    headers, _ = await learner_with_cards(client, count=6)
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     body = (await client.get("/api/v1/games/audio_guess", headers=headers)).json()
     assert all(q["audio_text"] for q in body["questions"])
 
 
 async def test_typing_race_has_no_options(client):
-    headers, _ = await learner_with_cards(client, count=6)
+    headers, _ = await learner_with_cards(client, count=6, premium=True)
     body = (await client.get("/api/v1/games/typing_race", headers=headers)).json()
     assert all(q["distractors"] == [] for q in body["questions"])
 

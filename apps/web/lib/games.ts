@@ -20,6 +20,12 @@ export const SKILL_DRILLS = ["listening", "speaking"] as const;
 
 export type GameType = (typeof GAME_TYPES)[number] | (typeof SKILL_DRILLS)[number];
 
+/** Free tier reaches these game types directly; the rest need Basic/
+ * Speaking Pro (402 from the API otherwise) — must match
+ * app.services.plans.FREE_GAME_TYPES on the backend exactly. Purely a UI
+ * hint for which tiles to render locked; the backend is the real gate. */
+export const FREE_GAME_TYPES: readonly GameType[] = ["word_match", "speed_quiz", "fill_blank"];
+
 export interface GameQuestion {
   card_id: string;
   prompt: string;

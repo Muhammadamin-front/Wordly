@@ -75,6 +75,9 @@ async def test_level_filter_excludes_other_levels(client):
     await seed_words(client, admin, level="C1", category=None, prefix="adv")
     await seed_words(client, admin, level="A1", category=None, prefix="easy")
     headers = await fresh_learner(client, email="filter@words.uz")
+    await client.post(  # typing_race is premium-only (see FREE_GAME_TYPES)
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+    )
 
     body = (await client.get("/api/v1/games/typing_race?level=C1&count=6", headers=headers)).json()
     # typing_race answer is the headword; all must be the C1 "adv*" words.

@@ -22,8 +22,10 @@ from app.schemas.games import (
 )
 from app.services import games as games_service
 from app.services import statistics as stats_service
+from app.services import subscriptions
 from app.services.gamification import RewardSummary, apply_skill_xp
 from app.services.leveling import local_today
+from app.services.plans import FREE_GAME_TYPES
 from app.services.quests import award_completed_quests
 from app.services.review import record_review
 
@@ -54,6 +56,11 @@ async def game_session(
 ):
     if game_type not in games_service.GAME_TYPES:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown game")
+    if game_type not in FREE_GAME_TYPES and not await subscriptions.is_premium(db, user):
+        raise HTTPException(
+            status_code=status.HTTP_402_PAYMENT_REQUIRED,
+            detail="This game requires Premium",
+        )
     profile = await stats_service.recent_learning_profile(db, user)
     questions, usable = await games_service.build_session(
         db,

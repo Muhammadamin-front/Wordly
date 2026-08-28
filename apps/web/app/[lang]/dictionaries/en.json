@@ -670,7 +670,9 @@
     "recentAccuracy": "Recent accuracy",
     "guided": "Guided",
     "balanced": "Balanced",
-    "challenge": "Challenge"
+    "challenge": "Challenge",
+    "premiumLocked": "Premium",
+    "unlockPremium": "Unlock with Premium"
   },
   "stats": {
     "title": "Statistics",

@@ -670,7 +670,9 @@
     "recentAccuracy": "Недавняя точность",
     "guided": "С подсказками",
     "balanced": "Сбалансированный",
-    "challenge": "Испытание"
+    "challenge": "Испытание",
+    "premiumLocked": "Премиум",
+    "unlockPremium": "Открыть по Premium"
   },
   "stats": {
     "title": "Статистика",

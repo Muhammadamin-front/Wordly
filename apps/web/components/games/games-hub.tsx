@@ -8,6 +8,7 @@ import {
   Gamepad2,
   Headphones,
   Keyboard,
+  Lock,
   Mic2,
   Puzzle,
   Search,
@@ -20,8 +21,9 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { usePremiumStatus } from "@/components/billing/use-premium-status";
 import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
-import { GAME_TYPES, type GameType } from "@/lib/games";
+import { FREE_GAME_TYPES, GAME_TYPES, type GameType } from "@/lib/games";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 const GAME_ICONS: Record<GameType, LucideIcon> = {
@@ -67,6 +69,7 @@ export function GamesHub({
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
+  const isPremium = usePremiumStatus();
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -94,6 +97,10 @@ export function GamesHub({
         {GAME_TYPES.map((type) => {
           const meta = games[type];
           const Icon = GAME_ICONS[type];
+          // Unknown while isPremium === null (still loading) renders as
+          // unlocked rather than flashing a lock that then disappears —
+          // the backend is the real gate either way, this is just a hint.
+          const locked = isPremium === false && !FREE_GAME_TYPES.includes(type);
           return (
             <motion.div
               key={type}
@@ -103,17 +110,31 @@ export function GamesHub({
               }}
             >
               <Link
-                href={`/${lang}/games/${type}`}
-                className={`premium-card group flex h-full min-h-44 flex-col rounded-[14px] bg-linear-to-br ${GAME_ACCENT[type]} p-5 active:scale-[0.98]`}
+                href={locked ? `/${lang}/pricing` : `/${lang}/games/${type}`}
+                aria-label={locked ? `${meta.name} — ${games.unlockPremium}` : meta.name}
+                className={`premium-card group relative flex h-full min-h-44 flex-col rounded-[14px] bg-linear-to-br ${GAME_ACCENT[type]} p-5 active:scale-[0.98] ${locked ? "opacity-70 grayscale-[0.4]" : ""}`}
               >
+                {locked && (
+                  <span className="print-label absolute right-3 top-3 flex items-center gap-1 border-brand-950 bg-card/90 text-ink-soft">
+                    <Lock className="size-3" aria-hidden />
+                    {games.premiumLocked}
+                  </span>
+                )}
                 <div className="flex items-start justify-between gap-4">
                   <span className="icon-tile size-12 rounded-lg">
                     <Icon className="size-6 text-ink" aria-hidden />
                   </span>
-                  <span className="h-1 w-14 bg-brand-500 opacity-70 transition-all group-hover:w-20" />
+                  {!locked && (
+                    <span className="h-1 w-14 bg-brand-500 opacity-70 transition-all group-hover:w-20" />
+                  )}
                 </div>
                 <h2 className="mt-6 font-display text-3xl tracking-wide text-ink">{meta.name}</h2>
                 <p className="mt-2 text-sm leading-6 text-ink-soft">{meta.desc}</p>
+                {locked && (
+                  <p className="mt-auto pt-3 text-xs font-bold text-brand-600 dark:text-brand-300">
+                    {games.unlockPremium}
+                  </p>
+                )}
               </Link>
             </motion.div>
           );
