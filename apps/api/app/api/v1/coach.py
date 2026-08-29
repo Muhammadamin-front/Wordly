@@ -236,6 +236,9 @@ async def send_message(
         reply=result.reply,
         corrections=[CorrectionOut(**c) for c in result.corrections],
         reward=_reward_out(result.reward),
+        audio_type=result.audio_type,
+        static_audio_id=result.static_audio_id,
+        ielts_part=result.ielts_part,
     )
 
 

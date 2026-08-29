@@ -17,7 +17,10 @@ class CharacterOut(BaseModel):
 
 class CreateSessionRequest(BaseModel):
     character: str = Field(pattern="^(gordon|mochi|alex|examiner)$")
-    mode: str = Field(default="chat", pattern="^(chat|ielts)$")
+    # ielts_full is the continuous Part 1 -> 2 -> 3 test, advancing
+    # ielts_part in place as the examiner speaks each transition; "ielts"
+    # is a standalone session of exactly one part.
+    mode: str = Field(default="chat", pattern="^(chat|ielts|ielts_full)$")
     ielts_part: Optional[int] = Field(default=None, ge=1, le=3)
     topic: Optional[str] = Field(default=None, max_length=160)
 
@@ -75,6 +78,14 @@ class TurnResponse(BaseModel):
     reply: str
     corrections: List[CorrectionOut]
     reward: RewardOut
+    # "static": `reply` is one of the examiner's scripted lines and its audio
+    # is already rendered — play /tts/examiner/{static_audio_id} rather than
+    # synthesizing it. "dynamic": a line written for this learner, so it has
+    # to be voiced live.
+    audio_type: str = "dynamic"
+    static_audio_id: Optional[str] = None
+    # Set only on the turn that moves a continuous test into a new part.
+    ielts_part: Optional[int] = None
 
 
 class IeltsReportOut(BaseModel):

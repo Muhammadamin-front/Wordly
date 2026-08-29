@@ -1,7 +1,9 @@
 import { apiFetch } from "@/lib/api";
 
 export type CharacterKey = "gordon" | "mochi" | "alex" | "examiner" | "raj";
-export type CoachMode = "chat" | "ielts";
+/** "ielts_full" is the continuous Part 1 -> 2 -> 3 test, advancing in
+ *  place as the examiner speaks each transition; "ielts" is one part. */
+export type CoachMode = "chat" | "ielts" | "ielts_full";
 
 export interface Character {
   key: CharacterKey;
@@ -58,10 +60,18 @@ export interface SessionListItem {
   started_at: string;
 }
 
+export type ExaminerAudioType = "static" | "dynamic";
+
 export interface TurnResponse {
   reply: string;
   corrections: Correction[];
   reward: Reward;
+  /** "static": `reply` is one of the examiner's scripted lines and its audio
+   *  is already rendered — play it by id instead of synthesizing. */
+  audio_type: ExaminerAudioType;
+  static_audio_id: string | null;
+  /** Set only on the turn that moves a continuous test into a new part. */
+  ielts_part: number | null;
 }
 
 export interface IeltsReport {
