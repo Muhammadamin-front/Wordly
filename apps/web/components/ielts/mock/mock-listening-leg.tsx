@@ -53,7 +53,10 @@ export function MockListeningLeg({
 
   const [sectionIndex, setSectionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, ListeningAnswerValue>>({});
-  const [secondsLeft, setSecondsLeft] = useState(0);
+  // Seeded at declaration rather than from the effect below: the leg's
+  // length is known before the first render, and writing it in an effect
+  // rendered a 0:00 clock for one frame before correcting itself.
+  const [secondsLeft, setSecondsLeft] = useState(MOCK_SKILL_MINUTES.listening * 60);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [audioFinished, setAudioFinished] = useState(false);
   const [audioFailed, setAudioFailed] = useState(false);
@@ -93,10 +96,9 @@ export function MockListeningLeg({
     }
   }
 
-  // Seed the leg-wide timer and start section 1's audio once.
+  // Start section 1's audio once the test is resolved.
   useEffect(() => {
     if (!test) return;
-    setSecondsLeft(MOCK_SKILL_MINUTES.listening * 60);
     window.setTimeout(() => void playSection(test.sections[0].number), 400);
     return () => audioRef.current?.pause();
     // eslint-disable-next-line react-hooks/exhaustive-deps
