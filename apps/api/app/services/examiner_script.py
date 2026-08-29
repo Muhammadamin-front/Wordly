@@ -87,3 +87,102 @@ def total_characters() -> int:
     """Characters across the whole bank — what one full warm-up costs, and
     the per-test spend it replaces for every session after the first."""
     return sum(len(text) for text in EXAMINER_PHRASES.values())
+
+
+# --- Audio routing -----------------------------------------------------------
+#
+# Which of the examiner's utterances can be played from pre-rendered audio and
+# which have to be synthesized on the spot.
+#
+# The model is NOT the authority here. It is told the catalogue and asked to
+# reuse a line verbatim when one fits, and it may hint at the id it used, but
+# the routing decision is taken server-side by matching the text it actually
+# produced. Trusting the hint breaks in three ways that all cost money or
+# credibility: a hint of "part3_intro" attached to different words plays audio
+# that contradicts the transcript; an invented id 404s in the middle of an
+# exam; and a line that IS in the bank but is marked dynamic gets re-bought.
+# Resolving from the text is self-correcting — if the model reproduced the
+# line, it routes to cache no matter what it claimed.
+
+import re
+from dataclasses import dataclass
+
+
+def _normalize(text: str) -> str:
+    """Fold the differences that don't change what a listener hears.
+
+    Case, surrounding whitespace, doubled spaces and the curly/straight
+    apostrophe split all produce a different cache key for identical speech,
+    and the model varies all four freely. Terminal punctuation is kept: "Do
+    you understand?" and "Do you understand." are different deliveries.
+    """
+    folded = text.strip().casefold().replace("’", "'")
+    return re.sub(r"\s+", " ", folded)
+
+
+_PHRASE_ID_BY_NORMALIZED = {
+    _normalize(text): phrase_id for phrase_id, text in EXAMINER_PHRASES.items()
+}
+
+
+@dataclass(frozen=True)
+class AudioRoute:
+    """How one examiner utterance should be voiced."""
+
+    audio_type: str  # "static" | "dynamic"
+    static_audio_id: Optional[str]  # set iff audio_type == "static"
+
+    @property
+    def is_static(self) -> bool:
+        return self.audio_type == "static"
+
+
+DYNAMIC = AudioRoute(audio_type="dynamic", static_audio_id=None)
+
+
+def resolve_audio(text: str) -> AudioRoute:
+    """Route one examiner utterance to pre-rendered audio or live synthesis.
+
+    Matching is on normalized text, so the model gets the routing for free by
+    reproducing a scripted line — it never has to name an id correctly.
+    """
+    phrase_id = _PHRASE_ID_BY_NORMALIZED.get(_normalize(text))
+    if phrase_id is None:
+        return DYNAMIC
+    return AudioRoute(audio_type="static", static_audio_id=phrase_id)
+
+
+def catalogue_for_prompt() -> str:
+    """The scripted lines, formatted for a system prompt.
+
+    Listed verbatim because reproducing a line exactly is what routes it to
+    cached audio; paraphrasing silently costs a synthesis.
+    """
+    return "\n".join(
+        '- {}: "{}"'.format(phrase_id, EXAMINER_PHRASES[phrase_id])
+        for phrase_id in PHRASE_ORDER
+    )
+
+
+# --- Part progression --------------------------------------------------------
+#
+# The ceremonial line IS the state transition: an examiner who has just said
+# "Now let's move on to Part 3" is, by definition, in Part 3. Deriving the
+# progression from the line it spoke keeps one mechanism instead of two, so
+# the spoken test and the stored ielts_part cannot disagree — which they can
+# if the model reports a part number in a field alongside unrelated speech.
+PART_ENTERED_BY_PHRASE: Dict[str, int] = {
+    "part1_intro": 1,
+    "part2_intro": 2,
+    "part3_intro": 3,
+}
+
+# Saying this ends the test, whatever part it was in.
+CLOSING_PHRASE_ID = "test_end"
+
+
+def part_entered(phrase_id: Optional[str]) -> Optional[int]:
+    """The part this scripted line moves the test into, if it moves it."""
+    if phrase_id is None:
+        return None
+    return PART_ENTERED_BY_PHRASE.get(phrase_id)

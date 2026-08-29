@@ -27,6 +27,7 @@ from app.models.coach import (
     IeltsReport,
 )
 from app.models.user import User
+from app.services import examiner_script
 from app.services.ai_client import AiClient
 from app.services.gamification import RewardSummary, apply_skill_xp
 from app.services.ielts_scoring import half_band as _half_band
@@ -171,11 +172,40 @@ def _learner_language(user: User) -> str:
     return LANGUAGE_NAMES.get(user.profile.ui_locale, LANGUAGE_NAMES["uz"])
 
 
+IELTS_MODES = ("ielts", "ielts_full")
+
+
+def _examiner_script_instruction(session: CoachSession) -> str:
+    """Tell the examiner which of its lines are already recorded.
+
+    Reproducing one of these verbatim is what routes it to pre-rendered audio
+    (services.examiner_script.resolve_audio matches on the text, not on
+    anything the model claims), so paraphrasing a scripted line is a silent
+    cost: the same words get synthesized again for every learner.
+    """
+    lines = [
+        "Some of your lines are fixed, exactly as in a real test, and are already recorded. "
+        "When one of them fits the moment, output it WORD FOR WORD, as your entire reply, "
+        "with nothing added before or after it. Never paraphrase these:",
+        examiner_script.catalogue_for_prompt(),
+        "Every question you ask is your own — only the lines above are fixed.",
+    ]
+    if session.mode == "ielts_full":
+        lines.append(
+            "This is one continuous test running Part 1, then Part 2, then Part 3. Move on by "
+            "speaking the matching fixed line above; the test advances when you say it. Spend "
+            "roughly 4-5 exchanges in Part 1 and 4-5 in Part 3, and close with the final line."
+        )
+    return " ".join(lines)
+
+
 def _system_prompt(user: User, session: CoachSession) -> str:
     character = CHARACTERS[session.character]
     parts = [character.persona]
-    if session.mode == "ielts":
+    if session.mode in IELTS_MODES:
         parts.append(IELTS_PART_GUIDANCE.get(session.ielts_part or 1, IELTS_PART_GUIDANCE[1]))
+        if session.character == "examiner":
+            parts.append(_examiner_script_instruction(session))
         if session.topic:
             parts.append('The topic for this test is: "{}".'.format(session.topic))
     else:
@@ -234,7 +264,9 @@ async def create_session(
         user_id=user.id,
         character=character,
         mode=mode,
-        ielts_part=ielts_part if mode == "ielts" else None,
+        # A continuous test needs a starting part as much as a single-part
+        # one does; only chat has no part.
+        ielts_part=(ielts_part or 1) if mode in IELTS_MODES else None,
         topic=topic,
     )
     db.add(session)
@@ -266,6 +298,14 @@ class TurnResult:
     reply: str
     corrections: List[Dict[str, str]]
     reward: RewardSummary
+    # How to voice `reply`: "static" means it is one of the examiner's
+    # scripted lines and the client should play the pre-rendered audio at
+    # /tts/examiner/{static_audio_id} instead of paying to synthesize it.
+    audio_type: str = "dynamic"
+    static_audio_id: Optional[str] = None
+    # Set when this reply moved an ielts_full test into a new part, so the
+    # client can relabel the UI without guessing from the text.
+    ielts_part: Optional[int] = None
 
 
 def _clean_corrections(raw: Any) -> List[Dict[str, str]]:
@@ -347,7 +387,30 @@ async def send_turn(
         xp_delta=FRIENDSHIP_XP_PER_TURN,
     )
     reward = await apply_skill_xp(db, user, XP_PER_TURN)
-    return TurnResult(reply=reply, corrections=corrections, reward=reward)
+
+    # Route the reply to pre-rendered audio when the examiner reproduced one
+    # of its scripted lines. Resolved from the text it actually produced, not
+    # from anything it reported, so a wrong or missing self-report cannot make
+    # us play the wrong recording or re-buy one we already own.
+    route = examiner_script.DYNAMIC
+    entered_part = None
+    if session.character == "examiner":
+        route = examiner_script.resolve_audio(reply)
+        # A ceremonial line is the state transition: having spoken "Now let's
+        # move on to Part 3", the examiner is in Part 3.
+        if session.mode == "ielts_full":
+            entered_part = examiner_script.part_entered(route.static_audio_id)
+            if entered_part is not None:
+                session.ielts_part = entered_part
+
+    return TurnResult(
+        reply=reply,
+        corrections=corrections,
+        reward=reward,
+        audio_type=route.audio_type,
+        static_audio_id=route.static_audio_id,
+        ielts_part=entered_part,
+    )
 
 
 _IELTS_SCHEMA = {
