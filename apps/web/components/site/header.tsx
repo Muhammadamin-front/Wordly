@@ -35,6 +35,7 @@ import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { getHomeLabel, getWordsLabel } from "@/lib/nav-labels";
 import type { Locale } from "@/lib/locales";
+import { useModalFocus } from "@/lib/use-modal-focus";
 
 const StatsWidget = dynamic(
   () => import("@/components/gamification/stats-widget").then((mod) => mod.StatsWidget),
@@ -94,21 +95,6 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
 
   const authed = ready && !!user;
 
-  // Lock body scroll and allow Escape to close while the drawer is open.
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = prev;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
   return (
     <header className="site-header sticky top-0 z-40">
       <div className="glass mx-auto flex h-14 max-w-(--app-container-width) items-center gap-2 rounded-[18px] px-2 sm:h-16 sm:gap-3 sm:rounded-[20px] shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
@@ -116,6 +102,8 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           type="button"
           onClick={() => setOpen(true)}
           aria-label={nav.menu}
+          aria-expanded={open}
+          aria-controls="mobile-navigation-dialog"
           className="-ml-0.5 flex size-11 shrink-0 items-center justify-center rounded-lg border border-line/80 bg-card/60 text-ink-soft shadow-sm transition-all hover:-translate-y-0.5 hover:bg-raised hover:text-ink lg:hidden"
         >
           <Menu className="size-5" aria-hidden />
@@ -329,6 +317,14 @@ function MobileSidebar({
   onLogout: () => Promise<void>;
 }) {
   const [busy, setBusy] = useState<"switch" | "logout" | null>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useModalFocus({
+    containerRef: dialogRef,
+    initialFocusRef: closeButtonRef,
+    onDismiss: onClose,
+    enabled: open,
+  });
 
   if (!open) return null;
 
@@ -341,11 +337,19 @@ function MobileSidebar({
         className="absolute inset-0 bg-ink/40 backdrop-blur-sm"
       />
       <aside
+        id="mobile-navigation-dialog"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mobile-navigation-title"
+        tabIndex={-1}
         className="surface-panel absolute! inset-y-0 left-0 flex w-[min(22rem,calc(100vw-1rem))] max-w-none animate-[drawer-in_0.2s_ease-out_both] flex-col rounded-r-lg bg-page/92 shadow-2xl backdrop-blur-2xl"
       >
         <div className="flex min-h-16 shrink-0 items-center justify-between border-b border-line px-4 pt-[env(safe-area-inset-top)]">
+          <h2 id="mobile-navigation-title" className="sr-only">{nav.menu}</h2>
           <Logo lang={lang} />
           <button
+            ref={closeButtonRef}
             type="button"
             aria-label={nav.close}
             onClick={onClose}

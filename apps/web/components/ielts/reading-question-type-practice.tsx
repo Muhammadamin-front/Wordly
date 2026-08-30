@@ -102,6 +102,8 @@ export function ReadingQuestionTypePractice({
   }
 
   const correct = checked && isCorrect(item.question, answer);
+  const promptId = `focused-reading-${item.question.id}-prompt`;
+  const instructionId = item.question.instruction ? `focused-reading-${item.question.id}-instruction` : undefined;
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <button type="button" onClick={onBack} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft transition-colors hover:text-ink">
@@ -130,9 +132,9 @@ export function ReadingQuestionTypePractice({
         <PassageContext item={item} />
         <article className="rounded-lg border border-line bg-card p-5 shadow-[0_10px_28px_rgba(27,64,55,0.055)] sm:p-6">
           <p className="type-label text-accent-500">{item.question.group}</p>
-          <h2 className="mt-2 text-xl font-black leading-7 text-ink">{item.question.prompt}</h2>
-          {item.question.instruction && <p className="mt-2 text-xs font-black uppercase tracking-wide text-ink-soft">{item.question.instruction}</p>}
-          <div className="mt-5"><PracticeQuestionInput question={item.question} value={answer} disabled={checked} onChange={setAnswer} /></div>
+          <h2 id={promptId} className="mt-2 text-xl font-black leading-7 text-ink">{item.question.prompt}</h2>
+          {item.question.instruction && <p id={instructionId} className="mt-2 text-xs font-black uppercase tracking-wide text-ink-soft">{item.question.instruction}</p>}
+          <div className="mt-5"><PracticeQuestionInput question={item.question} value={answer} disabled={checked} labelledBy={promptId} describedBy={instructionId} onChange={setAnswer} /></div>
 
           {checked && (
             <div className={cn("mt-5 rounded-lg border p-4", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-danger/5")} aria-live="polite">
@@ -169,18 +171,18 @@ function PassageContext({ item }: { item: ReadingQuestionPracticeItem }) {
   );
 }
 
-function PracticeQuestionInput({ question, value, disabled, onChange }: { question: ReadingQuestion; value: AnswerValue | undefined; disabled: boolean; onChange: (value: AnswerValue) => void }) {
+function PracticeQuestionInput({ question, value, disabled, labelledBy, describedBy, onChange }: { question: ReadingQuestion; value: AnswerValue | undefined; disabled: boolean; labelledBy: string; describedBy?: string; onChange: (value: AnswerValue) => void }) {
   if (TEXT_QUESTION_KINDS.has(question.kind)) {
-    return <input disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder="Type your answer" className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70" />;
+    return <input aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder="Type your answer" className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70" />;
   }
   if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") {
-    return <select disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70"><option value="">Choose an answer</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
+    return <select aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70"><option value="">Choose an answer</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
   }
   if (question.kind === "multiple-answer") {
     const current = Array.isArray(value) ? value : [];
-    return <div className="space-y-2">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover", disabled && "cursor-default opacity-70")}><input disabled={disabled} type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</div>;
+    return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover", disabled && "cursor-default opacity-70")}><input disabled={disabled} type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
   }
-  return <div className="space-y-2">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover", disabled && "cursor-default opacity-70")}><input disabled={disabled} type="radio" name={`drill-${question.id}`} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</div>;
+  return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover", disabled && "cursor-default opacity-70")}><input disabled={disabled} type="radio" name={`drill-${question.id}`} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
 }
 
 function formatAnswer(answer: string | string[]) {

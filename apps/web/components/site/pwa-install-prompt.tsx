@@ -95,8 +95,9 @@ export function PwaInstallPrompt({ t }: { t: Dictionary["pwaInstall"] }) {
 
   return (
     <div
-      role="dialog"
+      role="region"
       aria-label={t.title}
+      aria-live="polite"
       className="fixed inset-x-0 bottom-0 z-50 flex justify-center p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] motion-safe:animate-fade-up print:hidden"
     >
       <div className="surface-panel pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-2xl border border-line p-4 shadow-raised backdrop-blur-xl">

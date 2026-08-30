@@ -14,6 +14,7 @@ import {
   type ListeningFullTest,
 } from "@/lib/listening-practice";
 import { cn } from "@/lib/utils";
+import { useModalFocus } from "@/lib/use-modal-focus";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Copy = Dictionary["ieltsMock"];
@@ -200,6 +201,7 @@ export function MockListeningLeg({
             variant="secondary"
             className="size-12 shrink-0 rounded-full p-0 text-lg"
             disabled={!audioFailed && audioFinished}
+            aria-label={audioPlaying ? ieltsT.pause : ieltsT.replay}
             onClick={() => {
               if (audioFailed) {
                 void playSection(section.number);
@@ -221,26 +223,32 @@ export function MockListeningLeg({
       </div>
 
       <div className="mt-5 space-y-5">
-        {section.questions.map((q) => (
-          <div key={q.id} className="rounded-2xl border border-line bg-card p-4">
-            <p className="flex items-start gap-2 font-semibold text-ink">
-              <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded border border-line text-xs font-bold text-ink-soft">
-                {q.number}
-              </span>
-              {q.prompt}
-            </p>
-            {q.instruction && <p className="mt-1 pl-8 text-xs text-ink-soft">{q.instruction}</p>}
-            <div className="mt-2 pl-8">
-              <ListeningQuestionInput
-                question={q}
-                value={answers[q.id]}
-                disabled={false}
-                typeAnswerLabel={t.listeningTypeAnswer}
-                onChange={(value) => setAnswers((prev) => ({ ...prev, [q.id]: value }))}
-              />
+        {section.questions.map((q) => {
+          const promptId = `listening-question-${q.id}-prompt`;
+          const instructionId = q.instruction ? `listening-question-${q.id}-instruction` : undefined;
+          return (
+            <div key={q.id} className="rounded-2xl border border-line bg-card p-4">
+              <p id={promptId} className="flex items-start gap-2 font-semibold text-ink">
+                <span className="mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded border border-line text-xs font-bold text-ink-soft">
+                  {q.number}
+                </span>
+                {q.prompt}
+              </p>
+              {q.instruction && <p id={instructionId} className="mt-1 pl-8 text-xs text-ink-soft">{q.instruction}</p>}
+              <div className="mt-2 pl-8">
+                <ListeningQuestionInput
+                  question={q}
+                  value={answers[q.id]}
+                  disabled={false}
+                  typeAnswerLabel={t.listeningTypeAnswer}
+                  labelledBy={promptId}
+                  describedBy={instructionId}
+                  onChange={(value) => setAnswers((prev) => ({ ...prev, [q.id]: value }))}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {error && (
@@ -288,6 +296,14 @@ export function MockLegHeader({
   exitConfirmLeave: string;
 }) {
   const [confirming, setConfirming] = useState(false);
+  const dialogRef = useRef<HTMLElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  useModalFocus({
+    containerRef: dialogRef,
+    initialFocusRef: cancelButtonRef,
+    onDismiss: () => setConfirming(false),
+    enabled: confirming,
+  });
   return (
     <div className="flex items-center gap-3">
       <h1 className="text-xl font-black text-ink">{label}</h1>
@@ -299,19 +315,19 @@ export function MockLegHeader({
         {exitLabel}
       </button>
       {confirming && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4" role="dialog" aria-modal="true">
-          <div className="w-full max-w-sm rounded-lg border border-line bg-card p-5 shadow-2xl">
-            <p className="font-black text-ink">{exitConfirmTitle}</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4" role="presentation">
+          <section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="listening-exit-confirm-title" tabIndex={-1} className="w-full max-w-sm rounded-lg border border-line bg-card p-5 shadow-2xl">
+            <h2 id="listening-exit-confirm-title" className="font-black text-ink">{exitConfirmTitle}</h2>
             <p className="mt-2 text-sm leading-6 text-ink-soft">{exitConfirmBody}</p>
             <div className="mt-4 flex gap-2">
-              <Button variant="secondary" fullWidth onClick={() => setConfirming(false)}>
+              <Button ref={cancelButtonRef} variant="secondary" fullWidth onClick={() => setConfirming(false)}>
                 {exitConfirmStay}
               </Button>
               <Button variant="danger" fullWidth onClick={onAbandon}>
                 {exitConfirmLeave}
               </Button>
             </div>
-          </div>
+          </section>
         </div>
       )}
     </div>

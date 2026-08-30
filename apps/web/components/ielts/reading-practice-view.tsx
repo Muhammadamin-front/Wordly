@@ -27,7 +27,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,7 @@ import {
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { lookupWords, type WordLookupEntry } from "@/lib/vocab";
 import { cn } from "@/lib/utils";
+import { useModalFocus } from "@/lib/use-modal-focus";
 import { ReadingQuestionTypePractice } from "./reading-question-type-practice";
 
 type StudyMode = "practice" | "exam";
@@ -1025,8 +1026,15 @@ function renderTappableWords(text: string, wordLookup: Record<string, WordLookup
     parts.push(
       <span
         key={`${keyPrefix}-${i++}`}
+        role={translatable ? "button" : undefined}
+        tabIndex={translatable ? 0 : undefined}
         onClick={translatable ? () => onWordTap(word) : undefined}
-        className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline" : undefined}
+        onKeyDown={translatable ? (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          event.preventDefault();
+          onWordTap(word);
+        } : undefined}
+        className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35" : undefined}
       >
         {word}
       </span>
@@ -1038,6 +1046,10 @@ function renderTappableWords(text: string, wordLookup: Record<string, WordLookup
 }
 
 function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word: string; entry: WordLookupEntry }; onSave: () => void; onClose: () => void; t: Copy }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  useModalFocus({ containerRef: dialogRef, initialFocusRef: closeButtonRef, onDismiss: onClose });
+
   useEffect(() => {
     const dismiss = () => onClose();
     window.addEventListener("scroll", dismiss, true);
@@ -1052,8 +1064,11 @@ function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word
           passages fill the width, so a word-anchored popover routinely
           clipped off the screen edge. */}
       <div
+        ref={dialogRef}
         role="dialog"
+        aria-modal="true"
         aria-label={entry.headword}
+        tabIndex={-1}
         className="fixed left-1/2 top-1/2 z-50 w-64 -translate-x-1/2 -translate-y-1/2 rounded-lg border border-line bg-raised p-3 shadow-[3px_4px_0_rgba(84,37,15,0.2),0_16px_36px_rgba(84,37,15,0.16)]"
       >
         <div className="flex items-start justify-between gap-2">
@@ -1061,7 +1076,7 @@ function WordTranslationPopover({ tapped, onSave, onClose, t }: { tapped: { word
             <p className="truncate text-base font-black text-ink">{entry.headword}</p>
             <p className="text-[11px] font-bold uppercase text-ink-soft">{entry.pos}</p>
           </div>
-          <button type="button" onClick={onClose} aria-label={t.exitTest} className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-ink-soft hover:bg-hover"><X className="size-3.5" /></button>
+          <button ref={closeButtonRef} type="button" onClick={onClose} aria-label={t.close} className="inline-flex size-7 shrink-0 items-center justify-center rounded-md text-ink-soft hover:bg-hover"><X aria-hidden className="size-3.5" /></button>
         </div>
         {entry.translation_uz && <p className="mt-2 text-sm font-bold text-brand-600 dark:text-brand-300">{entry.translation_uz}</p>}
         {entry.translation_ru && <p className="text-xs text-ink-soft">{entry.translation_ru}</p>}
@@ -1102,6 +1117,8 @@ function elementForNode(node: Node) { return node.nodeType === Node.ELEMENT_NODE
 function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, onFlag, t }: { question: ReadingQuestion; answer: AnswerValue | undefined; flagged: boolean; setRef: (node: HTMLDivElement | null) => void; showGroup: boolean; onAnswer: (value: AnswerValue) => void; onFlag: () => void; t: Copy }) {
   const tone = questionKindTone(question.kind);
   const ToneIcon = tone.icon;
+  const promptId = `reading-question-${question.id}-prompt`;
+  const instructionId = question.instruction ? `reading-question-${question.id}-instruction` : undefined;
   return (
     <div ref={setRef} className="scroll-mt-4">
       {showGroup && (
@@ -1114,25 +1131,25 @@ function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, 
         <div className="flex items-start gap-3">
           <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", tone.chip)}>{question.number}</span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>
-            {question.instruction && <p className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}
+            <p id={promptId} className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>
+            {question.instruction && <p id={instructionId} className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}
           </div>
-          <button type="button" onClick={onFlag} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}>
-            <Flag className={cn("size-4", flagged && "fill-current")} />
+          <button type="button" onClick={onFlag} aria-label={`${t.markForReview}: ${question.prompt}`} aria-pressed={flagged} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}>
+            <Flag aria-hidden className={cn("size-4", flagged && "fill-current")} />
           </button>
         </div>
-        <div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} /></div>
+        <div className="mt-4 max-sm:mt-3"><QuestionInput t={t} question={question} value={answer} onChange={onAnswer} labelledBy={promptId} describedBy={instructionId} /></div>
       </section>
     </div>
   );
 }
 
-function QuestionInput({ question, value, onChange, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; t: Copy }) {
+function QuestionInput({ question, value, onChange, labelledBy, describedBy, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; labelledBy: string; describedBy?: string; t: Copy }) {
   const isText = ["sentence-completion", "summary-completion", "table-completion", "form-completion", "diagram-labelling", "short-answer"].includes(question.kind);
-  if (isText) return <input value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder={t.typeAnswer} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20" />;
-  if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") return <select value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20"><option value="">{t.chooseAnswer}</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
-  if (question.kind === "multiple-answer") { const current = Array.isArray(value) ? value : []; return <div className="space-y-2">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span><strong>{option.value}.</strong> {option.label.replace(/^[A-Z]\.\s*/, "")}</span></label>)}</div>; }
-  return <div className="space-y-2">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="radio" name={question.id} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</div>;
+  if (isText) return <input aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder={t.typeAnswer} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20" />;
+  if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") return <select aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20"><option value="">{t.chooseAnswer}</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
+  if (question.kind === "multiple-answer") { const current = Array.isArray(value) ? value : []; return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span><strong>{option.value}.</strong> {option.label.replace(/^[A-Z]\.\s*/, "")}</span></label>)}</fieldset>; }
+  return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="radio" name={question.id} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
 }
 
 function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, onClose, t }: { range: SelectedRange; onHighlight: (color: HighlightColor) => void; onRemove: () => void; onNote: () => void; onSaveWord: () => void; onClose: () => void; t: Copy }) {
@@ -1173,22 +1190,9 @@ function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, on
 
 function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, setNoteDraft, onClose, onSaveNote, onDeleteNote, onUpdateVocabulary, onDeleteVocabulary, t }: { drawer: Drawer; notes: PassageNote[]; vocabulary: SavedVocabulary[]; selectedRange: SelectedRange | null; noteDraft: string; setNoteDraft: (text: string) => void; onClose: () => void; onSaveNote: () => void; onDeleteNote: (id: string) => void; onUpdateVocabulary: (id: string, patch: Partial<SavedVocabulary>) => void; onDeleteVocabulary: (id: string) => void; t: Copy }) {
   const isNotes = drawer === "notes";
+  const dialogRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    closeButtonRef.current?.focus();
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", closeOnEscape);
-    };
-  }, [onClose]);
+  useModalFocus({ containerRef: dialogRef, initialFocusRef: closeButtonRef, onDismiss: onClose });
 
   return (
     <div
@@ -1197,9 +1201,11 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
       onClick={onClose}
     >
       <aside
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="reading-drawer-title"
+        tabIndex={-1}
         className="absolute inset-x-0 bottom-0 top-0 flex w-full flex-col border-line bg-raised shadow-[-20px_0_60px_rgba(15,35,31,0.24)] sm:left-auto sm:max-w-md sm:border-l"
         onClick={(event) => event.stopPropagation()}
       >
@@ -1226,7 +1232,7 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
               {selectedRange && (
                 <div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-4">
                   <p className="text-sm font-bold italic leading-6 text-ink">“{selectedRange.text}”</p>
-                  <textarea value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder={t.notePlaceholder} className="mt-3 min-h-28 w-full rounded-lg border border-line bg-card p-3 text-sm text-ink outline-none focus:border-brand-400" />
+                  <textarea aria-label={t.notePlaceholder} value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} placeholder={t.notePlaceholder} className="mt-3 min-h-28 w-full rounded-lg border border-line bg-card p-3 text-sm text-ink outline-none focus:border-brand-400" />
                   <Button size="sm" onClick={onSaveNote} className="mt-3"><Save className="size-4" /> Save note</Button>
                 </div>
               )}
@@ -1248,7 +1254,34 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
 
 function EmptyDrawer({ icon: Icon, title, text }: { icon: typeof Bookmark; title: string; text: string }) { return <div className="flex min-h-72 flex-col items-center justify-center text-center"><span className="icon-tile size-12 text-brand-600 dark:text-brand-300"><Icon className="size-5" /></span><h3 className="mt-4 font-black text-ink">{title}</h3><p className="mt-2 max-w-xs text-sm leading-6 text-ink-soft">{text}</p></div>; }
 
-function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm, t }: { title: string; text: string; action: string; destructive?: boolean; onCancel: () => void; onConfirm: () => void; t: Copy }) { return <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/35 p-4 backdrop-blur-sm"><section role="dialog" aria-modal="true" aria-labelledby="confirm-title" className="w-full max-w-md rounded-lg border border-line bg-raised p-6 shadow-[0_22px_70px_rgba(15,35,31,0.30)]"><h2 id="confirm-title" className="text-xl font-black text-ink">{title}</h2><p className="mt-3 text-sm leading-6 text-ink-soft">{text}</p><div className="mt-6 flex justify-end gap-2"><Button variant="secondary" onClick={onCancel}>{t.keepWorking}</Button><Button variant={destructive ? "danger" : "primary"} onClick={onConfirm}>{action}</Button></div></section></div>; }
+function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm, t }: { title: string; text: string; action: string; destructive?: boolean; onCancel: () => void; onConfirm: () => void; t: Copy }) {
+  const dialogRef = useRef<HTMLElement>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+  useModalFocus({ containerRef: dialogRef, initialFocusRef: cancelButtonRef, onDismiss: onCancel });
+
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/35 p-4 backdrop-blur-sm">
+      <section
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
+        tabIndex={-1}
+        className="w-full max-w-md rounded-lg border border-line bg-raised p-6 shadow-[0_22px_70px_rgba(15,35,31,0.30)]"
+      >
+        <h2 id={titleId} className="text-xl font-black text-ink">{title}</h2>
+        <p id={descriptionId} className="mt-3 text-sm leading-6 text-ink-soft">{text}</p>
+        <div className="mt-6 flex justify-end gap-2">
+          <Button ref={cancelButtonRef} variant="secondary" onClick={onCancel}>{t.keepWorking}</Button>
+          <Button variant={destructive ? "danger" : "primary"} onClick={onConfirm}>{action}</Button>
+        </div>
+      </section>
+    </div>
+  );
+}
 
 function ReadingResultScreen({ test, result, answers, onLibrary, onRetry, onReview, onNext, t }: { test: ReadingPracticeTest; result: TestResult; answers: Record<string, AnswerValue>; onLibrary: () => void; onRetry: () => void; onReview: () => void; onNext: () => void; t: Copy }) {
   const questions = allReadingQuestions(test);

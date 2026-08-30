@@ -1458,6 +1458,8 @@
     "notesHint": "Select a sentence in the passage, then choose Add note.",
     "vocabularyHint": "Select one word or a phrase in the passage, then choose Save word.",
     "personalNote": "Personal note",
+    "favouriteWord": "Favourite word",
+    "deleteWord": "Delete word",
     "notePlaceholder": "Why does this part matter? Write a note in English or your own language...",
     "definitionHint": "Add your own simple English definition.",
     "translationPlaceholder": "Add your own translation",

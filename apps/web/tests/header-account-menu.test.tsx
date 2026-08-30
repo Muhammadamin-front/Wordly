@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -57,5 +57,27 @@ describe("SiteHeader account menu", () => {
 
     await waitFor(() => expect(logout).toHaveBeenCalledOnce());
     expect(replace).toHaveBeenCalledWith("/en");
+  });
+
+  it("keeps keyboard focus inside the mobile navigation and restores it on close", async () => {
+    const user = userEvent.setup();
+    render(<SiteHeader lang="en" nav={en.nav} />);
+
+    const menuButton = screen.getByRole("button", { name: en.nav.menu });
+    await user.click(menuButton);
+
+    const dialog = screen.getByRole("dialog", { name: en.nav.menu });
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+
+    const closeButton = within(dialog).getByRole("button", { name: en.nav.close });
+    await waitFor(() => expect(closeButton).toHaveFocus());
+
+    within(dialog).getByRole("link", { name: "Vocora home" }).focus();
+    await user.tab({ shift: true });
+    expect(within(dialog).getByRole("button", { name: en.nav.logout })).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: en.nav.menu })).not.toBeInTheDocument();
+    expect(menuButton).toHaveFocus();
   });
 });
