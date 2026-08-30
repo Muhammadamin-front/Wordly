@@ -100,7 +100,7 @@ async def test_abandon_and_complete_leg_work_for_a_coin_paying_free_user(client)
 async def test_premium_user_starts_a_session_free_of_charge(client):
     headers = await learner(client, email="mockcoins-premium@words.uz")
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     resp = await client.post("/api/v1/ielts/mock/sessions", json={}, headers=headers)
     assert resp.status_code == 201, resp.text

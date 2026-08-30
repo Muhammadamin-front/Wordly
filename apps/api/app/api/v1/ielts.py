@@ -3,7 +3,7 @@ Coach). Generation and Writing scoring are AI calls (quota-guarded); grading a
 submitted Reading/Listening test is server-side and free."""
 import json
 import random
-from typing import Awaitable, Callable, Dict, List
+from typing import Awaitable, Callable, Dict, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
@@ -42,7 +42,12 @@ from app.services import ai_quota, coach, ielts, subscriptions, tts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
 from app.services.ielts_bank import bank_for
-from app.services.plans import FREE_WRITING_MASTER_UNITS
+from app.services.plans import (
+    FREE_WRITING_MASTER_UNITS,
+    get_plan,
+    writing_actions_per_day,
+    writing_essay_subcap_per_day,
+)
 
 router = APIRouter(
     prefix="/ielts",
@@ -88,6 +93,27 @@ async def _require_writing_master_unit(db: AsyncSession, user: User, unit_slug: 
         status_code=status.HTTP_402_PAYMENT_REQUIRED,
         detail="This Master Writing unit requires Premium",
     )
+
+
+async def _writing_quota_gate(db: AsyncSession, user: User) -> Optional[str]:
+    """Returns the active premium plan_code if the account is on one, after
+    enforcing that plan's combined daily writing-action pool (raises 429 if
+    exceeded). Returns None for a free account — free-tier drills stay on
+    the one free Master Writing unit's ai_quota gate, unaffected by this
+    per-tier pool."""
+    sub = await subscriptions.active_subscription(db, user.id)
+    plan = get_plan(sub.plan_code) if sub is not None else None
+    if plan is None or plan.tier != "premium":
+        return None
+    if not await ielts.has_writing_action_quota(db, user.id, sub.plan_code):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                f"Daily writing limit reached ({writing_actions_per_day(sub.plan_code)}/day). "
+                "Your allowance refills over the next 24 hours."
+            ),
+        )
+    return sub.plan_code
 
 
 def _reward(summary: RewardSummary) -> RewardOut:
@@ -143,12 +169,13 @@ async def writing_score(
     db: AsyncSession = Depends(get_db),
     client: AiClient = Depends(require_ai_client),
 ):
-    if await subscriptions.is_premium(db, user):
-        if not await ielts.has_premium_writing_quota(db, user.id):
+    plan_code = await _writing_quota_gate(db, user)
+    if plan_code is not None:
+        if not await ielts.has_writing_essay_subcap_quota(db, user.id, plan_code):
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 detail=(
-                    f"Daily writing limit reached ({ielts.PREMIUM_WRITING_CHECKS_PER_DAY}/day). "
+                    f"Daily full-essay limit reached ({writing_essay_subcap_per_day(plan_code)}/day). "
                     "Your allowance refills over the next 24 hours."
                 ),
             )
@@ -167,6 +194,8 @@ async def writing_score(
             lang=payload.lang, mock_session_id=payload.mock_session_id,
         ),
     )
+    if plan_code is not None:
+        await ielts.log_writing_action(db, user.id, "essay")
     await db.commit()
     return WritingScoreOut(
         band_overall=score.band_overall,
@@ -353,12 +382,15 @@ async def writing_master_paraphrase_check(
     client: AiClient = Depends(require_ai_client),
 ):
     await _require_writing_master_unit(db, user, payload.unit_slug)
+    plan_code = await _writing_quota_gate(db, user)
     result = await _guarded(
         db, user,
         lambda: ielts.score_paraphrase(
             db, user, client, payload.original_title, payload.paraphrase, lang=payload.lang
         ),
     )
+    if plan_code is not None:
+        await ielts.log_writing_action(db, user.id, "drill")
     await db.commit()
     return DrillFeedbackOut(
         quality=result.quality, feedback=result.feedback,
@@ -375,12 +407,15 @@ async def writing_master_overview_check(
     client: AiClient = Depends(require_ai_client),
 ):
     await _require_writing_master_unit(db, user, payload.unit_slug)
+    plan_code = await _writing_quota_gate(db, user)
     result = await _guarded(
         db, user,
         lambda: ielts.score_overview(
             db, user, client, payload.visual, payload.overview, lang=payload.lang
         ),
     )
+    if plan_code is not None:
+        await ielts.log_writing_action(db, user.id, "drill")
     await db.commit()
     return DrillFeedbackOut(
         quality=result.quality, feedback=result.feedback,

@@ -23,35 +23,51 @@ import { cn } from "@/lib/utils";
 
 import styles from "./pricing-view.module.css";
 
-const FEATURE_KEY: Record<string, keyof Dictionary["billing"]> = {
-  free: "freeFeatures",
-  premium_monthly: "premiumFeatures",
-  premium_quarterly: "premiumFeatures",
-  premium_yearly: "premiumFeatures",
-  family: "familyFeatures",
-};
+type Tier = "free" | "plus" | "pro" | "max";
+type Duration = "monthly" | "quarterly" | "yearly";
+const TIERS: Tier[] = ["free", "plus", "pro", "max"];
+const DURATIONS: Duration[] = ["monthly", "quarterly", "yearly"];
 
-const PLAN_NAME_KEY: Record<string, keyof Dictionary["billing"]> = {
-  free: "free",
-  premium_monthly: "premiumMonthly",
-  premium_quarterly: "premiumQuarterly",
-  premium_yearly: "premiumYearly",
-  family: "family",
-};
-
-function planName(code: string, t: Dictionary["billing"]): string {
-  const key = PLAN_NAME_KEY[code];
-  return key ? t[key] : code;
+/** "plus_monthly" -> "plus", "free" -> "free". Every paid plan code this
+ *  page shows is "<tier>_<duration>" — see PUBLIC_PLAN_CODES in
+ *  services/plans.py. */
+function tierOf(code: string): Tier {
+  return (code === "free" ? "free" : code.split("_")[0]) as Tier;
 }
 
-function featureList(code: string, t: Dictionary["billing"]): string[] {
-  const primary = t[FEATURE_KEY[code]];
-  const secondary = code === "free" ? t.freeIncludesList : t.premiumAddsList;
+function planCode(tier: Tier, duration: Duration): string {
+  return tier === "free" ? "free" : `${tier}_${duration}`;
+}
+
+function planNameKey(tier: Tier, duration: Duration): keyof Dictionary["billing"] {
+  if (tier === "free") return "free";
+  const cap = duration[0].toUpperCase() + duration.slice(1);
+  return `${tier}${cap}` as keyof Dictionary["billing"];
+}
+
+function planName(tier: Tier, duration: Duration, t: Dictionary["billing"]): string {
+  return t[planNameKey(tier, duration)];
+}
+
+function featureList(tier: Tier, t: Dictionary["billing"]): string[] {
+  const primary = t[tier === "free" ? "freeFeatures" : (`${tier}Features` as keyof Dictionary["billing"])];
+  const secondary = tier === "free" ? t.freeIncludesList : t.premiumAddsList;
   return [...new Set(`${primary} · ${secondary}`.split("·").map((item) => item.trim()).filter(Boolean))].slice(0, 7);
 }
 
-/** What the same period would cost at the monthly rate, and how much the
- *  longer plan saves against it.
+// Reuses the existing duration-tone gradients (see pricing-view.module.css)
+// as tier tones instead — free stays free; Plus/Pro/Max borrow the teal/
+// amber/deep-red look that used to mean monthly/quarterly/yearly, in
+// ascending order of "how premium it looks", which happens to line up.
+const TIER_TONE: Record<Tier, string> = {
+  free: styles.free,
+  plus: styles.monthly,
+  pro: styles.quarterly,
+  max: styles.yearly,
+};
+
+/** What the same period would cost at this tier's own monthly rate, and how
+ *  much the longer plan saves against it.
  *
  *  Derived from the monthly plan the API actually returns rather than a
  *  hardcoded "was" price — the quarterly and yearly plans are genuinely
@@ -70,6 +86,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   const { user, ready } = useAuth();
   const router = useRouter();
   const [plans, setPlans] = useState<Plan[] | null>(null);
+  const [duration, setDuration] = useState<Duration>("monthly");
   const [paymentStatus, setPaymentStatus] = useState<BillingStatus | null>(null);
   const [sub, setSub] = useState<Subscription | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
@@ -158,12 +175,18 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     );
   }
 
-  const planOrder = ["free", "premium_monthly", "premium_quarterly", "premium_yearly"];
   const checkoutEnabled = paymentStatus.checkout_enabled;
-  const monthlyPlan = plans.find((plan) => plan.code === "premium_monthly");
-  const displayPlans = plans
-    .filter((plan) => planOrder.includes(plan.code))
-    .sort((a, b) => planOrder.indexOf(a.code) - planOrder.indexOf(b.code));
+  const planByCode = new Map(plans.map((plan) => [plan.code, plan]));
+  const monthlyByTier: Partial<Record<Tier, Plan>> = {
+    plus: planByCode.get("plus_monthly"),
+    pro: planByCode.get("pro_monthly"),
+    max: planByCode.get("max_monthly"),
+  };
+  // One card per tier, all at the currently-selected duration — free has no
+  // duration, always its own single plan.
+  const displayPlans = TIERS
+    .map((tier) => planByCode.get(planCode(tier, duration)))
+    .filter((plan): plan is Plan => Boolean(plan));
 
   return (
     <main className={styles.page}>
@@ -184,6 +207,23 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
           </span>
         </header>
 
+        <div className="mx-auto mt-6 flex w-fit gap-1 rounded-full border border-[rgba(232,201,154,0.2)] bg-[rgba(255,248,234,0.06)] p-1">
+          {DURATIONS.map((d) => (
+            <button
+              key={d}
+              type="button"
+              onClick={() => setDuration(d)}
+              aria-pressed={duration === d}
+              className={cn(
+                "rounded-full px-4 py-1.5 text-xs font-bold transition-colors",
+                duration === d ? "bg-brand-50 text-brand-950" : "text-[rgba(243,230,203,0.68)] hover:text-brand-50"
+              )}
+            >
+              {d === "monthly" ? t.toggleMonthly : d === "quarterly" ? t.toggleQuarterly : t.toggleYearly}
+            </button>
+          ))}
+        </div>
+
         {(sub?.is_premium || error || (!paymentStatus.checkout_enabled && !paymentStatus.sandbox_enabled)) && (
           <div className={styles.statusRail}>
             {sub?.is_premium && <Alert tone="success">{t.premiumActive}</Alert>}
@@ -196,31 +236,22 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
         <div className={styles.planGrid}>
           {displayPlans.map((plan) => {
-            const isFree = plan.code === "free";
+            const tier = tierOf(plan.code);
+            const isFree = tier === "free";
+            // Same tier as their active subscription, regardless of which
+            // duration the toggle above is currently showing — a Pro yearly
+            // subscriber should still see "Current plan" while browsing the
+            // monthly cards, not just on the exact code they bought.
             const isCurrent = isFree
               ? Boolean(user && !sub?.is_premium)
-              : sub?.plan_code === plan.code && sub?.is_premium;
+              : Boolean(sub?.is_premium && sub.plan_code && tierOf(sub.plan_code) === tier);
             const isSelecting = selected === plan.code;
-            const popular = plan.code === "premium_yearly";
-            const saving = discount(plan, monthlyPlan);
-            const perUnit =
-              isFree
-                ? ""
-                : plan.code === "premium_monthly"
-                ? t.perMonth
-                : plan.code === "premium_quarterly"
-                  ? t.perQuarter
-                  : t.perYear;
+            const popular = tier === "pro";
+            const saving = discount(plan, monthlyByTier[tier]);
+            const perUnit = isFree ? "" : duration === "monthly" ? t.perMonth : duration === "quarterly" ? t.perQuarter : t.perYear;
             const canPurchase =
               isFree || !user || (paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled);
-            const tone =
-              isFree
-                ? styles.free
-                : plan.code === "premium_monthly"
-                ? styles.monthly
-                : plan.code === "premium_quarterly"
-                  ? styles.quarterly
-                  : styles.yearly;
+            const tone = TIER_TONE[tier];
 
             function choose() {
               trackEvent("premium_plan_selected", {
@@ -244,7 +275,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                 <div className={styles.gradientShape} aria-hidden />
                 <div className={styles.planContent}>
                   <div className={styles.planHeading}>
-                    <h2>{planName(plan.code, t)}</h2>
+                    <h2>{planName(tier, duration, t)}</h2>
                     {saving ? (
                       <span className={styles.saveBadge}>
                         −{saving.percent}%<span className="sr-only"> {t.saveLabel}</span>
@@ -254,7 +285,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                     )}
                   </div>
                   <ul className={styles.featureList}>
-                    {featureList(plan.code, t).map((feature) => (
+                    {featureList(tier, t).map((feature) => (
                       <li key={feature}>
                         <Check aria-hidden />
                         <span>{feature}</span>

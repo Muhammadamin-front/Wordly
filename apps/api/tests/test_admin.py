@@ -22,7 +22,7 @@ async def test_analytics_counts(client):
     )
     # A user activates premium (sandbox) to generate revenue.
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=lh
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=lh
     )
 
     admin = await make_admin(client)
@@ -130,7 +130,7 @@ async def test_super_admin_can_apply_audited_manual_subscription_correction(clie
 
     granted = await client.post(
         "/api/v1/admin/users/{}/subscription/grant".format(target_id),
-        json={"plan_code": "premium_monthly", "extra_days": 7, "reason": "Support ticket paid"},
+        json={"plan_code": "plus_monthly", "extra_days": 7, "reason": "Support ticket paid"},
         headers=admin,
     )
     assert granted.status_code == 200, granted.text

@@ -33,6 +33,26 @@ class IeltsTest(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
 
 
+class WritingActionLog(Base):
+    """One row per successful writing action that spent a real model call —
+    a Master Writing drill (paraphrase/overview check) or a full essay
+    score. Exists purely to enforce the per-tier combined daily pool
+    (plans.WRITING_ACTIONS_PER_DAY/WRITING_ESSAY_SUBCAP_PER_DAY); nothing
+    else reads it. Separate from IeltsResult because drills were never
+    persisted there (they don't produce a band score) and because counting
+    "actions" is a different concern from the band-history record."""
+
+    __tablename__ = "writing_action_logs"
+    __table_args__ = (Index("ix_writing_action_logs_user_created", "user_id", "created_at"),)
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    kind: Mapped[str] = mapped_column(String(10), nullable=False)  # essay|drill
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
+
+
 class IeltsResult(Base):
     """One scored attempt, for band history on the IELTS hub."""
 
