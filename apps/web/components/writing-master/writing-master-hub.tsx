@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Lock, PenLine, Target } from "lucide-react";
+import { Lock, PenLine, Target, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -83,7 +83,25 @@ export function WritingMasterHub({ lang }: { lang: string }) {
         </p>
       )}
 
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
+      {(() => {
+        const masteredCount = MASTER_UNITS.filter((u) => (progress[u.slug]?.best_score ?? 0) >= 100).length;
+        return (
+          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-line bg-card p-4">
+            <Trophy className={`size-6 shrink-0 ${masteredCount > 0 ? "text-brand-500" : "text-ink-soft"}`} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-black text-ink">{masteredCount} / {MASTER_UNITS.length} units mastered</p>
+              <div className="mt-1.5 h-1.5 rounded-full bg-line/60">
+                <div
+                  className="h-full rounded-full bg-brand-500 transition-[width] duration-500"
+                  style={{ width: `${(masteredCount / MASTER_UNITS.length) * 100}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {MASTER_UNITS.map((unit) => {
           const locked = isPremium === false && !FREE_WRITING_MASTER_UNITS.includes(unit.slug);
           const entry = progress[unit.slug];
@@ -93,14 +111,25 @@ export function WritingMasterHub({ lang }: { lang: string }) {
               key={unit.slug}
               href={locked ? `/${lang}/pricing` : `/${lang}/ielts/writing/master/${unit.slug}`}
               className={`relative rounded-2xl border p-5 transition ${
-                locked ? "border-line/70 bg-card/60 opacity-70" : "border-line bg-card hover:border-brand-400"
+                locked
+                  ? "border-line/70 bg-card/60 opacity-70"
+                  : mastered
+                    ? "border-success/40 bg-success/5 hover:border-success"
+                    : "border-line bg-card hover:border-brand-400"
               }`}
             >
               {locked && <Lock className="absolute right-4 top-4 size-4 text-ink-soft" />}
-              {mastered && <CheckCircle2 className="absolute right-4 top-4 size-4 text-success" />}
+              {mastered && (
+                <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black text-success">
+                  <Trophy className="size-3" /> Mastered
+                </span>
+              )}
               <p className="font-black text-ink">{lang === "uz" ? unit.titleUz : unit.title}</p>
               <div className="mt-3 h-1.5 rounded-full bg-line/60">
-                <div className="h-full rounded-full bg-brand-500" style={{ width: `${entry?.best_score ?? 0}%` }} />
+                <div
+                  className={`h-full rounded-full transition-[width] duration-500 ${mastered ? "bg-success" : "bg-brand-500"}`}
+                  style={{ width: `${entry?.best_score ?? 0}%` }}
+                />
               </div>
             </Link>
           );
