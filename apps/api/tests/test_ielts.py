@@ -11,6 +11,12 @@ QUESTIONS = [
     {"prompt": "Q3?", "options": ["a", "b", "c", "d"], "answer_index": 2},
 ]
 
+WRITING_ESSAY = (
+    "Digital technology can improve access to education. "
+    "Technology also helps students find useful resources. "
+    "However, young people sometimes uses technology without clear limits."
+)
+
 
 class FakeIeltsAi:
     async def text(self, *, system, prompt, max_tokens) -> str:
@@ -23,18 +29,189 @@ class FakeIeltsAi:
         props = schema["properties"]
         if "questions" in props:
             return {"title": "The Ocean", "body": "A passage about the ocean.", "questions": QUESTIONS}
+        assert "AI estimate" in system
+        assert "not an official IELTS score" in system
+        assert "contradictions" in system
+        assert "5-8 good_points" in system and "5-8 areas_to_improve" in system
+        assert "SERVER-NUMBERED SOURCE SENTENCES" in prompt
+        assert "band_overall" not in props
+        analysis_schema = props["analysis"]["properties"]
+        assert "sentence" not in analysis_schema["sentence_feedback"]["items"]["properties"]
+        assert "frequency" not in analysis_schema["repetitions"]["items"]["properties"]
+        assert set(analysis_schema["band_plan"]["properties"]) == {"actions"}
         return {
-            "band_overall": 6.4,
             "task": {"band": 6.0, "comment": "Addresses the task."},
             "coherence": {"band": 6.5, "comment": "Mostly well organised."},
             "lexical": {"band": 7.0, "comment": "Good range of vocabulary."},
             "grammar": {"band": 6.0, "comment": "Some agreement errors."},
-            "errors": [
-                {"quote": "peoples is", "fix": "people are", "note": "'People' is already plural.", "type": "grammar"},
-            ],
-            "strengths": ["Clear position", "Good paragraphing"],
             "feedback": "Good structure; work on cohesion.",
             "improved": "A full band-8 model answer.",
+            "analysis": {
+                "sentence_feedback": [
+                    {
+                        "sentence_number": 1,
+                        "highlight": "improve access",
+                        "status": "good",
+                        "category": "collocation",
+                        "explanation": "This is a concise academic collocation.",
+                        "use_instead": "",
+                        "why": "",
+                    },
+                    {
+                        "sentence_number": 2,
+                        "highlight": "helps students",
+                        "status": "improve",
+                        "category": "vocabulary",
+                        "explanation": "The verb is accurate but basic.",
+                        "use_instead": "enables students",
+                        "why": "The alternative is more precise in this context.",
+                    },
+                    {
+                        "sentence_number": 3,
+                        "highlight": "people sometimes uses",
+                        "status": "error",
+                        "category": "subject_verb_agreement",
+                        "explanation": "The plural subject needs the base verb.",
+                        "use_instead": "people sometimes use",
+                        "why": "People is plural, so use is the correct verb form.",
+                    },
+                    {
+                        "sentence_number": 1,
+                        "highlight": "fabricated highlight",
+                        "status": "error",
+                        "category": "grammar",
+                        "explanation": "This model-generated text is not in the essay.",
+                        "use_instead": "replacement",
+                        "why": "It must be filtered.",
+                    },
+                ],
+                "good_points": [
+                    {
+                        "title": "Academic collocation",
+                        "evidence": "improve access",
+                        "explanation": "The phrase is concise and natural.",
+                    },
+                    {
+                        "title": "Relevant subject",
+                        "evidence": "Digital technology",
+                        "explanation": "The response opens directly on topic.",
+                    },
+                    {
+                        "title": "Clear benefit",
+                        "evidence": "useful resources",
+                        "explanation": "The benefit is concrete.",
+                    },
+                    {
+                        "title": "Contrast signal",
+                        "evidence": "However",
+                        "explanation": "The linker marks a change in direction.",
+                    },
+                    {
+                        "title": "Specific limitation",
+                        "evidence": "clear limits",
+                        "explanation": "The wording identifies a concrete concern.",
+                    },
+                    {
+                        "title": "Invented strength",
+                        "evidence": "evidence not in essay",
+                        "explanation": "This must be filtered.",
+                    },
+                ],
+                "areas_to_improve": [
+                    {
+                        "title": "Agreement",
+                        "evidence": "people sometimes uses",
+                        "action": "Use a plural verb with people.",
+                    },
+                    {
+                        "title": "Basic verb",
+                        "evidence": "helps students",
+                        "action": "Choose a more precise verb where natural.",
+                    },
+                    {
+                        "title": "Repetition",
+                        "evidence": "technology",
+                        "action": "Use accurate referencing to reduce repetition.",
+                    },
+                    {
+                        "title": "Development",
+                        "evidence": "useful resources",
+                        "action": "Explain how those resources improve learning.",
+                    },
+                    {
+                        "title": "Precision",
+                        "evidence": "clear limits",
+                        "action": "Define what appropriate limits would be.",
+                    },
+                ],
+                "language_upgrades": [
+                    {
+                        "used": "helps students",
+                        "use_instead": "enables students",
+                        "why": "It is more precise here.",
+                    },
+                    {
+                        "used": "invented wording",
+                        "use_instead": "replacement",
+                        "why": "This must be filtered.",
+                    },
+                ],
+                "repetitions": [
+                    {
+                        "word": "technology",
+                        "problem": "It appears too often in a short response.",
+                        "alternatives": ["digital tools", "these systems"],
+                    },
+                    {
+                        "word": "computers",
+                        "problem": "This word is not actually present.",
+                        "alternatives": ["devices"],
+                    },
+                ],
+                "cohesion": {
+                    "strengths": [
+                        {"quote": "However", "explanation": "It marks contrast clearly."}
+                    ],
+                    "issues": [
+                        {
+                            "quote": "Technology also",
+                            "explanation": "The repeated noun makes the link mechanical.",
+                        },
+                        {
+                            "quote": "fabricated cohesion quote",
+                            "explanation": "This must be filtered.",
+                        },
+                    ],
+                    "opportunities": ["Use a pronoun where its reference remains clear."],
+                },
+                "grammar_profile": {
+                    "strengths": [
+                        {
+                            "quote": "can improve",
+                            "explanation": "The modal is followed by the base verb.",
+                        }
+                    ],
+                    "weaknesses": [
+                        {
+                            "quote": "people sometimes uses",
+                            "explanation": "Subject-verb agreement is inaccurate.",
+                        }
+                    ],
+                },
+                "band_plan": {
+                    "actions": [
+                        "Check agreement in every sentence.",
+                        "Develop each main point with a consequence.",
+                        "Reduce avoidable noun repetition.",
+                        "Use precise but natural verbs.",
+                    ]
+                },
+                "next_steps": [
+                    "Correct the agreement error and rewrite the final sentence.",
+                    "Practise cohesive referencing for technology-related essays.",
+                    "Add one developed example to the response.",
+                ],
+            },
         }
 
 
@@ -264,19 +441,58 @@ async def test_writing_score_returns_bands(client):
         headers = await learner(client, email="ieltsw@words.uz")
         resp = await client.post(
             "/api/v1/ielts/writing/score",
-            json={"task_type": "task2", "prompt": "Some people think...", "essay": "x" * 60, "lang": "uz"},
+            json={
+                "task_type": "task2",
+                "prompt": "Some people think...",
+                "essay": WRITING_ESSAY,
+                "lang": "uz",
+            },
             headers=headers,
         )
         assert resp.status_code == 200, resp.text
         data = resp.json()
-        assert data["band_overall"] == 6.5  # 6.4 -> nearest half band
+        assert data["band_overall"] == 6.5  # criterion average 6.375 -> 6.5
         assert data["lexical"]["band"] == 7.0
         assert data["lexical"]["comment"]
-        assert data["errors"][0]["fix"] == "people are"
-        assert data["strengths"]
+        assert data["errors"][0]["quote"] == "people sometimes uses"
+        assert data["errors"][0]["fix"] == "people sometimes use"
+        assert "improve access" in data["strengths"][0]
         assert data["feedback"]
         assert data["improved"]
         assert data["reward"]["xp_gained"] > 0
+
+        analysis = data["analysis"]
+        assert [item["status"] for item in analysis["sentence_feedback"]] == [
+            "good",
+            "improve",
+            "error",
+        ]
+        assert analysis["sentence_feedback"][0]["sentence"] == (
+            "Digital technology can improve access to education."
+        )
+        assert all(
+            item["highlight"] in item["sentence"]
+            for item in analysis["sentence_feedback"]
+        )
+        assert all(
+            item["highlight"] != "fabricated highlight"
+            for item in analysis["sentence_feedback"]
+        )
+        assert len(analysis["good_points"]) == 5
+        assert analysis["language_upgrades"] == [
+            {
+                "used": "helps students",
+                "use_instead": "enables students",
+                "why": "It is more precise here.",
+            }
+        ]
+        assert analysis["repetitions"][0]["frequency"] == 3
+        assert len(analysis["repetitions"]) == 1
+        assert len(analysis["cohesion"]["issues"]) == 1
+        assert analysis["band_plan"]["current_band"] == 6.5
+        assert analysis["band_plan"]["target_band"] == 7.0
+        assert len(analysis["band_plan"]["actions"]) == 4
+        assert len(analysis["next_steps"]) == 3
 
         # It shows up as the best Writing band on the overview.
         ov = (await client.get("/api/v1/ielts/overview", headers=headers)).json()

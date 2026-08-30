@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -99,6 +99,95 @@ class WritingErrorOut(BaseModel):
     type: str  # grammar|vocabulary|spelling|punctuation|style
 
 
+WritingFeedbackStatus = Literal["good", "improve", "error"]
+WritingFeedbackCategory = Literal[
+    "grammar",
+    "vocabulary",
+    "collocation",
+    "articles",
+    "prepositions",
+    "word_form",
+    "tense",
+    "subject_verb_agreement",
+    "sentence_structure",
+    "punctuation",
+    "cohesion",
+    "logic",
+    "style",
+    "spelling",
+]
+
+
+class WritingSentenceFeedbackOut(BaseModel):
+    sentence_number: int
+    sentence: str
+    highlight: str
+    status: WritingFeedbackStatus
+    category: WritingFeedbackCategory
+    explanation: str
+    use_instead: str
+    why: str
+
+
+class WritingGoodPointOut(BaseModel):
+    title: str
+    evidence: str
+    explanation: str
+
+
+class WritingAreaToImproveOut(BaseModel):
+    title: str
+    evidence: str
+    action: str
+
+
+class WritingLanguageUpgradeOut(BaseModel):
+    used: str
+    use_instead: str
+    why: str
+
+
+class WritingRepetitionOut(BaseModel):
+    word: str
+    frequency: int
+    problem: str
+    alternatives: List[str]
+
+
+class WritingQuotedAnalysisPointOut(BaseModel):
+    quote: str
+    explanation: str
+
+
+class WritingCohesionOut(BaseModel):
+    strengths: List[WritingQuotedAnalysisPointOut]
+    issues: List[WritingQuotedAnalysisPointOut]
+    opportunities: List[str]
+
+
+class WritingGrammarProfileOut(BaseModel):
+    strengths: List[WritingQuotedAnalysisPointOut]
+    weaknesses: List[WritingQuotedAnalysisPointOut]
+
+
+class WritingBandPlanOut(BaseModel):
+    current_band: float
+    target_band: float
+    actions: List[str]
+
+
+class WritingAnalysisOut(BaseModel):
+    sentence_feedback: List[WritingSentenceFeedbackOut]
+    good_points: List[WritingGoodPointOut]
+    areas_to_improve: List[WritingAreaToImproveOut]
+    language_upgrades: List[WritingLanguageUpgradeOut]
+    repetitions: List[WritingRepetitionOut]
+    cohesion: WritingCohesionOut
+    grammar_profile: WritingGrammarProfileOut
+    band_plan: WritingBandPlanOut
+    next_steps: List[str]
+
+
 class WritingScoreOut(BaseModel):
     band_overall: float
     task: CriterionOut
@@ -109,4 +198,5 @@ class WritingScoreOut(BaseModel):
     strengths: List[str]
     feedback: str
     improved: str  # full band-8 model rewrite
+    analysis: WritingAnalysisOut
     reward: RewardOut
