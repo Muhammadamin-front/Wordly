@@ -57,10 +57,17 @@ function SubscriptionCard({ locale, subscription, cancelling, onCancel }: { loca
 
 function PlanCard({ locale, plan, status, current, loading, onCheckout }: { locale: Locale; plan: BillingPlan; status: BillingStatus; current: boolean; loading: boolean; onCheckout: (provider: "payme" | "click" | "uzum") => void }) {
   const t = labels[locale];
-  const PLAN_TITLE: Record<string, string> = { free: t.free, premium_monthly: t.monthly, premium_quarterly: t.quarterly, premium_yearly: t.yearly };
-  const PLAN_PERIOD: Record<string, string> = { free: "", premium_monthly: t.perMonth, premium_quarterly: t.perQuarter, premium_yearly: t.perYear };
-  const title = PLAN_TITLE[plan.code] ?? plan.code;
-  const periodic = PLAN_PERIOD[plan.code] ?? "";
+  // plan.code is "<tier>_<duration>" for every paid plan (plus/pro/max ×
+  // monthly/quarterly/yearly) — see PUBLIC_PLAN_CODES in services/plans.py.
+  // Mobile still shows a generic "Premium ..." label rather than the
+  // Plus/Pro/Max names web now shows; this screen only redirects to web
+  // checkout anyway (see canUseHostedCheckout below), so a fuller relabel
+  // is deferred with the rest of the mobile pricing UI.
+  const tier = plan.code.split("_")[0];
+  const durationWord = plan.code.endsWith("_yearly") ? t.yearly : plan.code.endsWith("_quarterly") ? t.quarterly : t.monthly;
+  const durationPeriod = plan.code.endsWith("_yearly") ? t.perYear : plan.code.endsWith("_quarterly") ? t.perQuarter : t.perMonth;
+  const title = plan.code === "free" ? t.free : tier === "plus" ? durationWord : `${tier[0].toUpperCase()}${tier.slice(1)} ${durationWord}`;
+  const periodic = plan.code === "free" ? "" : durationPeriod;
   const price = new Intl.NumberFormat(locale === "ru" ? "ru-RU" : "uz-UZ").format(plan.price_som);
   const canUseHostedCheckout = Platform.OS === "web";
   const sellable = plan.code !== "free" && status.checkout_enabled && !current && canUseHostedCheckout;

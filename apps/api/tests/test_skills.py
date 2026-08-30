@@ -196,7 +196,7 @@ async def test_free_grammar_submit_is_gated_too(client):
 async def test_premium_reaches_every_grammar_level(client):
     headers = await auth_headers(client)
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     for level in ("A1", "A2", "B1", "B2"):
         resp = await client.get(f"/api/v1/skills/grammar?level={level}&count=5", headers=headers)

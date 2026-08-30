@@ -14,17 +14,21 @@ async def test_plans_listed(client):
     body = (await client.get("/api/v1/billing/plans")).json()
     codes = {p["code"] for p in body["plans"]}
     assert codes == {
-        "free", "premium_monthly", "premium_quarterly", "premium_yearly",
-        "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+        "free",
+        "plus_monthly", "plus_quarterly", "plus_yearly",
+        "pro_monthly", "pro_quarterly", "pro_yearly",
+        "max_monthly", "max_quarterly", "max_yearly",
     }
-    monthly = next(p for p in body["plans"] if p["code"] == "premium_monthly")
-    assert monthly["price_som"] == 49000
-    quarterly = next(p for p in body["plans"] if p["code"] == "premium_quarterly")
-    assert quarterly["price_som"] == 125000
-    yearly = next(p for p in body["plans"] if p["code"] == "premium_yearly")
-    assert yearly["price_som"] == 441000
-    speaking_pro = next(p for p in body["plans"] if p["code"] == "speaking_pro_monthly")
-    assert speaking_pro["price_som"] == 145000
+    plus_monthly = next(p for p in body["plans"] if p["code"] == "plus_monthly")
+    assert plus_monthly["price_som"] == 49000
+    plus_quarterly = next(p for p in body["plans"] if p["code"] == "plus_quarterly")
+    assert plus_quarterly["price_som"] == 125000
+    plus_yearly = next(p for p in body["plans"] if p["code"] == "plus_yearly")
+    assert plus_yearly["price_som"] == 441000
+    pro_monthly = next(p for p in body["plans"] if p["code"] == "pro_monthly")
+    assert pro_monthly["price_som"] == 129000
+    max_monthly = next(p for p in body["plans"] if p["code"] == "max_monthly")
+    assert max_monthly["price_som"] == 499999
 
 
 async def test_public_billing_catalog_keeps_account_actions_protected(client):
@@ -43,14 +47,14 @@ async def test_new_user_is_not_premium(client):
 async def test_sandbox_activation_grants_premium(client):
     headers = await learner(client)
     activated = await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     assert activated.status_code == 200
     assert activated.json()["is_premium"] is True
 
     sub = (await client.get("/api/v1/billing/subscription", headers=headers)).json()
     assert sub["is_premium"] is True
-    assert sub["plan_code"] == "premium_monthly"
+    assert sub["plan_code"] == "plus_monthly"
 
 
 async def test_premium_raises_ai_quota(client):
@@ -58,7 +62,7 @@ async def test_premium_raises_ai_quota(client):
     before = (await client.get("/api/v1/ai/quota", headers=headers)).json()
     assert before["daily_quota"] == 5
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_yearly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_yearly"}, headers=headers
     )
     after = (await client.get("/api/v1/ai/quota", headers=headers)).json()
     assert after["daily_quota"] == get_settings().AI_PREMIUM_DAILY_QUOTA
@@ -72,7 +76,7 @@ async def test_checkout_creates_order_and_url(client):
     try:
         response = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "payme"},
+            json={"plan_code": "plus_monthly", "provider": "payme"},
             headers=headers,
         )
         assert response.status_code == 201, response.text
@@ -94,12 +98,12 @@ async def test_checkout_idempotency_and_safe_return_urls(client):
     try:
         first = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "/uz/pricing"},
+            json={"plan_code": "plus_monthly", "provider": "payme", "return_url": "/uz/pricing"},
             headers={**headers, "Idempotency-Key": key},
         )
         second = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "/uz/pricing"},
+            json={"plan_code": "plus_monthly", "provider": "payme", "return_url": "/uz/pricing"},
             headers={**headers, "Idempotency-Key": key},
         )
         assert first.status_code == second.status_code == 201
@@ -107,7 +111,7 @@ async def test_checkout_idempotency_and_safe_return_urls(client):
 
         unsafe = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "payme", "return_url": "https://attacker.example"},
+            json={"plan_code": "plus_monthly", "provider": "payme", "return_url": "https://attacker.example"},
             headers=headers,
         )
         assert unsafe.status_code == 400
@@ -119,7 +123,7 @@ async def test_checkout_idempotency_and_safe_return_urls(client):
 async def test_user_cancellation_keeps_access_until_expiry(client):
     headers = await learner(client, email="cancelled@words.uz")
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     canceled = await client.post("/api/v1/billing/cancel", headers=headers)
     assert canceled.status_code == 200
@@ -142,7 +146,7 @@ async def test_billing_status_and_unconfigured_checkout(client):
 
     checkout_response = await client.post(
         "/api/v1/billing/checkout",
-        json={"plan_code": "premium_monthly", "provider": "payme"},
+        json={"plan_code": "plus_monthly", "provider": "payme"},
         headers=headers,
     )
     assert checkout_response.status_code == 503
@@ -178,12 +182,12 @@ async def test_uzum_checkout_registers_hosted_page_and_reuses_idempotency(client
         headers = await learner(client, email="uzum-buyer@words.uz")
         first = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "uzum", "return_url": "/uz/billing"},
+            json={"plan_code": "plus_monthly", "provider": "uzum", "return_url": "/uz/billing"},
             headers={**headers, "Idempotency-Key": key},
         )
         second = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "uzum", "return_url": "/uz/billing"},
+            json={"plan_code": "plus_monthly", "provider": "uzum", "return_url": "/uz/billing"},
             headers={**headers, "Idempotency-Key": key},
         )
         assert first.status_code == second.status_code == 201
@@ -231,7 +235,7 @@ async def test_uzum_callback_verifies_remote_completion_before_granting(client, 
         headers = await learner(client, email="uzum-complete@words.uz")
         checkout = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            json={"plan_code": "plus_monthly", "provider": "uzum"},
             headers=headers,
         )
         order_id = checkout.json()["order_id"]
@@ -281,7 +285,7 @@ async def test_uzum_declined_payment_never_grants_premium_even_with_success_call
         headers = await learner(client, email="uzum-declined@words.uz")
         checkout = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            json={"plan_code": "plus_monthly", "provider": "uzum"},
             headers=headers,
         )
         order_id = checkout.json()["order_id"]
@@ -323,7 +327,7 @@ async def test_uzum_callback_rejects_amount_mismatch_without_granting(client, mo
         headers = await learner(client, email="uzum-amount@words.uz")
         checkout = await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "uzum"},
+            json={"plan_code": "plus_monthly", "provider": "uzum"},
             headers=headers,
         )
         order_id = checkout.json()["order_id"]
@@ -347,7 +351,7 @@ async def test_sandbox_is_always_disabled_in_production(client):
     try:
         response = await client.post(
             "/api/v1/billing/sandbox-activate",
-            json={"plan_code": "premium_monthly"},
+            json={"plan_code": "plus_monthly"},
             headers=headers,
         )
         assert response.status_code == 403
@@ -377,7 +381,7 @@ async def _make_order(client, headers, provider="payme") -> tuple[str, int]:
     settings.PAYME_MERCHANT_ID = "m"
     response = await client.post(
         "/api/v1/billing/checkout",
-        json={"plan_code": "premium_monthly", "provider": provider},
+        json={"plan_code": "plus_monthly", "provider": provider},
         headers=headers,
     )
     body = response.json()
@@ -520,7 +524,7 @@ async def test_click_prepare_and_complete(client):
         headers = await learner(client)
         order = (await client.post(
             "/api/v1/billing/checkout",
-            json={"plan_code": "premium_monthly", "provider": "click"},
+            json={"plan_code": "plus_monthly", "provider": "click"},
             headers=headers,
         )).json()
         order_id = order["order_id"]
@@ -579,7 +583,7 @@ async def test_referral_code_and_reward(client):
     referee = await register_user(client, email="referee@words.uz", referral_code=code)
     referee_headers = {"Authorization": "Bearer " + referee["access_token"]}
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"},
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"},
         headers=referee_headers,
     )
 

@@ -10,7 +10,7 @@ async def learner(client, email="mock@words.uz") -> dict:
 async def premium_learner(client, email="mock-premium@words.uz") -> dict:
     headers = await learner(client, email=email)
     activated = await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     assert activated.status_code == 200, activated.text
     return headers

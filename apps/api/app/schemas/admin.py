@@ -81,7 +81,11 @@ class AdminActionRequest(BaseModel):
 
 
 class ManualSubscriptionGrant(BaseModel):
-    plan_code: Literal["premium_monthly", "premium_quarterly", "premium_yearly"]
+    plan_code: Literal[
+        "plus_monthly", "plus_quarterly", "plus_yearly",
+        "pro_monthly", "pro_quarterly", "pro_yearly",
+        "max_monthly", "max_quarterly", "max_yearly",
+    ]
     extra_days: int = Field(default=0, ge=0, le=3650)
     reason: str = Field(min_length=3, max_length=500)
 

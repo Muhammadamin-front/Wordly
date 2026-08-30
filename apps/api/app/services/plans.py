@@ -15,59 +15,105 @@ class Plan:
 
 PLANS: Dict[str, Plan] = {
     "free": Plan("free", "free", 0, 0, 1),
-    "premium_monthly": Plan("premium_monthly", "premium", 49_000, 30, 1),
+    # Three tiers replace the old premium_*/speaking_pro_* split: Plus is
+    # writing-only (no real-time voice at all — speaking stays a Pro/Max
+    # differentiator instead of a taste on every paid tier), Pro bundles in
+    # the same voice allowance the old speaking_pro_monthly sold separately,
+    # Max is the top tier. See WRITING_ACTIONS_PER_DAY/WRITING_ESSAY_SUBCAP_
+    # PER_DAY/VOICE_SECONDS_PER_WEEK below for what each tier actually gets.
+    "plus_monthly": Plan("plus_monthly", "premium", 49_000, 30, 1),
     # ~15% off 3x monthly (147,000 -> 124,950, rounded to a clean 125,000).
-    "premium_quarterly": Plan("premium_quarterly", "premium", 125_000, 90, 1),
+    "plus_quarterly": Plan("plus_quarterly", "premium", 125_000, 90, 1),
     # Exactly 25% off 12x monthly (588,000 * 0.75 = 441,000).
-    "premium_yearly": Plan("premium_yearly", "premium", 441_000, 365, 1),
+    "plus_yearly": Plan("plus_yearly", "premium", 441_000, 365, 1),
+    # Priced as "Plus + what speaking_pro_monthly used to cost standalone,
+    # bundled" (49,000 + 145,000 = 194,000) at a real ~33% bundle discount —
+    # not a number invented from scratch. See VOICE_SECONDS_PER_WEEK: Pro
+    # gets exactly the old speaking_pro_monthly voice allowance.
+    "pro_monthly": Plan("pro_monthly", "premium", 129_000, 30, 1),
+    # ~15% off 3x monthly (387,000 -> 328,950, rounded to a clean 329,000).
+    "pro_quarterly": Plan("pro_quarterly", "premium", 329_000, 90, 1),
+    # Exactly 25% off 12x monthly (1,548,000 * 0.75 = 1,161,000).
+    "pro_yearly": Plan("pro_yearly", "premium", 1_161_000, 365, 1),
+    "max_monthly": Plan("max_monthly", "premium", 499_999, 30, 1),
+    # ~15% off 3x monthly (1,499,997 * 0.85 = 1,274,997.45, rounded to 1,275,000).
+    "max_quarterly": Plan("max_quarterly", "premium", 1_275_000, 90, 1),
+    # 25% off 12x monthly (5,999,988 * 0.75 = 4,499,991), rounded up to keep
+    # the "999" pricing style consistent with the monthly price.
+    "max_yearly": Plan("max_yearly", "premium", 4_499_999, 365, 1),
     # Unlike streaming seats, each family seat is a real AI-consuming user
-    # (own 200/day quota) — marginal cost per seat is ~4,500 so'm/mo typical,
-    # not ~0. Priced at ~25% off 6x premium_yearly (2,646,000 -> 1,990,000),
-    # not a steep streaming-style bulk discount: was 349,000 total, which
-    # undercut a single solo yearly seat and ran near-zero margin per seat
-    # at typical usage — see git history for the analysis.
+    # (own daily quota) — marginal cost per seat is real, not ~0. Priced at
+    # ~25% off 6x plus_yearly (2,646,000 -> 1,990,000), not a steep
+    # streaming-style bulk discount — see git history for the analysis.
+    # Allowances follow the Plus tier (see WRITING_ACTIONS_PER_DAY etc.) —
+    # family was always linked to the base premium tier, never to Pro/Max.
     "family": Plan("family", "premium", 1_990_000, 365, 6),
-    # Real-time voice speaking (GPT-5.6 Terra/Gemini brain + ElevenLabs TTS)
-    # costs ~262 so'm/minute — dominated by ElevenLabs, not much room to cut.
-    # 300 min/mo (~85,000 so'm real cost) needs its own tier priced for that,
-    # not folded into premium_* at ~40% margin — lands right next to what
-    # rivals already charge for the same generosity (Cefrs Max: 134,199).
-    "speaking_pro_monthly": Plan("speaking_pro_monthly", "premium", 145_000, 30, 1),
-    # ~15% off 3x monthly (435,000 -> 369,750, rounded to a clean 370,000).
-    "speaking_pro_quarterly": Plan("speaking_pro_quarterly", "premium", 370_000, 90, 1),
-    # Exactly 25% off 12x monthly (1,740,000 * 0.75 = 1,305,000).
-    "speaking_pro_yearly": Plan("speaking_pro_yearly", "premium", 1_305_000, 365, 1),
 }
 
 PAID_PLANS = [p for p in PLANS.values() if p.tier == "premium"]
 PUBLIC_PLAN_CODES = (
     "free",
-    "premium_monthly", "premium_quarterly", "premium_yearly",
-    "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+    "plus_monthly", "plus_quarterly", "plus_yearly",
+    "pro_monthly", "pro_quarterly", "pro_yearly",
+    "max_monthly", "max_quarterly", "max_yearly",
 )
 SELLABLE_PLAN_CODES = frozenset((
-    "premium_monthly", "premium_quarterly", "premium_yearly",
-    "speaking_pro_monthly", "speaking_pro_quarterly", "speaking_pro_yearly",
+    "plus_monthly", "plus_quarterly", "plus_yearly",
+    "pro_monthly", "pro_quarterly", "pro_yearly",
+    "max_monthly", "max_quarterly", "max_yearly",
 ))
+
+# Which tier ladder a plan code belongs to, for the two per-tier dicts below
+# — every duration of a tier shares the same daily/weekly allowances (only
+# the price and billing period change with duration).
+_TIER_OF_PLAN: Dict[str, str] = {
+    "plus_monthly": "plus", "plus_quarterly": "plus", "plus_yearly": "plus",
+    "pro_monthly": "pro", "pro_quarterly": "pro", "pro_yearly": "pro",
+    "max_monthly": "max", "max_quarterly": "max", "max_yearly": "max",
+    "family": "plus",
+}
 
 # Real-time voice speaking allowance, in whole seconds, reset every calendar
 # week (see services.voice_minutes) — not a lifetime balance like coins.
-# "premium_*" plan codes are the Basic tier here; any code not listed gets 0
-# (free tier never reaches real-time voice at all — see services.voice_minutes).
+# Any tier not listed gets 0 (Plus and free never reach real-time voice at
+# all — speaking is a Pro/Max differentiator now, not a taste on every tier).
 #
 # Weekly rather than monthly because it is what the plans advertise, and it
 # paces the spend: a learner cannot burn a whole month's voice cost in one
 # sitting and then churn, and a quiet week costs nothing to carry.
+#
+# Real cost is ~262 so'm/minute (ElevenLabs-dominated, not much room to cut):
+#   Pro:  70 min/week (~300/mo) is exactly the old speaking_pro_monthly
+#         allowance — a proven ~46% margin at that plan's price, and now
+#         bundled into pro_monthly instead of sold as its own tier.
+#   Max:  25 min/day (175/week, ~750/mo) — real cost ~196,500 so'm/mo,
+#         ~39% of max_monthly's price, leaving comfortable margin at the
+#         top tier's price point.
+_VOICE_SECONDS_PER_WEEK_BY_TIER: Dict[str, int] = {
+    "plus": 0,
+    "pro": 70 * 60,
+    "max": 25 * 60 * 7,
+}
 VOICE_SECONDS_PER_WEEK: Dict[str, int] = {
-    "premium_monthly": 10 * 60,
-    "premium_quarterly": 10 * 60,
-    "premium_yearly": 10 * 60,
-    "family": 10 * 60,
-    # ~70/week keeps Speaking Pro at the ~300 minutes a month it was priced
-    # against (~262 so'm/minute real cost) now that the window is weekly.
-    "speaking_pro_monthly": 70 * 60,
-    "speaking_pro_quarterly": 70 * 60,
-    "speaking_pro_yearly": 70 * 60,
+    code: _VOICE_SECONDS_PER_WEEK_BY_TIER[tier] for code, tier in _TIER_OF_PLAN.items()
+}
+
+# Master Writing's combined daily action pool — every check that spends a
+# real model call (the paraphrase/overview drills AND the full essay
+# band-score check) draws from one number, which is what's actually
+# advertised ("15/45/100 writing checks a day"). See services.ielts's
+# has_writing_action_quota/log_writing_action for enforcement.
+WRITING_ACTIONS_PER_DAY: Dict[str, int] = {
+    code: {"plus": 15, "pro": 45, "max": 100}[tier] for code, tier in _TIER_OF_PLAN.items()
+}
+
+# A sub-limit *within* the pool above, specifically for full essay checks —
+# those are a much bigger model call (8192-token cap, full rubric) than a
+# drill (400-token cap), so without this a learner could spend the whole
+# daily pool on the expensive path only. Deliberately not a 3x-9x jump off
+# the old flat 5/day premium cap — a modest, cost-aware scale-up per tier.
+WRITING_ESSAY_SUBCAP_PER_DAY: Dict[str, int] = {
+    code: {"plus": 5, "pro": 12, "max": 25}[tier] for code, tier in _TIER_OF_PLAN.items()
 }
 
 # Coin price for extra real-time voice minutes beyond the monthly allowance
@@ -131,11 +177,25 @@ def get_plan(code: str) -> Optional[Plan]:
 
 
 def voice_seconds_per_week(plan_code: Optional[str]) -> int:
-    """0 for free/unknown/None — real-time voice is never reachable without
-    an active Basic or Speaking Pro subscription."""
+    """0 for free/unknown/None/Plus — real-time voice needs Pro or Max."""
     if not plan_code:
         return 0
     return VOICE_SECONDS_PER_WEEK.get(plan_code, 0)
+
+
+def writing_actions_per_day(plan_code: Optional[str]) -> int:
+    """0 for free/unknown/None — the free tier keeps its own separate
+    weekly-rolling quota (FREE_WRITING_CHECKS_PER_WEEK in services.ielts),
+    unaffected by this per-tier pool."""
+    if not plan_code:
+        return 0
+    return WRITING_ACTIONS_PER_DAY.get(plan_code, 0)
+
+
+def writing_essay_subcap_per_day(plan_code: Optional[str]) -> int:
+    if not plan_code:
+        return 0
+    return WRITING_ESSAY_SUBCAP_PER_DAY.get(plan_code, 0)
 
 
 def public_coin_packs() -> list[CoinPack]:

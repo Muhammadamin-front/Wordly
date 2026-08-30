@@ -37,7 +37,7 @@ async def learner_with_cards(
     headers = {"Authorization": "Bearer " + data["access_token"]}
     if premium:
         await client.post(
-            "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+            "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
         )
     await client.post(
         "/api/v1/cards/add-by-level", json={"cefr_level": "A1", "limit": count}, headers=headers

@@ -37,7 +37,7 @@ async def learner(client, email="master-writing@words.uz") -> dict:
 
 async def make_premium(client, headers) -> None:
     resp = await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     assert resp.status_code == 200, resp.text
 

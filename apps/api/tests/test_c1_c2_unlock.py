@@ -61,7 +61,7 @@ async def test_adding_a_c1_word_with_enough_coins_unlocks_permanently(client):
 async def test_premium_user_never_charged_for_c1_c2(client):
     headers = await learner(client, email="c1c2-premium@words.uz")
     await client.post(
-        "/api/v1/billing/sandbox-activate", json={"plan_code": "premium_monthly"}, headers=headers
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
     )
     word = await seed_word(client, headword="ephemeral", cefr_level="C1")
     resp = await client.post("/api/v1/cards", json={"word_id": word["id"]}, headers=headers)

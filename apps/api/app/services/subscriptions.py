@@ -100,7 +100,7 @@ async def add_days(db: AsyncSession, user_id: UUID, days: int) -> None:
         db.add(
             Subscription(
                 user_id=user_id,
-                plan_code="premium_monthly",
+                plan_code="plus_monthly",
                 provider="referral",
                 seats=1,
                 started_at=now,

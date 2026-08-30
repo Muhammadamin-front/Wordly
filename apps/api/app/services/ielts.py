@@ -21,11 +21,12 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import utcnow
-from app.models.ielts import IeltsResult, IeltsTest
+from app.models.ielts import IeltsResult, IeltsTest, WritingActionLog
 from app.models.user import User
 from app.services.ai_client import AiClient
 from app.services.gamification import RewardSummary, apply_skill_xp
 from app.services.ielts_scoring import RELIABLE_QUESTION_COUNT, band_from_ratio, half_band as _half_band
+from app.services.plans import writing_actions_per_day, writing_essay_subcap_per_day
 
 XP_READING = 30
 XP_WRITING = 40
@@ -1873,13 +1874,13 @@ def _legacy_error_type(category: str) -> str:
 
 
 FREE_WRITING_CHECKS_PER_WEEK = 3
-PREMIUM_WRITING_CHECKS_PER_DAY = 5
 
 
 async def _writing_checks_since(db: AsyncSession, user_id: UUID, since) -> int:
     """Counted from IeltsResult rows rather than a separate counter, so
     there's nothing to reset or drift out of sync with what actually
-    happened."""
+    happened. Free tier only — paid tiers use _writing_actions_since below,
+    which also counts drills (never persisted as an IeltsResult)."""
     count = await db.scalar(
         select(func.count(IeltsResult.id)).where(
             IeltsResult.user_id == user_id,
@@ -1892,22 +1893,48 @@ async def _writing_checks_since(db: AsyncSession, user_id: UUID, since) -> int:
 
 async def has_free_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
     """Free tier: 3 writing checks per rolling 7 days — tighter than the
-    general daily AI-action quota, and specific to this one feature."""
+    general daily AI-action quota, and specific to this one feature.
+    Unaffected by the paid-tier pool below; the free tier's one unlocked
+    Master Writing unit gates its drills through ai_quota instead."""
     since = utcnow() - timedelta(days=7)
     return await _writing_checks_since(db, user_id, since) < FREE_WRITING_CHECKS_PER_WEEK
 
 
-async def has_premium_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
-    """Paid tiers: 5 writing checks per rolling 24 hours — what the plans
-    advertise. Each check is a long, expensive model call, so this is a real
-    cost ceiling, not a taste-then-upsell boundary; it sits well above what
-    a learner drafting full essays gets through in a day.
+async def _writing_actions_since(db: AsyncSession, user_id: UUID, since, kind: Optional[str] = None) -> int:
+    conditions = [WritingActionLog.user_id == user_id, WritingActionLog.created_at >= since]
+    if kind is not None:
+        conditions.append(WritingActionLog.kind == kind)
+    count = await db.scalar(select(func.count(WritingActionLog.id)).where(*conditions))
+    return count or 0
 
-    Rolling rather than midnight-to-midnight for the same reason the free
-    window is: no timezone to plumb through, and no burst of ten checks
-    across a midnight boundary."""
+
+async def has_writing_action_quota(db: AsyncSession, user_id: UUID, plan_code: Optional[str]) -> bool:
+    """Paid tiers: the combined daily pool this plan's tier advertises —
+    drills and full essay checks together (plans.WRITING_ACTIONS_PER_DAY).
+    Rolling 24h, same reasoning as the flat cap this replaces: no timezone
+    to plumb through, no burst of checks across a midnight boundary."""
+    limit = writing_actions_per_day(plan_code)
+    if limit <= 0:
+        return False
     since = utcnow() - timedelta(days=1)
-    return await _writing_checks_since(db, user_id, since) < PREMIUM_WRITING_CHECKS_PER_DAY
+    return await _writing_actions_since(db, user_id, since) < limit
+
+
+async def has_writing_essay_subcap_quota(db: AsyncSession, user_id: UUID, plan_code: Optional[str]) -> bool:
+    """A sub-limit *within* the pool above, just for full essay checks — a
+    much bigger model call (8192-token cap, full rubric) than a drill
+    (plans.WRITING_ESSAY_SUBCAP_PER_DAY). Checked in addition to
+    has_writing_action_quota, not instead of it."""
+    limit = writing_essay_subcap_per_day(plan_code)
+    if limit <= 0:
+        return False
+    since = utcnow() - timedelta(days=1)
+    return await _writing_actions_since(db, user_id, since, kind="essay") < limit
+
+
+async def log_writing_action(db: AsyncSession, user_id: UUID, kind: str) -> None:
+    db.add(WritingActionLog(user_id=user_id, kind=kind))
+    await db.flush()
 
 
 async def score_writing(
