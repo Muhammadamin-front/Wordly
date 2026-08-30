@@ -6,18 +6,21 @@
   "build": {
     "preview": {
       "distribution": "internal",
-      "environment": "preview"
+      "environment": "preview",
+      "node": "20.20.2"
     },
     "deviceTest": {
       "distribution": "internal",
       "environment": "production",
+      "node": "20.20.2",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
       "autoIncrement": true,
-      "environment": "production"
+      "environment": "production",
+      "node": "20.20.2"
     }
   },
   "submit": {
