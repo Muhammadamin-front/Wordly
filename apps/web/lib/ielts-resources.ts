@@ -818,6 +818,114 @@ export const IELTS_VOCABULARY_RESOURCES: VocabularyResource[] = [
     ],
   },
   {
+    slug: "task1-line-graph-mastery",
+    eyebrow: "Master Writing · Line graphs",
+    title: "Line Graph Mastery",
+    description: "Trend verbs ranked by strength, plus the prepositions examiners check first — the deeper vocabulary a line-graph answer needs beyond the basics.",
+    groups: [
+      {
+        title: "Rising, by strength",
+        note: "Don't just repeat 'increased' — move up this scale as the change gets bigger.",
+        items: [
+          { basic: "went up (general)", advanced: "rose · increased · grew", example: "The number of visitors rose steadily between 2010 and 2015." },
+          { basic: "went up gradually", advanced: "climbed · edged up", example: "Average prices climbed gradually over the decade." },
+          { basic: "went up suddenly", advanced: "jumped", example: "Sales jumped in the month after the campaign launched." },
+          { basic: "went up a huge amount, fast", advanced: "surged · soared · skyrocketed", example: "Demand for the service skyrocketed after 2018." },
+        ],
+      },
+      {
+        title: "Falling, by strength",
+        note: "The same scale in reverse — match the verb to how sharp the fall actually was.",
+        items: [
+          { basic: "went down (general)", advanced: "fell · decreased", example: "Unemployment fell throughout the period shown." },
+          { basic: "went down gradually", advanced: "declined · dipped · slid", example: "The birth rate declined gradually across the two decades." },
+          { basic: "went down a huge amount, fast", advanced: "plunged · plummeted", example: "Oil prices plummeted in the final quarter of 2015." },
+        ],
+      },
+      {
+        title: "Stability & fluctuation",
+        note: "For the parts of the line that don't clearly go up or down.",
+        items: [
+          { basic: "stayed the same", advanced: "remained stable · levelled off · plateaued", example: "Growth levelled off at around 40,000 units." },
+          { basic: "went up and down a lot", advanced: "fluctuated · oscillated", example: "Rainfall oscillated between 50mm and 90mm each month." },
+        ],
+      },
+      {
+        title: "Peak & lowest point",
+        note: "Every line has a highest and lowest value — name them, don't just describe the shape.",
+        items: [
+          { basic: "the highest point", advanced: "reached a peak of · hit a record high", example: "The figure reached a peak of 85% in 2019." },
+          { basic: "the lowest point", advanced: "reached a low of · bottomed out at", example: "The rate bottomed out at just 12% in 2012." },
+        ],
+      },
+      {
+        title: "Comparing two lines",
+        note: "Most line-graph prompts plot two or more series — this is the language for describing how they relate.",
+        items: [
+          { basic: "went past the other line", advanced: "overtook · surpassed", example: "China overtook the US figure in 2010." },
+          { basic: "stayed below the other line", advanced: "remained below · lagged behind", example: "Coal consumption remained below gas throughout the period." },
+          { basic: "the difference got bigger/smaller", advanced: "the gap widened / narrowed", example: "The gap between the two figures widened considerably after 2015." },
+        ],
+      },
+      {
+        title: "Prepositions with numbers",
+        note: "The single most common grammar mistake in this unit — examiners check these first.",
+        items: [
+          { basic: "20 → 50", advanced: "increased from 20 to 50 (never 'until')", example: "The figure rose from 20% to 50% over the period." },
+          { basic: "the size of the change", advanced: "increased by 30", example: "The number increased by 30, from 20 to 50." },
+          { basic: "one moment in time", advanced: "stood at 50 in 2010", example: "The figure stood at exactly 50% in 2010." },
+          { basic: "a range", advanced: "fluctuated between 20 and 50", example: "The temperature fluctuated between 20 and 50 degrees." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "task1-map-vocabulary",
+    eyebrow: "Master Writing · Maps",
+    title: "Map Vocabulary",
+    description: "Location language and the passive-voice change verbs a before/after map answer runs on.",
+    groups: [
+      {
+        title: "Location",
+        note: "Fix where things are before describing what changed there.",
+        items: [
+          { basic: "it is in", advanced: "is located in · is situated in", example: "The new hospital is situated in the northern part of the town." },
+          { basic: "next to", advanced: "adjacent to · directly opposite", example: "The car park is adjacent to the shopping centre." },
+          { basic: "around it", advanced: "surrounded by · bordered by", example: "The site was surrounded by open farmland in 2000." },
+          { basic: "on the edge of town", advanced: "on the outskirts of", example: "A new housing estate was built on the outskirts of the town." },
+        ],
+      },
+      {
+        title: "Change — the core map grammar",
+        note: "A map has no named actor doing the building, so this is almost always passive voice: 'workers built it' is wrong, 'it was built' is right.",
+        items: [
+          { basic: "they built it", advanced: "it was constructed / it was built", example: "A new sports centre was constructed to the south of the river." },
+          { basic: "it became something else", advanced: "was converted into · was transformed into", example: "The old warehouse was converted into a leisure centre." },
+          { basic: "the old thing was removed for a new one", advanced: "was replaced by · made way for", example: "The old market was replaced by a supermarket." },
+          { basic: "it got bigger", advanced: "was extended · was widened", example: "The main road was widened to accommodate more traffic." },
+        ],
+      },
+      {
+        title: "Roads & access",
+        note: "Transport changes come up in almost every map prompt.",
+        items: [
+          { basic: "it moved", advanced: "was relocated", example: "The bus station was relocated closer to the town centre." },
+          { basic: "you can reach it by", advanced: "provided access to · was accessible via", example: "A new footpath provided access to the riverside park." },
+          { basic: "it goes along", advanced: "ran along · branched off from", example: "A cycle path ran along the northern edge of the woodland." },
+        ],
+      },
+      {
+        title: "Land use",
+        note: "Green space and farmland either stay the same or get built on — this is the language for both.",
+        items: [
+          { basic: "it didn't change", advanced: "remained unchanged · remained intact", example: "The area of woodland remained largely intact throughout the period." },
+          { basic: "it became park/green space", advanced: "was converted into green space · was landscaped", example: "The disused railway line was converted into green space." },
+          { basic: "trees/land removed for building", advanced: "was cleared to make way for", example: "Woodland was cleared to make way for new housing." },
+        ],
+      },
+    ],
+  },
+  {
     slug: "use-this-instead",
     eyebrow: "Lexical upgrade",
     title: "Use This Instead",
