@@ -19,5 +19,8 @@
     "test:api": "cd apps/api && .venv/bin/python -m pytest",
     "test:release-preflight": "node --test scripts/release-preflight.test.mjs scripts/setup-production.test.mjs",
     "release:preflight": "node scripts/release-preflight.mjs"
+  },
+  "dependencies": {
+    "expo": "^57.0.18"
   }
 }
