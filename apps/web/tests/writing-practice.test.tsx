@@ -4,8 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { WritingPractice } from "@/components/ielts/writing-practice";
+import { WRITING_ESSAY, WRITING_SCORE } from "./writing-feedback-fixture";
 
-const { writingTasksMock } = vi.hoisted(() => ({ writingTasksMock: vi.fn() }));
+const { writingTasksMock, scoreWritingMock } = vi.hoisted(() => ({
+  writingTasksMock: vi.fn(),
+  scoreWritingMock: vi.fn(),
+}));
 
 vi.mock("@/lib/ielts", async (importOriginal) => {
   const original = await importOriginal<typeof import("@/lib/ielts")>();
@@ -14,6 +18,7 @@ vi.mock("@/lib/ielts", async (importOriginal) => {
     ieltsApi: {
       ...original.ieltsApi,
       writingTasks: writingTasksMock,
+      scoreWriting: scoreWritingMock,
     },
   };
 });
@@ -25,10 +30,12 @@ const t = {
   writingPlaceholder: "Write your response here…",
   words: "words",
   min: "min",
-  getBand: "Get band score",
+  getBand: "Get AI band estimate",
   quotaOut: "Quota exceeded",
   notConfigured: "Not configured",
   error: "Something went wrong",
+  improved: "Model answer (Band 8)",
+  tryAgain: "Try another",
 } as unknown as Dictionary["ielts"];
 
 describe("WritingPractice", () => {
@@ -48,6 +55,7 @@ describe("WritingPractice", () => {
       ],
       task2: [{ title: "Task 2 — Opinion", prompt: "Give your opinion." }],
     });
+    scoreWritingMock.mockResolvedValue(WRITING_SCORE);
   });
 
   it("opens on Academic Task 1 with its visual", async () => {
@@ -69,5 +77,23 @@ describe("WritingPractice", () => {
 
     expect(screen.getByText("Give your opinion.")).toBeInTheDocument();
     expect(onTaskChange).toHaveBeenCalledWith("task2");
+  });
+
+  it("submits the candidate's exact essay and replaces the composer with the premium report", async () => {
+    const user = userEvent.setup();
+    render(<WritingPractice lang="en" t={t} />);
+
+    await screen.findByText("Summarise the bar chart.");
+    await user.type(screen.getByLabelText("Write your response here…"), WRITING_ESSAY);
+    await user.click(screen.getByRole("button", { name: "Get AI band estimate" }));
+
+    expect(await screen.findByRole("heading", { name: "IELTS Writing Feedback" })).toBeInTheDocument();
+    expect(scoreWritingMock).toHaveBeenCalledWith(
+      "task1",
+      "Summarise the bar chart.",
+      WRITING_ESSAY,
+      "en"
+    );
+    expect(screen.queryByLabelText("Write your response here…")).not.toBeInTheDocument();
   });
 });

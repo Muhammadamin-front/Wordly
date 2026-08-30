@@ -119,6 +119,94 @@ export interface WritingError {
   type: "grammar" | "vocabulary" | "spelling" | "punctuation" | "style";
 }
 
+export type WritingFeedbackStatus = "good" | "improve" | "error";
+
+export type WritingFeedbackCategory =
+  | "grammar"
+  | "vocabulary"
+  | "collocation"
+  | "articles"
+  | "prepositions"
+  | "word_form"
+  | "tense"
+  | "subject_verb_agreement"
+  | "sentence_structure"
+  | "punctuation"
+  | "cohesion"
+  | "logic"
+  | "style"
+  | "spelling";
+
+export interface WritingSentenceFeedback {
+  sentence_number: number;
+  sentence: string;
+  highlight: string;
+  status: WritingFeedbackStatus;
+  category: WritingFeedbackCategory;
+  explanation: string;
+  use_instead: string;
+  why: string;
+}
+
+export interface WritingGoodPoint {
+  title: string;
+  evidence: string;
+  explanation: string;
+}
+
+export interface WritingImprovementArea {
+  title: string;
+  evidence: string;
+  action: string;
+}
+
+export interface WritingLanguageUpgrade {
+  used: string;
+  use_instead: string;
+  why: string;
+}
+
+export interface WritingRepetition {
+  word: string;
+  frequency: number;
+  problem: string;
+  alternatives: string[];
+}
+
+export interface WritingObservation {
+  quote: string;
+  explanation: string;
+}
+
+export interface WritingCohesionAnalysis {
+  strengths: WritingObservation[];
+  issues: WritingObservation[];
+  opportunities: string[];
+}
+
+export interface WritingGrammarProfile {
+  strengths: WritingObservation[];
+  weaknesses: WritingObservation[];
+}
+
+export interface WritingBandPlan {
+  current_band: number;
+  target_band: number;
+  actions: string[];
+}
+
+export interface WritingAnalysis {
+  sentence_feedback: WritingSentenceFeedback[];
+  good_points: WritingGoodPoint[];
+  areas_to_improve: WritingImprovementArea[];
+  language_upgrades: WritingLanguageUpgrade[];
+  repetitions: WritingRepetition[];
+  cohesion: WritingCohesionAnalysis;
+  grammar_profile: WritingGrammarProfile;
+  band_plan: WritingBandPlan;
+  next_steps: string[];
+}
+
 export interface WritingScore {
   band_overall: number;
   task: WritingCriterion;
@@ -129,6 +217,7 @@ export interface WritingScore {
   strengths: string[];
   feedback: string;
   improved: string; // full band-8 model rewrite
+  analysis: WritingAnalysis;
   reward: IeltsReward;
 }
 
@@ -161,6 +250,10 @@ export const ieltsApi = {
       method: "POST",
       body: { task_type: taskType, prompt, essay, lang, mock_session_id: mockSessionId },
       auth: true,
+      // A grounded, sentence-level report is intentionally a longer model
+      // call than ordinary API actions. Match the server-side AI allowance so
+      // the browser does not abandon a healthy report after the global 15s.
+      timeoutMs: 75_000,
     }),
 
   generate: (kind: ComprehensionKind, band = 6) =>

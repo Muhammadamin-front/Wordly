@@ -26,16 +26,23 @@ from app.schemas.ielts import (
     QuestionOut,
     RewardOut,
     SubmitRequest,
+    WritingAnalysisOut,
     WritingErrorOut,
     WritingScoreOut,
     WritingScoreRequest,
     WritingTask,
+)
+from app.schemas.writing_master import (
+    DrillFeedbackOut,
+    OverviewCheckRequest,
+    ParaphraseCheckRequest,
 )
 from app.models.ielts import IeltsTest
 from app.services import ai_quota, coach, ielts, subscriptions, tts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
 from app.services.ielts_bank import bank_for
+from app.services.plans import FREE_WRITING_MASTER_UNITS
 
 router = APIRouter(
     prefix="/ielts",
@@ -68,6 +75,19 @@ async def _guarded(db: AsyncSession, user: User, call: Callable[[], Awaitable]):
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="AI produced no test")
     await ai_quota.consume(db, user)
     return result
+
+
+async def _require_writing_master_unit(db: AsyncSession, user: User, unit_slug: str) -> None:
+    """Mirrors _require_grammar_level in api/v1/skills.py: only the first unit
+    (process) is free, same "one unit as a taste" shape."""
+    if unit_slug in FREE_WRITING_MASTER_UNITS:
+        return
+    if await subscriptions.is_premium(db, user):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_402_PAYMENT_REQUIRED,
+        detail="This Master Writing unit requires Premium",
+    )
 
 
 def _reward(summary: RewardSummary) -> RewardOut:
@@ -161,6 +181,7 @@ async def writing_score(
         strengths=score.strengths,
         feedback=score.feedback,
         improved=score.improved,
+        analysis=WritingAnalysisOut(**score.analysis),
         reward=_reward(score.reward),
     )
 
@@ -315,3 +336,52 @@ async def listening_submit(
     db: AsyncSession = Depends(get_db),
 ):
     return await _submit(payload, user, db)
+
+
+# --- Master Writing drills -----------------------------------------------
+# Short single-shot checks, gated by the general ai_quota (via _guarded)
+# rather than the writing-specific quota — see services.ielts's module
+# comment above score_paraphrase for why. Unit-gated separately: a locked
+# unit must never reach the AI call at all, so the premium check runs first.
+
+
+@router.post("/writing/master/paraphrase-check", response_model=DrillFeedbackOut)
+async def writing_master_paraphrase_check(
+    payload: ParaphraseCheckRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    client: AiClient = Depends(require_ai_client),
+):
+    await _require_writing_master_unit(db, user, payload.unit_slug)
+    result = await _guarded(
+        db, user,
+        lambda: ielts.score_paraphrase(
+            db, user, client, payload.original_title, payload.paraphrase, lang=payload.lang
+        ),
+    )
+    await db.commit()
+    return DrillFeedbackOut(
+        quality=result.quality, feedback=result.feedback,
+        model_example=result.model_example, score=result.score,
+    )
+
+
+@router.post("/writing/master/overview-check", response_model=DrillFeedbackOut)
+async def writing_master_overview_check(
+    payload: OverviewCheckRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    client: AiClient = Depends(require_ai_client),
+):
+    await _require_writing_master_unit(db, user, payload.unit_slug)
+    result = await _guarded(
+        db, user,
+        lambda: ielts.score_overview(
+            db, user, client, payload.visual, payload.overview, lang=payload.lang
+        ),
+    )
+    await db.commit()
+    return DrillFeedbackOut(
+        quality=result.quality, feedback=result.feedback,
+        model_example=result.model_example, score=result.score,
+    )

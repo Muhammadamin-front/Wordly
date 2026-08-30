@@ -11,6 +11,7 @@ Reading/Listening tests are graded server-side; the client never sees the
 answer key.
 """
 import json
+import re
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any, Dict, List, Optional, Tuple
@@ -28,6 +29,9 @@ from app.services.ielts_scoring import RELIABLE_QUESTION_COUNT, band_from_ratio,
 
 XP_READING = 30
 XP_WRITING = 40
+# Master Writing drills are one sentence/paragraph, not a full essay — a
+# fraction of XP_WRITING keeps the numbers honest about the effort involved.
+XP_WRITING_DRILL = 10
 XP_LISTENING = 30
 
 # Static Writing prompts (Academic), rotated client-side. Original prompts in
@@ -1426,38 +1430,186 @@ _CRITERION = {
     "additionalProperties": False,
 }
 
-_WRITING_SCHEMA = {
+_WRITING_FEEDBACK_STATUSES = ["good", "improve", "error"]
+_WRITING_FEEDBACK_CATEGORIES = [
+    "grammar",
+    "vocabulary",
+    "collocation",
+    "articles",
+    "prepositions",
+    "word_form",
+    "tense",
+    "subject_verb_agreement",
+    "sentence_structure",
+    "punctuation",
+    "cohesion",
+    "logic",
+    "style",
+    "spelling",
+]
+
+_QUOTED_ANALYSIS_POINT_SCHEMA = {
     "type": "object",
     "properties": {
-        "band_overall": {"type": "number"},
-        "task": _CRITERION,
-        "coherence": _CRITERION,
-        "lexical": _CRITERION,
-        "grammar": _CRITERION,
-        "errors": {
+        "quote": {"type": "string"},
+        "explanation": {"type": "string"},
+    },
+    "required": ["quote", "explanation"],
+    "additionalProperties": False,
+}
+
+_WRITING_ANALYSIS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "sentence_feedback": {
             "type": "array",
             "items": {
                 "type": "object",
                 "properties": {
-                    "quote": {"type": "string"},
-                    "fix": {"type": "string"},
-                    "note": {"type": "string"},
-                    "type": {
-                        "type": "string",
-                        "enum": ["grammar", "vocabulary", "spelling", "punctuation", "style"],
-                    },
+                    "sentence_number": {"type": "integer"},
+                    "highlight": {"type": "string"},
+                    "status": {"type": "string", "enum": _WRITING_FEEDBACK_STATUSES},
+                    "category": {"type": "string", "enum": _WRITING_FEEDBACK_CATEGORIES},
+                    "explanation": {"type": "string"},
+                    "use_instead": {"type": "string"},
+                    "why": {"type": "string"},
                 },
-                "required": ["quote", "fix", "note", "type"],
+                "required": [
+                    "sentence_number",
+                    "highlight",
+                    "status",
+                    "category",
+                    "explanation",
+                    "use_instead",
+                    "why",
+                ],
                 "additionalProperties": False,
             },
         },
-        "strengths": {"type": "array", "items": {"type": "string"}},
-        "feedback": {"type": "string"},
-        "improved": {"type": "string"},
+        "good_points": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 8,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string"},
+                    "evidence": {"type": "string"},
+                    "explanation": {"type": "string"},
+                },
+                "required": ["title", "evidence", "explanation"],
+                "additionalProperties": False,
+            },
+        },
+        "areas_to_improve": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 8,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "title": {"type": "string"},
+                    "evidence": {"type": "string"},
+                    "action": {"type": "string"},
+                },
+                "required": ["title", "evidence", "action"],
+                "additionalProperties": False,
+            },
+        },
+        "language_upgrades": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "used": {"type": "string"},
+                    "use_instead": {"type": "string"},
+                    "why": {"type": "string"},
+                },
+                "required": ["used", "use_instead", "why"],
+                "additionalProperties": False,
+            },
+        },
+        "repetitions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "word": {"type": "string"},
+                    "problem": {"type": "string"},
+                    "alternatives": {"type": "array", "items": {"type": "string"}},
+                },
+                "required": ["word", "problem", "alternatives"],
+                "additionalProperties": False,
+            },
+        },
+        "cohesion": {
+            "type": "object",
+            "properties": {
+                "strengths": {
+                    "type": "array",
+                    "items": _QUOTED_ANALYSIS_POINT_SCHEMA,
+                },
+                "issues": {
+                    "type": "array",
+                    "items": _QUOTED_ANALYSIS_POINT_SCHEMA,
+                },
+                "opportunities": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["strengths", "issues", "opportunities"],
+            "additionalProperties": False,
+        },
+        "grammar_profile": {
+            "type": "object",
+            "properties": {
+                "strengths": {
+                    "type": "array",
+                    "items": _QUOTED_ANALYSIS_POINT_SCHEMA,
+                },
+                "weaknesses": {
+                    "type": "array",
+                    "items": _QUOTED_ANALYSIS_POINT_SCHEMA,
+                },
+            },
+            "required": ["strengths", "weaknesses"],
+            "additionalProperties": False,
+        },
+        "band_plan": {
+            "type": "object",
+            "properties": {
+                "actions": {"type": "array", "items": {"type": "string"}},
+            },
+            "required": ["actions"],
+            "additionalProperties": False,
+        },
+        "next_steps": {"type": "array", "items": {"type": "string"}},
     },
     "required": [
-        "band_overall", "task", "coherence", "lexical", "grammar",
-        "errors", "strengths", "feedback", "improved",
+        "sentence_feedback",
+        "good_points",
+        "areas_to_improve",
+        "language_upgrades",
+        "repetitions",
+        "cohesion",
+        "grammar_profile",
+        "band_plan",
+        "next_steps",
+    ],
+    "additionalProperties": False,
+}
+
+_WRITING_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "task": _CRITERION,
+        "coherence": _CRITERION,
+        "lexical": _CRITERION,
+        "grammar": _CRITERION,
+        "feedback": {"type": "string"},
+        "improved": {"type": "string"},
+        "analysis": _WRITING_ANALYSIS_SCHEMA,
+    },
+    "required": [
+        "task", "coherence", "lexical", "grammar", "feedback", "improved", "analysis",
     ],
     "additionalProperties": False,
 }
@@ -1490,12 +1642,234 @@ class WritingScore:
     strengths: List[str]
     feedback: str
     improved: str
+    analysis: Dict[str, Any]
     reward: RewardSummary
 
 
 def _criterion(data: Any) -> Criterion:
     data = data if isinstance(data, dict) else {}
     return Criterion(band=_half_band(data.get("band")), comment=str(data.get("comment", "")).strip())
+
+
+_SOURCE_SENTENCE_RE = re.compile(
+    r"\S.*?(?:[.!?]+(?:[\"'”’)]*)(?=\s+|$)|(?=\Z))",
+    flags=re.DOTALL,
+)
+
+
+def _source_sentences(essay: str) -> List[str]:
+    """Split an essay into stable, one-based source sentences for AI references.
+
+    The returned strings are verbatim substrings of ``essay`` apart from outer
+    whitespace. The server, rather than the model, owns this mapping so the
+    client never has to trust a generated copy of the candidate's sentence.
+    """
+    sentences = [match.group(0).strip() for match in _SOURCE_SENTENCE_RE.finditer(essay)]
+    sentences = [sentence for sentence in sentences if sentence]
+    if not sentences and essay.strip():
+        return [essay.strip()]
+    return sentences
+
+
+def _text(value: Any) -> str:
+    return value.strip() if isinstance(value, str) else ""
+
+
+def _raw_list(value: Any) -> List[Any]:
+    return value if isinstance(value, list) else []
+
+
+def _text_list(value: Any, limit: int) -> List[str]:
+    return [text for item in _raw_list(value) if (text := _text(item))][:limit]
+
+
+def _evidence_items(
+    value: Any,
+    essay: str,
+    *,
+    detail_key: str,
+    limit: int,
+) -> List[Dict[str, str]]:
+    validated: List[Dict[str, str]] = []
+    for item in _raw_list(value):
+        if not isinstance(item, dict):
+            continue
+        title = _text(item.get("title"))
+        evidence = _text(item.get("evidence"))
+        detail = _text(item.get(detail_key))
+        if title and evidence and detail and evidence in essay:
+            validated.append(
+                {"title": title, "evidence": evidence, detail_key: detail}
+            )
+        if len(validated) >= limit:
+            break
+    return validated
+
+
+def _quoted_analysis_points(value: Any, essay: str, limit: int = 8) -> List[Dict[str, str]]:
+    validated: List[Dict[str, str]] = []
+    for item in _raw_list(value):
+        if not isinstance(item, dict):
+            continue
+        quote = _text(item.get("quote"))
+        explanation = _text(item.get("explanation"))
+        if quote and explanation and quote in essay:
+            validated.append({"quote": quote, "explanation": explanation})
+        if len(validated) >= limit:
+            break
+    return validated
+
+
+def _word_frequency(essay: str, word: str) -> int:
+    if not word:
+        return 0
+    pattern = re.compile(r"(?<!\w){}(?!\w)".format(re.escape(word)), flags=re.IGNORECASE)
+    return len(pattern.findall(essay))
+
+
+def _build_writing_analysis(
+    value: Any,
+    *,
+    essay: str,
+    sentences: List[str],
+    current_band: float,
+) -> Dict[str, Any]:
+    raw = value if isinstance(value, dict) else {}
+
+    sentence_feedback: List[Dict[str, Any]] = []
+    for item in _raw_list(raw.get("sentence_feedback")):
+        if not isinstance(item, dict):
+            continue
+        number = item.get("sentence_number")
+        if isinstance(number, bool):
+            continue
+        try:
+            number = int(number)
+        except (TypeError, ValueError):
+            continue
+        if number < 1 or number > len(sentences):
+            continue
+        sentence = sentences[number - 1]
+        highlight = _text(item.get("highlight"))
+        status = _text(item.get("status"))
+        category = _text(item.get("category"))
+        explanation = _text(item.get("explanation"))
+        use_instead = _text(item.get("use_instead"))
+        why = _text(item.get("why"))
+        if (
+            not highlight
+            or highlight not in sentence
+            or status not in _WRITING_FEEDBACK_STATUSES
+            or category not in _WRITING_FEEDBACK_CATEGORIES
+            or not explanation
+        ):
+            continue
+        # An improvement/error without an actionable replacement is not useful
+        # enough to show as a correction card. GOOD observations intentionally
+        # carry empty replacement fields.
+        if status != "good" and (not use_instead or not why):
+            continue
+        sentence_feedback.append(
+            {
+                "sentence_number": number,
+                "sentence": sentence,
+                "highlight": highlight,
+                "status": status,
+                "category": category,
+                "explanation": explanation,
+                "use_instead": use_instead,
+                "why": why,
+            }
+        )
+        if len(sentence_feedback) >= 30:
+            break
+
+    good_points = _evidence_items(
+        raw.get("good_points"), essay, detail_key="explanation", limit=8
+    )
+    areas_to_improve = _evidence_items(
+        raw.get("areas_to_improve"), essay, detail_key="action", limit=8
+    )
+
+    language_upgrades: List[Dict[str, str]] = []
+    for item in _raw_list(raw.get("language_upgrades")):
+        if not isinstance(item, dict):
+            continue
+        used = _text(item.get("used"))
+        use_instead = _text(item.get("use_instead"))
+        why = _text(item.get("why"))
+        if used and used in essay and use_instead and why:
+            language_upgrades.append(
+                {"used": used, "use_instead": use_instead, "why": why}
+            )
+        if len(language_upgrades) >= 12:
+            break
+
+    repetitions: List[Dict[str, Any]] = []
+    for item in _raw_list(raw.get("repetitions")):
+        if not isinstance(item, dict):
+            continue
+        word = _text(item.get("word"))
+        problem = _text(item.get("problem"))
+        alternatives = _text_list(item.get("alternatives"), 6)
+        frequency = _word_frequency(essay, word)
+        if word and frequency and problem and alternatives:
+            repetitions.append(
+                {
+                    "word": word,
+                    "frequency": frequency,
+                    "problem": problem,
+                    "alternatives": alternatives,
+                }
+            )
+        if len(repetitions) >= 8:
+            break
+
+    raw_cohesion = raw.get("cohesion") if isinstance(raw.get("cohesion"), dict) else {}
+    cohesion = {
+        "strengths": _quoted_analysis_points(raw_cohesion.get("strengths"), essay),
+        "issues": _quoted_analysis_points(raw_cohesion.get("issues"), essay),
+        "opportunities": _text_list(raw_cohesion.get("opportunities"), 8),
+    }
+
+    raw_grammar = (
+        raw.get("grammar_profile") if isinstance(raw.get("grammar_profile"), dict) else {}
+    )
+    grammar_profile = {
+        "strengths": _quoted_analysis_points(raw_grammar.get("strengths"), essay),
+        "weaknesses": _quoted_analysis_points(raw_grammar.get("weaknesses"), essay),
+    }
+
+    raw_band_plan = (
+        raw.get("band_plan") if isinstance(raw.get("band_plan"), dict) else {}
+    )
+    band_plan = {
+        "current_band": current_band,
+        "target_band": min(9.0, current_band + 0.5),
+        "actions": _text_list(raw_band_plan.get("actions"), 6),
+    }
+
+    return {
+        "sentence_feedback": sentence_feedback,
+        "good_points": good_points,
+        "areas_to_improve": areas_to_improve,
+        "language_upgrades": language_upgrades,
+        "repetitions": repetitions,
+        "cohesion": cohesion,
+        "grammar_profile": grammar_profile,
+        "band_plan": band_plan,
+        "next_steps": _text_list(raw.get("next_steps"), 5),
+    }
+
+
+def _legacy_error_type(category: str) -> str:
+    if category in {"vocabulary", "collocation"}:
+        return "vocabulary"
+    if category in {"spelling", "punctuation", "style"}:
+        return category
+    if category in {"cohesion", "logic"}:
+        return "style"
+    return "grammar"
 
 
 FREE_WRITING_CHECKS_PER_WEEK = 3
@@ -1540,38 +1914,70 @@ async def score_writing(
     db: AsyncSession, user: User, client: AiClient, task_type: str, prompt: str,
     essay: str, lang: str = "en", mock_session_id: Optional[UUID] = None,
 ) -> WritingScore:
-    """Professional Writing review: strict band scores per criterion, a full
-    error list with corrections, strengths, and a band-8 model rewrite."""
+    """Detailed AI-estimated Writing review grounded in the submitted essay."""
     criteria = "Task Achievement" if task_type == "task1" else "Task Response"
     descriptors = _TASK1_BAND_DESCRIPTORS if task_type == "task1" else _TASK2_BAND_DESCRIPTORS
     feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
+    sentences = _source_sentences(essay)
+    numbered_sentences = "\n".join(
+        "{:02d}: {}".format(number, sentence)
+        for number, sentence in enumerate(sentences, start=1)
+    )
     system = (
-        "You are a certified IELTS Writing examiner and an experienced writing tutor. "
+        "You are an expert IELTS Writing evaluator and an experienced writing coach. "
+        "This report is an AI estimate, not an official IELTS score. Never call it official "
+        "and never imply that you are an official or certified examiner. "
         "Score strictly and fairly on the 0-9 band scale in 0.5 steps against the four "
         "official IELTS criteria: {crit}, Coherence & Cohesion, Lexical Resource, and "
         "Grammatical Range & Accuracy — using the real public band descriptors below, "
         "not your own impression of the scale. A response must fully fit a band's "
         "positive features to be placed there; do not inflate scores.\n\n"
         "{descriptors}\n\n"
-        "band_overall is the average of the four criteria, rounded to the nearest 0.5. "
-        "Each criterion gets a 1-2 sentence 'comment'. 'errors' lists every significant "
-        "mistake (up to 12, most damaging first): 'quote' copies the exact fragment from "
-        "the response, 'fix' is the corrected fragment, 'note' explains the rule in one "
-        "short sentence. 'strengths' names 2-3 concrete things the candidate did well. "
-        "'feedback' is a 2-4 sentence overall summary with the single most important next "
-        "step. 'improved' rewrites the WHOLE response as a band-8 model answer that keeps "
-        "the candidate's ideas and structure. Write all comments, notes, strengths and "
-        "feedback in {lang}; quotes, fixes and the improved response stay in English."
+        "Give each criterion a specific 1-2 sentence comment. The server calculates the "
+        "overall band from those four criterion bands. 'feedback' is a concise 2-4 sentence "
+        "overall assessment, and 'improved' rewrites the WHOLE response as a Band-8 model "
+        "answer while retaining the candidate's ideas and structure.\n\n"
+        "Produce premium, essay-grounded 'analysis'; never give generic advice when an exact "
+        "example is available. In sentence_feedback, refer only to the server-numbered source "
+        "sentences. Copy each highlight character-for-character from that numbered sentence, "
+        "classify only meaningful examples as good, improve, or error, and do not annotate text "
+        "merely to increase the count. GOOD means genuinely effective language; IMPROVE means "
+        "possible but imprecise, repetitive, wordy, basic, or unnatural; ERROR means genuinely "
+        "incorrect grammar, lexis, punctuation, cohesion, or logic. Leave use_instead and why "
+        "as empty strings for GOOD. For IMPROVE and ERROR, provide a natural English replacement "
+        "and a short reason. Do not output the sentence text; the server maps sentence_number "
+        "back to the exact source sentence.\n\n"
+        "Give 5-8 good_points and 5-8 areas_to_improve, each backed by an exact excerpt from "
+        "this essay. Suggest language_upgrades only where the alternative is natural and "
+        "contextually appropriate; never make wording more complex for its own sake. Identify "
+        "genuinely excessive repetitions, but omit frequency because the server counts it. "
+        "Analyse both strengths and weaknesses in cohesion and grammar with exact quotes. Check "
+        "especially for contradictions between the introduction, body, and conclusion; classify "
+        "a real position contradiction under logic with high priority. Give 4-6 specific band-plan "
+        "actions and 3-5 personalized next steps. Omit current_band and target_band because the "
+        "server derives them. Every evidence, used, quote, and highlight field must be an exact, "
+        "case-sensitive substring of the candidate response.\n\n"
+        "Write comments, explanations, titles, actions, problems, opportunities, and next steps "
+        "in {lang}. Keep source excerpts, replacements, repetition words/alternatives, and the "
+        "improved response in English."
     ).format(crit=criteria, descriptors=descriptors, lang=feedback_lang)
     user_prompt = (
-        "IELTS Writing {tt}.\n\nPROMPT:\n{p}\n\nCANDIDATE RESPONSE:\n{e}"
-    ).format(tt=task_type.upper(), p=prompt, e=essay)
+        "IELTS Writing {tt}.\n\nPROMPT:\n{p}\n\nCANDIDATE RESPONSE (verbatim):\n{e}"
+        "\n\nSERVER-NUMBERED SOURCE SENTENCES:\n{sentences}"
+    ).format(tt=task_type.upper(), p=prompt, e=essay, sentences=numbered_sentences)
     data = await client.json(
         system=system, prompt=user_prompt, schema=_WRITING_SCHEMA, max_tokens=8192
     )
 
     reward = await apply_skill_xp(db, user, XP_WRITING)
-    band = _half_band(data.get("band_overall"))
+    task = _criterion(data.get("task"))
+    coherence = _criterion(data.get("coherence"))
+    lexical = _criterion(data.get("lexical"))
+    grammar = _criterion(data.get("grammar"))
+    band = _half_band((task.band + coherence.band + lexical.band + grammar.band) / 4)
+    analysis = _build_writing_analysis(
+        data.get("analysis"), essay=essay, sentences=sentences, current_band=band
+    )
     db.add(
         IeltsResult(
             user_id=user.id, skill="writing", band=band, detail=data.get("feedback"),
@@ -1580,26 +1986,126 @@ async def score_writing(
     )
     errors = [
         WritingError(
-            quote=str(e.get("quote", "")).strip(),
-            fix=str(e.get("fix", "")).strip(),
-            note=str(e.get("note", "")).strip(),
-            type=str(e.get("type", "grammar")),
+            quote=item["highlight"],
+            fix=item["use_instead"],
+            note=item["why"] or item["explanation"],
+            type=_legacy_error_type(item["category"]),
         )
-        for e in data.get("errors", [])
-        if isinstance(e, dict) and str(e.get("quote", "")).strip()
+        for item in analysis["sentence_feedback"]
+        if item["status"] == "error"
     ][:12]
+    strengths = [
+        '{}: "{}" — {}'.format(item["title"], item["evidence"], item["explanation"])
+        for item in analysis["good_points"]
+    ]
     return WritingScore(
         band_overall=band,
-        task=_criterion(data.get("task")),
-        coherence=_criterion(data.get("coherence")),
-        lexical=_criterion(data.get("lexical")),
-        grammar=_criterion(data.get("grammar")),
+        task=task,
+        coherence=coherence,
+        lexical=lexical,
+        grammar=grammar,
         errors=errors,
-        strengths=[str(s).strip() for s in data.get("strengths", []) if str(s).strip()][:4],
+        strengths=strengths,
         feedback=str(data.get("feedback", "")).strip(),
         improved=str(data.get("improved", "")).strip(),
+        analysis=analysis,
         reward=reward,
     )
+
+
+# --- Master Writing drills -----------------------------------------------
+# Short, single-shot checks (one sentence / one paragraph), not full-essay
+# band scoring — grading a paraphrase on the 0-9 scale is meaningless, and it
+# would spend the expensive _WRITING_SCHEMA call on a cheap task. Modeled on
+# api/v1/ai.py's WRITING_SCHEMA ({corrected, feedback}) rather than
+# _WRITING_SCHEMA. Gated by the general ai_quota (via the route's _guarded),
+# not has_free/premium_writing_quota — that quota is for full essays.
+
+_DRILL_QUALITY_SCORE = {"needs_work": 40, "good": 75, "excellent": 100}
+
+_DRILL_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "quality": {"type": "string", "enum": ["needs_work", "good", "excellent"]},
+        "feedback": {"type": "string"},
+        "model_example": {"type": "string"},
+    },
+    "required": ["quality", "feedback", "model_example"],
+    "additionalProperties": False,
+}
+
+
+@dataclass
+class DrillFeedback:
+    quality: str
+    feedback: str
+    model_example: str
+    score: int
+    reward: RewardSummary
+
+
+def _drill_feedback(data: Dict[str, Any], reward: RewardSummary) -> DrillFeedback:
+    quality = str(data.get("quality", "needs_work"))
+    if quality not in _DRILL_QUALITY_SCORE:
+        quality = "needs_work"
+    return DrillFeedback(
+        quality=quality,
+        feedback=str(data.get("feedback", "")).strip(),
+        model_example=str(data.get("model_example", "")).strip(),
+        score=_DRILL_QUALITY_SCORE[quality],
+        reward=reward,
+    )
+
+
+async def score_paraphrase(
+    db: AsyncSession, user: User, client: AiClient,
+    original_title: str, learner_paraphrase: str, lang: str = "en",
+) -> DrillFeedback:
+    """Grade one paraphrased Task 1 introduction sentence."""
+    feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
+    system = (
+        "You are an IELTS Writing Task 1 coach focused on one skill: paraphrasing the "
+        "question title into a strong introduction sentence. A good paraphrase changes "
+        "the wording and sentence structure while keeping the exact meaning — it does not "
+        "just swap one or two synonyms, and it must not change what the chart/diagram "
+        "actually shows. 'excellent' = natural, well-structured, meaning fully preserved. "
+        "'good' = meaning preserved but wording is close to the original or slightly "
+        "awkward. 'needs_work' = meaning changed, key information dropped, or barely "
+        "reworded at all. Give feedback in {lang}. model_example is one strong paraphrase "
+        "sentence in English, regardless of feedback language."
+    ).format(lang=feedback_lang)
+    prompt = (
+        'Original title: "{title}"\n\nLearner\'s paraphrase: "{paraphrase}"'
+    ).format(title=original_title, paraphrase=learner_paraphrase)
+    data = await client.json(system=system, prompt=prompt, schema=_DRILL_SCHEMA, max_tokens=400)
+    reward = await apply_skill_xp(db, user, XP_WRITING_DRILL)
+    return _drill_feedback(data, reward)
+
+
+async def score_overview(
+    db: AsyncSession, user: User, client: AiClient,
+    visual: Dict[str, Any], learner_overview: str, lang: str = "en",
+) -> DrillFeedback:
+    """Grade one Task 1 overview paragraph (the highest-value paragraph in a
+    real answer) written for the given chart/diagram."""
+    feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
+    system = (
+        "You are an IELTS Writing Task 1 coach focused on one skill: writing the overview "
+        "paragraph — 1-2 sentences stating the most significant overall pattern(s) in the "
+        "chart or diagram, with NO specific numbers or minor details. 'excellent' = "
+        "identifies the single most important trend/feature and nothing more. 'good' = "
+        "identifies a real pattern but is too detailed (includes numbers) or misses the "
+        "most significant feature. 'needs_work' = restates the chart title, lists random "
+        "data points instead of a pattern, or is factually wrong about what the visual "
+        "shows. Give feedback in {lang}. model_example is one strong overview in English, "
+        "regardless of feedback language."
+    ).format(lang=feedback_lang)
+    prompt = (
+        "Chart/diagram data (JSON): {visual}\n\nLearner's overview: \"{overview}\""
+    ).format(visual=json.dumps(visual)[:2000], overview=learner_overview)
+    data = await client.json(system=system, prompt=prompt, schema=_DRILL_SCHEMA, max_tokens=400)
+    reward = await apply_skill_xp(db, user, XP_WRITING_DRILL)
+    return _drill_feedback(data, reward)
 
 
 # --- Overview ----------------------------------------------------------------
