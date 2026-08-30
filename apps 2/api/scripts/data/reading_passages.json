@@ -1,0 +1,596 @@
+[
+  {
+    "slug": "my-family-a1",
+    "cefr_level": "A1",
+    "title_en": "My Family",
+    "body_en": "My name is Aziz. I am eleven years old and I live in Tashkent. There are five people in my family: my father, my mother, my two sisters, and me. My father is a doctor. He works at a big hospital. My mother is a teacher. She teaches English at a school near our house. My sisters are students. In the evening we eat dinner together and talk about our day. I love my family very much.",
+    "summary_uz": "Aziz o'z oilasi haqida gapiradi: otasi shifokor, onasi o'qituvchi, ikki opasi talaba. Kechqurun ular birga ovqatlanishadi.",
+    "questions": [
+      {
+        "prompt_en": "How many people are in Aziz's family?",
+        "options": ["Three", "Four", "Five", "Six"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What is his father's job?",
+        "options": ["Teacher", "Doctor", "Driver", "Student"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does the family do in the evening?",
+        "options": ["They watch TV", "They eat dinner together", "They play football", "They go to the hospital"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "at-the-market-a1",
+    "cefr_level": "A1",
+    "title_en": "At the Market",
+    "body_en": "On Sunday morning, Dilnoza goes to the market with her grandmother. The market is big and full of people. First, they buy apples and grapes. The fruit is fresh and cheap. Then they buy bread and cheese. Dilnoza's grandmother knows many sellers, and they always smile at her. Before they go home, Dilnoza drinks a cup of tea and eats a hot samsa. She likes Sundays at the market.",
+    "summary_uz": "Dilnoza yakshanba kuni buvisi bilan bozorga boradi. Ular meva, non va pishloq sotib olishadi, keyin Dilnoza choy ichib, somsa yeydi.",
+    "questions": [
+      {
+        "prompt_en": "When does Dilnoza go to the market?",
+        "options": ["On Monday", "On Friday evening", "On Sunday morning", "Every day"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What fruit do they buy?",
+        "options": ["Apples and grapes", "Bananas and oranges", "Melons", "Cherries"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does Dilnoza eat at the market?",
+        "options": ["Bread and cheese", "A hot samsa", "An apple", "Plov"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "my-school-day-a1",
+    "cefr_level": "A1",
+    "title_en": "My School Day",
+    "body_en": "I get up at seven o'clock. I wash my face, get dressed, and eat breakfast with my brother. School starts at eight thirty. My favourite lesson is English because our teacher plays word games with us. At twelve o'clock we have lunch in the school canteen. After school I do my homework, and then I play football with my friends in the yard. I go to bed at ten o'clock.",
+    "summary_uz": "O'quvchi o'z kun tartibini aytadi: soat 7 da turadi, 8:30 da dars boshlanadi, sevimli fani — ingliz tili, darsdan keyin futbol o'ynaydi.",
+    "questions": [
+      {
+        "prompt_en": "What time does school start?",
+        "options": ["At seven o'clock", "At eight thirty", "At twelve o'clock", "At ten o'clock"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why is English the writer's favourite lesson?",
+        "options": ["It is easy", "The teacher plays word games", "There is no homework", "It is the first lesson"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does the writer do after homework?",
+        "options": ["Watches TV", "Goes to bed", "Plays football with friends", "Eats lunch"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "a-trip-to-samarkand-a2",
+    "cefr_level": "A2",
+    "title_en": "A Trip to Samarkand",
+    "body_en": "Last month, our class travelled to Samarkand by fast train. The journey took about two hours, and we played cards and watched the fields go past the window. In Samarkand we visited Registan Square. Our guide told us that people built these beautiful madrasahs hundreds of years ago. The blue domes shone in the sun, and everyone took photos. At lunchtime we tried Samarkand bread, which is famous all over Uzbekistan. I bought a small painted plate for my mother. On the way home, everybody was tired but happy. I want to go back next year with my family.",
+    "summary_uz": "Sinf Samarqandga tez poyezdda sayohat qildi: Registon maydonini ko'rishdi, mashhur Samarqand nonini yeb ko'rishdi va esdalik sovg'alar olishdi.",
+    "questions": [
+      {
+        "prompt_en": "How did the class travel to Samarkand?",
+        "options": ["By bus", "By plane", "By fast train", "By car"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What did the guide say about the madrasahs?",
+        "options": ["They are new buildings", "People built them hundreds of years ago", "They are closed to visitors", "They were built last year"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What did the writer buy?",
+        "options": ["Samarkand bread", "A painted plate", "A photo album", "A train ticket"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "How did everyone feel on the way home?",
+        "options": ["Bored and hungry", "Tired but happy", "Angry", "Afraid"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "the-new-cafe-a2",
+    "cefr_level": "A2",
+    "title_en": "The New Café",
+    "body_en": "A new café opened near my office last week, so my colleague Malika and I decided to try it on Friday. The café is small but very modern, with green plants on every table and quiet music. I ordered coffee and a piece of honey cake; Malika chose green tea because she doesn't drink coffee in the afternoon. The waiter was friendly and brought our order quickly. The cake was delicious, but the coffee was a little bitter for me. The prices are cheaper than at the old café on the corner. We agreed to come back next week and bring our manager.",
+    "summary_uz": "Muallif hamkasbi bilan yangi kafega boradi: kafe zamonaviy, xizmat tez, tort mazali, narxlar esa eski kafedagidan arzon.",
+    "questions": [
+      {
+        "prompt_en": "When did the writer visit the café?",
+        "options": ["On Monday", "On Friday", "Last month", "Yesterday morning"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did Malika choose green tea?",
+        "options": ["She doesn't drink coffee in the afternoon", "The coffee was expensive", "The café had no coffee", "She doesn't like cake"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What did the writer think of the coffee?",
+        "options": ["It was perfect", "It was too sweet", "It was a little bitter", "It was cold"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "How are the prices compared to the old café?",
+        "options": ["More expensive", "The same", "Cheaper", "The text doesn't say"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "grandfathers-garden-a2",
+    "cefr_level": "A2",
+    "title_en": "Grandfather's Garden",
+    "body_en": "My grandfather has a large garden behind his house in the village. Every spring he plants tomatoes, cucumbers, and peppers, and in summer the whole family helps him water the plants. He wakes up before sunrise because he says the garden is quietest in the early morning. Last year the weather was very dry, and he was worried about his vegetables. Luckily, it rained in July, and the harvest was better than ever. My grandfather always gives boxes of tomatoes to his neighbours. \"A good garden makes good friends,\" he likes to say.",
+    "summary_uz": "Buvaning qishloqdagi bog'i haqida: u erta turib bog'ini parvarish qiladi, hosilni qo'shnilari bilan bo'lishadi.",
+    "questions": [
+      {
+        "prompt_en": "What does grandfather plant in spring?",
+        "options": ["Apples and grapes", "Tomatoes, cucumbers, and peppers", "Flowers only", "Potatoes and onions"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why does he wake up before sunrise?",
+        "options": ["He can't sleep", "The garden is quietest in the early morning", "He goes to work", "The neighbours visit him"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why was he worried last year?",
+        "options": ["The weather was very dry", "The plants were sick", "He lost his tools", "It rained too much"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does he do with part of his harvest?",
+        "options": ["He sells it at the market", "He gives it to his neighbours", "He throws it away", "He keeps everything"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "learning-online-b1",
+    "cefr_level": "B1",
+    "title_en": "Learning Online",
+    "body_en": "Five years ago, most students in my town had never taken an online course. Today, almost everyone I know studies something on the internet: languages, programming, design, or even cooking. The main advantage is flexibility — you can watch a lesson at midnight or during your lunch break, and repeat difficult parts as many times as you need. However, online learning also has a serious weakness: without a teacher watching, it is easy to lose motivation. Research suggests that most people who start a free online course never finish it. In my experience, the students who succeed set a fixed time for study, turn off their phone notifications, and find a friend to learn with. Technology gives us the door, but we still have to walk through it ourselves.",
+    "summary_uz": "Onlayn ta'lim qulay va moslashuvchan, ammo motivatsiyani saqlash qiyin. Muvaffaqiyat qozonganlar aniq jadval tuzadi va do'st bilan birga o'qiydi.",
+    "questions": [
+      {
+        "prompt_en": "What is the main advantage of online learning, according to the writer?",
+        "options": ["It is always free", "Flexibility", "It is easier than school", "You get a certificate"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What serious weakness does the writer mention?",
+        "options": ["Bad internet connections", "Expensive courses", "Losing motivation without a teacher", "Too much homework"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What does research suggest about free online courses?",
+        "options": ["Most people never finish them", "They are better than universities", "They are only for programmers", "Everyone finishes them quickly"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What does the final sentence mean?",
+        "options": ["Technology solves everything for us", "Doors are important in education", "Success still depends on our own effort", "Online courses should be closed"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "the-old-bicycle-b1",
+    "cefr_level": "B1",
+    "title_en": "The Old Bicycle",
+    "body_en": "When Karim turned sixteen, his father gave him an old bicycle instead of the new smartphone he had asked for. At first, Karim was disappointed and left the bicycle in the yard for weeks. One rainy afternoon, bored and offline, he decided to repair it. He cleaned the rusty chain, pumped the tyres, and painted the frame dark green. The work took three weekends, but when he finally rode it through the neighbourhood, he felt strangely proud. Soon he was cycling to school every day, saving the bus money, and exploring streets he had never seen. A year later, Karim told his father the bicycle was the best present he had ever received — not because of what it was, but because of what it had taught him.",
+    "summary_uz": "Karim otasi sovg'a qilgan eski velosipedni avval yoqtirmaydi, keyin uni o'zi ta'mirlab, undan faxrlanadi va muhim saboq oladi.",
+    "questions": [
+      {
+        "prompt_en": "How did Karim feel about the present at first?",
+        "options": ["Excited", "Disappointed", "Proud", "Surprised and happy"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What made him start repairing the bicycle?",
+        "options": ["His father asked him to", "He wanted to sell it", "He was bored on a rainy afternoon", "His friends laughed at him"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "How long did the repair work take?",
+        "options": ["One afternoon", "Three weekends", "A whole year", "Two days"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did Karim call it the best present he had ever received?",
+        "options": ["It was expensive", "It looked new after painting", "Because of what it taught him", "Because he could sell it later"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "water-in-the-desert-b1",
+    "cefr_level": "B1",
+    "title_en": "Water in the Desert",
+    "body_en": "Uzbekistan is a country of sunshine, but that sunshine comes at a price: water is precious here. Farmers in the Aral Sea region remember when the sea reached their villages; today the shore lies many kilometres away. Scientists say that old irrigation methods wasted enormous amounts of water, because open canals lose much of it to the sun before it ever reaches the fields. Modern drip irrigation, which delivers water directly to each plant's roots through thin pipes, can cut water use by more than half. The technology is not cheap, and many small farms cannot afford it without help. Still, every year more fields switch to the new system. Saving water, experts argue, is no longer a choice for the region — it is the only way to keep farming alive for the next generation.",
+    "summary_uz": "Orol dengizi mintaqasida suv tanqisligi haqida: eski sug'orish usullari suvni isrof qiladi, tomchilatib sug'orish esa suvni yarmidan ko'proq tejaydi.",
+    "questions": [
+      {
+        "prompt_en": "What problem does the passage describe?",
+        "options": ["Too much rain", "Water shortage", "Cold winters", "Expensive electricity"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why do open canals waste water?",
+        "options": ["Much of it is lost to the sun", "The pipes are too thin", "Farmers forget to close them", "Animals drink from them"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "How much water can drip irrigation save?",
+        "options": ["About ten percent", "More than half", "Almost none", "All of it"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why don't all farms use drip irrigation?",
+        "options": ["It is illegal", "It is not cheap", "It doesn't work in deserts", "Farmers prefer canals"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "a-morning-at-the-library-a1",
+    "cefr_level": "A1",
+    "title_en": "A Morning at the Library",
+    "body_en": "On Saturday, Kamola goes to the public library with her cousin. The library opens at nine o'clock, so they arrive ten minutes early. Kamola borrows a book about animals because she wants to learn about dolphins. Her cousin chooses a comic book. They sit near a large window and read quietly for an hour. Before they leave, the librarian gives them a small paper with the return date. They must bring the books back in two weeks.",
+    "summary_uz": "Kamola shanba kuni amakivachchasi bilan kutubxonaga boradi. U delfinlar haqida kitob oladi va kitoblarni ikki haftadan keyin qaytarishi kerak.",
+    "questions": [
+      {
+        "prompt_en": "When does the library open?",
+        "options": ["At eight o'clock", "At nine o'clock", "At ten o'clock", "At eleven o'clock"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does Kamola want to learn about?",
+        "options": ["Animals", "Cars", "Music", "Cooking"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "Where do the cousins read?",
+        "options": ["Near a large window", "At home", "In a cafe", "On a bus"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "When must they return the books?",
+        "options": ["The next day", "In one week", "In two weeks", "Next month"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "the-football-match-a1",
+    "cefr_level": "A1",
+    "title_en": "The Football Match",
+    "body_en": "On Wednesday afternoon, our school football team plays a match against another school. The game starts at four o'clock on the sports field behind our classroom building. I wear a blue shirt because blue is our team colour. My best friend Bekzod is the goalkeeper. In the first half, no team scores a goal. In the second half, our captain kicks the ball into the net. We win the match one to zero. After the game, our teacher buys juice for every player.",
+    "summary_uz": "Maktab futbol jamoasi boshqa maktabga qarshi o'ynaydi. Ular 1:0 hisobida g'alaba qozonishadi va o'qituvchi barcha o'yinchilarga sharbat olib beradi.",
+    "questions": [
+      {
+        "prompt_en": "What colour is the school team shirt?",
+        "options": ["Red", "Blue", "Green", "White"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What position does Bekzod play?",
+        "options": ["Goalkeeper", "Captain", "Teacher", "Referee"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What is the score at the end of the match?",
+        "options": ["0-0", "1-0", "1-1", "2-0"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does the teacher buy after the game?",
+        "options": ["Football shirts", "Books", "Juice", "Tickets"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "a-new-neighbour-a1",
+    "cefr_level": "A1",
+    "title_en": "A New Neighbour",
+    "body_en": "A new family moves into the house next to ours on Monday. They have a daughter called Maria. She is twelve years old, the same age as me. On Tuesday, my mother and I take some bread and fruit to their house. Maria opens the door and smiles. She is from Spain, but she speaks English very well. She likes drawing pictures and riding a bicycle. On Friday, we ride our bicycles in the park together. I am happy because I have a new friend in my street.",
+    "summary_uz": "Qo'shni uyga yangi oila ko'chib keladi. Muallif Mariya ismli, o'zi bilan tengdosh qiz bilan tanishib, tezda do'stlashadi.",
+    "questions": [
+      {
+        "prompt_en": "When does the new family move in?",
+        "options": ["On Monday", "On Tuesday", "On Friday", "On Saturday"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "Where is Maria from?",
+        "options": ["Uzbekistan", "Spain", "England", "France"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What hobby does Maria like?",
+        "options": ["Drawing pictures", "Playing tennis", "Cooking", "Swimming"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What do the children do on Friday?",
+        "options": ["Read at home", "Ride bicycles in the park", "Go to school", "Play a computer game"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "weekend-volunteering-a2",
+    "cefr_level": "A2",
+    "title_en": "Weekend Volunteering",
+    "body_en": "Last Saturday, I joined a group of volunteers who cleaned the park near our apartment block. We met at eight in the morning, and the organiser gave everyone gloves, bags, and a map of the area. My job was to collect plastic bottles near the small lake. Other volunteers painted old benches and planted flowers around the playground. It was warmer than we expected, so we stopped for water every hour. By lunchtime, the park looked much cleaner. The organiser thanked us and invited us to join another project next month: helping an animal shelter.",
+    "summary_uz": "Muallif ko'ngillilar bilan parkni tozalaydi: plastik idishlarni yig'adi, boshqalar esa o'rindiqlarni bo'yab, gullar ekishadi. Keyingi loyiha hayvonlar boshpanasiga yordam berish bo'ladi.",
+    "questions": [
+      {
+        "prompt_en": "What did the organiser give the volunteers?",
+        "options": ["Gloves, bags, and a map", "Food and tickets", "New clothes", "Books and pens"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What was the writer's job?",
+        "options": ["Painting benches", "Planting flowers", "Collecting plastic bottles", "Cleaning apartments"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "Why did the group stop every hour?",
+        "options": ["They were waiting for a bus", "The weather was warm and they needed water", "The park was closed", "They wanted to eat lunch"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What will the next project involve?",
+        "options": ["Building a playground", "Helping an animal shelter", "Painting a school", "Cleaning the lake"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "the-science-fair-a2",
+    "cefr_level": "A2",
+    "title_en": "The Science Fair",
+    "body_en": "Our school held a science fair last Thursday. Students could work alone or in small teams, and each project needed to explain a scientific idea. My friend Timur and I made a simple water filter from sand, small stones, cotton, and a plastic bottle. We tested it with muddy water, but our teacher reminded visitors that filtered water is not always safe to drink. Another team showed how plants grow toward light. The judges asked many questions before choosing the winners. We did not win first prize, but we received a special certificate for clear teamwork and learned a lot while preparing the project.",
+    "summary_uz": "Maktabdagi fan yarmarkasida Timur va muallif oddiy suv filtri yasashadi. Ular birinchi o'rinni olmasalar ham, yaxshi jamoaviy ish uchun sertifikat olishadi.",
+    "questions": [
+      {
+        "prompt_en": "What did each project need to explain?",
+        "options": ["A scientific idea", "A family story", "A sport", "A holiday plan"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What did Timur and the writer make?",
+        "options": ["A robot", "A water filter", "A model car", "A solar lamp"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What warning did the teacher give?",
+        "options": ["The bottle was too expensive", "Filtered water is not always safe to drink", "The project needed more sand", "Plants need no light"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why did the team receive a certificate?",
+        "options": ["They won first prize", "They had clear teamwork", "They used the most water", "They arrived early"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "finding-a-lost-phone-a2",
+    "cefr_level": "A2",
+    "title_en": "Finding a Lost Phone",
+    "body_en": "On my way home from college, I found a phone on a seat at the bus stop. It had a blue case and was still switched on. I did not want to open the owner's messages, so I looked only at the lock screen. A missed call appeared from a number called Mum. A few minutes later, the phone rang again. I answered and explained where I had found it. The caller was the owner's older sister, and she arrived at the bus stop with her brother twenty minutes later. He was very relieved because the phone contained his class notes and family photos. He offered me money, but I politely refused it.",
+    "summary_uz": "Muallif avtobus bekatidan telefon topadi. Shaxsiy xabarlarni ochmay, egasining oilasi bilan bog'lanadi va telefonni qaytaradi.",
+    "questions": [
+      {
+        "prompt_en": "Where did the writer find the phone?",
+        "options": ["At a bus stop", "In a classroom", "At a cafe", "On a train"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "Why did the writer not open the owner's messages?",
+        "options": ["The phone was broken", "The writer respected the owner's privacy", "There was no internet", "The phone was locked forever"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Who called the phone?",
+        "options": ["The owner's teacher", "The owner's older sister", "A bus driver", "The writer's mother"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Why was the owner relieved?",
+        "options": ["He found a new job", "The phone contained important notes and photos", "He received money", "The bus arrived early"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "the-community-garden-b1",
+    "cefr_level": "B1",
+    "title_en": "The Community Garden",
+    "body_en": "Two years ago, an empty piece of land behind our local clinic was full of rubbish and tall grass. A group of neighbours asked the council if they could turn it into a community garden. The council agreed, but it could not provide money for tools or plants. Instead, residents collected small donations, and a nearby hardware shop gave them seeds at a lower price. Today, the garden has vegetables, herbs, and a small area where children can learn about insects. Each family looks after one part of the garden, but everyone shares the harvest. The project has not solved every problem in the neighbourhood, yet it has created a reason for people of different ages to meet and work together.",
+    "summary_uz": "Mahalla aholisi bo'sh va iflos yer maydonini umumiy bog'ga aylantiradi. Oilalar alohida qismlarga qarashadi, hosil esa hamma bilan bo'lishiladi.",
+    "questions": [
+      {
+        "prompt_en": "What was on the land before the project?",
+        "options": ["A busy market", "Rubbish and tall grass", "A new clinic", "A sports centre"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "How did the residents get seeds more cheaply?",
+        "options": ["The council paid for them", "A hardware shop offered a lower price", "They grew them indoors", "A school donated them"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "How is the garden organised?",
+        "options": ["Only children work there", "Each family cares for one part and shares the harvest", "One gardener does all the work", "People pay to pick vegetables"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What is the writer's main point about the project?",
+        "options": ["It has fixed every local problem", "It has helped neighbours connect", "It is too expensive to continue", "It should become a clinic"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "working-from-home-b1",
+    "cefr_level": "B1",
+    "title_en": "Working from Home",
+    "body_en": "When my aunt started working from home, she imagined that she would have more free time. At first, she enjoyed avoiding the rush-hour bus and making lunch in her own kitchen. However, she soon noticed that her work and home life were mixing together. Because her laptop was always nearby, she often answered messages late at night. She also missed the short conversations with colleagues that used to happen naturally in the office. After a few months, she made three rules: she begins work at the same time every day, takes a real lunch break away from her desk, and closes her laptop when the working day ends. These changes have not made home working perfect, but they have made it more balanced.",
+    "summary_uz": "Muallifning xolasi uyda ishlashni boshlaydi. U qulayliklar bilan birga ish va shaxsiy hayot aralashib ketishini sezadi va muvozanat uchun aniq qoidalar belgilaydi.",
+    "questions": [
+      {
+        "prompt_en": "What did the aunt initially enjoy about working from home?",
+        "options": ["Avoiding the rush-hour bus", "Meeting more colleagues", "Travelling to new offices", "Having no deadlines"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What problem did she have with her laptop?",
+        "options": ["It was too old", "It made it hard to separate work from home life", "It had no messages", "She could not carry it"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What does she do at the end of the working day?",
+        "options": ["Starts a second job", "Calls her colleagues", "Closes her laptop", "Takes the bus"],
+        "answer_index": 2
+      },
+      {
+        "prompt_en": "What is the overall result of her new rules?",
+        "options": ["They make work perfect", "They make home working more balanced", "They remove all messages", "They make her work longer"],
+        "answer_index": 1
+      }
+    ]
+  },
+  {
+    "slug": "a-local-history-project-b1",
+    "cefr_level": "B1",
+    "title_en": "A Local History Project",
+    "body_en": "Our history teacher gave us an unusual assignment: instead of using only textbooks, we had to discover one story from our own neighbourhood. My group chose an old cinema that closed before we were born. We found newspaper articles in the library and interviewed three older residents who remembered going there. They told us that the cinema showed films from many countries and had a small orchestra before the first evening show. We were surprised to learn that the building was later used as a warehouse for almost twenty years. For our presentation, we created a timeline, recorded short audio clips from the interviews, and suggested that the empty building could become a cultural centre again.",
+    "summary_uz": "Tarix darsida o'quvchilar eski kinoteatr tarixi haqida tadqiqot qilishadi. Ular kutubxona manbalari va katta yoshli aholining xotiralaridan foydalanishadi.",
+    "questions": [
+      {
+        "prompt_en": "What made the assignment unusual?",
+        "options": ["Students could not work in groups", "Students researched a local story, not only textbooks", "It was about future technology", "It had no presentation"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "Where did the group find written information?",
+        "options": ["In newspaper articles at the library", "On television", "In a cinema ticket", "At the warehouse"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What happened before the first evening film?",
+        "options": ["A small orchestra played", "The building closed", "People ate dinner", "A lecture began"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What did the students suggest for the building?",
+        "options": ["Turning it into a warehouse", "Demolishing it", "Making it a cultural centre", "Selling it as a school"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "smart-cities-and-everyday-life-b2",
+    "cefr_level": "B2",
+    "title_en": "Smart Cities and Everyday Life",
+    "body_en": "The phrase smart city often brings to mind impressive control rooms, autonomous vehicles, and data flowing through every street. In practice, the most useful changes are frequently less dramatic. A sensor that tells a maintenance team when a public bin is full can prevent overflowing rubbish. A traffic system that adjusts signal timing after an accident may shorten delays for thousands of commuters. These tools can make public services more responsive, but they also raise an important question: who decides which data are collected and how long they are kept? City leaders sometimes present technology as a neutral solution, yet the priorities built into a system reflect human choices. A useful smart-city project should therefore be judged not only by whether it is innovative, but by whether residents can understand, question, and benefit from it.",
+    "summary_uz": "Aqlli shahar texnologiyalari kundalik xizmatlarni yaxshilashi mumkin, ammo ma'lumotlar qanday yig'ilishi va tizimdagi qarorlar kimga foyda berishini ham nazorat qilish kerak.",
+    "questions": [
+      {
+        "prompt_en": "Which example does the writer give of a less dramatic smart-city tool?",
+        "options": ["A sensor that reports a full public bin", "A flying car", "A new shopping centre", "A larger control room"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What benefit can adjusted traffic signals provide?",
+        "options": ["They remove every accident", "They may reduce delays after an accident", "They make cars autonomous", "They collect no data"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What concern does the writer raise about public data?",
+        "options": ["Whether it is collected and retained responsibly", "Whether it is printed on paper", "Whether it is always free", "Whether it replaces traffic lights"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What standard should be used to judge a smart-city project?",
+        "options": ["Its visual appearance only", "Its cost only", "Whether residents can understand, question, and benefit from it", "Whether it uses the newest software"],
+        "answer_index": 2
+      }
+    ]
+  },
+  {
+    "slug": "the-repair-economy-b2",
+    "cefr_level": "B2",
+    "title_en": "The Repair Economy",
+    "body_en": "For many years, replacing a broken product seemed simpler than repairing it. Low prices, fast delivery, and sealed electronic parts encouraged consumers to treat phones, appliances, and even clothing as temporary possessions. Recently, however, repair has begun to return to public attention. Independent repair shops, community workshops, and online guides give people more ways to extend the life of what they own. Supporters argue that repair saves money, reduces waste, and teaches practical skills. Manufacturers respond that modern devices are complex and that unrestricted repairs can create safety or security risks. The debate is not simply about nostalgia for older products. It is about whether people should have reasonable access to spare parts, clear manuals, and repair information after they have bought an item.",
+    "summary_uz": "Ta'mirlash iqtisodiyoti buyumlarni tezda almashtirish o'rniga ularning umrini uzaytirishni targ'ib qiladi. Bahs ehtiyot qismlar va ta'mirlash ma'lumotlariga kirish huquqi haqida.",
+    "questions": [
+      {
+        "prompt_en": "Why did replacement become common in the past?",
+        "options": ["Products were always easy to repair", "Low prices and sealed parts encouraged it", "People had fewer delivery options", "Repair shops were free"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What is one benefit of repair mentioned by supporters?",
+        "options": ["It guarantees new products", "It reduces waste", "It removes all safety risks", "It makes devices simpler"],
+        "answer_index": 1
+      },
+      {
+        "prompt_en": "What concern do manufacturers express?",
+        "options": ["Repairs can create safety or security risks", "People do not want manuals", "Online guides are too short", "Clothing cannot be repaired"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What is the central issue in the final sentence?",
+        "options": ["Whether people can reasonably access repair resources", "Whether older products look better", "Whether delivery should be faster", "Whether all products should be free"],
+        "answer_index": 0
+      }
+    ]
+  },
+  {
+    "slug": "language-and-memory-b2",
+    "cefr_level": "B2",
+    "title_en": "Language and Memory",
+    "body_en": "People often say that learning a new word is like putting a file into a cabinet: once it is stored, it should be available whenever it is needed. Memory does not work so neatly. A word may seem familiar when we see it in a text yet remain difficult to produce in conversation. Researchers distinguish between recognition, which is the ability to identify a word, and recall, which is the ability to retrieve it without a prompt. This difference helps explain why repeated exposure alone is not enough for confident language use. Learners benefit when they meet a word in varied contexts, try to use it themselves, and return to it after a delay. Forgetting is not always a sign of failure; the effort of retrieving partly forgotten information can strengthen the memory trace. Effective revision is therefore less about rereading a long list and more about making recall an active habit.",
+    "summary_uz": "So'zni tanib olish va uni mustaqil esga tushirib ishlatish turli ko'nikmalardir. So'zlarni turli kontekstlarda qo'llash va oraliqli takrorlash xotirani kuchaytiradi.",
+    "questions": [
+      {
+        "prompt_en": "What does recognition mean in the passage?",
+        "options": ["Identifying a word when you see it", "Writing a word perfectly", "Translating every word", "Learning only from a list"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "Why can a familiar word still be hard to use in conversation?",
+        "options": ["It may be recognised but not easily recalled", "It is always too long", "It has no definition", "It appears only in books"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "Which activity does the writer recommend?",
+        "options": ["Meeting and using a word in varied contexts", "Reading one list without stopping", "Avoiding difficult words", "Memorising only translations"],
+        "answer_index": 0
+      },
+      {
+        "prompt_en": "What is the writer's view of forgetting?",
+        "options": ["It always proves learning has failed", "It can make retrieval practice stronger", "It should be ignored completely", "It happens only to beginners"],
+        "answer_index": 1
+      }
+    ]
+  }
+]

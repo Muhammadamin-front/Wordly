@@ -1,0 +1,9 @@
+[branch "main"]
+	gk-last-accessed = 2026-08-12T16:17:26.566Z
+	gk-last-modified = 2026-08-12T16:17:26.566Z
+[branch "agent/fix-speaking-band8-samples"]
+	gk-last-accessed = 2026-08-15T17:46:33.635Z
+	gk-last-modified = 2026-08-15T17:46:33.635Z
+[branch "agent/audit-fixes"]
+	gk-last-accessed = 2026-08-18T19:20:50.427Z
+	gk-last-modified = 2026-08-18T19:20:50.427Z

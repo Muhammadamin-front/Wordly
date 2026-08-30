@@ -1,0 +1,443 @@
+"use client";
+
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  BookOpenCheck,
+  CheckCircle2,
+  Layers3,
+  LibraryBig,
+  Plus,
+  Sparkles,
+  Target,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+
+import { useAuth } from "@/components/auth/auth-provider";
+import { CollectionCard } from "@/components/library/collection-card";
+import { LevelCard } from "@/components/library/level-card";
+import { SearchPanel } from "@/components/library/search-panel";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  exportDeckCsv,
+  flashcardsApi,
+  importDeckCsv,
+  type Deck,
+  type DeckImportReport,
+  type Queue,
+} from "@/lib/flashcards";
+import { expressionsApi } from "@/lib/expressions";
+import { libraryApi, SHELVES, type Shelf } from "@/lib/library";
+import type { Dictionary } from "@/app/[lang]/dictionaries";
+
+/** Circular progress ring SVG. */
+function CircularProgress({ percent, size = 120 }: { percent: number; size?: number }) {
+  const radius = size / 2 - 8;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg]">
+      {/* Background ring */}
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        className="text-line/40"
+      />
+      {/* Progress ring */}
+      <motion.circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="6"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+        className="text-[#9fd08b]"
+        initial={{ strokeDashoffset: circumference }}
+        animate={{ strokeDashoffset: offset }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+    </svg>
+  );
+}
+
+function StatTile({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string | number;
+  tone: string;
+}) {
+  return (
+    <div className="rounded-[20px] border border-[#ead8b7]/16 bg-[#08251a]/48 px-4 py-3 shadow-[0_18px_42px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl">
+      <Icon className={`size-5 ${tone}`} aria-hidden />
+      <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[#ead8b7]/66">{label}</p>
+      <p className="text-lg font-extrabold text-[#fff3dc]">{value}</p>
+    </div>
+  );
+}
+
+export function LibraryView({
+  lang,
+  t,
+  vocab,
+}: {
+  lang: string;
+  t: Dictionary["library"];
+  vocab: Dictionary["vocab"];
+}) {
+  const { user, ready } = useAuth();
+  const router = useRouter();
+  const [shelves, setShelves] = useState<Record<string, Shelf> | null>(null);
+  const [decks, setDecks] = useState<Deck[] | null>(null);
+  const [queue, setQueue] = useState<Queue | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [report, setReport] = useState<DeckImportReport | null>(null);
+  const [creating, setCreating] = useState(false);
+  const importTarget = useRef<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (ready && !user) router.replace(`/${lang}/auth/login`);
+  }, [ready, user, router, lang]);
+
+  useEffect(() => {
+    if (!ready || !user) return;
+    let cancelled = false;
+    Promise.all([
+      libraryApi.overview(),
+      flashcardsApi.decks(),
+      flashcardsApi.queue(),
+      expressionsApi.meta().catch(() => null),
+    ]).then(([overview, deckList, q, expressionMeta]) => {
+      if (cancelled) return;
+      const shelfMap = Object.fromEntries(overview.shelves.map((s) => [s.key, s]));
+      if (expressionMeta) {
+        shelfMap.expressions = {
+          key: "expressions",
+          total: expressionMeta.total,
+          added: 0,
+          learned: 0,
+        };
+      }
+      setShelves(shelfMap);
+      setDecks(deckList);
+      setQueue(q);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, user, reloadKey]);
+
+  const reload = () => setReloadKey((k) => k + 1);
+
+  async function onCreate(event: { preventDefault: () => void; currentTarget: HTMLFormElement; target: HTMLFormElement }) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const name = String(form.get("name") ?? "").trim();
+    if (!name) return;
+    await flashcardsApi.createDeck(name, String(form.get("description") ?? "") || undefined);
+    event.target.reset();
+    setCreating(false);
+    reload();
+  }
+
+  async function onImportFile(file: File) {
+    if (!importTarget.current) return;
+    setReport(await importDeckCsv(importTarget.current, file));
+    reload();
+  }
+
+  if (!ready || !user || shelves === null || decks === null) {
+    return (
+      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
+        <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
+        <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="aspect-4/5 rounded-2xl" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  // CEFR levels partition the corpus exactly once (category shelves overlap).
+  const totalAdded = ["A1", "A2", "B1", "B2", "C1", "C2"].reduce(
+    (sum, key) => sum + (shelves[key]?.added ?? 0),
+    0
+  );
+  const totalLearned = ["A1", "A2", "B1", "B2", "C1", "C2"].reduce(
+    (sum, key) => sum + (shelves[key]?.learned ?? 0),
+    0
+  );
+  const progressPercent = totalAdded > 0 ? Math.round((totalLearned / totalAdded) * 100) : 0;
+
+  const shelfStrings = t.shelves as Record<string, { name: string; desc: string }>;
+  const labels = {
+    words: t.words,
+    learned: t.learned,
+    continue: t.continue,
+    start: t.start,
+    soon: t.soon,
+  };
+
+  return (
+    <main className="mx-auto w-full max-w-7xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
+      {/* Hero with circular progress */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative overflow-hidden rounded-[30px] border border-[#ead8b7]/20 bg-[#16382b] shadow-[0_34px_90px_rgba(4,25,15,0.34)]"
+      >
+        <Image
+          src="/images/vocora-forest-hero.webp"
+          alt=""
+          fill
+          priority
+          sizes="(max-width: 768px) calc(100vw - 24px), 1280px"
+          className="absolute inset-0 size-full object-cover object-[68%_center] opacity-[0.58] saturate-[0.92]"
+        />
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(105deg,rgba(13,49,37,0.98)_0%,rgba(21,65,48,0.91)_42%,rgba(88,61,42,0.46)_100%)]" />
+        <div aria-hidden className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#e9cf9b]/12 blur-3xl" />
+        <div aria-hidden className="absolute -right-14 bottom-0 h-72 w-72 rounded-full bg-[#77a878]/14 blur-3xl" />
+
+        <div className="relative z-10 grid gap-8 p-5 sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:p-10">
+          <div className="max-w-2xl">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#ead8b7]/24 bg-[#f3dfbb]/12 px-3 py-2 text-[11px] font-black uppercase tracking-wide text-[#ead8b7] backdrop-blur-xl">
+              <LibraryBig className="size-4" aria-hidden />
+              Vocora library
+            </span>
+            <h1 className="mt-6 max-w-[11ch] text-4xl font-black leading-[0.94] tracking-tight text-[#fff3dc] sm:text-6xl lg:text-7xl">
+              {t.title}
+            </h1>
+            <p className="mt-5 max-w-lg text-sm font-medium leading-7 text-[#ead8b7]/82 sm:text-lg">
+              {t.subtitle}
+            </p>
+
+            <div className="mt-7 grid gap-3 min-[460px]:grid-cols-3">
+              <StatTile
+                icon={BookOpenCheck}
+                label={t.words}
+                value={totalAdded}
+                tone="text-[#f1cf88]"
+              />
+              <StatTile
+                icon={CheckCircle2}
+                label={t.learned}
+                value={totalLearned}
+                tone="text-[#a8d28f]"
+              />
+              <StatTile
+                icon={Layers3}
+                label="Levels"
+                value="6"
+                tone="text-[#d7b38a]"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-end justify-start lg:justify-end">
+            <div className="relative min-h-52 w-full max-w-sm overflow-hidden rounded-[26px] border border-[#ead8b7]/18 bg-[#08251a]/50 p-5 shadow-[0_24px_60px_rgba(0,0,0,0.28),inset_0_1px_0_rgba(255,255,255,0.13)] backdrop-blur-xl">
+              <div aria-hidden className="absolute -right-10 -top-8 h-40 w-24 rotate-12 rounded-full border border-[#ead8b7]/18 bg-[#ead8b7]/10" />
+              <div className="relative text-[#ead8b7]">
+                <CircularProgress percent={progressPercent} size={136} />
+              </div>
+              <div className="relative mt-4">
+                <p className="text-5xl font-black tracking-tight text-[#fff3dc]">{progressPercent}%</p>
+                <p className="mt-2 text-sm font-bold text-[#ead8b7]/72">{t.continue.toLowerCase()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Corpus-wide search + add */}
+      <div className="mt-8">
+        <SearchPanel lang={lang} t={t} vocab={vocab} />
+      </div>
+
+      {report && (
+        <Alert tone={report.errors.length ? "error" : "success"} className="mt-6">
+          {report.created} {t.imported} · {report.skipped} {t.skipped}
+          {report.errors.length > 0 && ` · ${report.errors[0]}`}
+        </Alert>
+      )}
+
+      <input
+        ref={fileInput}
+        type="file"
+        accept=".csv,.tsv,text/csv"
+        className="hidden"
+        onChange={(e) => e.target.files?.[0] && void onImportFile(e.target.files[0])}
+      />
+
+      {/* My cards — everything added via "Add to my cards" lands here */}
+      {queue && totalAdded > 0 && (
+        <motion.section
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+        className="relative mt-8 overflow-hidden rounded-[26px] border border-[#ead8b7]/16 bg-[#143427]/78 p-4 shadow-[0_22px_64px_rgba(4,24,14,0.25)] backdrop-blur-xl sm:mt-10 sm:p-6"
+        >
+          <Link href={`/${lang}/library/my-cards`} className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <span className="icon-tile flex size-14 shrink-0 items-center justify-center rounded-lg">
+              <BookOpenCheck className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
+            </span>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg font-extrabold text-[#fff3dc]">{t.myCards}</h2>
+              <div className="mt-2 h-2 w-full rounded-full bg-white/14">
+                <div
+                  className="h-full rounded-full bg-linear-to-r from-[#8fca82] to-[#1f9b7d] transition-all"
+                  style={{
+                    width: `${queue.due_count + queue.new_count > 0 ? Math.min((queue.due_count + queue.new_count) / (totalAdded * 0.3) * 100, 100) : 0}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-xs text-[#ead8b7]/70 sm:text-sm">
+                <strong className="text-[#fff3dc]">{queue.due_count + queue.new_count}</strong> {t.due}{" "}
+                · <strong className="text-[#9fd08b]">{totalAdded}</strong> {t.words.toLowerCase()}
+              </p>
+            </div>
+          </Link>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href={`/${lang}/library/my-cards`}>
+              <Button variant="secondary" size="sm">
+                {t.manage}
+              </Button>
+            </Link>
+            <Link href={`/${lang}/review`}>
+              <Button size="sm">{t.review} →</Button>
+            </Link>
+          </div>
+        </motion.section>
+      )}
+
+      {/* Level shelves */}
+      <section className="mt-10 sm:mt-12">
+        <div className="mb-4 flex items-center gap-2 sm:mb-6">
+          <Target className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
+          <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t.title}</h2>
+        </div>
+        <p className="mb-5 text-sm leading-6 text-ink-soft sm:mb-6">{t.subtitle}</p>
+        <div className="grid grid-cols-2 gap-3 min-[390px]:gap-4 sm:gap-5 lg:grid-cols-4">
+          {SHELVES.map((meta, i) => {
+            const data = meta.soon ? undefined : shelves[meta.key];
+            return (
+              <motion.div
+                key={meta.slug}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.05 * i, duration: 0.35 }}
+              >
+                <LevelCard
+                  lang={lang}
+                  meta={meta}
+                  strings={shelfStrings[meta.slug]}
+                  total={data?.total ?? 0}
+                  learned={data?.learned ?? 0}
+                  labels={labels}
+                />
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Your collections */}
+      <section className="mt-12 sm:mt-16">
+        <div className="flex items-center gap-2">
+          <Sparkles className="size-5 text-brand-600 dark:text-brand-300" />
+          <h2 className="text-xl font-extrabold tracking-tight text-ink sm:text-2xl">{t.collections}</h2>
+        </div>
+        <p className="mt-1 text-sm text-ink-soft">{t.collectionsDesc}</p>
+
+        <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+          {decks.map((deck) => (
+            <CollectionCard
+              key={deck.id}
+              lang={lang}
+              deck={deck}
+              labels={{
+                cards: t.cards,
+                due: t.due,
+                review: t.review,
+                import: t.importCsv,
+                export: t.exportCsv,
+                delete: t.delete,
+              }}
+              onImport={() => {
+                importTarget.current = deck.id;
+                fileInput.current?.click();
+              }}
+              onExport={() => void exportDeckCsv(deck.id, deck.name)}
+              onDelete={async () => {
+                if (!window.confirm(t.deleteConfirm)) return;
+                await flashcardsApi.deleteDeck(deck.id);
+                reload();
+              }}
+            />
+          ))}
+
+          {/* Create new collection */}
+          <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 300, damping: 22 }}
+            className="premium-card flex h-full min-h-40 flex-col items-stretch justify-center rounded-lg border-2 border-dashed border-line bg-card/40 p-6 backdrop-blur-sm"
+          >
+            {creating ? (
+              <form onSubmit={onCreate} className="space-y-3">
+                <div>
+                  <Label htmlFor="name">{t.deckName}</Label>
+                  <Input id="name" name="name" required maxLength={80} autoFocus />
+                </div>
+                <div>
+                  <Label htmlFor="description">{t.deckDesc}</Label>
+                  <Input id="description" name="description" maxLength={300} />
+                </div>
+                <div className="flex gap-2">
+                  <Button type="submit" size="sm">
+                    {t.create}
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" onClick={() => setCreating(false)}>
+                    <X className="size-4" aria-hidden />
+                  </Button>
+                </div>
+              </form>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setCreating(true)}
+                className="flex flex-col items-center gap-2 text-ink-soft transition-colors hover:text-ink"
+              >
+                <span className="icon-tile flex size-12 items-center justify-center rounded-lg text-brand-600 dark:text-brand-300">
+                  <Plus className="size-6" />
+                </span>
+                <span className="font-semibold">{t.newCollection}</span>
+              </button>
+            )}
+          </motion.div>
+        </div>
+      </section>
+    </main>
+  );
+}

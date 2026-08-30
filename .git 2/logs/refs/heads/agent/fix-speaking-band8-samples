@@ -1,0 +1,6 @@
+0000000000000000000000000000000000000000 0d912741606cbc934add61ddc02a16037eeee06a berdullayev@gmail.com <berdullayev@gmail.com> 1786640973 +0500	branch: Created from origin/main
+0d912741606cbc934add61ddc02a16037eeee06a a4ff2579494daf234aafaec6429e207d37f21bb3 berdullayev@gmail.com <berdullayev@gmail.com> 1786812581 +0500	commit: Replace generated Speaking samples with written question-answer pairs
+a4ff2579494daf234aafaec6429e207d37f21bb3 dc9387471653ebff567a25bc6fa8d3fb3c67fb57 berdullayev@gmail.com <berdullayev@gmail.com> 1786813975 +0500	commit: Vary reading answer keys and ground evidence in the passage text
+dc9387471653ebff567a25bc6fa8d3fb3c67fb57 3d7a739b98f7a9ce084744283a7b89acc6c11dbd berdullayev@gmail.com <berdullayev@gmail.com> 1786814470 +0500	commit: Stop saving usage notes and English echoes as expression translations
+3d7a739b98f7a9ce084744283a7b89acc6c11dbd c98b201124087089a549442c9ec8eb36d8c9b443 berdullayev@gmail.com <berdullayev@gmail.com> 1786815767 +0500	commit: Rebuild the auth screens as the paper-cut split card
+c98b201124087089a549442c9ec8eb36d8c9b443 4d6ea4ccedb457b5b9e430afb38f59c774eb8a69 berdullayev@gmail.com <berdullayev@gmail.com> 1786815780 +0500	commit: Document Google sign-in setup and allow its popup to report back
