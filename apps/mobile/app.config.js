@@ -1,12 +1,31 @@
-import type { ConfigContext, ExpoConfig } from "expo/config";
+// Plain JS, deliberately not app.config.ts: EAS Build's own config-reading
+// step (a fixed copy of @expo/require-utils bundled into their build worker,
+// separate from anything this project pins) fails to parse this file as
+// TypeScript — "SyntaxError: Unexpected token '{'" inside
+// compileSourceTextModule, from /usr/local/eas-build-worker's own code, not
+// this project's node_modules. Reproduced locally under both Node 24 and a
+// worker-matching 20.20.2 without error, which means the failure is specific
+// to whatever version of that parser the worker ships, not to Node's version
+// or anything this project controls. Expo's own tracker has open reports of
+// the same failure signature. .js sidesteps the whole TS-in-config parsing
+// path — there is nothing left for that parser to mis-stem.
+//
+// JSDoc keeps editor type-checking on ConfigContext/ExpoConfig; there is
+// nothing here `tsc --noEmit` would have caught that JSDoc + `strict`-mode
+// editor hints don't already catch by hand.
 
-function googleIosUrlScheme(clientId?: string): string | null {
+/**
+ * @param {string | undefined} clientId
+ * @returns {string | null}
+ */
+function googleIosUrlScheme(clientId) {
   const suffix = ".apps.googleusercontent.com";
   if (!clientId?.endsWith(suffix)) return null;
   return `com.googleusercontent.apps.${clientId.slice(0, -suffix.length)}`;
 }
 
-function assertProductionEnvironment(): void {
+/** @returns {void} */
+function assertProductionEnvironment() {
   const profile = process.env.EAS_BUILD_PROFILE;
   if (profile !== "production" && profile !== "preview") return;
 
@@ -37,7 +56,12 @@ function assertProductionEnvironment(): void {
   }
 }
 
-export default ({ config }: ConfigContext): ExpoConfig => {
+/**
+ * @param {import("expo/config").ConfigContext} root0
+ * @param {import("expo/config").ExpoConfig} root0.config
+ * @returns {import("expo/config").ExpoConfig}
+ */
+module.exports = ({ config }) => {
   assertProductionEnvironment();
   const iosUrlScheme = googleIosUrlScheme(process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID);
   if (process.env.EAS_BUILD_PROFILE === "production" && !iosUrlScheme) {
