@@ -18,7 +18,7 @@ export interface MasterUnit {
 export const MASTER_UNITS: MasterUnit[] = [
   { slug: "process", kind: "image", title: "Process diagrams", titleUz: "Process diagrammalar", vocabularySlug: "task1-process-language" },
   { slug: "bar-chart", kind: "bar", title: "Bar charts", titleUz: "Bar chartlar", vocabularySlug: "task1-trend-vocabulary" },
-  { slug: "line-graph", kind: "line", title: "Line graphs", titleUz: "Line grafiklar", vocabularySlug: "task1-trend-vocabulary" },
+  { slug: "line-graph", kind: "line", title: "Line graphs", titleUz: "Line grafiklar", vocabularySlug: "task1-line-graph-mastery" },
   { slug: "table", kind: "table", title: "Tables", titleUz: "Jadvallar", vocabularySlug: "task1-comparison-vocabulary" },
   { slug: "pie-chart", kind: "pie-pair", title: "Pie charts", titleUz: "Pie chartlar", vocabularySlug: "task1-proportion-vocabulary" },
 ];
