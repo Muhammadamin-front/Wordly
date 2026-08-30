@@ -29,6 +29,9 @@ from app.services.ielts_scoring import RELIABLE_QUESTION_COUNT, band_from_ratio,
 
 XP_READING = 30
 XP_WRITING = 40
+# Master Writing drills are one sentence/paragraph, not a full essay — a
+# fraction of XP_WRITING keeps the numbers honest about the effort involved.
+XP_WRITING_DRILL = 10
 XP_LISTENING = 30
 
 # Static Writing prompts (Academic), rotated client-side. Original prompts in
@@ -2008,6 +2011,101 @@ async def score_writing(
         analysis=analysis,
         reward=reward,
     )
+
+
+# --- Master Writing drills -----------------------------------------------
+# Short, single-shot checks (one sentence / one paragraph), not full-essay
+# band scoring — grading a paraphrase on the 0-9 scale is meaningless, and it
+# would spend the expensive _WRITING_SCHEMA call on a cheap task. Modeled on
+# api/v1/ai.py's WRITING_SCHEMA ({corrected, feedback}) rather than
+# _WRITING_SCHEMA. Gated by the general ai_quota (via the route's _guarded),
+# not has_free/premium_writing_quota — that quota is for full essays.
+
+_DRILL_QUALITY_SCORE = {"needs_work": 40, "good": 75, "excellent": 100}
+
+_DRILL_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "quality": {"type": "string", "enum": ["needs_work", "good", "excellent"]},
+        "feedback": {"type": "string"},
+        "model_example": {"type": "string"},
+    },
+    "required": ["quality", "feedback", "model_example"],
+    "additionalProperties": False,
+}
+
+
+@dataclass
+class DrillFeedback:
+    quality: str
+    feedback: str
+    model_example: str
+    score: int
+    reward: RewardSummary
+
+
+def _drill_feedback(data: Dict[str, Any], reward: RewardSummary) -> DrillFeedback:
+    quality = str(data.get("quality", "needs_work"))
+    if quality not in _DRILL_QUALITY_SCORE:
+        quality = "needs_work"
+    return DrillFeedback(
+        quality=quality,
+        feedback=str(data.get("feedback", "")).strip(),
+        model_example=str(data.get("model_example", "")).strip(),
+        score=_DRILL_QUALITY_SCORE[quality],
+        reward=reward,
+    )
+
+
+async def score_paraphrase(
+    db: AsyncSession, user: User, client: AiClient,
+    original_title: str, learner_paraphrase: str, lang: str = "en",
+) -> DrillFeedback:
+    """Grade one paraphrased Task 1 introduction sentence."""
+    feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
+    system = (
+        "You are an IELTS Writing Task 1 coach focused on one skill: paraphrasing the "
+        "question title into a strong introduction sentence. A good paraphrase changes "
+        "the wording and sentence structure while keeping the exact meaning — it does not "
+        "just swap one or two synonyms, and it must not change what the chart/diagram "
+        "actually shows. 'excellent' = natural, well-structured, meaning fully preserved. "
+        "'good' = meaning preserved but wording is close to the original or slightly "
+        "awkward. 'needs_work' = meaning changed, key information dropped, or barely "
+        "reworded at all. Give feedback in {lang}. model_example is one strong paraphrase "
+        "sentence in English, regardless of feedback language."
+    ).format(lang=feedback_lang)
+    prompt = (
+        'Original title: "{title}"\n\nLearner\'s paraphrase: "{paraphrase}"'
+    ).format(title=original_title, paraphrase=learner_paraphrase)
+    data = await client.json(system=system, prompt=prompt, schema=_DRILL_SCHEMA, max_tokens=400)
+    reward = await apply_skill_xp(db, user, XP_WRITING_DRILL)
+    return _drill_feedback(data, reward)
+
+
+async def score_overview(
+    db: AsyncSession, user: User, client: AiClient,
+    visual: Dict[str, Any], learner_overview: str, lang: str = "en",
+) -> DrillFeedback:
+    """Grade one Task 1 overview paragraph (the highest-value paragraph in a
+    real answer) written for the given chart/diagram."""
+    feedback_lang = _FEEDBACK_LANG.get(lang, _FEEDBACK_LANG["en"])
+    system = (
+        "You are an IELTS Writing Task 1 coach focused on one skill: writing the overview "
+        "paragraph — 1-2 sentences stating the most significant overall pattern(s) in the "
+        "chart or diagram, with NO specific numbers or minor details. 'excellent' = "
+        "identifies the single most important trend/feature and nothing more. 'good' = "
+        "identifies a real pattern but is too detailed (includes numbers) or misses the "
+        "most significant feature. 'needs_work' = restates the chart title, lists random "
+        "data points instead of a pattern, or is factually wrong about what the visual "
+        "shows. Give feedback in {lang}. model_example is one strong overview in English, "
+        "regardless of feedback language."
+    ).format(lang=feedback_lang)
+    prompt = (
+        "Chart/diagram data (JSON): {visual}\n\nLearner's overview: \"{overview}\""
+    ).format(visual=json.dumps(visual)[:2000], overview=learner_overview)
+    data = await client.json(system=system, prompt=prompt, schema=_DRILL_SCHEMA, max_tokens=400)
+    reward = await apply_skill_xp(db, user, XP_WRITING_DRILL)
+    return _drill_feedback(data, reward)
 
 
 # --- Overview ----------------------------------------------------------------

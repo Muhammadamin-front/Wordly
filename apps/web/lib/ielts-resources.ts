@@ -684,6 +684,140 @@ export interface VocabularyResource {
 
 export const IELTS_VOCABULARY_RESOURCES: VocabularyResource[] = [
   {
+    slug: "task1-trend-vocabulary",
+    eyebrow: "Master Writing · Bar & line charts",
+    title: "Trend Vocabulary",
+    description: "The verbs and adverbs that describe how a line or bar moves over time — the backbone of every bar/line Task 1 answer.",
+    groups: [
+      {
+        title: "Rising",
+        note: "Vary the verb, then add an adverb or a speed word — don't just repeat 'increased'.",
+        items: [
+          { basic: "went up", advanced: "increased · rose · climbed", example: "The number of users increased steadily between 2015 and 2020." },
+          { basic: "went up a lot, fast", advanced: "soared · surged · rocketed", example: "Sales soared after the product launch." },
+          { basic: "went up slowly", advanced: "edged up · crept up", example: "Prices edged up slightly over the decade." },
+          { basic: "reached the top", advanced: "peaked at", example: "Demand peaked at just over 80% in July." },
+        ],
+      },
+      {
+        title: "Falling",
+        note: "The falling equivalents — a Task 1 answer with only 'increase' words reads as one-note.",
+        items: [
+          { basic: "went down", advanced: "decreased · fell · declined", example: "Unemployment declined throughout the period." },
+          { basic: "went down a lot, fast", advanced: "plummeted · plunged · collapsed", example: "Exports plummeted during the crisis." },
+          { basic: "went down slowly", advanced: "eased · tailed off", example: "Inflation eased in the final quarter." },
+          { basic: "went down to the lowest point", advanced: "bottomed out", example: "The market bottomed out in early 2009." },
+        ],
+      },
+      {
+        title: "No clear direction",
+        note: "Real data rarely moves in one straight line — these describe the rest of it.",
+        items: [
+          { basic: "went up and down", advanced: "fluctuated", example: "Rainfall fluctuated considerably from month to month." },
+          { basic: "stayed the same", advanced: "remained stable · plateaued · levelled off", example: "Growth plateaued after 2018." },
+          { basic: "stayed about the same, small changes", advanced: "remained broadly stable", example: "The rate remained broadly stable at around 5%." },
+          { basic: "went past another line", advanced: "overtook · surpassed", example: "China overtook the US in 2010." },
+        ],
+      },
+      {
+        title: "Describing the size of a change",
+        note: "A number alone is weak — pair it with a size word.",
+        items: [
+          { basic: "a big change", advanced: "a dramatic / sharp / marked increase", example: "There was a dramatic increase in car ownership." },
+          { basic: "a small change", advanced: "a slight / marginal / gradual rise", example: "A gradual rise was recorded in the same period." },
+          { basic: "did not change", advanced: "remained constant / unchanged", example: "The figure remained unchanged throughout." },
+          { basic: "twice as much", advanced: "doubled", example: "The population doubled over thirty years." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "task1-process-language",
+    eyebrow: "Master Writing · Process diagrams",
+    title: "Process Language",
+    description: "Passive voice and sequencing markers — how a process description differs from a data description.",
+    groups: [
+      {
+        title: "Sequencing a step",
+        note: "Vary these — a process answer that starts every sentence with 'then' reads as a list, not prose.",
+        items: [
+          { basic: "first", advanced: "initially · at the outset", example: "Initially, the raw bamboo is harvested by hand." },
+          { basic: "next", advanced: "subsequently · following this", example: "Following this, the strips are crushed into a pulp." },
+          { basic: "after that", advanced: "once X has happened, Y is done", example: "Once the fibres have been softened, they are spun into yarn." },
+          { basic: "at the same time", advanced: "simultaneously · meanwhile", example: "Meanwhile, water is added to the mixture." },
+          { basic: "last", advanced: "finally · at the final stage", example: "At the final stage, the fabric is cut and sewn into clothing." },
+        ],
+      },
+      {
+        title: "The passive voice (the core skill)",
+        note: "A process has no named actor — 'workers crush the strips' is wrong; 'the strips are crushed' is right.",
+        items: [
+          { basic: "workers crush it", advanced: "it is crushed", example: "The bamboo stems are crushed to make a liquid pulp." },
+          { basic: "they filter it", advanced: "it is filtered", example: "The liquid is filtered to separate the fibres." },
+          { basic: "they leave it to dry", advanced: "it is left to dry / it is dried", example: "The beans are left to dry in the sun for several days." },
+          { basic: "after they do X, they do Y", advanced: "after being X-ed, it is Y-ed", example: "After being harvested, the cherries are depulped and fermented." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "task1-proportion-vocabulary",
+    eyebrow: "Master Writing · Pie charts",
+    title: "Proportion Vocabulary",
+    description: "Fraction and share language for describing parts of a whole — the vocabulary a bar/line answer never needs.",
+    groups: [
+      {
+        title: "Fractions and shares",
+        note: "Match the phrase to the real number — 'the majority' for anything under half is a factual error, not a style choice.",
+        items: [
+          { basic: "half", advanced: "half of · exactly 50%", example: "Exactly half of household spending went on housing." },
+          { basic: "a bit less than half", advanced: "just under half · nearly half", example: "Just under half of respondents chose this option." },
+          { basic: "more than half", advanced: "the majority · over half", example: "The majority of the budget was allocated to education." },
+          { basic: "a quarter", advanced: "a quarter of · one in four", example: "A quarter of the total came from renewable sources." },
+          { basic: "a very small part", advanced: "a negligible proportion · a tiny fraction", example: "A negligible proportion of energy came from coal." },
+        ],
+      },
+      {
+        title: "Comparing slices",
+        note: "Pie-pair prompts almost always ask you to compare two charts — this is where those marks come from.",
+        items: [
+          { basic: "the biggest part", advanced: "the largest share · accounted for the largest proportion", example: "Manufacturing accounted for the largest proportion of exports." },
+          { basic: "the smallest part", advanced: "the smallest share · made up the least", example: "Agriculture made up the least of the three sectors." },
+          { basic: "it got bigger between the two charts", advanced: "the share of X rose from ... to ...", example: "The share of online sales rose from 12% to 34%." },
+          { basic: "they were almost equal", advanced: "an almost identical proportion", example: "Both sectors accounted for an almost identical proportion." },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "task1-comparison-vocabulary",
+    eyebrow: "Master Writing · Tables",
+    title: "Comparison Vocabulary",
+    description: "A table has no visual shape to describe — every sentence is a direct comparison between rows or columns.",
+    groups: [
+      {
+        title: "Direct comparison",
+        note: "The core structure of a table answer: X compared with/to Y.",
+        items: [
+          { basic: "compared to", advanced: "compared with · in contrast to", example: "Spending on health, compared with education, rose more slowly." },
+          { basic: "more than", advanced: "higher than · in excess of", example: "Tuition fees were higher than the national average." },
+          { basic: "less than", advanced: "lower than · below", example: "The figure for rural areas was well below the urban rate." },
+          { basic: "the same as", advanced: "on a par with · comparable to", example: "Japan's figure was on a par with South Korea's." },
+        ],
+      },
+      {
+        title: "Superlatives (highest / lowest)",
+        note: "Every table has one row and one column that are the extremes — name them explicitly.",
+        items: [
+          { basic: "the biggest number", advanced: "the highest figure · the largest amount", example: "Germany recorded the highest figure among the four countries." },
+          { basic: "the smallest number", advanced: "the lowest figure · the smallest amount", example: "The lowest figure was recorded in the final year." },
+          { basic: "second biggest", advanced: "the second-highest", example: "Canada had the second-highest rate, just behind the US." },
+          { basic: "very different from each other", advanced: "a marked disparity / a wide gap between", example: "There was a wide gap between the highest and lowest figures." },
+        ],
+      },
+    ],
+  },
+  {
     slug: "use-this-instead",
     eyebrow: "Lexical upgrade",
     title: "Use This Instead",

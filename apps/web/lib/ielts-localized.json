@@ -504,6 +504,308 @@
     },
     "resources": [
       {
+        "slug": "task1-trend-vocabulary",
+        "eyebrow": "Master Writing · Bar & line charts",
+        "title": "Trend so'zlar",
+        "description": "Vaqt o'tishi bilan chiziq yoki ustun qanday harakatlanishini tasvirlaydigan fe'l va ravishlar — har qanday bar/line Task 1 javobining asosi.",
+        "groups": [
+          {
+            "title": "Ko'tarilish",
+            "note": "Fe'lni har xillashtiring, so'ng ravish yoki tezlik so'zi qo'shing — faqat 'increased'ni takrorlamang.",
+            "items": [
+              {
+                "basic": "went up",
+                "advanced": "increased · rose · climbed",
+                "example": "The number of users increased steadily between 2015 and 2020."
+              },
+              {
+                "basic": "went up a lot, fast",
+                "advanced": "soared · surged · rocketed",
+                "example": "Sales soared after the product launch."
+              },
+              {
+                "basic": "went up slowly",
+                "advanced": "edged up · crept up",
+                "example": "Prices edged up slightly over the decade."
+              },
+              {
+                "basic": "reached the top",
+                "advanced": "peaked at",
+                "example": "Demand peaked at just over 80% in July."
+              }
+            ]
+          },
+          {
+            "title": "Pasayish",
+            "note": "Pasayish uchun ham xuddi shunday — faqat 'increase' so'zlari bilan yozilgan Task 1 javobi bir xilday ko'rinadi.",
+            "items": [
+              {
+                "basic": "went down",
+                "advanced": "decreased · fell · declined",
+                "example": "Unemployment declined throughout the period."
+              },
+              {
+                "basic": "went down a lot, fast",
+                "advanced": "plummeted · plunged · collapsed",
+                "example": "Exports plummeted during the crisis."
+              },
+              {
+                "basic": "went down slowly",
+                "advanced": "eased · tailed off",
+                "example": "Inflation eased in the final quarter."
+              },
+              {
+                "basic": "went down to the lowest point",
+                "advanced": "bottomed out",
+                "example": "The market bottomed out in early 2009."
+              }
+            ]
+          },
+          {
+            "title": "Aniq yo'nalishsiz",
+            "note": "Haqiqiy ma'lumotlar kamdan-kam holda faqat bitta chiziq bo'ylab harakatlanadi — qolganini shular tasvirlaydi.",
+            "items": [
+              {
+                "basic": "went up and down",
+                "advanced": "fluctuated",
+                "example": "Rainfall fluctuated considerably from month to month."
+              },
+              {
+                "basic": "stayed the same",
+                "advanced": "remained stable · plateaued · levelled off",
+                "example": "Growth plateaued after 2018."
+              },
+              {
+                "basic": "stayed about the same, small changes",
+                "advanced": "remained broadly stable",
+                "example": "The rate remained broadly stable at around 5%."
+              },
+              {
+                "basic": "went past another line",
+                "advanced": "overtook · surpassed",
+                "example": "China overtook the US in 2010."
+              }
+            ]
+          },
+          {
+            "title": "O'zgarish darajasini tasvirlash",
+            "note": "Faqat raqam kuchsiz — uni hajm so'zi bilan birga qo'llang.",
+            "items": [
+              {
+                "basic": "a big change",
+                "advanced": "a dramatic / sharp / marked increase",
+                "example": "There was a dramatic increase in car ownership."
+              },
+              {
+                "basic": "a small change",
+                "advanced": "a slight / marginal / gradual rise",
+                "example": "A gradual rise was recorded in the same period."
+              },
+              {
+                "basic": "did not change",
+                "advanced": "remained constant / unchanged",
+                "example": "The figure remained unchanged throughout."
+              },
+              {
+                "basic": "twice as much",
+                "advanced": "doubled",
+                "example": "The population doubled over thirty years."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-process-language",
+        "eyebrow": "Master Writing · Process diagrammalar",
+        "title": "Process lug'ati",
+        "description": "Passive voice va ketma-ketlik so'zlari — process tavsifi ma'lumot tavsifidan nimasi bilan farq qiladi.",
+        "groups": [
+          {
+            "title": "Bosqichlarni ketma-ketlashtirish",
+            "note": "Har xillashtiring — har bir gapni 'keyin' bilan boshlagan process javobi ro'yxatga o'xshab qoladi, matnga emas.",
+            "items": [
+              {
+                "basic": "first",
+                "advanced": "initially · at the outset",
+                "example": "Initially, the raw bamboo is harvested by hand."
+              },
+              {
+                "basic": "next",
+                "advanced": "subsequently · following this",
+                "example": "Following this, the strips are crushed into a pulp."
+              },
+              {
+                "basic": "after that",
+                "advanced": "once X has happened, Y is done",
+                "example": "Once the fibres have been softened, they are spun into yarn."
+              },
+              {
+                "basic": "at the same time",
+                "advanced": "simultaneously · meanwhile",
+                "example": "Meanwhile, water is added to the mixture."
+              },
+              {
+                "basic": "last",
+                "advanced": "finally · at the final stage",
+                "example": "At the final stage, the fabric is cut and sewn into clothing."
+              }
+            ]
+          },
+          {
+            "title": "Passive voice (asosiy ko'nikma)",
+            "note": "Processda aniq ega yo'q — 'ishchilar uni maydalaydi' noto'g'ri; 'u maydalanadi' to'g'ri.",
+            "items": [
+              {
+                "basic": "workers crush it",
+                "advanced": "it is crushed",
+                "example": "The bamboo stems are crushed to make a liquid pulp."
+              },
+              {
+                "basic": "they filter it",
+                "advanced": "it is filtered",
+                "example": "The liquid is filtered to separate the fibres."
+              },
+              {
+                "basic": "they leave it to dry",
+                "advanced": "it is left to dry / it is dried",
+                "example": "The beans are left to dry in the sun for several days."
+              },
+              {
+                "basic": "after they do X, they do Y",
+                "advanced": "after being X-ed, it is Y-ed",
+                "example": "After being harvested, the cherries are depulped and fermented."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-proportion-vocabulary",
+        "eyebrow": "Master Writing · Pie chartlar",
+        "title": "Ulush lug'ati",
+        "description": "Butunning qismlarini tasvirlash uchun kasr va ulush so'zlari — bar/line javobida hech qachon kerak bo'lmaydigan lug'at.",
+        "groups": [
+          {
+            "title": "Ulush va foizlar",
+            "note": "Iborani haqiqiy songa mos tanlang — yarmidan kam narsa uchun 'ko'pchilik' deyish stil emas, faktik xato.",
+            "items": [
+              {
+                "basic": "half",
+                "advanced": "half of · exactly 50%",
+                "example": "Exactly half of household spending went on housing."
+              },
+              {
+                "basic": "a bit less than half",
+                "advanced": "just under half · nearly half",
+                "example": "Just under half of respondents chose this option."
+              },
+              {
+                "basic": "more than half",
+                "advanced": "the majority · over half",
+                "example": "The majority of the budget was allocated to education."
+              },
+              {
+                "basic": "a quarter",
+                "advanced": "a quarter of · one in four",
+                "example": "A quarter of the total came from renewable sources."
+              },
+              {
+                "basic": "a very small part",
+                "advanced": "a negligible proportion · a tiny fraction",
+                "example": "A negligible proportion of energy came from coal."
+              }
+            ]
+          },
+          {
+            "title": "Bo'laklarni solishtirish",
+            "note": "Pie-pair promptlari deyarli har doim ikkita chartni solishtirishni so'raydi — bu ballar aynan shu yerdan keladi.",
+            "items": [
+              {
+                "basic": "the biggest part",
+                "advanced": "the largest share · accounted for the largest proportion",
+                "example": "Manufacturing accounted for the largest proportion of exports."
+              },
+              {
+                "basic": "the smallest part",
+                "advanced": "the smallest share · made up the least",
+                "example": "Agriculture made up the least of the three sectors."
+              },
+              {
+                "basic": "it got bigger between the two charts",
+                "advanced": "the share of X rose from ... to ...",
+                "example": "The share of online sales rose from 12% to 34%."
+              },
+              {
+                "basic": "they were almost equal",
+                "advanced": "an almost identical proportion",
+                "example": "Both sectors accounted for an almost identical proportion."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-comparison-vocabulary",
+        "eyebrow": "Master Writing · Jadvallar",
+        "title": "Solishtirish lug'ati",
+        "description": "Jadvalda tasvirlanadigan vizual shakl yo'q — har bir gap qator yoki ustunlar orasidagi to'g'ridan-to'g'ri solishtiruv.",
+        "groups": [
+          {
+            "title": "To'g'ridan-to'g'ri solishtirish",
+            "note": "Jadval javobining asosiy tuzilishi: X, Y bilan solishtirganda.",
+            "items": [
+              {
+                "basic": "compared to",
+                "advanced": "compared with · in contrast to",
+                "example": "Spending on health, compared with education, rose more slowly."
+              },
+              {
+                "basic": "more than",
+                "advanced": "higher than · in excess of",
+                "example": "Tuition fees were higher than the national average."
+              },
+              {
+                "basic": "less than",
+                "advanced": "lower than · below",
+                "example": "The figure for rural areas was well below the urban rate."
+              },
+              {
+                "basic": "the same as",
+                "advanced": "on a par with · comparable to",
+                "example": "Japan's figure was on a par with South Korea's."
+              }
+            ]
+          },
+          {
+            "title": "Superlativlar (eng yuqori / eng past)",
+            "note": "Har bir jadvalda eng yuqori va eng past bitta qator va ustun bor — ularni aniq nomlang.",
+            "items": [
+              {
+                "basic": "the biggest number",
+                "advanced": "the highest figure · the largest amount",
+                "example": "Germany recorded the highest figure among the four countries."
+              },
+              {
+                "basic": "the smallest number",
+                "advanced": "the lowest figure · the smallest amount",
+                "example": "The lowest figure was recorded in the final year."
+              },
+              {
+                "basic": "second biggest",
+                "advanced": "the second-highest",
+                "example": "Canada had the second-highest rate, just behind the US."
+              },
+              {
+                "basic": "very different from each other",
+                "advanced": "a marked disparity / a wide gap between",
+                "example": "There was a wide gap between the highest and lowest figures."
+              }
+            ]
+          }
+        ]
+      },
+      {
         "slug": "use-this-instead",
         "eyebrow": "Leksik yangilanish",
         "title": "Buning o'rniga foydalaning",
@@ -1311,6 +1613,308 @@
       }
     },
     "resources": [
+      {
+        "slug": "task1-trend-vocabulary",
+        "eyebrow": "Master Writing · Бар и линейные графики",
+        "title": "Лексика трендов",
+        "description": "Глаголы и наречия, описывающие движение линии или столбца во времени — основа любого ответа Task 1 по bar/line.",
+        "groups": [
+          {
+            "title": "Рост",
+            "note": "Меняйте глагол, добавляйте наречие или слово скорости — не повторяйте только 'increased'.",
+            "items": [
+              {
+                "basic": "went up",
+                "advanced": "increased · rose · climbed",
+                "example": "The number of users increased steadily between 2015 and 2020."
+              },
+              {
+                "basic": "went up a lot, fast",
+                "advanced": "soared · surged · rocketed",
+                "example": "Sales soared after the product launch."
+              },
+              {
+                "basic": "went up slowly",
+                "advanced": "edged up · crept up",
+                "example": "Prices edged up slightly over the decade."
+              },
+              {
+                "basic": "reached the top",
+                "advanced": "peaked at",
+                "example": "Demand peaked at just over 80% in July."
+              }
+            ]
+          },
+          {
+            "title": "Падение",
+            "note": "То же самое для падения — ответ Task 1 только со словами 'increase' звучит однообразно.",
+            "items": [
+              {
+                "basic": "went down",
+                "advanced": "decreased · fell · declined",
+                "example": "Unemployment declined throughout the period."
+              },
+              {
+                "basic": "went down a lot, fast",
+                "advanced": "plummeted · plunged · collapsed",
+                "example": "Exports plummeted during the crisis."
+              },
+              {
+                "basic": "went down slowly",
+                "advanced": "eased · tailed off",
+                "example": "Inflation eased in the final quarter."
+              },
+              {
+                "basic": "went down to the lowest point",
+                "advanced": "bottomed out",
+                "example": "The market bottomed out in early 2009."
+              }
+            ]
+          },
+          {
+            "title": "Без чёткого направления",
+            "note": "Реальные данные редко движутся по прямой — это слова для всего остального.",
+            "items": [
+              {
+                "basic": "went up and down",
+                "advanced": "fluctuated",
+                "example": "Rainfall fluctuated considerably from month to month."
+              },
+              {
+                "basic": "stayed the same",
+                "advanced": "remained stable · plateaued · levelled off",
+                "example": "Growth plateaued after 2018."
+              },
+              {
+                "basic": "stayed about the same, small changes",
+                "advanced": "remained broadly stable",
+                "example": "The rate remained broadly stable at around 5%."
+              },
+              {
+                "basic": "went past another line",
+                "advanced": "overtook · surpassed",
+                "example": "China overtook the US in 2010."
+              }
+            ]
+          },
+          {
+            "title": "Описание величины изменения",
+            "note": "Одно число слабо — добавляйте к нему слово величины.",
+            "items": [
+              {
+                "basic": "a big change",
+                "advanced": "a dramatic / sharp / marked increase",
+                "example": "There was a dramatic increase in car ownership."
+              },
+              {
+                "basic": "a small change",
+                "advanced": "a slight / marginal / gradual rise",
+                "example": "A gradual rise was recorded in the same period."
+              },
+              {
+                "basic": "did not change",
+                "advanced": "remained constant / unchanged",
+                "example": "The figure remained unchanged throughout."
+              },
+              {
+                "basic": "twice as much",
+                "advanced": "doubled",
+                "example": "The population doubled over thirty years."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-process-language",
+        "eyebrow": "Master Writing · Диаграммы процессов",
+        "title": "Лексика процессов",
+        "description": "Пассивный залог и слова последовательности — чем описание процесса отличается от описания данных.",
+        "groups": [
+          {
+            "title": "Последовательность этапов",
+            "note": "Меняйте их — ответ, где каждое предложение начинается с 'затем', читается как список, а не текст.",
+            "items": [
+              {
+                "basic": "first",
+                "advanced": "initially · at the outset",
+                "example": "Initially, the raw bamboo is harvested by hand."
+              },
+              {
+                "basic": "next",
+                "advanced": "subsequently · following this",
+                "example": "Following this, the strips are crushed into a pulp."
+              },
+              {
+                "basic": "after that",
+                "advanced": "once X has happened, Y is done",
+                "example": "Once the fibres have been softened, they are spun into yarn."
+              },
+              {
+                "basic": "at the same time",
+                "advanced": "simultaneously · meanwhile",
+                "example": "Meanwhile, water is added to the mixture."
+              },
+              {
+                "basic": "last",
+                "advanced": "finally · at the final stage",
+                "example": "At the final stage, the fabric is cut and sewn into clothing."
+              }
+            ]
+          },
+          {
+            "title": "Пассивный залог (ключевой навык)",
+            "note": "У процесса нет названного исполнителя — 'рабочие измельчают его' неверно; 'он измельчается' верно.",
+            "items": [
+              {
+                "basic": "workers crush it",
+                "advanced": "it is crushed",
+                "example": "The bamboo stems are crushed to make a liquid pulp."
+              },
+              {
+                "basic": "they filter it",
+                "advanced": "it is filtered",
+                "example": "The liquid is filtered to separate the fibres."
+              },
+              {
+                "basic": "they leave it to dry",
+                "advanced": "it is left to dry / it is dried",
+                "example": "The beans are left to dry in the sun for several days."
+              },
+              {
+                "basic": "after they do X, they do Y",
+                "advanced": "after being X-ed, it is Y-ed",
+                "example": "After being harvested, the cherries are depulped and fermented."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-proportion-vocabulary",
+        "eyebrow": "Master Writing · Круговые диаграммы",
+        "title": "Лексика долей",
+        "description": "Слова для описания частей целого — лексика, которая никогда не нужна в ответе по bar/line.",
+        "groups": [
+          {
+            "title": "Доли и проценты",
+            "note": "Подбирайте фразу под реальное число — 'большинство' для доли меньше половины — это фактическая ошибка.",
+            "items": [
+              {
+                "basic": "half",
+                "advanced": "half of · exactly 50%",
+                "example": "Exactly half of household spending went on housing."
+              },
+              {
+                "basic": "a bit less than half",
+                "advanced": "just under half · nearly half",
+                "example": "Just under half of respondents chose this option."
+              },
+              {
+                "basic": "more than half",
+                "advanced": "the majority · over half",
+                "example": "The majority of the budget was allocated to education."
+              },
+              {
+                "basic": "a quarter",
+                "advanced": "a quarter of · one in four",
+                "example": "A quarter of the total came from renewable sources."
+              },
+              {
+                "basic": "a very small part",
+                "advanced": "a negligible proportion · a tiny fraction",
+                "example": "A negligible proportion of energy came from coal."
+              }
+            ]
+          },
+          {
+            "title": "Сравнение долей",
+            "note": "Промпты pie-pair почти всегда просят сравнить два чарта — именно отсюда берутся эти баллы.",
+            "items": [
+              {
+                "basic": "the biggest part",
+                "advanced": "the largest share · accounted for the largest proportion",
+                "example": "Manufacturing accounted for the largest proportion of exports."
+              },
+              {
+                "basic": "the smallest part",
+                "advanced": "the smallest share · made up the least",
+                "example": "Agriculture made up the least of the three sectors."
+              },
+              {
+                "basic": "it got bigger between the two charts",
+                "advanced": "the share of X rose from ... to ...",
+                "example": "The share of online sales rose from 12% to 34%."
+              },
+              {
+                "basic": "they were almost equal",
+                "advanced": "an almost identical proportion",
+                "example": "Both sectors accounted for an almost identical proportion."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "slug": "task1-comparison-vocabulary",
+        "eyebrow": "Master Writing · Таблицы",
+        "title": "Лексика сравнения",
+        "description": "У таблицы нет визуальной формы для описания — каждое предложение это прямое сравнение строк или столбцов.",
+        "groups": [
+          {
+            "title": "Прямое сравнение",
+            "note": "Основная структура ответа по таблице: X по сравнению с Y.",
+            "items": [
+              {
+                "basic": "compared to",
+                "advanced": "compared with · in contrast to",
+                "example": "Spending on health, compared with education, rose more slowly."
+              },
+              {
+                "basic": "more than",
+                "advanced": "higher than · in excess of",
+                "example": "Tuition fees were higher than the national average."
+              },
+              {
+                "basic": "less than",
+                "advanced": "lower than · below",
+                "example": "The figure for rural areas was well below the urban rate."
+              },
+              {
+                "basic": "the same as",
+                "advanced": "on a par with · comparable to",
+                "example": "Japan's figure was on a par with South Korea's."
+              }
+            ]
+          },
+          {
+            "title": "Превосходная степень (самый высокий / самый низкий)",
+            "note": "В каждой таблице есть одна строка и один столбец с крайними значениями — называйте их прямо.",
+            "items": [
+              {
+                "basic": "the biggest number",
+                "advanced": "the highest figure · the largest amount",
+                "example": "Germany recorded the highest figure among the four countries."
+              },
+              {
+                "basic": "the smallest number",
+                "advanced": "the lowest figure · the smallest amount",
+                "example": "The lowest figure was recorded in the final year."
+              },
+              {
+                "basic": "second biggest",
+                "advanced": "the second-highest",
+                "example": "Canada had the second-highest rate, just behind the US."
+              },
+              {
+                "basic": "very different from each other",
+                "advanced": "a marked disparity / a wide gap between",
+                "example": "There was a wide gap between the highest and lowest figures."
+              }
+            ]
+          }
+        ]
+      },
       {
         "slug": "use-this-instead",
         "eyebrow": "Лексическое обновление",

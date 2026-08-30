@@ -93,6 +93,9 @@ FREE_GAME_TYPES = frozenset(("word_match", "speed_quiz", "fill_blank", "listenin
 # giving away half the course.
 FREE_VOCABULARY_LEVELS = frozenset(("A1", "A2"))
 FREE_GRAMMAR_LEVELS = frozenset(("A1",))
+# Master Writing units, in teaching order. Only the first (process diagrams)
+# is free — same "one unit as a taste" shape as FREE_GRAMMAR_LEVELS.
+FREE_WRITING_MASTER_UNITS = frozenset(("process",))
 
 
 @dataclass(frozen=True)

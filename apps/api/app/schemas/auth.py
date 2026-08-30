@@ -1,7 +1,7 @@
 from typing import List, Literal, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class RegisterRequest(BaseModel):
@@ -73,6 +73,7 @@ class ProfileOut(BaseModel):
     learning_interests: List[str]
     onboarding_completed: bool
     starter_deck_id: Optional[UUID] = None
+    target_band_score: Optional[float] = None
 
 
 class UserOut(BaseModel):
@@ -110,6 +111,14 @@ class ProfileUpdate(BaseModel):
     ui_locale: Optional[str] = Field(default=None, pattern="^(uz|ru|en)$")
     timezone: Optional[str] = Field(default=None, max_length=64)
     bio: Optional[str] = Field(default=None, max_length=500)
+    target_band_score: Optional[float] = Field(default=None, ge=4.0, le=9.0)
+
+    @field_validator("target_band_score")
+    @classmethod
+    def _half_band_step(cls, value: Optional[float]) -> Optional[float]:
+        if value is not None and (value * 2) % 1 != 0:
+            raise ValueError("target_band_score must be in 0.5 steps (e.g. 6.5, 7.0)")
+        return value
 
 
 class PushTokenRegister(BaseModel):
