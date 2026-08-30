@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, BookOpenText, CheckCircle2, Lock, PenLine, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpenText, CheckCircle2, Lock, PenLine, Sparkles, Trophy } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -35,6 +35,23 @@ function DrillPanel({
   );
 }
 
+/** A brief "+N XP" pill after every drill/practice call that awards XP —
+ *  server-authoritative (echoes reward.xp_gained from the response, never a
+ *  client-guessed constant). Fades via the animate-xp-toast keyframe
+ *  (app/globals.css), keyed by toastKey — no internal effect/timer, the
+ *  caller clears xpToast itself after the same duration. */
+function XpToast({ xp, leveledUp, toastKey }: { xp: number; leveledUp: boolean; toastKey: number }) {
+  return (
+    <div key={toastKey} className="pointer-events-none fixed left-1/2 top-6 z-50 animate-xp-toast">
+      <div className="flex items-center gap-1.5 rounded-full bg-ink px-4 py-2 text-sm font-black text-white shadow-xl dark:bg-brand-600">
+        <Sparkles className="size-4 text-brand-300" />
+        +{xp} XP
+        {leveledUp && <span className="text-brand-300">· Level up!</span>}
+      </div>
+    </div>
+  );
+}
+
 export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: MasterUnit }) {
   const { user, ready } = useAuth();
   const isPremium = usePremiumStatus();
@@ -50,6 +67,14 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
   const [score, setScore] = useState<WritingScore | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [xpToast, setXpToast] = useState<{ xp: number; leveledUp: boolean; key: number } | null>(null);
+  const pass = passBand(user?.profile.target_band_score ?? null);
+
+  function fireXp(xp: number, leveledUp: boolean) {
+    if (xp <= 0) return;
+    setXpToast({ xp, leveledUp, key: Date.now() });
+    window.setTimeout(() => setXpToast(null), 2400);
+  }
 
   useEffect(() => {
     if (locked) return;
@@ -74,6 +99,7 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
     try {
       const result = await writingMasterApi.checkParaphrase(unit.slug, task.prompt, paraphraseText, lang);
       setParaphraseResult(result);
+      fireXp(result.xp_gained, result.leveled_up);
       if (result.quality !== "needs_work") await record("overview");
     } catch (err) {
       setError(err instanceof ApiError && err.status === 429 ? t.quotaOut : t.error);
@@ -89,6 +115,7 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
     try {
       const result = await writingMasterApi.checkOverview(unit.slug, task.visual, overviewText, lang);
       setOverviewResult(result);
+      fireXp(result.xp_gained, result.leveled_up);
       if (result.quality !== "needs_work") await record("practice");
     } catch (err) {
       setError(err instanceof ApiError && err.status === 429 ? t.quotaOut : t.error);
@@ -104,7 +131,8 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
     try {
       const result = await ieltsApi.scoreWriting("task1", task.prompt, essay, lang);
       setScore(result);
-      if (result.band_overall >= passBand(null)) await record("done");
+      fireXp(result.reward.xp_gained, result.reward.leveled_up);
+      if (result.band_overall >= pass) await record("done");
     } catch (err) {
       setError(err instanceof ApiError && err.status === 429 ? t.quotaOut : t.error);
     } finally {
@@ -127,22 +155,33 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
 
   const words = essay.trim() ? essay.trim().split(/\s+/).length : 0;
 
+  const stepOrder: Step[] = ["vocab", "paraphrase", "overview", "practice"];
+  const stepIndex = stepOrder.indexOf(step);
+
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      {xpToast && <XpToast xp={xpToast.xp} leveledUp={xpToast.leveledUp} toastKey={xpToast.key} />}
       <h1 className="font-display text-3xl text-ink">{lang === "uz" ? unit.titleUz : unit.title}</h1>
 
       {/* step rail */}
       <ol className="mt-4 flex flex-wrap gap-2 text-xs font-bold">
-        {(["vocab", "paraphrase", "overview", "practice"] as Step[]).map((s, i) => (
-          <li
-            key={s}
-            className={`rounded-full border px-3 py-1 ${
-              step === s ? "border-brand-500 bg-brand-500/10 text-brand-700" : "border-line text-ink-soft"
-            }`}
-          >
-            {i + 1}. {s}
-          </li>
-        ))}
+        {stepOrder.map((s, i) => {
+          const done = i < stepIndex || (i === stepIndex && score !== null);
+          return (
+            <li
+              key={s}
+              className={`flex items-center gap-1 rounded-full border px-3 py-1 ${
+                step === s
+                  ? "border-brand-500 bg-brand-500/10 text-brand-700"
+                  : done
+                    ? "border-success/40 bg-success/10 text-success"
+                    : "border-line text-ink-soft"
+              }`}
+            >
+              {done ? <CheckCircle2 className="size-3.5" /> : <span>{i + 1}.</span>} {s}
+            </li>
+          );
+        })}
       </ol>
 
       {error && <Alert tone="error" className="mt-4">{error}</Alert>}
@@ -242,10 +281,20 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
 
       {score && (
         <div className="mt-6">
-          {score.band_overall >= passBand(null) ? (
-            <Alert tone="success" className="mb-4"><CheckCircle2 className="mr-1 inline size-4" /> Unit mastered — nice work.</Alert>
+          {score.band_overall >= pass ? (
+            <div className="mb-4 flex items-center gap-3 rounded-2xl border border-success/30 bg-success/10 p-4">
+              <Trophy className="size-8 shrink-0 text-success" />
+              <div>
+                <p className="font-black text-success">Unit mastered!</p>
+                <p className="text-sm text-ink-soft">
+                  Band {score.band_overall.toFixed(1)}, at or above your {pass.toFixed(1)} pass mark for this unit.
+                </p>
+              </div>
+            </div>
           ) : (
-            <Alert tone="info" className="mb-4">Keep practicing this unit — you&apos;re not quite at the pass mark yet.</Alert>
+            <Alert tone="info" className="mb-4">
+              Band {score.band_overall.toFixed(1)} — keep practicing this unit, the pass mark is {pass.toFixed(1)}.
+            </Alert>
           )}
           <WritingFeedbackReport lang={lang} taskType="task1" score={score} t={t} onRetry={() => { setScore(null); setEssay(""); }} />
         </div>

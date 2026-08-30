@@ -69,3 +69,8 @@ class DrillFeedbackOut(BaseModel):
     # not model-chosen — the client posts this straight to
     # /me/writing-master-progress/attempt without inventing its own mapping.
     score: int
+    # Echoes the XP this call already awarded server-side (apply_skill_xp
+    # runs unconditionally, win or "needs_work") so the UI can show a real
+    # "+10 XP" toast instead of a client-guessed constant.
+    xp_gained: int
+    leveled_up: bool

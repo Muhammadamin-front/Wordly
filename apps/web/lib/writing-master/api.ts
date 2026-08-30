@@ -8,6 +8,8 @@ export interface DrillFeedback {
   feedback: string;
   model_example: string;
   score: number;
+  xp_gained: number;
+  leveled_up: boolean;
 }
 
 export interface WritingMasterProgressEntry {

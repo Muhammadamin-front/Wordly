@@ -363,6 +363,7 @@ async def writing_master_paraphrase_check(
     return DrillFeedbackOut(
         quality=result.quality, feedback=result.feedback,
         model_example=result.model_example, score=result.score,
+        xp_gained=result.reward.xp_gained, leveled_up=result.reward.leveled_up,
     )
 
 
@@ -384,4 +385,5 @@ async def writing_master_overview_check(
     return DrillFeedbackOut(
         quality=result.quality, feedback=result.feedback,
         model_example=result.model_example, score=result.score,
+        xp_gained=result.reward.xp_gained, leveled_up=result.reward.leveled_up,
     )
