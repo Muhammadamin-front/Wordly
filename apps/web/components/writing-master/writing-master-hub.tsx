@@ -18,11 +18,14 @@ const BAND_GOALS = [6.0, 6.5, 7.0, 7.5, 8.0, 8.5];
 export function WritingMasterHub({ lang }: { lang: string }) {
   const { user, ready, updateUser } = useAuth();
   const isPremium = usePremiumStatus();
-  const [progress, setProgress] = useState<WritingMasterProgress>({});
+  // Seeded via the useState initializer rather than an effect: loadProgress()
+  // is a safe no-op on the server (its own try/catch swallows the
+  // window-is-undefined error), and seeding here avoids the render-then-
+  // correct flash a same-tick setState-in-effect would cause.
+  const [progress, setProgress] = useState<WritingMasterProgress>(() => loadProgress());
   const [savingGoal, setSavingGoal] = useState(false);
 
   useEffect(() => {
-    setProgress(loadProgress());
     const onChange = () => setProgress(loadProgress());
     window.addEventListener(WRITING_MASTER_PROGRESS_EVENT, onChange);
     window.addEventListener("storage", onChange);
