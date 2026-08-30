@@ -48,4 +48,15 @@ describe("Reading workspace panel layout", () => {
     expect(navigator).toBeInTheDocument();
     expect(split).toHaveStyle({ "--reading-sheet-height": "46%" });
   });
+
+  it("names answer controls and review toggles from the visible question prompt", () => {
+    startTest();
+
+    const prompt = "Choose the best heading for paragraph A.";
+    expect(screen.getByRole("combobox", { name: prompt })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: `Mark for review: ${prompt}` })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+  });
 });

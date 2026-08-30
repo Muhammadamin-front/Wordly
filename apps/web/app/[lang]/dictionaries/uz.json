@@ -1458,6 +1458,8 @@
     "notesHint": "Matndan bir gapni belgilang, so'ng 'Izoh qo'shish' ni tanlang.",
     "vocabularyHint": "Matndan bitta so'z yoki iborani belgilang, so'ng 'So'zni saqlash' ni tanlang.",
     "personalNote": "Shaxsiy izoh",
+    "favouriteWord": "So‘zni sevimlilarga qo‘shish",
+    "deleteWord": "So‘zni o‘chirish",
     "notePlaceholder": "Bu joy nima uchun muhim? O'zbekcha yoki inglizcha izoh yozing...",
     "definitionHint": "O'zingizning sodda inglizcha ta'rifingizni yozing.",
     "translationPlaceholder": "Shaxsiy tarjima qo'shing",

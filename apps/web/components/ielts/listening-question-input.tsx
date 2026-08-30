@@ -1,6 +1,7 @@
 "use client";
 
 import type { ListeningOption, ListeningQuestion } from "@/lib/listening-practice";
+import { cn } from "@/lib/utils";
 
 export type ListeningAnswerValue = string | string[];
 
@@ -14,12 +15,16 @@ export function ListeningQuestionInput({
   onChange,
   disabled,
   typeAnswerLabel,
+  labelledBy,
+  describedBy,
 }: {
   question: ListeningQuestion;
   value: ListeningAnswerValue | undefined;
   onChange: (value: ListeningAnswerValue) => void;
   disabled?: boolean;
   typeAnswerLabel: string;
+  labelledBy: string;
+  describedBy?: string;
 }) {
   const isText = (
     ["sentence-completion", "summary-completion", "table-completion", "form-completion", "short-answer"] as const
@@ -31,6 +36,8 @@ export function ListeningQuestionInput({
         type="text"
         value={typeof value === "string" ? value : ""}
         disabled={disabled}
+        aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
         onChange={(event) => onChange(event.target.value)}
         placeholder={typeAnswerLabel}
         className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink outline-none placeholder:text-ink-soft focus:border-brand-400 disabled:opacity-60"
@@ -43,6 +50,8 @@ export function ListeningQuestionInput({
       <select
         value={typeof value === "string" ? value : ""}
         disabled={disabled}
+        aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
         onChange={(event) => onChange(event.target.value)}
         className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm text-ink outline-none focus:border-brand-400 disabled:opacity-60"
       >
@@ -61,53 +70,71 @@ export function ListeningQuestionInput({
   if (question.kind === "multiple-answer") {
     const selected = Array.isArray(value) ? value : [];
     return (
-      <div className="space-y-1.5">
+      <fieldset
+        aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
+        className="min-w-0 space-y-1.5 border-0 p-0"
+      >
         {(question.options ?? []).map((option: ListeningOption) => {
           const checked = selected.includes(option.value);
           return (
-            <button
+            <label
               key={option.value}
-              type="button"
-              disabled={disabled}
-              onClick={() =>
-                onChange(
-                  checked ? selected.filter((v) => v !== option.value) : [...selected, option.value]
-                )
-              }
-              className={
-                checked
-                  ? "flex w-full items-center gap-2 rounded-lg border border-brand-500 bg-brand-600/10 px-3 py-2 text-left text-sm text-ink"
-                  : "flex w-full items-center gap-2 rounded-lg border border-line px-3 py-2 text-left text-sm text-ink hover:bg-line/40"
-              }
+              className={cn(
+                "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus/35",
+                checked ? "border-brand-500 bg-brand-600/10" : "border-line",
+                disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-line/40"
+              )}
             >
+              <input
+                type="checkbox"
+                checked={checked}
+                disabled={disabled}
+                onChange={() =>
+                  onChange(
+                    checked ? selected.filter((v) => v !== option.value) : [...selected, option.value]
+                  )
+                }
+                className="sr-only"
+              />
               <span className="font-bold">{option.value}</span>
               {option.label}
-            </button>
+            </label>
           );
         })}
-      </div>
+      </fieldset>
     );
   }
 
   // multiple-choice fallback
   return (
-    <div className="space-y-1.5">
+    <fieldset
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy}
+      className="min-w-0 space-y-1.5 border-0 p-0"
+    >
       {(question.options ?? []).map((option: ListeningOption) => (
-        <button
+        <label
           key={option.value}
-          type="button"
-          disabled={disabled}
-          onClick={() => onChange(option.value)}
-          className={
-            value === option.value
-              ? "flex w-full items-center gap-2 rounded-lg border border-brand-500 bg-brand-600/10 px-3 py-2 text-left text-sm text-ink"
-              : "flex w-full items-center gap-2 rounded-lg border border-line px-3 py-2 text-left text-sm text-ink hover:bg-line/40"
-          }
+          className={cn(
+            "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus/35",
+            value === option.value ? "border-brand-500 bg-brand-600/10" : "border-line",
+            disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-line/40"
+          )}
         >
+          <input
+            type="radio"
+            name={question.id}
+            checked={value === option.value}
+            disabled={disabled}
+            onChange={() => onChange(option.value)}
+            className="sr-only"
+          />
           <span className="font-bold">{option.value}</span>
           {option.label}
-        </button>
+        </label>
       ))}
-    </div>
+    </fieldset>
   );
 }
