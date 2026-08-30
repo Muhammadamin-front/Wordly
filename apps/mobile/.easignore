@@ -1,0 +1,24 @@
+# What EAS Build archives before uploading, from apps/mobile as the app root
+# (per Expo's monorepo guide). Without this file EAS falls back to .gitignore
+# — but only the one found starting from this directory, so a sibling
+# workspace's build cache that's gitignored at the repo ROOT (not here) still
+# gets swept into the archive. apps/web/.next hit 8.6GB and stalled
+# "Compressing project files" for 10+ minutes with a killed, hung-looking
+# build — this is the fix, not a guess: confirmed by du -sh before writing it.
+#
+# Keep every workspace's package.json reachable (npm workspace resolution
+# needs them at install time) — only their build output and dependencies are
+# excluded here, never their source.
+node_modules/
+**/node_modules/
+.expo/
+dist/
+.git/
+
+# Sibling workspaces: their installed deps and build artifacts, never needed
+# to build the mobile app.
+../api/.venv/
+../api/.venv-check/
+../api/tts_cache/
+../web/.next/
+../web/node_modules/
