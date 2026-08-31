@@ -1207,6 +1207,7 @@
     "listen": "Listen",
     "loadMore": "Load more",
     "noResults": "Nothing found",
+    "checkingDictionary": "Checking the dictionary…",
     "aiDefineCta": "Not in our dictionary yet — look it up with AI",
     "aiDefineLoading": "Looking it up…",
     "aiDefineNotRecognized": "That doesn't look like a real English word — check the spelling and try again.",

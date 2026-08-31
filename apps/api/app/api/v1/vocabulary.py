@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFil
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import require_content_manager
+from app.api.deps import get_current_user, require_content_manager
 from app.core.cache import cached_response
 from app.core.config import get_settings
 from app.core.rate_limit import rate_limit
@@ -19,7 +19,10 @@ from app.schemas.vocabulary import (
     CatalogMeta,
     CatalogSitemap,
     CatalogSitemapEntry,
+    DefineExternalRequest,
+    ExampleIn,
     ImportReport,
+    SenseIn,
     WordCreate,
     WordListItem,
     WordLookupEntry,
@@ -31,6 +34,7 @@ from app.schemas.vocabulary import (
 )
 from app.services import vocabulary as vocab_service
 from app.services.admin_audit import record_admin_action
+from app.services.external_dictionary import fetch_external_definition
 from app.services.inflection import inflection_candidates
 
 router = APIRouter(tags=["vocabulary"])
@@ -179,6 +183,69 @@ async def lookup_words(payload: WordLookupRequest, db: AsyncSession = Depends(ge
             definition_en=sense.definition_en if sense else None,
         )
     return WordLookupResponse(entries=entries)
+
+
+@router.post(
+    "/words/define-external",
+    response_model=WordOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("default"))],
+)
+async def define_word_externally(
+    payload: DefineExternalRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Free, no-AI-quota fallback for a search that came back empty: look
+    the term up in the Free Dictionary API and add it to the corpus
+    (status="review", same "stays out of the public catalogue until a
+    curator promotes it" treatment as the AI fallback in api.v1.ai's
+    define-word — see services.vocabulary.find_existing_word, shared by
+    both). English definition only — no Uzbek/Russian translation, since
+    the source has none; still surfaced as a real word card rather than
+    nothing, with translations left for a curator to add before
+    publishing. Raises 404 when the term genuinely isn't a known English
+    word/phrase either, so the client can fall through to Define with AI."""
+    term = payload.word.strip().lower()
+    existing = await vocab_service.find_existing_word(db, term)
+    if existing is not None:
+        return WordOut.model_validate(existing)
+
+    found = await fetch_external_definition(payload.word)
+    if found is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Not found in the free dictionary either.",
+        )
+
+    # The source's own headword can differ from the search term (case,
+    # spelling) and might already be in the corpus under that form.
+    dup = await vocab_service.find_existing_word(db, found.headword.lower())
+    if dup is not None:
+        return WordOut.model_validate(dup)
+
+    word_payload = WordCreate(
+        headword=found.headword,
+        pos=found.pos,
+        cefr_level="B1",  # the source has no level data — see services.external_dictionary
+        ipa=found.ipa,
+        status="review",
+        senses=[
+            SenseIn(
+                definition_en=found.definition_en,
+                # No translation from this source — fall back to the
+                # headword itself rather than an empty string, the same
+                # convention api.v1.ai's define-word uses when a field is
+                # left blank.
+                translation_uz=found.headword,
+                translation_ru=found.headword,
+                examples=[ExampleIn(text_en=found.example_en)] if found.example_en else [],
+            )
+        ],
+    )
+    word = await vocab_service.create_word(db, word_payload)
+    await db.commit()
+    return WordOut.model_validate(word)
 
 
 @router.get("/words/{slug}", response_model=WordOut)

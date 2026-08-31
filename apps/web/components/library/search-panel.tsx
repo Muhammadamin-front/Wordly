@@ -10,7 +10,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
-import { defineWordViaAi, fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
+import { defineWordExternally, defineWordViaAi, fetchWord, fetchWords, type Word, type WordListItem } from "@/lib/vocab";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 function toListItem(word: Word): WordListItem {
@@ -52,6 +52,12 @@ export function SearchPanel({
   const [wordDetailLoading, setWordDetailLoading] = useState(false);
   const [aiDefining, setAiDefining] = useState(false);
   const [aiDefineError, setAiDefineError] = useState<string | null>(null);
+  // Auto-tried once per empty search, before the explicit "Define with AI"
+  // button — a free external dictionary lookup, no AI quota spent. Most
+  // common misses against our ~10k-word library resolve here for free;
+  // only a genuine miss (or a typo the free API can't guess) leaves the
+  // "no results" state with the AI button still available.
+  const [externalTrying, setExternalTrying] = useState(false);
   const detailRequest = useRef(0);
 
   // Debounced search across the whole published corpus (no level filter).
@@ -64,6 +70,7 @@ export function SearchPanel({
         if (!term) {
           setResults(null);
           setLoading(false);
+          setExternalTrying(false);
           return;
         }
         fetchWords({ q: term, page: 1 })
@@ -71,6 +78,21 @@ export function SearchPanel({
             if (cancelled) return;
             setResults(res.items);
             setLoading(false);
+            if (res.items.length === 0) {
+              setExternalTrying(true);
+              defineWordExternally(term)
+                .then((word) => {
+                  if (cancelled) return;
+                  setOpenWord(toListItem(word));
+                  setWordDetail(word);
+                  setWordDetailLoading(false);
+                })
+                .catch(() => {
+                  // Not in the free dictionary either — leave the empty
+                  // state, "Define with AI" stays available below.
+                })
+                .finally(() => setExternalTrying(false));
+            }
           })
           .catch(() => {
             if (!cancelled) setLoading(false);
@@ -183,14 +205,23 @@ export function SearchPanel({
         >
           {results.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center">
-              <p className="text-sm text-ink-soft">{t.noResults}</p>
-              <Button variant="secondary" size="sm" loading={aiDefining} onClick={onDefineViaAi}>
-                {aiDefining ? t.aiDefineLoading : t.aiDefineCta}
-              </Button>
-              {aiDefineError && (
-                <Alert tone="error" className="max-w-sm">
-                  {aiDefineError}
-                </Alert>
+              {externalTrying ? (
+                <>
+                  <span className="size-5 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+                  <p className="text-sm text-ink-soft">{t.checkingDictionary}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-ink-soft">{t.noResults}</p>
+                  <Button variant="secondary" size="sm" loading={aiDefining} onClick={onDefineViaAi}>
+                    {aiDefining ? t.aiDefineLoading : t.aiDefineCta}
+                  </Button>
+                  {aiDefineError && (
+                    <Alert tone="error" className="max-w-sm">
+                      {aiDefineError}
+                    </Alert>
+                  )}
+                </>
               )}
             </div>
           ) : (

@@ -39,6 +39,18 @@ async def get_category_by_slug(db: AsyncSession, slug: Optional[str]) -> Optiona
     return await db.scalar(select(Category).where(Category.slug == slug))
 
 
+async def find_existing_word(db: AsyncSession, term: str) -> Optional[Word]:
+    """Exact match, plus the same inflection-guessing the search bar uses —
+    covers both "already in the curated corpus" and "a previous learner's
+    search already generated this via AI or the external dictionary
+    fallback", so the same missing word never triggers a second lookup.
+    Shared by both fallback paths in api.v1.ai/api.v1.vocabulary."""
+    candidates = [term, *inflection_candidates(term)]
+    return await db.scalar(
+        select(Word).where(func.lower(Word.headword).in_(candidates)).limit(1)
+    )
+
+
 def _build_senses(payload: List[SenseIn]) -> List[WordSense]:
     senses = []
     for order, sense_in in enumerate(payload, start=1):
