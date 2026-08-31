@@ -160,3 +160,42 @@ async def test_support_user_detail_exposes_diagnostics_not_credentials(client):
     body = response.json()
     assert {"email_verified", "active_sessions", "password_reset_pending"} <= body.keys()
     assert "password_hash" not in body and "token_hash" not in body
+
+
+async def test_admin_role_is_restricted_to_the_sole_admin_account(client):
+    """admin/super_admin can only ever be granted to Settings.SOLE_ADMIN_EMAIL
+    — not a general role any super admin can hand out."""
+    target = await register_user(client, email="not-the-owner@words.uz")
+    admin = await make_super_admin(client)
+    target_id = target["user"]["id"]
+
+    for role in ("admin", "super_admin"):
+        response = await client.post(
+            "/api/v1/admin/users/{}/role".format(target_id), json={"role": role}, headers=admin
+        )
+        assert response.status_code == 403, response.text
+
+    # Roles below admin are unaffected by this restriction.
+    ok = await client.post(
+        "/api/v1/admin/users/{}/role".format(target_id), json={"role": "support"}, headers=admin
+    )
+    assert ok.status_code == 200, ok.text
+
+
+async def test_sole_admin_account_can_be_promoted_and_never_demoted(client):
+    from app.core.config import get_settings
+
+    sole_admin_email = get_settings().SOLE_ADMIN_EMAIL
+    target = await register_user(client, email=sole_admin_email)
+    admin = await make_super_admin(client)
+    target_id = target["user"]["id"]
+
+    promote = await client.post(
+        "/api/v1/admin/users/{}/role".format(target_id), json={"role": "super_admin"}, headers=admin
+    )
+    assert promote.status_code == 200, promote.text
+
+    demote = await client.post(
+        "/api/v1/admin/users/{}/role".format(target_id), json={"role": "learner"}, headers=admin
+    )
+    assert demote.status_code == 409, demote.text

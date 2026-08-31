@@ -79,6 +79,18 @@ export type StaffRole =
   | "admin"
   | "super_admin";
 
+// Mirrors ManualSubscriptionGrant's plan_code Literal in schemas/admin.py.
+export type GrantablePlanCode =
+  | "plus_monthly" | "plus_quarterly" | "plus_yearly"
+  | "pro_monthly" | "pro_quarterly" | "pro_yearly"
+  | "max_monthly" | "max_quarterly" | "max_yearly";
+
+export const GRANTABLE_PLAN_CODES: GrantablePlanCode[] = [
+  "plus_monthly", "plus_quarterly", "plus_yearly",
+  "pro_monthly", "pro_quarterly", "pro_yearly",
+  "max_monthly", "max_quarterly", "max_yearly",
+];
+
 export const adminApi = {
   analytics: () => apiFetch<AdminAnalytics>("/admin/analytics", { auth: true }),
 
@@ -122,4 +134,20 @@ export const adminApi = {
     }),
 
   auditLogs: () => apiFetch<AdminAuditLog[]>("/admin/audit-logs", { auth: true }),
+
+  // Both super-admin only, mirroring the backend's require_super_admin on
+  // these two routes — a plain "admin" cannot grant/revoke, only ban.
+  grantSubscription: (id: string, planCode: GrantablePlanCode, extraDays: number, reason: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}/subscription/grant`, {
+      method: "POST",
+      body: { plan_code: planCode, extra_days: extraDays, reason },
+      auth: true,
+    }),
+
+  revokeSubscription: (id: string, reason: string) =>
+    apiFetch<{ message: string }>(`/admin/users/${id}/subscription/revoke`, {
+      method: "POST",
+      body: { reason },
+      auth: true,
+    }),
 };

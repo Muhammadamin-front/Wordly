@@ -39,7 +39,8 @@
     "billing": "Premium",
     "menu": "Меню",
     "close": "Закрыть",
-    "ielts": "IELTS"
+    "ielts": "IELTS",
+    "admin": "Панель администратора"
   },
   "landing": {
     "heroTitle": "Покорите английский — слово за словом",
@@ -1056,7 +1057,15 @@
     "noSubscription": "Нет подписки",
     "verification": "Подтверждение",
     "sessions": "Активные сессии",
-    "resetPending": "Сброс ожидает"
+    "resetPending": "Сброс ожидает",
+    "grantPremium": "Выдать / отозвать премиум",
+    "plan": "Тариф",
+    "extraDays": "Доп. дни",
+    "grant": "Выдать",
+    "revoke": "Отозвать",
+    "reasonRequired": "Для отзыва подписки нужна причина.",
+    "reasonForRecord": "Причина (сохраняется в журнале)",
+    "grantDefaultReason": "Выдано из панели администратора"
   },
   "social": {
     "friends": "Друзья",
