@@ -71,6 +71,13 @@ class RelationOut(RelationIn):
     related_word_id: Optional[UUID] = None
 
 
+class DefineExternalRequest(BaseModel):
+    # A raw search term, not yet known to be a real word — the corpus
+    # lookup (exact + inflected-form match) happens server-side before the
+    # external dictionary call. Mirrors schemas.ai.DefineWordRequest.
+    word: str = Field(min_length=1, max_length=80)
+
+
 class WordCreate(BaseModel):
     headword: str = Field(min_length=1, max_length=80)
     pos: str = Field(min_length=1, max_length=20)

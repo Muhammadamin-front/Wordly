@@ -200,6 +200,16 @@ export async function defineWordViaAi(word: string): Promise<Word> {
   return apiFetch<Word>("/ai/define-word", { method: "POST", body: { word }, auth: true });
 }
 
+/** First-line fallback for the same empty search, tried before defineWordViaAi:
+ *  a free external dictionary lookup, no AI quota spent. English definition
+ *  only (no Uzbek/Russian translation — see the route's own docstring), but
+ *  still added to the corpus and shown immediately, same as the AI path.
+ *  Throws ApiError(404) when the term isn't in that dictionary either —
+ *  callers should fall through to defineWordViaAi on that specific status. */
+export async function defineWordExternally(word: string): Promise<Word> {
+  return apiFetch<Word>("/words/define-external", { method: "POST", body: { word }, auth: true });
+}
+
 // --- admin (browser, Bearer-authenticated) ----------------------------------
 
 export const adminVocabApi = {

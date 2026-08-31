@@ -2,7 +2,7 @@ from typing import Callable, Awaitable, List, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
@@ -32,7 +32,6 @@ from app.schemas.ai import (
 from app.schemas.vocabulary import ExampleIn, SenseIn, WordCreate, WordOut
 from app.services import ai_quota, vocabulary as vocab_service
 from app.services.ai_client import AiClient, AiError, get_ai_client
-from app.services.inflection import inflection_candidates
 
 router = APIRouter(
     prefix="/ai",
@@ -177,17 +176,6 @@ _DEFINE_WORD_SCHEMA = {
 }
 
 
-async def _find_existing(db: AsyncSession, term: str) -> Optional[Word]:
-    """Exact match, plus the same inflection-guessing the search bar uses —
-    covers both "already in the curated corpus" and "a previous learner's
-    search already generated this via AI", so the same missing word never
-    costs a second AI call."""
-    candidates = [term, *inflection_candidates(term)]
-    return await db.scalar(
-        select(Word).where(func.lower(Word.headword).in_(candidates)).limit(1)
-    )
-
-
 @router.post("/define-word", response_model=WordOut, status_code=status.HTTP_201_CREATED)
 async def define_word(
     payload: DefineWordRequest,
@@ -203,7 +191,7 @@ async def define_word(
     search for the same word — from anyone — finds this row directly and
     never re-triggers the AI."""
     term = payload.word.strip().lower()
-    existing = await _find_existing(db, term)
+    existing = await vocab_service.find_existing_word(db, term)
     if existing is not None:
         return WordOut.model_validate(existing)
 
@@ -236,7 +224,7 @@ async def define_word(
         # The AI's own correction (e.g. a typo fix) can land on a headword
         # already in the corpus under a different search term — re-check
         # before creating a duplicate row.
-        dup = await _find_existing(db, headword.lower())
+        dup = await vocab_service.find_existing_word(db, headword.lower())
         if dup is not None:
             return dup
         pos = str(data.get("pos", "")).strip().lower()
