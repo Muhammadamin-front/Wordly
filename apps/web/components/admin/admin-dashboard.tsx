@@ -11,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   adminApi,
+  GRANTABLE_PLAN_CODES,
   type AdminAnalytics,
   type AdminAuditLog,
   type AdminUserDetail,
   type AdminUser,
   type AiReport,
+  type GrantablePlanCode,
   type StaffRole,
 } from "@/lib/admin-panel";
 import { formatSom } from "@/lib/billing";
@@ -232,7 +234,15 @@ function UsersTab({ t, lang, role }: { t: Dictionary["adminPanel"]; lang: string
         </div>
       )}
       {pending && <ConfirmUserAction t={t} pending={pending} onClose={() => setPending(null)} onDone={reload} />}
-      {selectedUserId && <UserDetailDialog t={t} lang={lang} userId={selectedUserId} onClose={() => setSelectedUserId(null)} />}
+      {selectedUserId && (
+        <UserDetailDialog
+          t={t}
+          lang={lang}
+          userId={selectedUserId}
+          isSuperAdmin={isSuperAdmin}
+          onClose={() => setSelectedUserId(null)}
+        />
+      )}
     </div>
   );
 }
@@ -261,14 +271,97 @@ function ConfirmUserAction({ t, pending, onClose, onDone }: { t: Dictionary["adm
   return <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4" role="presentation" onMouseDown={onClose}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title" tabIndex={-1} className="w-full max-w-md rounded-xl2 border border-line bg-card p-5 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><h2 id="admin-confirm-title" className="text-lg font-extrabold text-ink">{t.confirmAction}</h2><p className="mt-2 text-sm leading-relaxed text-ink-soft">{pending.user.email} · {actionLabel}</p><label className="mt-5 block text-sm font-bold text-ink"><span className="sr-only">{t.reasonOptional}</span><textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} placeholder={t.reasonOptional} className="min-h-24 w-full rounded-lg border border-line bg-raised p-3 text-sm text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20" /></label>{error && <Alert className="mt-3" tone="error">{error}</Alert>}<div className="mt-5 flex justify-end gap-2"><Button ref={cancelButtonRef} variant="ghost" onClick={onClose} disabled={saving}>{t.cancel}</Button><Button variant={pending.kind === "ban" ? "danger" : "primary"} onClick={submit} loading={saving}>{t.confirm}</Button></div></section></div>;
 }
 
-function UserDetailDialog({ t, lang, userId, onClose }: { t: Dictionary["adminPanel"]; lang: string; userId: string; onClose: () => void }) {
+function UserDetailDialog({
+  t, lang, userId, isSuperAdmin, onClose,
+}: {
+  t: Dictionary["adminPanel"]; lang: string; userId: string; isSuperAdmin: boolean; onClose: () => void;
+}) {
   const [detail, setDetail] = useState<AdminUserDetail | null>(null);
   const [error, setError] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
   const dialogRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   useModalFocus({ containerRef: dialogRef, initialFocusRef: closeButtonRef, onDismiss: onClose });
-  useEffect(() => { let cancelled = false; adminApi.userDetail(userId).then((value) => !cancelled && setDetail(value)).catch(() => !cancelled && setError(true)); return () => { cancelled = true; }; }, [userId]);
-  return <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4" role="presentation" onMouseDown={onClose}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="admin-user-detail-title" tabIndex={-1} className="max-h-[85dvh] w-full max-w-2xl overflow-y-auto rounded-xl2 border border-line bg-card p-5 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">{t.details}</p><h2 id="admin-user-detail-title" className="mt-1 text-xl font-extrabold text-ink">{detail?.display_name ?? "..."}</h2></div><Button ref={closeButtonRef} size="sm" variant="ghost" onClick={onClose}>{t.cancel}</Button></div>{error ? <Alert tone="error" className="mt-5">{t.loadingError}</Alert> : !detail ? <Spinner /> : <div className="mt-6 space-y-6"><div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><Stat label="CEFR" value={detail.cefr_level} /><Stat label={t.learning} value={`${detail.cards_total} cards`} /><Stat label={t.reviewsTotal} value={String(detail.reviews_total)} /><Stat label="Due" value={String(detail.cards_due)} /></div><section><h3 className="font-extrabold text-ink">{t.details}</h3><div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3"><Stat label={t.verification} value={detail.email_verified ? t.active : t.banned} /><Stat label={t.sessions} value={String(detail.active_sessions)} /><Stat label={t.resetPending} value={detail.password_reset_pending ? t.active : "-"} /></div></section><section><h3 className="font-extrabold text-ink">{t.subscription}</h3>{detail.subscription ? <p className="mt-2 text-sm leading-relaxed text-ink-soft">{detail.subscription.plan_code} · {detail.subscription.status} · {detail.subscription.provider} · {formatApiDate(detail.subscription.expires_at, lang) ?? "—"}</p> : <p className="mt-2 text-sm text-ink-soft">{t.noSubscription}</p>}</section><section><h3 className="font-extrabold text-ink">{t.payments}</h3>{detail.payments.length ? <ul className="mt-2 divide-y divide-line rounded-lg border border-line">{detail.payments.map((payment) => <li className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm" key={payment.id}><span className="font-semibold text-ink">{payment.plan_code} · {payment.provider}</span><span className="text-ink-soft">{formatSom(payment.amount_tiyin / 100)} · {formatApiDate(payment.created_at, lang) ?? "—"}</span></li>)}</ul> : <p className="mt-2 text-sm text-ink-soft">{t.payments}: 0</p>}</section></div>}</section></div>;
+  useEffect(() => { let cancelled = false; adminApi.userDetail(userId).then((value) => !cancelled && setDetail(value)).catch(() => !cancelled && setError(true)); return () => { cancelled = true; }; }, [userId, reloadKey]);
+  return <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4" role="presentation" onMouseDown={onClose}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="admin-user-detail-title" tabIndex={-1} className="max-h-[85dvh] w-full max-w-2xl overflow-y-auto rounded-xl2 border border-line bg-card p-5 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">{t.details}</p><h2 id="admin-user-detail-title" className="mt-1 text-xl font-extrabold text-ink">{detail?.display_name ?? "..."}</h2></div><Button ref={closeButtonRef} size="sm" variant="ghost" onClick={onClose}>{t.cancel}</Button></div>{error ? <Alert tone="error" className="mt-5">{t.loadingError}</Alert> : !detail ? <Spinner /> : <div className="mt-6 space-y-6"><div className="grid grid-cols-2 gap-3 sm:grid-cols-4"><Stat label="CEFR" value={detail.cefr_level} /><Stat label={t.learning} value={`${detail.cards_total} cards`} /><Stat label={t.reviewsTotal} value={String(detail.reviews_total)} /><Stat label="Due" value={String(detail.cards_due)} /></div><section><h3 className="font-extrabold text-ink">{t.details}</h3><div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3"><Stat label={t.verification} value={detail.email_verified ? t.active : t.banned} /><Stat label={t.sessions} value={String(detail.active_sessions)} /><Stat label={t.resetPending} value={detail.password_reset_pending ? t.active : "-"} /></div></section><section><h3 className="font-extrabold text-ink">{t.subscription}</h3>{detail.subscription ? <p className="mt-2 text-sm leading-relaxed text-ink-soft">{detail.subscription.plan_code} · {detail.subscription.status} · {detail.subscription.provider} · {formatApiDate(detail.subscription.expires_at, lang) ?? "—"}</p> : <p className="mt-2 text-sm text-ink-soft">{t.noSubscription}</p>}{isSuperAdmin && <SubscriptionActions t={t} userId={detail.id} hasSubscription={Boolean(detail.subscription)} onDone={() => setReloadKey((n) => n + 1)} />}</section><section><h3 className="font-extrabold text-ink">{t.payments}</h3>{detail.payments.length ? <ul className="mt-2 divide-y divide-line rounded-lg border border-line">{detail.payments.map((payment) => <li className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm" key={payment.id}><span className="font-semibold text-ink">{payment.plan_code} · {payment.provider}</span><span className="text-ink-soft">{formatSom(payment.amount_tiyin / 100)} · {formatApiDate(payment.created_at, lang) ?? "—"}</span></li>)}</ul> : <p className="mt-2 text-sm text-ink-soft">{t.payments}: 0</p>}</section></div>}</section></div>;
+}
+
+/** Grant/revoke a subscription directly — the only way to hand out or pull
+ *  Premium from the admin panel today (the "premium berish" requirement).
+ *  Super-admin only, matching the backend's require_super_admin on both
+ *  routes. Revoke requires a reason (enforced server-side too). */
+function SubscriptionActions({
+  t, userId, hasSubscription, onDone,
+}: { t: Dictionary["adminPanel"]; userId: string; hasSubscription: boolean; onDone: () => void }) {
+  const [planCode, setPlanCode] = useState<GrantablePlanCode>("plus_monthly");
+  const [extraDays, setExtraDays] = useState(30);
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  async function grant() {
+    setSaving(true); setError("");
+    try {
+      await adminApi.grantSubscription(userId, planCode, extraDays, reason || t.grantDefaultReason);
+      setReason("");
+      onDone();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : t.loadingError);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function revoke() {
+    if (!reason.trim()) { setError(t.reasonRequired); return; }
+    setSaving(true); setError("");
+    try {
+      await adminApi.revokeSubscription(userId, reason);
+      setReason("");
+      onDone();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : t.loadingError);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="mt-4 rounded-lg border border-line bg-raised/50 p-3">
+      <p className="text-xs font-bold uppercase tracking-wide text-ink-soft">{t.grantPremium}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <select
+          aria-label={t.plan}
+          value={planCode}
+          onChange={(event) => setPlanCode(event.target.value as GrantablePlanCode)}
+          className="min-h-9 rounded-md border border-line bg-card px-2 text-xs text-ink"
+        >
+          {GRANTABLE_PLAN_CODES.map((code) => <option key={code} value={code}>{code}</option>)}
+        </select>
+        <input
+          type="number"
+          min={0}
+          max={3650}
+          aria-label={t.extraDays}
+          value={extraDays}
+          onChange={(event) => setExtraDays(Number(event.target.value))}
+          className="min-h-9 w-20 rounded-md border border-line bg-card px-2 text-xs text-ink"
+        />
+        <Button size="sm" loading={saving} onClick={grant}>{t.grant}</Button>
+        {hasSubscription && (
+          <Button size="sm" variant="danger" loading={saving} onClick={revoke}>{t.revoke}</Button>
+        )}
+      </div>
+      <input
+        value={reason}
+        onChange={(event) => setReason(event.target.value)}
+        placeholder={t.reasonForRecord}
+        maxLength={500}
+        className="mt-2 h-9 w-full rounded-md border border-line bg-card px-2 text-xs text-ink outline-none focus:border-brand-400"
+      />
+      {error && <Alert tone="error" className="mt-2 text-xs">{error}</Alert>}
+    </div>
+  );
 }
 
 function Stat({ label, value }: { label: string; value: string }) { return <div className="rounded-lg bg-hover p-3"><p className="text-lg font-extrabold text-ink">{value}</p><p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-ink-soft">{label}</p></div>; }

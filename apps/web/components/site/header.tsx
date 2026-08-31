@@ -14,6 +14,7 @@ import {
   Map,
   Menu,
   RefreshCw,
+  ShieldCheck,
   Sparkles,
   Trophy,
   UserRound,
@@ -62,6 +63,10 @@ interface NavItem {
   href: string; // path suffix after /{lang}
   icon: LucideIcon;
 }
+
+// Any role AdminGuard lets into /admin at all — the page itself further
+// restricts individual tabs/actions by role (see admin-dashboard.tsx).
+const STAFF_ROLES = new Set(["support", "content_manager", "admin", "super_admin"]);
 
 const PRIMARY_NAV: NavItem[] = [
   { key: "dashboard", href: "dashboard", icon: Sparkles },
@@ -155,8 +160,10 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           </div>
           {authed ? (
             <AccountMenu
+              lang={lang}
               nav={nav}
               userName={user.profile.display_name}
+              isStaff={STAFF_ROLES.has(user.role)}
               onSwitchAccount={async () => {
                 await logout();
                 router.replace(`/${lang}/auth/login?switch=1`);
@@ -186,6 +193,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
         lang={lang}
         nav={nav}
         authed={authed}
+        isStaff={Boolean(user && STAFF_ROLES.has(user.role))}
         pathname={pathname}
         open={open}
         onClose={() => setOpen(false)}
@@ -204,13 +212,17 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
 }
 
 function AccountMenu({
+  lang,
   nav,
   userName,
+  isStaff,
   onSwitchAccount,
   onLogout,
 }: {
+  lang: Locale;
   nav: Dictionary["nav"];
   userName: string;
+  isStaff: boolean;
   onSwitchAccount: () => Promise<void>;
   onLogout: () => Promise<void>;
 }) {
@@ -272,6 +284,17 @@ function AccountMenu({
         <p className="truncate border-b border-line px-3 pb-2 pt-1 text-xs font-bold text-ink-soft">
           {userName}
         </p>
+        {isStaff && (
+          <Link
+            href={`/${lang}/admin`}
+            role="menuitem"
+            onClick={() => setExpanded(false)}
+            className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
+            <ShieldCheck className="size-4" aria-hidden />
+            {nav.admin}
+          </Link>
+        )}
         <button
           type="button"
           role="menuitem"
@@ -301,6 +324,7 @@ function MobileSidebar({
   lang,
   nav,
   authed,
+  isStaff,
   pathname,
   open,
   onClose,
@@ -310,6 +334,7 @@ function MobileSidebar({
   lang: Locale;
   nav: Dictionary["nav"];
   authed: boolean;
+  isStaff: boolean;
   pathname: string;
   open: boolean;
   onClose: () => void;
@@ -419,6 +444,16 @@ function MobileSidebar({
           </div>
           {authed ? (
             <div className="grid gap-2">
+              {isStaff && (
+                <Link
+                  href={`/${lang}/admin`}
+                  onClick={onClose}
+                  className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "w-full")}
+                >
+                  <ShieldCheck className="size-4" aria-hidden />
+                  {nav.admin}
+                </Link>
+              )}
               <Button
                 variant="secondary"
                 size="sm"

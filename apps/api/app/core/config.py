@@ -58,6 +58,12 @@ class Settings(BaseSettings):
     RESET_TOKEN_TTL_SECONDS: int = 30 * 60
     BCRYPT_ROUNDS: int = 12
 
+    # The only account the "admin"/"super_admin" roles can ever be granted to
+    # or held by — enforced in api.v1.admin's set_role, not just a default.
+    # A single hardcoded owner account rather than a general admin-invite
+    # system, by explicit product decision.
+    SOLE_ADMIN_EMAIL: str = "berdullayev@gmail.com"
+
     # Storage
     DATABASE_URL: str = "sqlite+aiosqlite:///./words_dev.db"
     REDIS_URL: Optional[str] = None  # e.g. redis://localhost:6379/0

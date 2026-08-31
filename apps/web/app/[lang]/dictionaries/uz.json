@@ -39,7 +39,8 @@
     "billing": "Premium",
     "menu": "Menyu",
     "close": "Yopish",
-    "ielts": "IELTS"
+    "ielts": "IELTS",
+    "admin": "Admin panel"
   },
   "landing": {
     "heroTitle": "Ingliz tilini so'zma-so'z zabt eting",
@@ -1056,7 +1057,15 @@
     "noSubscription": "Obuna yo'q",
     "verification": "Tasdiqlash",
     "sessions": "Faol sessiyalar",
-    "resetPending": "Tiklash so'rovi"
+    "resetPending": "Tiklash so'rovi",
+    "grantPremium": "Premium berish / bekor qilish",
+    "plan": "Tarif",
+    "extraDays": "Qo'shimcha kunlar",
+    "grant": "Berish",
+    "revoke": "Bekor qilish",
+    "reasonRequired": "Obunani bekor qilish uchun sabab kiritish shart.",
+    "reasonForRecord": "Sabab (audit jurnalida saqlanadi)",
+    "grantDefaultReason": "Admin panelidan berildi"
   },
   "social": {
     "friends": "Do'stlar",

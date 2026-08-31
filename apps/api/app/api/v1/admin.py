@@ -6,7 +6,8 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import require_admin, require_super_admin, require_support
-from app.core.roles import SUPER_ADMIN
+from app.core.config import get_settings
+from app.core.roles import ADMIN_ROLES, SUPER_ADMIN
 from app.core.security import utcnow
 from app.db.session import get_db
 from app.models.ai import AiReport
@@ -341,6 +342,21 @@ async def set_role(
     db: AsyncSession = Depends(get_db),
 ):
     user = await _get_user(db, user_id, admin)
+    is_sole_admin_account = user.email.lower() == get_settings().SOLE_ADMIN_EMAIL.lower()
+    if payload.role in ADMIN_ROLES and not is_sole_admin_account:
+        # admin/super_admin is a single hardcoded owner account, not a role
+        # any super admin can hand out — see Settings.SOLE_ADMIN_EMAIL.
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access is restricted to a single account.",
+        )
+    if is_sole_admin_account and payload.role not in ADMIN_ROLES:
+        # That account must always stay admin — this is the one guaranteed
+        # break-glass account, not just "usually" the highest privilege.
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="This account must remain an admin.",
+        )
     if user.role == SUPER_ADMIN and payload.role != SUPER_ADMIN:
         super_admins = int(
             await db.scalar(select(func.count(User.id)).where(User.role == SUPER_ADMIN)) or 0

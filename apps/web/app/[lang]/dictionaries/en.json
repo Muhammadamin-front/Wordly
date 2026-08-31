@@ -39,7 +39,8 @@
     "billing": "Premium",
     "menu": "Menu",
     "close": "Close",
-    "ielts": "IELTS"
+    "ielts": "IELTS",
+    "admin": "Admin panel"
   },
   "landing": {
     "heroTitle": "Conquer English, one word at a time",
@@ -1056,7 +1057,15 @@
     "noSubscription": "No subscription",
     "verification": "Verification",
     "sessions": "Active sessions",
-    "resetPending": "Reset pending"
+    "resetPending": "Reset pending",
+    "grantPremium": "Grant / revoke premium",
+    "plan": "Plan",
+    "extraDays": "Extra days",
+    "grant": "Grant",
+    "revoke": "Revoke",
+    "reasonRequired": "A reason is required to revoke a subscription.",
+    "reasonForRecord": "Reason (kept in the audit log)",
+    "grantDefaultReason": "Granted from the admin panel"
   },
   "social": {
     "friends": "Friends",
