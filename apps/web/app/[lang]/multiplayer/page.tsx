@@ -13,7 +13,7 @@ export default async function MultiplayerPage({ params }: { params: Promise<{ la
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <QuizRoom lang={lang} mp={dict.mp} />
+      <QuizRoom lang={lang} mp={dict.mp} wordChain={dict.wordChain} />
     </>
   );
 }

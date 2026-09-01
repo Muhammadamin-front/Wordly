@@ -17,6 +17,11 @@ from app.db.session import get_session_factory, init_engine
 from app.services.multiplayer_pubsub import MemoryPubSub, RedisPubSub
 from app.services.multiplayer_store import MemoryRoomStore, RedisRoomStore
 from app.services.multiplayer_timers import MemoryPhaseLock, RedisPhaseLock
+from app.services.word_chain_matchmaking import (
+    MemoryWordChainMatchmaker,
+    RedisWordChainMatchmaker,
+)
+from app.services.word_chain_store import MemoryWordChainRoomStore, RedisWordChainRoomStore
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("words.api")
@@ -45,6 +50,12 @@ async def lifespan(app: FastAPI):
         )
         app.state.mp_pubsub = RedisPubSub(settings.REDIS_URL)
         app.state.mp_lock = RedisPhaseLock(settings.REDIS_URL)
+        app.state.word_chain_store = RedisWordChainRoomStore(
+            settings.REDIS_URL, ttl_seconds=settings.MULTIPLAYER_ROOM_TTL_SECONDS
+        )
+        app.state.word_chain_matchmaker = RedisWordChainMatchmaker(
+            settings.REDIS_URL, ttl_seconds=settings.MULTIPLAYER_ROOM_TTL_SECONDS
+        )
         app.state.backend = "redis"
     else:
         app.state.rate_limit_storage = MemoryStorage()
@@ -52,6 +63,8 @@ async def lifespan(app: FastAPI):
         app.state.mp_store = MemoryRoomStore()
         app.state.mp_pubsub = MemoryPubSub()
         app.state.mp_lock = MemoryPhaseLock()
+        app.state.word_chain_store = MemoryWordChainRoomStore()
+        app.state.word_chain_matchmaker = MemoryWordChainMatchmaker()
         app.state.backend = "memory"
     yield
 

@@ -220,6 +220,27 @@ class Settings(BaseSettings):
     # Absolute cap on a room's Redis TTL — well past any real game's length,
     # just a backstop against an abandoned room lingering forever.
     MULTIPLAYER_ROOM_TTL_SECONDS: int = 2 * 60 * 60
+
+    # Word Chain is server-authoritative. These values are kept with the
+    # multiplayer settings so operators can tune pacing without deploying a
+    # new API build. Public online matching always uses at least two humans;
+    # bots remain available only in explicitly created private rooms.
+    WORD_CHAIN_STARTING_TIME: int = 15
+    WORD_CHAIN_TIME_DECREASE_PER_ROUND: int = 1
+    WORD_CHAIN_MINIMUM_TIME: int = 5
+    WORD_CHAIN_MIN_PLAYERS: int = 2
+    WORD_CHAIN_MAX_PLAYERS: int = 8
+    WORD_CHAIN_MINIMUM_WORD_LENGTH: int = 3
+    WORD_CHAIN_DIFFICULT_LETTER_THRESHOLD: int = 15
+    WORD_CHAIN_LIVES_PER_PLAYER: int = 2
+    WORD_CHAIN_STREAK_BONUS_THRESHOLD: int = 3
+    WORD_CHAIN_STREAK_TIME_BONUS: int = 2
+    WORD_CHAIN_BOT_MIN_DELAY: float = 1.0
+    WORD_CHAIN_BOT_MAX_DELAY: float = 5.0
+    WORD_CHAIN_BOT_ENABLED: bool = True
+    # A private room can survive longer than an invite. This keeps a stale
+    # message from looking actionable after the host has moved on.
+    WORD_CHAIN_INVITATION_TTL_SECONDS: int = 30 * 60
     # Comma-separated IPs/CIDRs of reverse proxies allowed to supply
     # X-Forwarded-For. Empty means forwarded headers are never trusted.
     TRUSTED_PROXY_CIDRS: str = ""

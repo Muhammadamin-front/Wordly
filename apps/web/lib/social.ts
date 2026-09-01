@@ -35,6 +35,19 @@ export interface PublicProfile {
   achievements: string[];
 }
 
+export interface WordChainInvitation {
+  invitation_id: string;
+  sender_id: string;
+  sender_name: string;
+  room_code: string;
+  expires_at: string;
+  created_at: string;
+}
+
+export interface WordChainInvitationJoin {
+  room_code: string;
+}
+
 interface Message {
   message: string;
 }
@@ -61,4 +74,27 @@ export const socialApi = {
   friendCode: () => apiFetch<Message>("/me/friend-code", { auth: true }),
 
   profile: (code: string) => apiFetch<PublicProfile>(`/profile/${code}`, { auth: true }),
+
+  wordChainInvites: () => apiFetch<WordChainInvitation[]>("/word-chain/invitations", { auth: true }),
+
+  inviteToWordChain: (inviteeId: string, roomCode: string) =>
+    apiFetch<WordChainInvitation>("/word-chain/invitations", {
+      method: "POST",
+      body: { invitee_id: inviteeId, room_code: roomCode },
+      auth: true,
+    }),
+
+  acceptWordChainInvite: (invitationId: string) =>
+    apiFetch<WordChainInvitationJoin>(`/word-chain/invitations/${invitationId}/accept`, {
+      method: "POST",
+      body: {},
+      auth: true,
+    }),
+
+  declineWordChainInvite: (invitationId: string) =>
+    apiFetch<Message>(`/word-chain/invitations/${invitationId}/decline`, {
+      method: "POST",
+      body: {},
+      auth: true,
+    }),
 };

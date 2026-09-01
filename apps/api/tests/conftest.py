@@ -42,6 +42,8 @@ from app.services.emailer import ConsoleEmailer
 from app.services.multiplayer_pubsub import MemoryPubSub
 from app.services.multiplayer_store import MemoryRoomStore
 from app.services.multiplayer_timers import MemoryPhaseLock
+from app.services.word_chain_matchmaking import MemoryWordChainMatchmaker
+from app.services.word_chain_store import MemoryWordChainRoomStore
 
 
 # Tests default to in-memory SQLite. Point TEST_DATABASE_URL at Postgres
@@ -70,6 +72,8 @@ async def client() -> AsyncIterator[AsyncClient]:
     app.state.mp_store = MemoryRoomStore()
     app.state.mp_pubsub = MemoryPubSub()
     app.state.mp_lock = MemoryPhaseLock()
+    app.state.word_chain_store = MemoryWordChainRoomStore()
+    app.state.word_chain_matchmaker = MemoryWordChainMatchmaker()
     ConsoleEmailer.outbox.clear()
 
     transport = ASGITransport(app=app)

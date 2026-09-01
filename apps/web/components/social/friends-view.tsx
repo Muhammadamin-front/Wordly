@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Swords } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
 import {
@@ -14,33 +15,54 @@ import {
   type Friend,
   type LeaderboardEntry,
   type PendingRequest,
+  type WordChainInvitation,
 } from "@/lib/social";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 export function FriendsView({ lang, social }: { lang: string; social: Dictionary["social"] }) {
   const { user, ready } = useAuth();
   const router = useRouter();
+  const userId = user?.id;
 
   const [code, setCode] = useState("");
   const [friends, setFriends] = useState<Friend[]>([]);
   const [pending, setPending] = useState<PendingRequest[]>([]);
+  const [wordChainInvites, setWordChainInvites] = useState<WordChainInvitation[]>([]);
   const [board, setBoard] = useState<LeaderboardEntry[]>([]);
+  const [friendsLoading, setFriendsLoading] = useState(true);
+  const [friendsLoadError, setFriendsLoadError] = useState(false);
+  const [wordChainInvitesLoading, setWordChainInvitesLoading] = useState(true);
+  const [wordChainInvitesError, setWordChainInvitesError] = useState(false);
   const [input, setInput] = useState("");
   const [notice, setNotice] = useState<{ tone: "success" | "error"; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [respondingInvitation, setRespondingInvitation] = useState<{
+    id: string;
+    action: "accept" | "decline";
+  } | null>(null);
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
   const load = useCallback(() => {
+    setFriendsLoading(true);
+    setFriendsLoadError(false);
     Promise.all([socialApi.friends(), socialApi.pending(), socialApi.leaderboard()])
       .then(([f, p, b]) => {
         setFriends(f);
         setPending(p);
         setBoard(b);
       })
-      .catch(() => {});
+      .catch(() => setFriendsLoadError(true))
+      .finally(() => setFriendsLoading(false));
+
+    setWordChainInvitesLoading(true);
+    setWordChainInvitesError(false);
+    socialApi.wordChainInvites()
+      .then(setWordChainInvites)
+      .catch(() => setWordChainInvitesError(true))
+      .finally(() => setWordChainInvitesLoading(false));
     socialApi
       .friendCode()
       .then((r) => setCode(r.message))
@@ -48,8 +70,10 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
   }, []);
 
   useEffect(() => {
-    if (ready && user) load();
-  }, [ready, user, load]);
+    if (!ready || !userId) return;
+    const deferredLoad = window.setTimeout(load, 0);
+    return () => window.clearTimeout(deferredLoad);
+  }, [ready, userId, load]);
 
   function addFriend(event: FormEvent) {
     event.preventDefault();
@@ -76,6 +100,25 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
     socialApi.remove(id).then(load).catch(() => {});
   };
 
+  const respondToWordChainInvite = async (invitationId: string, accept: boolean) => {
+    setRespondingInvitation({ id: invitationId, action: accept ? "accept" : "decline" });
+    try {
+      if (accept) {
+        const invitation = await socialApi.acceptWordChainInvite(invitationId);
+        router.push(`/${lang}/multiplayer/word-chain?join=${encodeURIComponent(invitation.room_code)}`);
+        return;
+      }
+      await socialApi.declineWordChainInvite(invitationId);
+      setNotice({ tone: "success", text: social.wordChainInviteDeclined });
+    } catch (err) {
+      const text = err instanceof ApiError ? err.detail : social.wordChainInviteUnavailable;
+      setNotice({ tone: "error", text });
+    } finally {
+      setRespondingInvitation(null);
+      load();
+    }
+  };
+
   const copyCode = () => {
     navigator.clipboard?.writeText(code).then(
       () => {
@@ -89,7 +132,7 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
   if (!ready || !user) return null;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink">{social.title}</h1>
         <Link
@@ -129,6 +172,72 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
       {notice && (
         <Alert tone={notice.tone} className="mt-3">
           {notice.text}
+        </Alert>
+      )}
+
+      {(wordChainInvitesLoading || wordChainInvitesError || wordChainInvites.length > 0) && (
+        <section className="mt-8" aria-labelledby="word-chain-invitations-heading">
+          <h2 id="word-chain-invitations-heading" className="text-sm font-bold uppercase tracking-wide text-ink-soft">
+            {social.wordChainInvites}
+          </h2>
+          {wordChainInvitesLoading && <p className="mt-3 text-sm text-ink-soft" role="status">{social.loading}</p>}
+          {wordChainInvitesError && (
+            <Alert tone="error" className="mt-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span>{social.wordChainInvitesLoadError}</span>
+                <Button variant="ghost" size="sm" onClick={load}>{social.retry}</Button>
+              </div>
+            </Alert>
+          )}
+          {wordChainInvites.length > 0 && (
+            <ul className="mt-3 space-y-2">
+              {wordChainInvites.map((invite) => {
+                const isResponding = respondingInvitation?.id === invite.invitation_id;
+                const isAccepting = isResponding && respondingInvitation.action === "accept";
+                const isDeclining = isResponding && respondingInvitation.action === "decline";
+                return (
+                  <li
+                    key={invite.invitation_id}
+                    className="flex flex-col gap-3 rounded-xl border border-accent-500/45 bg-accent-500/8 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <p className="min-w-0 text-sm leading-6 text-ink">
+                      <strong>{invite.sender_name}</strong> {social.wordChainInviteFrom}
+                    </p>
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => respondToWordChainInvite(invite.invitation_id, true)}
+                        loading={isAccepting}
+                        disabled={isDeclining}
+                      >
+                        <Swords size={16} aria-hidden />
+                        {social.wordChainInviteJoin}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => respondToWordChainInvite(invite.invitation_id, false)}
+                        loading={isDeclining}
+                        disabled={isAccepting}
+                      >
+                        {social.decline}
+                      </Button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      )}
+
+      {friendsLoading && <p className="mt-8 text-sm text-ink-soft" role="status">{social.loading}</p>}
+      {friendsLoadError && (
+        <Alert tone="error" className="mt-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span>{social.loadError}</span>
+            <Button variant="ghost" size="sm" onClick={load}>{social.retry}</Button>
+          </div>
         </Alert>
       )}
 
@@ -182,7 +291,7 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
       {/* Friends list */}
       <section className="mt-8">
         <h2 className="text-sm font-bold uppercase tracking-wide text-ink-soft">{social.friends}</h2>
-        {friends.length === 0 ? (
+        {!friendsLoading && !friendsLoadError && friends.length === 0 ? (
           <p className="mt-3 rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-soft">
             {social.noFriends}
           </p>
@@ -191,17 +300,27 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
             {friends.map((f) => (
               <li
                 key={f.user_id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-line bg-card px-4 py-3"
+                className="flex flex-col gap-3 rounded-xl border border-line bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
               >
-                <span>
+                <span className="min-w-0">
                   <span className="font-semibold text-ink">{f.display_name}</span>
                   <span className="ml-2 text-xs text-ink-soft">
                     {social.level} {f.level} · 🔥 {f.current_streak}
                   </span>
                 </span>
-                <Button variant="ghost" size="sm" onClick={() => removeFriend(f.user_id)}>
-                  {social.remove}
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href={`/${lang}/multiplayer/word-chain?invite=${encodeURIComponent(f.user_id)}`}
+                    className={buttonVariants({ variant: "secondary", size: "sm" })}
+                    aria-label={`${social.inviteToWordChain}: ${f.display_name}`}
+                  >
+                    <Swords size={16} aria-hidden />
+                    {social.inviteToWordChain}
+                  </Link>
+                  <Button variant="ghost" size="sm" onClick={() => removeFriend(f.user_id)}>
+                    {social.remove}
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

@@ -2,6 +2,7 @@
 unconditionally; the Redis-backed classes only run when TEST_REDIS_URL is set
 (mirrors the project's existing TEST_DATABASE_URL opt-in-real-backend pattern
 for anything that needs a live external service in CI)."""
+import asyncio
 import os
 import time
 from uuid import uuid4
@@ -15,6 +16,38 @@ from app.services.multiplayer_timers import MemoryPhaseLock, RedisPhaseLock, sch
 
 TEST_REDIS_URL = os.environ.get("TEST_REDIS_URL")
 requires_redis = pytest.mark.skipif(not TEST_REDIS_URL, reason="TEST_REDIS_URL not set")
+
+
+class FakeRedisPubSub:
+    """Small in-process stream used to exercise RedisPubSub's dispatcher."""
+
+    def __init__(self):
+        self.messages = asyncio.Queue()
+        self.listen_calls = 0
+        self.subscribed = []
+        self.unsubscribed = []
+
+    async def subscribe(self, channel):
+        self.subscribed.append(channel)
+
+    async def unsubscribe(self, channel):
+        self.unsubscribed.append(channel)
+
+    async def listen(self):
+        self.listen_calls += 1
+        while True:
+            yield await self.messages.get()
+
+
+def make_redis_pubsub_for_test(fake_pubsub):
+    """Build the transport around a fake stream without a live Redis server."""
+    pubsub = object.__new__(RedisPubSub)
+    pubsub._redis = None
+    pubsub._pubsub = fake_pubsub
+    pubsub._handlers = {}
+    pubsub._reader = None
+    pubsub._subscription_lock = asyncio.Lock()
+    return pubsub
 
 
 def make_room(code: str) -> Room:
@@ -49,6 +82,44 @@ async def test_memory_pubsub_delivers_to_local_subscribers():
     await pubsub.unsubscribe("ROOM", handler)
     await pubsub.publish("ROOM", {"type": "ignored"})
     assert received == [{"type": "lobby"}]  # no longer subscribed
+
+
+async def test_redis_pubsub_uses_one_reader_and_dispatches_by_channel():
+    fake_pubsub = FakeRedisPubSub()
+    pubsub = make_redis_pubsub_for_test(fake_pubsub)
+    room_one = []
+    room_two = []
+
+    async def first_handler(message):
+        room_one.append(message)
+
+    async def second_handler(message):
+        room_two.append(message)
+
+    await asyncio.gather(
+        pubsub.subscribe("ONE", first_handler),
+        pubsub.subscribe("TWO", second_handler),
+    )
+    await asyncio.sleep(0)
+    assert fake_pubsub.listen_calls == 1
+
+    await fake_pubsub.messages.put(
+        {"type": "message", "channel": "mp:chan:ONE", "data": '{"type": "one"}'}
+    )
+    await fake_pubsub.messages.put(
+        {"type": "message", "channel": "mp:chan:TWO", "data": '{"type": "two"}'}
+    )
+    await asyncio.sleep(0)
+
+    assert room_one == [{"type": "one"}]
+    assert room_two == [{"type": "two"}]
+
+    await pubsub.unsubscribe("ONE", first_handler)
+    await pubsub.unsubscribe("TWO", second_handler)
+    assert fake_pubsub.unsubscribed == ["mp:chan:ONE", "mp:chan:TWO"]
+
+    pubsub._reader.cancel()
+    await pubsub._reader
 
 
 async def test_memory_phase_lock_always_wins():

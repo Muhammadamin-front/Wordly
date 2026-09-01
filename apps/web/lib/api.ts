@@ -4,7 +4,12 @@ import { trackApiFailure } from "@/lib/analytics";
 // fetches must reach the published port. Matches next.config.ts.
 const serverApiUrl =
   process.env.INTERNAL_API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
-export const API_URL = typeof window === "undefined" ? serverApiUrl : "";
+// Browser HTTP requests can use Next's same-origin rewrite when no public API
+// origin is configured. WebSockets cannot be proxied by that rewrite though,
+// so production clients must retain the public API origin baked into the
+// bundle (for example https://api.vocora.uz).
+const publicApiUrl = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ?? "";
+export const API_URL = typeof window === "undefined" ? serverApiUrl : publicApiUrl;
 
 export interface Profile {
   display_name: string;

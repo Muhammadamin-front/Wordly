@@ -2,6 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Link2 } from "lucide-react";
 import { useCallback, useEffect, useReducer, useRef } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -137,7 +139,15 @@ export function reducer(state: State, action: Action): State {
   }
 }
 
-export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
+export function QuizRoom({
+  lang,
+  mp,
+  wordChain,
+}: {
+  lang: string;
+  mp: Dictionary["mp"];
+  wordChain: Dictionary["wordChain"];
+}) {
   const { user, ready } = useAuth();
   const router = useRouter();
   const socketRef = useRef<WebSocket | null>(null);
@@ -266,10 +276,20 @@ export function QuizRoom({ lang, mp }: { lang: string; mp: Dictionary["mp"] }) {
       : null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
-      <div className="flex items-center justify-between gap-3">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink">{mp.title}</h1>
-        <SoundToggle enabled={sound.enabled} onToggle={sound.toggle} labels={{ on: mp.soundOn, off: mp.soundOff }} />
+        <div className="flex items-center gap-2">
+          <Link
+            href={`/${lang}/multiplayer/word-chain`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-accent-600/45 bg-accent-500/10 px-3 text-sm font-bold text-accent-text transition-colors hover:bg-accent-500/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            title={wordChain.quizCtaHint}
+          >
+            <Link2 className="size-4" aria-hidden />
+            {wordChain.quizCta}
+          </Link>
+          <SoundToggle enabled={sound.enabled} onToggle={sound.toggle} labels={{ on: mp.soundOn, off: mp.soundOff }} />
+        </div>
       </div>
 
       {state.error && (
