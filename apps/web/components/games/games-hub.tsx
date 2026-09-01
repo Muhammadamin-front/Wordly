@@ -13,6 +13,7 @@ import {
   Puzzle,
   Search,
   SpellCheck,
+  Swords,
   Timer,
   type LucideIcon,
 } from "lucide-react";
@@ -62,10 +63,12 @@ export function GamesHub({
   lang,
   games,
   gam,
+  wordChain,
 }: {
   lang: string;
   games: Dictionary["games"];
   gam: Dictionary["gam"];
+  wordChain: Dictionary["wordChain"];
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
@@ -88,11 +91,42 @@ export function GamesHub({
 
       <DailyQuestsPanel lang={lang} gam={gam} />
 
+      <section
+        className="surface-panel relative mt-6 overflow-hidden rounded-[18px] p-5 sm:p-7"
+        aria-labelledby="word-chain-practice-title"
+      >
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-4">
+            <span className="icon-tile size-12 shrink-0 rounded-lg bg-accent-500/12">
+              <Swords className="size-6 text-accent-600 dark:text-accent-300" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <h2 id="word-chain-practice-title" className="type-h2 text-ink">
+                {wordChain.title}
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
+                {wordChain.playOnlineHint}
+              </p>
+            </div>
+          </div>
+          <Link
+            href={`/${lang}/multiplayer/word-chain`}
+            aria-label={`${wordChain.title} — ${wordChain.playOnline}`}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 text-sm font-black text-white shadow-[0_8px_18px_rgb(126_45_28_/_0.22)] transition-[background-color,transform,box-shadow] hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-[0_12px_24px_rgb(126_45_28_/_0.28)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus active:translate-y-0"
+          >
+            <Swords className="size-4" aria-hidden />
+            {wordChain.playOnline}
+          </Link>
+        </div>
+      </section>
+
+      <h2 className="type-h2 mt-8 text-ink">{games.soloPracticeTitle}</h2>
+
       <motion.div
         variants={{ show: { transition: { staggerChildren: 0.04 } } }}
         initial="hidden"
         animate="show"
-        className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
       >
         {GAME_TYPES.map((type) => {
           const meta = games[type];

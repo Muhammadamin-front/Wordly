@@ -563,6 +563,7 @@
   "games": {
     "title": "O'yinlar",
     "subtitle": "So'zlaringizni o'ynab mustahkamlang — har bir javob takrorlash hisoblanadi",
+    "soloPracticeTitle": "Yakka mashqlar",
     "needWords": "O'ynash uchun kamida 4 ta so'z qo'shing.",
     "needWordsTitle": "Avval bir nechta so'z qo'shing",
     "needWordsBody": "O'yinlar saqlangan so'zlaringiz va daraja so'zlaridan mashq materiali sifatida foydalanadi. Karta qo'shing yoki boshqa manbani tanlang.",

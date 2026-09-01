@@ -563,6 +563,7 @@
   "games": {
     "title": "Games",
     "subtitle": "Reinforce your words through play — every answer is a review",
+    "soloPracticeTitle": "Practise on your own",
     "needWords": "Add at least 4 words to play.",
     "needWordsTitle": "Add a few words first",
     "needWordsBody": "Games use your saved words and level words as practice material. Add cards or choose another source to start.",
