@@ -3,14 +3,15 @@
 import Link from "next/link";
 import { BarChart3, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
-import { statisticsApi, type HeatmapDay, type Statistics } from "@/lib/statistics";
+import { statisticsApi, type HeatmapDay } from "@/lib/statistics";
+import { apiKeys, useApi } from "@/lib/use-api";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -69,31 +70,20 @@ export function StatisticsView({
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const [stats, setStats] = useState<Statistics | null>(null);
-  const [heatmap, setHeatmap] = useState<HeatmapDay[]>([]);
-  const [error, setError] = useState(false);
+  const authed = ready && Boolean(user);
+  const { data, error } = useApi(authed ? apiKeys.statistics(HEATMAP_DAYS + 1) : null, async () => {
+    const [statistics, heat] = await Promise.all([
+      statisticsApi.statistics(),
+      statisticsApi.heatmap(HEATMAP_DAYS + 1),
+    ]);
+    return { statistics, days: heat.days };
+  });
+  const stats = data?.statistics ?? null;
+  const heatmap: HeatmapDay[] = data?.days ?? [];
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
-
-  useEffect(() => {
-    if (!ready || !user) return;
-    let cancelled = false;
-    Promise.all([statisticsApi.statistics(), statisticsApi.heatmap(HEATMAP_DAYS + 1)])
-      .then(([s, h]) => {
-        if (cancelled) return;
-        setError(false);
-        setStats(s);
-        setHeatmap(h.days);
-      })
-      .catch(() => {
-        if (!cancelled) setError(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, user]);
 
   if (!ready || !user || (stats === null && !error)) {
     return (

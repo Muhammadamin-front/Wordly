@@ -9,6 +9,7 @@ import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
 import { SkipLink } from "@/components/site/skip-link";
+import { SwrProvider } from "@/components/site/swr-provider";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
@@ -126,11 +127,13 @@ export default async function RootLayout({
       <body className="flex min-h-dvh flex-col">
         <ThemeProvider>
           <SkipLink label={skipLabel} />
-          <AuthProvider>
-            <AnalyticsProvider />
-            <GrammarProgressSync />
-            {children}
-          </AuthProvider>
+          <SwrProvider>
+            <AuthProvider>
+              <AnalyticsProvider />
+              <GrammarProgressSync />
+              {children}
+            </AuthProvider>
+          </SwrProvider>
           <PwaRegister />
           <PwaInstallPrompt t={layoutDict.pwaInstall} />
         </ThemeProvider>

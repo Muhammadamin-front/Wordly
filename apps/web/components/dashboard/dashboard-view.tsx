@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -26,8 +26,9 @@ import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { gamificationApi, STATS_CHANGED_EVENT, type Stats } from "@/lib/gamification";
-import { learningApi, type LearningPlan } from "@/lib/learning";
+import { gamificationApi } from "@/lib/gamification";
+import { learningApi } from "@/lib/learning";
+import { apiKeys, useApi } from "@/lib/use-api";
 
 const GOAL_OPTIONS = [10, 20, 30, 50];
 
@@ -72,9 +73,18 @@ export function DashboardView({
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const [learningPlan, setLearningPlan] = useState<LearningPlan | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
   const copy = dashboardCopy(lang);
+  const authed = ready && Boolean(user);
+  // Both keys are shared: the header widget reads stats, and the learning
+  // plan is revalidated centrally when a session finishes.
+  const { data: stats, mutate: mutateStats } = useApi(
+    authed ? apiKeys.stats : null,
+    () => gamificationApi.stats()
+  );
+  const { data: learningPlan } = useApi(
+    authed ? apiKeys.learningPlan : null,
+    () => learningApi.plan()
+  );
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
@@ -83,28 +93,11 @@ export function DashboardView({
     }
   }, [ready, user, router, lang]);
 
-  useEffect(() => {
-    if (!ready || !user) return;
-    let cancelled = false;
-    const loadStats = () =>
-      gamificationApi.stats().then((s) => !cancelled && setStats(s)).catch(() => {});
-    learningApi
-      .plan()
-      .then((plan) => {
-        if (!cancelled) setLearningPlan(plan);
-      })
-      .catch(() => {});
-    loadStats();
-    window.addEventListener(STATS_CHANGED_EVENT, loadStats);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(STATS_CHANGED_EVENT, loadStats);
-    };
-  }, [ready, user]);
-
   async function changeGoal(goal: number) {
     const updated = await gamificationApi.setDailyGoal(goal);
-    setStats(updated);
+    // The server already returned the new state, so publish it to the shared
+    // cache without spending another round trip on a revalidation.
+    void mutateStats(updated, { revalidate: false });
   }
 
   if (!ready || !user) {

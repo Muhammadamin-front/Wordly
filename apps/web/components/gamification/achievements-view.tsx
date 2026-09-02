@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CircleDollarSign, Flame, Medal } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card } from "@/components/ui/card";
-import { gamificationApi, type Achievement, type Stats } from "@/lib/gamification";
+import { gamificationApi } from "@/lib/gamification";
+import { apiKeys, useApi } from "@/lib/use-api";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -31,27 +32,19 @@ export function AchievementsView({
 }) {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const [items, setItems] = useState<Achievement[] | null>(null);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const authed = ready && Boolean(user);
+  // stats is the same cache entry the header widget and dashboard read.
+  const { data: items } = useApi(
+    authed ? apiKeys.achievements : null,
+    () => gamificationApi.achievements()
+  );
+  const { data: stats } = useApi(authed ? apiKeys.stats : null, () => gamificationApi.stats());
 
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
   }, [ready, user, router, lang]);
 
-  useEffect(() => {
-    if (!ready || !user) return;
-    let cancelled = false;
-    Promise.all([gamificationApi.achievements(), gamificationApi.stats()]).then(([a, s]) => {
-      if (cancelled) return;
-      setItems(a);
-      setStats(s);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [ready, user]);
-
-  if (!ready || !user || items === null || stats === null) {
+  if (!ready || !user || !items || !stats) {
     return (
       <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />

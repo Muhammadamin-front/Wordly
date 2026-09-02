@@ -2,31 +2,19 @@
 
 import { Coins, Flame, Zap } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
 import { useAuth } from "@/components/auth/auth-provider";
-import { gamificationApi, STATS_CHANGED_EVENT, type Stats } from "@/lib/gamification";
+import { gamificationApi } from "@/lib/gamification";
+import { apiKeys, useApi } from "@/lib/use-api";
 
 /** Compact streak / level / coins pill shown in the header when signed in. */
 export function StatsWidget({ lang }: { lang: string }) {
   const { user, ready } = useAuth();
-  const [stats, setStats] = useState<Stats | null>(null);
-
-  useEffect(() => {
-    if (!ready || !user) return;
-    let cancelled = false;
-    const load = () =>
-      gamificationApi
-        .stats()
-        .then((s) => !cancelled && setStats(s))
-        .catch(() => {});
-    load();
-    window.addEventListener(STATS_CHANGED_EVENT, load);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(STATS_CHANGED_EVENT, load);
-    };
-  }, [ready, user]);
+  // Shares one request and one cache entry with the dashboard and the
+  // achievements page; SwrProvider revalidates it after every session.
+  const { data: stats } = useApi(
+    ready && user ? apiKeys.stats : null,
+    () => gamificationApi.stats()
+  );
 
   if (!ready || !user || !stats) return null;
 

@@ -3,15 +3,11 @@
 import { motion } from "framer-motion";
 import { Award, BrainCircuit, Check, ChevronRight, Flame, Link2, Target, Zap } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState, type ComponentType } from "react";
+import { type ComponentType } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
-import {
-  gamificationApi,
-  QUESTS_CHANGED_EVENT,
-  type DailyQuest,
-  type DailyQuests,
-} from "@/lib/gamification";
+import { gamificationApi, type DailyQuest } from "@/lib/gamification";
+import { apiKeys, useApi } from "@/lib/use-api";
 import { questHref, questProgressPercent } from "@/lib/quests";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -83,19 +79,10 @@ function QuestCard({ lang, quest, gam }: { lang: string; quest: DailyQuest; gam:
 
 export function DailyQuestsPanel({ lang, gam }: { lang: string; gam: Dictionary["gam"] }) {
   const { ready, user } = useAuth();
-  const [data, setData] = useState<DailyQuests | null>(null);
-
-  useEffect(() => {
-    if (!ready || !user) return;
-    let cancelled = false;
-    const load = () => gamificationApi.dailyQuests().then((value) => !cancelled && setData(value)).catch(() => {});
-    load();
-    window.addEventListener(QUESTS_CHANGED_EVENT, load);
-    return () => {
-      cancelled = true;
-      window.removeEventListener(QUESTS_CHANGED_EVENT, load);
-    };
-  }, [ready, user]);
+  const { data } = useApi(
+    ready && user ? apiKeys.quests : null,
+    () => gamificationApi.dailyQuests()
+  );
 
   if (!ready || !user || !data) return null;
 

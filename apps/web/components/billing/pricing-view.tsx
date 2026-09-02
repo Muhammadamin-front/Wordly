@@ -93,12 +93,26 @@ function discount(plan: Plan, monthly: Plan | undefined) {
   return { regular, percent: Math.round((1 - plan.price_som / regular) * 100) };
 }
 
-export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"] }) {
+export function PricingView({
+  lang,
+  t,
+  initialPlans,
+  initialStatus,
+}: {
+  lang: string;
+  t: Dictionary["billing"];
+  /** Both are public endpoints, so the page renders them on the server and
+   *  hands them down here. When present the browser skips those two requests
+   *  entirely and the prices are in the HTML — this page used to serve a
+   *  spinner to crawlers and to anyone on a slow connection. */
+  initialPlans?: Plan[];
+  initialStatus?: BillingStatus;
+}) {
   const { user, ready } = useAuth();
   const router = useRouter();
-  const [plans, setPlans] = useState<Plan[] | null>(null);
+  const [plans, setPlans] = useState<Plan[] | null>(initialPlans ?? null);
   const [duration, setDuration] = useState<Duration>("monthly");
-  const [paymentStatus, setPaymentStatus] = useState<BillingStatus | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<BillingStatus | null>(initialStatus ?? null);
   const [sub, setSub] = useState<Subscription | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -113,26 +127,26 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
   useEffect(() => {
     if (!ready) return;
     let cancelled = false;
+    // Only what the server could not provide: the subscription is per-user,
+    // and plans/status are refetched solely when they were not passed in.
     Promise.all([
-      billingApi.plans(),
-      user ? billingApi.subscription() : Promise.resolve(null),
-      billingApi.status(),
-    ]).then(
-      ([p, s, status]) => {
-        if (cancelled) return;
-        setPlans(p.plans);
-        setSub(s);
-        setPaymentStatus(status);
-        setLoadError(false);
-      }
-    ).catch(() => {
+      initialPlans ? null : billingApi.plans(),
+      initialStatus ? null : billingApi.status(),
+      user ? billingApi.subscription() : null,
+    ]).then(([loadedPlans, loadedStatus, subscription]) => {
+      if (cancelled) return;
+      if (loadedPlans) setPlans(loadedPlans.plans);
+      if (loadedStatus) setPaymentStatus(loadedStatus);
+      setSub(subscription);
+      setLoadError(false);
+    }).catch(() => {
       if (cancelled) return;
       setLoadError(true);
     });
     return () => {
       cancelled = true;
     };
-  }, [ready, user, reloadKey]);
+  }, [ready, user, reloadKey, initialPlans, initialStatus]);
 
   async function pay(planCode: string, provider: PaymentProvider) {
     setBusy(true);
