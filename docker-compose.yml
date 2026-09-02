@@ -32,7 +32,7 @@ services:
   api:
     build: ./apps/api
     restart: unless-stopped
-    environment:
+    environment: &api-environment
       ENVIRONMENT: ${ENVIRONMENT:-development}
       APP_VERSION: ${APP_VERSION:-1.0.0}
       # Safe only for local development; production startup rejects this value.
@@ -96,6 +96,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+
+  worker:
+    build: ./apps/api
+    restart: unless-stopped
+    # Same image and same environment as the API; it differs only in what it
+    # runs. Migrations are applied by deploy.sh before either starts.
+    environment: *api-environment
+    command: ["python", "-m", "scripts.worker"]
+    volumes:
+      - tts_cache:/srv/api/tts_cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   web:
     build:

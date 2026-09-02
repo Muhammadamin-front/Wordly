@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import admin, ai, auth, coach, coach_live, expressions, flashcards, gamification, games, grammar_progress, ielts, ielts_mock, library, multiplayer, payments, skills, social, statistics, teacher, tts, users, vocabulary, word_chain, writing_master_progress
+from app.api.v1 import admin, ai, auth, coach, coach_live, expressions, flashcards, gamification, games, grammar_progress, ielts, ielts_mock, jobs, library, multiplayer, payments, skills, social, statistics, teacher, tts, users, vocabulary, word_chain, writing_master_progress
 
 api_router = APIRouter()
 api_router.include_router(auth.router)
@@ -29,3 +29,4 @@ api_router.include_router(skills.router)
 api_router.include_router(tts.router)
 api_router.include_router(library.router)
 api_router.include_router(expressions.router)
+api_router.include_router(jobs.router)

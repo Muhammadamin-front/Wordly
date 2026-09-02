@@ -279,6 +279,15 @@ sudo systemctl enable --now vocora-uptime.timer
 systemctl list-timers vocora-uptime.timer
 ```
 
+### Background jobs
+
+Long AI work (currently IELTS writing scoring) is queued in the `ai_jobs`
+table and executed by the `worker` container (`python -m scripts.worker`),
+not inside the request. The API returns `202 { job_id }`; the client polls
+`GET /jobs/{id}`. Jobs retry up to three times and a learner may hold three
+in flight at once. To watch it: `docker compose logs -f worker`. A stuck job
+shows as a `running` row with an old `started_at`.
+
 ## 6. Backups & state
 
 All durable state is in Postgres (`pgdata` volume): users, SRS history, corpus,

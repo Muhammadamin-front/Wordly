@@ -1,4 +1,5 @@
-import { apiFetch } from "@/lib/api";
+import { apiFetch, ApiError } from "@/lib/api";
+import { waitForJob } from "@/lib/jobs";
 
 export type IeltsSkill = "reading" | "writing" | "listening" | "speaking";
 export type ComprehensionKind = "reading" | "listening";
@@ -245,16 +246,40 @@ export const ieltsApi = {
   writingTasks: () =>
     apiFetch<Record<string, WritingTask[]>>("/ielts/writing/tasks", { auth: true }),
 
-  scoreWriting: (taskType: string, prompt: string, essay: string, lang = "en", mockSessionId?: string) =>
-    apiFetch<WritingScore>("/ielts/writing/score", {
-      method: "POST",
-      body: { task_type: taskType, prompt, essay, lang, mock_session_id: mockSessionId },
-      auth: true,
-      // A grounded, sentence-level report is intentionally a longer model
-      // call than ordinary API actions. Match the server-side AI allowance so
-      // the browser does not abandon a healthy report after the global 15s.
-      timeoutMs: 75_000,
-    }),
+  /** Queues the essay and waits for the worker's result.
+   *
+   *  A grounded, sentence-level report is a long model call; held inside one
+   *  request it tied up a server worker throughout and was lost outright if
+   *  the connection dropped. The job now outlives the request. An API that
+   *  predates the queue (404) is still scored the old way, so a rollback of
+   *  either side keeps working. */
+  scoreWriting: async (
+    taskType: string,
+    prompt: string,
+    essay: string,
+    lang = "en",
+    mockSessionId?: string
+  ): Promise<WritingScore> => {
+    const body = { task_type: taskType, prompt, essay, lang, mock_session_id: mockSessionId };
+    try {
+      const { job_id } = await apiFetch<{ job_id: string }>("/ielts/writing/score/queue", {
+        method: "POST",
+        body,
+        auth: true,
+      });
+      return await waitForJob<WritingScore>(job_id);
+    } catch (error) {
+      if (!(error instanceof ApiError) || error.status !== 404) throw error;
+      return apiFetch<WritingScore>("/ielts/writing/score", {
+        method: "POST",
+        body,
+        auth: true,
+        // Match the server-side AI allowance so the browser does not abandon
+        // a healthy report after the global 15s.
+        timeoutMs: 75_000,
+      });
+    }
+  },
 
   generate: (kind: ComprehensionKind, band = 6) =>
     apiFetch<GeneratedTest>(`/ielts/${kind}/generate`, {

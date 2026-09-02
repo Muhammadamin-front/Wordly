@@ -17,20 +17,19 @@ from app.db.session import get_db
 from app.models.user import User
 from app.schemas.ielts import (
     BankItemOut,
-    CriterionOut,
     GenerateRequest,
     GeneratedTestOut,
     GradeOut,
     HistoryItemOut,
     OverviewOut,
     QuestionOut,
+    QueuedJobOut,
     RewardOut,
     SubmitRequest,
-    WritingAnalysisOut,
-    WritingErrorOut,
     WritingScoreOut,
     WritingScoreRequest,
     WritingTask,
+    writing_score_out,
 )
 from app.schemas.writing_master import (
     DrillFeedbackOut,
@@ -38,7 +37,7 @@ from app.schemas.writing_master import (
     ParaphraseCheckRequest,
 )
 from app.models.ielts import IeltsTest
-from app.services import ai_quota, coach, ielts, subscriptions, tts
+from app.services import ai_quota, coach, ielts, job_handlers, job_queue, subscriptions, tts
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.gamification import RewardSummary
 from app.services.ielts_bank import bank_for
@@ -162,13 +161,11 @@ async def writing_tasks():
     }
 
 
-@router.post("/writing/score", response_model=WritingScoreOut)
-async def writing_score(
-    payload: WritingScoreRequest,
-    user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-    client: AiClient = Depends(require_ai_client),
-):
+async def _essay_quota_gate(db: AsyncSession, user: User) -> Optional[str]:
+    """The full-essay allowance check both writing-score routes share.
+
+    Returns the plan code (None on the free plan) so the caller knows whether
+    to log a paid writing action afterwards."""
     plan_code = await _writing_quota_gate(db, user)
     if plan_code is not None:
         if not await ielts.has_writing_essay_subcap_quota(db, user.id, plan_code):
@@ -187,6 +184,17 @@ async def writing_score(
                 "Upgrade to Premium for more."
             ),
         )
+    return plan_code
+
+
+@router.post("/writing/score", response_model=WritingScoreOut)
+async def writing_score(
+    payload: WritingScoreRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    client: AiClient = Depends(require_ai_client),
+):
+    plan_code = await _essay_quota_gate(db, user)
     score = await _guarded(
         db, user,
         lambda: ielts.score_writing(
@@ -197,22 +205,48 @@ async def writing_score(
     if plan_code is not None:
         await ielts.log_writing_action(db, user.id, "essay")
     await db.commit()
-    return WritingScoreOut(
-        band_overall=score.band_overall,
-        task=CriterionOut(band=score.task.band, comment=score.task.comment),
-        coherence=CriterionOut(band=score.coherence.band, comment=score.coherence.comment),
-        lexical=CriterionOut(band=score.lexical.band, comment=score.lexical.comment),
-        grammar=CriterionOut(band=score.grammar.band, comment=score.grammar.comment),
-        errors=[
-            WritingErrorOut(quote=e.quote, fix=e.fix, note=e.note, type=e.type)
-            for e in score.errors
-        ],
-        strengths=score.strengths,
-        feedback=score.feedback,
-        improved=score.improved,
-        analysis=WritingAnalysisOut(**score.analysis),
-        reward=_reward(score.reward),
-    )
+    return writing_score_out(score)
+
+
+@router.post("/writing/score/queue", response_model=QueuedJobOut, status_code=status.HTTP_202_ACCEPTED)
+async def writing_score_queued(
+    payload: WritingScoreRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _: AiClient = Depends(require_ai_client),
+):
+    """Hands the essay to the worker instead of scoring it in this request.
+
+    Scoring an essay takes tens of seconds: held inline it tied up a request
+    for the whole model call, and a learner who lost their connection lost the
+    result with it. The job survives both — poll GET /jobs/{id} for it."""
+    plan_code = await _essay_quota_gate(db, user)
+    if not await ai_quota.has_quota(db, user):
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Daily AI limit reached. Upgrade to Premium for unlimited AI.",
+        )
+    try:
+        job = await job_queue.enqueue(
+            db,
+            user.id,
+            job_handlers.WRITING_SCORE,
+            {
+                "task_type": payload.task_type,
+                "prompt": payload.prompt,
+                "essay": payload.essay,
+                "lang": payload.lang,
+                "mock_session_id": payload.mock_session_id,
+                "plan_code": plan_code,
+            },
+        )
+    except job_queue.TooManyJobs:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="You already have scoring in progress. Wait for it to finish.",
+        )
+    await db.commit()
+    return QueuedJobOut(job_id=job.id)
 
 
 async def _generate(kind: str, band: float, user: User, db: AsyncSession, client: AiClient):

@@ -188,6 +188,41 @@ class WritingAnalysisOut(BaseModel):
     next_steps: List[str]
 
 
+class QueuedJobOut(BaseModel):
+    """202 response for work handed to the background worker; poll
+    GET /jobs/{job_id} for the result."""
+
+    job_id: UUID
+
+
+def writing_score_out(score) -> "WritingScoreOut":
+    """Builds the response from a services.ielts WritingScore.
+
+    Lives here rather than in the route because the queue worker produces the
+    very same payload out of band — see services/job_handlers.py."""
+    return WritingScoreOut(
+        band_overall=score.band_overall,
+        task=CriterionOut(band=score.task.band, comment=score.task.comment),
+        coherence=CriterionOut(band=score.coherence.band, comment=score.coherence.comment),
+        lexical=CriterionOut(band=score.lexical.band, comment=score.lexical.comment),
+        grammar=CriterionOut(band=score.grammar.band, comment=score.grammar.comment),
+        errors=[
+            WritingErrorOut(quote=e.quote, fix=e.fix, note=e.note, type=e.type)
+            for e in score.errors
+        ],
+        strengths=score.strengths,
+        feedback=score.feedback,
+        improved=score.improved,
+        analysis=WritingAnalysisOut(**score.analysis),
+        reward=RewardOut(
+            xp_gained=score.reward.xp_gained,
+            total_xp=score.reward.total_xp,
+            level=score.reward.level,
+            leveled_up=score.reward.leveled_up,
+        ),
+    )
+
+
 class WritingScoreOut(BaseModel):
     band_overall: float
     task: CriterionOut

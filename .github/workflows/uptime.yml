@@ -67,9 +67,10 @@ jobs:
             echo "No Telegram secrets configured; the failed run itself is the alert."
             exit 0
           fi
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          text="$(printf '🚨 Vocora is unreachable from outside:\n%s\n%s' \
+            "${FAILURES:-see the workflow run}" "$run_url")"
           curl -fsS -o /dev/null --max-time 20 \
             "https://api.telegram.org/bot${TOKEN}/sendMessage" \
             --data-urlencode "chat_id=${CHAT_ID}" \
-            --data-urlencode "text=🚨 Vocora is unreachable from outside:
-${FAILURES:-see the workflow run}
-${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            --data-urlencode "text=${text}"
