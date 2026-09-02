@@ -963,7 +963,14 @@
     "toggleQuarterly": "Quarterly",
     "toggleYearly": "Yearly",
     "saveLabel": "off",
-    "regularPrice": "Regular price"
+    "regularPrice": "Regular price",
+    "paymentMethodsTitle": "Ways to pay",
+    "notAvailableYet": "Not available yet",
+    "manualPaymentTitle": "Pay by card transfer",
+    "manualPaymentBody": "Card payment through Payme and Click is not switched on yet. In the meantime: show the card number below, transfer your plan's price, then send the receipt screenshot to {handle} on Telegram — your Premium is activated by hand as soon as it's confirmed.",
+    "manualPaymentReveal": "Show card number",
+    "manualPaymentCopy": "Copy",
+    "manualPaymentCopied": "Copied!"
   },
   "teacher": {
     "title": "Teacher panel",

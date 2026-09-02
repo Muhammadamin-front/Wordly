@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Copy, CreditCard, Send, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -22,6 +22,16 @@ import {
 import { cn } from "@/lib/utils";
 
 import styles from "./pricing-view.module.css";
+
+// Manual-payment fallback while the Payme/Click integrations are still
+// pending approval: the learner transfers the plan's price to this card and
+// sends the receipt on Telegram, and Premium is granted by hand from the
+// admin panel (see the subscription grant/revoke controls there).
+const TELEGRAM_HANDLE = "@Muhammad1803";
+const TELEGRAM_URL = "https://t.me/Muhammad1803";
+// Grouped for reading; copied without spaces, since banking apps commonly
+// reject a pasted number that still contains them.
+const TRANSFER_CARD_NUMBER = "5614 6821 1273 2054";
 
 type Tier = "free" | "plus" | "pro" | "max";
 type Duration = "monthly" | "quarterly" | "yearly";
@@ -348,6 +358,8 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
           })}
         </div>
 
+        <PaymentMethods t={t} />
+
         <footer className={styles.boardFooter}>
           <p>{t.honestBody}</p>
           <p><ShieldCheck aria-hidden /> {t.paymentGate}</p>
@@ -355,5 +367,92 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         {paymentStatus.sandbox_enabled && <p className={styles.sandboxNote}>{t.sandboxNote}</p>}
       </section>
     </main>
+  );
+}
+
+/** Card-gateway status plus the manual Telegram/card-transfer route. Payme
+ *  and Click are shown deliberately, marked unavailable, rather than hidden:
+ *  learners recognize them and would otherwise assume the site takes no
+ *  Uzbek payment at all. */
+function PaymentMethods({ t }: { t: Dictionary["billing"] }) {
+  const [showCard, setShowCard] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  async function copyCard() {
+    try {
+      await navigator.clipboard.writeText(TRANSFER_CARD_NUMBER.replace(/\s/g, ""));
+    } catch {
+      return; // Clipboard can be denied; the number stays visible on screen.
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
+  }
+
+  return (
+    <section className="mt-8 rounded-2xl border border-[rgba(232,201,154,0.2)] bg-[rgba(255,248,234,0.04)] p-5">
+      <p className="text-xs font-black uppercase tracking-widest text-[rgba(243,230,203,0.68)]">
+        {t.paymentMethodsTitle}
+      </p>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {[t.payme, t.click].map((name) => (
+          <div
+            key={name}
+            className="flex items-center gap-3 rounded-xl border border-[rgba(232,201,154,0.16)] bg-[rgba(255,248,234,0.03)] p-3 opacity-60"
+          >
+            <CreditCard className="size-5 shrink-0 text-[rgba(243,230,203,0.68)]" aria-hidden />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-bold text-brand-50">{name}</p>
+              <p className="text-[11px] font-semibold text-[rgba(243,230,203,0.6)]">{t.notAvailableYet}</p>
+            </div>
+          </div>
+        ))}
+
+        <a
+          href={TELEGRAM_URL}
+          target="_blank"
+          rel="noreferrer noopener"
+          className="flex items-center gap-3 rounded-xl border border-[rgba(143,195,185,0.45)] bg-[rgba(143,195,185,0.1)] p-3 transition-colors hover:bg-[rgba(143,195,185,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+        >
+          <Send className="size-5 shrink-0 text-[#8fc3b9]" aria-hidden />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-brand-50">Telegram</p>
+            <p className="truncate text-[11px] font-semibold text-[#8fc3b9]">{TELEGRAM_HANDLE}</p>
+          </div>
+        </a>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-[rgba(232,201,154,0.16)] p-4">
+        <p className="text-sm font-bold text-brand-50">{t.manualPaymentTitle}</p>
+        <p className="mt-1 text-xs leading-relaxed text-[rgba(243,230,203,0.72)]">
+          {t.manualPaymentBody.replace("{handle}", TELEGRAM_HANDLE)}
+        </p>
+
+        {showCard ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <code className="rounded-lg bg-[rgba(255,248,234,0.1)] px-3 py-2 text-base font-black tracking-[0.12em] text-brand-50 tabular-nums">
+              {TRANSFER_CARD_NUMBER}
+            </code>
+            <button
+              type="button"
+              onClick={() => void copyCard()}
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[rgba(232,201,154,0.28)] px-3 text-xs font-bold text-brand-50 transition-colors hover:bg-[rgba(255,248,234,0.08)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            >
+              {copied ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
+              {copied ? t.manualPaymentCopied : t.manualPaymentCopy}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowCard(true)}
+            className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[rgba(143,195,185,0.45)] bg-[rgba(143,195,185,0.1)] px-3 text-xs font-bold text-brand-50 transition-colors hover:bg-[rgba(143,195,185,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
+            <CreditCard className="size-3.5" aria-hidden />
+            {t.manualPaymentReveal}
+          </button>
+        )}
+      </div>
+    </section>
   );
 }

@@ -963,7 +963,14 @@
     "toggleQuarterly": "3 oylik",
     "toggleYearly": "Yillik",
     "saveLabel": "chegirma",
-    "regularPrice": "Oddiy narx"
+    "regularPrice": "Oddiy narx",
+    "paymentMethodsTitle": "To'lov usullari",
+    "notAvailableYet": "Hozircha mavjud emas",
+    "manualPaymentTitle": "Karta orqali to'lov",
+    "manualPaymentBody": "Payme va Click orqali to'lov hali yoqilmagan. Shu vaqt ichida: quyidagi karta raqamini oching, tarif narxini o'tkazing va chek skrinshotini Telegramda {handle} ga yuboring — tasdiqlangach Premium qo'lda faollashtiriladi.",
+    "manualPaymentReveal": "Karta raqamini ko'rsatish",
+    "manualPaymentCopy": "Nusxalash",
+    "manualPaymentCopied": "Nusxalandi!"
   },
   "teacher": {
     "title": "O'qituvchi paneli",
