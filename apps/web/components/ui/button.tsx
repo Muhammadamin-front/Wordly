@@ -4,12 +4,12 @@ import { forwardRef, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 export const buttonVariants = cva(
-  "tactile-action relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border font-bold transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] disabled:pointer-events-none disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 motion-reduce:transition-none cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-focus/35 focus-visible:outline-none",
+  "tactile-action relative isolate inline-flex items-center justify-center gap-2 overflow-hidden rounded-md border font-bold transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] disabled:pointer-events-none disabled:opacity-50 active:translate-x-0.5 active:translate-y-0.5 motion-reduce:transition-none cursor-pointer select-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:outline-none",
   {
     variants: {
       variant: {
         primary:
-          "border-brand-950 bg-primary text-white shadow-[3px_4px_0_#54250f] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[5px_6px_0_#54250f] active:shadow-[1px_2px_0_#54250f] dark:text-brand-50",
+          "border-brand-950 bg-primary text-primary-contrast shadow-[3px_4px_0_#54250f] hover:-translate-y-0.5 hover:bg-primary-hover hover:shadow-[5px_6px_0_#54250f] active:shadow-[1px_2px_0_#54250f]",
         secondary:
           "border-line bg-raised text-ink shadow-[2px_3px_0_rgb(84,37,15,0.18)] hover:-translate-y-0.5 hover:border-brand-500 hover:bg-sand-50 hover:text-primary hover:shadow-[4px_5px_0_rgb(84,37,15,0.24)] active:shadow-[1px_2px_0_rgb(84,37,15,0.16)]",
         accent:
@@ -42,6 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       ref={ref}
       className={cn(buttonVariants({ variant, size, fullWidth }), className)}
       disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
     >
       {loading && (

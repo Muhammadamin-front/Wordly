@@ -123,8 +123,8 @@ function ChoiceQuestion({
               className={cn(
                 "flex min-h-14 items-center justify-between rounded-lg border px-4 py-3.5 text-left font-semibold shadow-sm transition-colors",
                 state === "idle" && "border-line bg-card text-ink hover:border-brand-400",
-                state === "correct" && "border-success bg-success/10 text-success",
-                state === "wrong" && "border-danger bg-danger/10 text-danger"
+                state === "correct" && "border-success bg-success/10 text-success-text",
+                state === "wrong" && "border-danger bg-danger/10 text-danger-text"
               )}
             >
               <span>{option}</span>

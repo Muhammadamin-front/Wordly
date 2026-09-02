@@ -53,7 +53,7 @@ export function AchievementsView({
 
   if (!ready || !user || items === null || stats === null) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -62,7 +62,7 @@ export function AchievementsView({
   const unlockedCount = items.filter((a) => a.unlocked).length;
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
       <h1 className="type-h1 text-ink">{page.title}</h1>
       <p className="mt-1 text-sm text-ink-soft">{page.subtitle}</p>
 
@@ -122,7 +122,7 @@ export function AchievementsView({
                 </p>
               </div>
               {item.unlocked && (
-                <span className="rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success">
+                <span className="rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-bold text-success-text">
                   ✓ {page.unlocked}
                 </span>
               )}

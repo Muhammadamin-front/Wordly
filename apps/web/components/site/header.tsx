@@ -101,7 +101,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
   const authed = ready && !!user;
 
   return (
-    <header className="site-header sticky top-0 z-40">
+    <header className="site-header sticky top-0 z-40" style={{ viewTransitionName: "site-header" }}>
       <div className="glass mx-auto flex h-14 max-w-(--app-container-width) items-center gap-2 rounded-[18px] px-2 sm:h-16 sm:gap-3 sm:rounded-[20px] shadow-[0_14px_44px_rgba(24,63,57,0.09)] sm:px-5">
         <button
           type="button"
@@ -118,7 +118,7 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
           <Logo lang={lang} className="site-header-logo [&_.logo-mark]:size-8 [&_.logo-text]:text-lg sm:[&_.logo-mark]:size-9 sm:[&_.logo-text]:text-[21px]" />
         </div>
 
-        <nav className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
+        <nav aria-label={nav.menu} className="hidden min-w-0 flex-1 items-center gap-1.5 overflow-visible lg:flex">
           {authed ? (
             <>
               {PRIMARY_NAV.map((item) => (
@@ -132,19 +132,37 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
             <>
               <Link
                 href={`/${lang}`}
-                className="relative px-3 py-2 text-sm font-bold text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+                aria-current={pathname === `/${lang}` ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold transition-colors",
+                  pathname === `/${lang}`
+                    ? "font-bold text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+                    : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
+                )}
               >
                 {getHomeLabel(lang)}
               </Link>
               <Link
                 href={`/${lang}/vocabulary`}
-                className="px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-brand-900 dark:hover:text-ink"
+                aria-current={isActive(pathname, lang, "vocabulary") ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold transition-colors",
+                  isActive(pathname, lang, "vocabulary")
+                    ? "font-bold text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+                    : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
+                )}
               >
                 {getWordsLabel(lang)}
               </Link>
               <Link
                 href={`/${lang}/ielts`}
-                className="px-3 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-brand-900 dark:hover:text-ink"
+                aria-current={isActive(pathname, lang, "ielts") ? "page" : undefined}
+                className={cn(
+                  "relative inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold transition-colors",
+                  isActive(pathname, lang, "ielts")
+                    ? "font-bold text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
+                    : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
+                )}
               >
                 IELTS
               </Link>
@@ -300,7 +318,7 @@ function AccountMenu({
           role="menuitem"
           disabled={busy !== null}
           onClick={() => void run("switch")}
-          className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35 disabled:opacity-60"
+          className="mt-1 flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink transition-colors hover:bg-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-60"
         >
           <RefreshCw className={cn("size-4", busy === "switch" && "animate-spin")} aria-hidden />
           {nav.switchAccount}
@@ -310,7 +328,7 @@ function AccountMenu({
           role="menuitem"
           disabled={busy !== null}
           onClick={() => void run("logout")}
-          className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink-soft transition-colors hover:bg-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35 disabled:opacity-60"
+          className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-bold text-ink-soft transition-colors hover:bg-hover hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus disabled:opacity-60"
         >
           <LogOut className="size-4" aria-hidden />
           {nav.logout}
@@ -422,7 +440,7 @@ function MobileSidebar({
                 onClick={onClose}
                 className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-card/70"
               >
-                <Sparkles className="size-4 text-accent-500" aria-hidden />
+                <Sparkles className="size-4 text-accent-text" aria-hidden />
                 {nav.features}
               </Link>
               <Link
@@ -524,8 +542,9 @@ function DesktopNavLink({
   return (
     <Link
       href={`/${lang}/${item.href}`}
+      aria-current={active ? "page" : undefined}
       className={cn(
-        "relative flex h-10 shrink-0 items-center whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors",
+        "relative flex min-h-11 shrink-0 items-center whitespace-nowrap px-3 py-2 text-[13px] font-bold transition-colors",
         active
           ? "text-brand-950 after:absolute after:inset-x-3 after:-bottom-1 after:h-0.5 after:bg-brand-900 dark:text-ink"
           : "text-ink-soft hover:text-brand-900 dark:hover:text-ink"
@@ -608,7 +627,7 @@ function DesktopNavGroup({
           }
         }}
         className={cn(
-          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35",
+          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
           active
             ? "bg-brand-600/10 text-brand-700 dark:bg-white/10 dark:text-ink"
             : "text-ink-soft hover:bg-hover hover:text-ink"
@@ -658,9 +677,10 @@ function DesktopNavGroup({
               key={item.key}
               href={`/${lang}/${item.href}`}
               role="menuitem"
+              aria-current={itemActive ? "page" : undefined}
               onClick={closeMenu}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
                 itemActive
                   ? "bg-brand-600/12 text-brand-600 dark:text-brand-200"
                   : "text-ink-soft hover:bg-hover hover:text-ink"
@@ -757,6 +777,7 @@ function MobileBottomNav({
           <Link
             key={item.key}
             href={`/${lang}/${item.href}`}
+            aria-current={active ? "page" : undefined}
             className={cn(
               "flex min-h-14 flex-col items-center justify-center gap-1 rounded-[18px] px-1 text-[10px] font-black transition-colors",
               active
@@ -792,6 +813,7 @@ function MobileNavLink({
     <Link
       href={`/${lang}/${item.href}`}
       onClick={onClose}
+      aria-current={active ? "page" : undefined}
       className={cn(
         "flex min-h-11 items-center gap-3 rounded-lg px-3 py-3 text-sm font-bold transition-all",
         active

@@ -49,7 +49,7 @@ export function AnswerReveal({
               row.user_id === myUserId ? "border-brand-400 bg-brand-500/5" : "border-line bg-card"
             )}
           >
-            <span aria-hidden className={cn("text-lg", row.correct ? "text-success" : "text-ink-soft")}>
+            <span aria-hidden className={cn("text-lg", row.correct ? "text-success-text" : "text-ink-soft")}>
               {row.correct ? "✓" : "✕"}
             </span>
             <span className="flex-1 truncate font-semibold text-ink">{nameOf(row.user_id)}</span>

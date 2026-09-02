@@ -38,12 +38,12 @@ export function MockLegTransition({
 }) {
   const NextIcon = NEXT_ICON[nextSkill];
   return (
-    <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16 text-center">
+    <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-16 text-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        className="flex size-16 items-center justify-center rounded-full bg-success/12 text-success"
+        className="flex size-16 items-center justify-center rounded-full bg-success/12 text-success-text"
       >
         <CheckCircle2 className="size-8" aria-hidden />
       </motion.div>

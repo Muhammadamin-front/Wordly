@@ -48,7 +48,7 @@ export function StatsWidget({ lang }: { lang: string }) {
         {stats.level}
       </span>
       <span className="inline-flex items-center gap-1.5">
-        <Coins className="size-3.5 text-accent-500" aria-hidden />
+        <Coins className="size-3.5 text-accent-text" aria-hidden />
         {stats.coins}
       </span>
     </Link>

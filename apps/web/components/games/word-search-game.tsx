@@ -148,7 +148,7 @@ export function WordSearchGame({
                 onClick={() => click(r, c)}
                 className={cn(
                   "flex aspect-square items-center justify-center rounded text-xs font-bold transition-colors sm:text-sm",
-                  isFound && "bg-success/25 text-success",
+                  isFound && "bg-success/25 text-success-text",
                   isStart && "bg-brand-600 text-white",
                   !isFound && !isStart && "bg-card text-ink hover:bg-brand-600/10"
                 )}
@@ -168,7 +168,7 @@ export function WordSearchGame({
             className={cn(
               "rounded-full px-2.5 py-1 text-xs font-semibold",
               found.has(t.cardId)
-                ? "bg-success/10 text-success line-through"
+                ? "bg-success/10 text-success-text line-through"
                 : "bg-line/60 text-ink-soft"
             )}
             animate={found.has(t.cardId) ? { scale: [1, 1.08, 1] } : { scale: 1 }}

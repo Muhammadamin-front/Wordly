@@ -38,7 +38,7 @@ export function VocabularyWordCard({
           onClick={() => speak(word.headword)}
           aria-label={labels.listen}
           title={labels.listen}
-          className="flex size-7 items-center justify-center rounded-md border border-line bg-raised text-ink-soft shadow-[2px_2px_0_rgb(84,37,15,0.16)] transition-all hover:-translate-y-0.5 hover:text-brand-600 sm:size-9 dark:hover:text-brand-300"
+          className="flex size-11 items-center justify-center rounded-md border border-line bg-raised text-ink-soft shadow-[2px_2px_0_rgb(84,37,15,0.16)] transition-all hover:-translate-y-0.5 hover:text-brand-600 dark:hover:text-brand-300"
         >
           <Volume2 className="size-3 sm:size-4" />
         </button>
@@ -46,7 +46,7 @@ export function VocabularyWordCard({
       backActions={
         <Link
           href={`/${lang}/words/${word.slug}`}
-          className="flex h-7 w-full items-center justify-center gap-1 rounded-md border border-brand-950 bg-brand-600 px-1 text-[10px] font-bold text-white shadow-[2px_3px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500 sm:h-11 sm:gap-2 sm:px-4 sm:text-sm"
+          className="flex min-h-11 w-full items-center justify-center gap-1 rounded-md border border-brand-950 bg-brand-600 px-1 text-[10px] font-bold text-white shadow-[2px_3px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500 sm:gap-2 sm:px-4 sm:text-sm"
         >
           {labels.details}
           <ArrowUpRight className="size-4" />
@@ -54,7 +54,7 @@ export function VocabularyWordCard({
       }
       front={
         <div className="flex h-full flex-col p-2 sm:p-5">
-          <div className="pr-7 sm:pr-12">
+          <div className="pr-12">
             <div className="flex min-w-0 items-center gap-1 sm:gap-2">
               <span className="print-label border-brand-600 bg-brand-600/10 px-1.5 py-0.5 text-[9px] text-brand-600 sm:px-2 sm:py-1 sm:text-[11px] dark:text-brand-300">
                 {word.cefr_level}
@@ -74,7 +74,7 @@ export function VocabularyWordCard({
         </div>
       }
       back={
-        <div className="flex h-full flex-col p-2 pb-10 sm:p-5 sm:pb-20">
+        <div className="flex h-full flex-col p-2 pb-14 sm:p-5 sm:pb-20">
           <p className="truncate pr-5 text-[9px] font-black uppercase text-ink-soft sm:pr-7 sm:text-xs">{word.headword}</p>
           <p className="mt-2 line-clamp-3 font-display text-2xl leading-none tracking-wide text-ink sm:mt-4 sm:text-4xl">{primaryTranslation}</p>
           {lang !== "ru" && word.primary_translation_ru && (

@@ -81,7 +81,7 @@ export function LiveCall({
         >
           ← {t.back}
         </button>
-        <span className="rounded-full bg-danger/10 px-3 py-1 text-xs font-bold text-danger">
+        <span className="rounded-full bg-danger/10 px-3 py-1 text-xs font-bold text-danger-text">
           ● {t.liveCall}
         </span>
       </div>

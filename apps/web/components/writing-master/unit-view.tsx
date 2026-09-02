@@ -144,7 +144,7 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
 
   if (locked) {
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-4 px-4 py-20 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center gap-4 px-4 py-20 text-center">
         <Lock className="size-8 text-ink-soft" />
         <p className="text-lg font-black text-ink">{unit.title}</p>
         <p className="text-sm text-ink-soft">Premium required for this unit.</p>
@@ -159,7 +159,7 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
   const stepIndex = stepOrder.indexOf(step);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
       {xpToast && <XpToast xp={xpToast.xp} leveledUp={xpToast.leveledUp} toastKey={xpToast.key} />}
       <h1 className="font-display text-3xl text-ink">{lang === "uz" ? unit.titleUz : unit.title}</h1>
 
@@ -174,7 +174,7 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
                 step === s
                   ? "border-brand-500 bg-brand-500/10 text-brand-700"
                   : done
-                    ? "border-success/40 bg-success/10 text-success"
+                    ? "border-success/40 bg-success/10 text-success-text"
                     : "border-line text-ink-soft"
               }`}
             >
@@ -283,9 +283,9 @@ export function UnitView({ lang, t, unit }: { lang: string; t: Ielts; unit: Mast
         <div className="mt-6">
           {score.band_overall >= pass ? (
             <div className="mb-4 flex items-center gap-3 rounded-2xl border border-success/30 bg-success/10 p-4">
-              <Trophy className="size-8 shrink-0 text-success" />
+              <Trophy className="size-8 shrink-0 text-success-text" />
               <div>
-                <p className="font-black text-success">Unit mastered!</p>
+                <p className="font-black text-success-text">Unit mastered!</p>
                 <p className="text-sm text-ink-soft">
                   Band {score.band_overall.toFixed(1)}, at or above your {pass.toFixed(1)} pass mark for this unit.
                 </p>

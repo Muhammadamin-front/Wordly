@@ -1,6 +1,6 @@
 export default function GrammarLessonLoading() {
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 animate-pulse px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 animate-pulse px-4 py-8 sm:px-6">
       <div className="h-11 w-44 rounded-lg bg-line/60" />
       <section className="surface-panel mt-5 rounded-lg p-6 sm:p-8">
         <div className="h-4 w-28 rounded bg-line/60" />

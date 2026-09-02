@@ -60,7 +60,7 @@ export function MyCardsView({ lang, t }: { lang: string; t: Dictionary["library"
   if (!ready || !user) return null;
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
       <Link
         href={`/${lang}/decks`}
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
@@ -84,7 +84,7 @@ export function MyCardsView({ lang, t }: { lang: string; t: Dictionary["library"
             value={query}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={t.searchMyCards}
-            className="h-11 w-full rounded-xl border border-line bg-card pl-9 pr-4 text-sm text-ink placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30"
+            className="h-11 w-full rounded-xl border border-line bg-card pl-9 pr-4 text-sm text-ink placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus"
           />
         </div>
         <p className="text-sm text-ink-soft">

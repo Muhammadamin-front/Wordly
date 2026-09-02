@@ -44,12 +44,12 @@ export function LeaderboardPanel({
                   <span className="text-xs font-bold text-brand-500">+{row.delta}</span>
                 )}
                 {rose && (
-                  <span aria-hidden className="text-success">
+                  <span aria-hidden className="text-success-text">
                     ▲
                   </span>
                 )}
                 {fell && (
-                  <span aria-hidden className="text-danger">
+                  <span aria-hidden className="text-danger-text">
                     ▼
                   </span>
                 )}

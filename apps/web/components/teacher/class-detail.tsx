@@ -65,14 +65,14 @@ export function ClassDetail({
 
   if (!ready || !user || data === null) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
       <Card className="bg-linear-to-br from-brand-600/10 to-transparent text-center">
         <p className="text-xs text-ink-soft">{t.shareCode}</p>
         <p className="mt-1 font-mono text-3xl font-extrabold tracking-widest text-brand-600 dark:text-brand-300">
@@ -134,7 +134,7 @@ export function ClassDetail({
                   {a.assignment.target_reviews} {t.reviews}
                 </p>
               </div>
-              <span className="shrink-0 rounded-full bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+              <span className="shrink-0 rounded-full bg-success/10 px-2.5 py-1 text-xs font-bold text-success-text">
                 {a.completed}/{a.total} {t.completed}
               </span>
             </div>

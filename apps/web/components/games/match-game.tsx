@@ -47,8 +47,8 @@ export function MatchGame({
   const cell = (active: boolean, done: boolean, isWrong: boolean) =>
     cn(
       "relative w-full overflow-hidden rounded-lg border px-3 py-3.5 text-center font-semibold transition-colors",
-      done && "border-success/40 bg-success/10 text-success opacity-50",
-      isWrong && "border-danger bg-danger/10 text-danger",
+      done && "border-success/40 bg-success/10 text-success-text opacity-50",
+      isWrong && "border-danger bg-danger/10 text-danger-text",
       active && "border-brand-400 bg-brand-600/10 text-brand-600 dark:text-brand-300",
       !done && !isWrong && !active && "border-line bg-card text-ink hover:border-brand-400"
     );

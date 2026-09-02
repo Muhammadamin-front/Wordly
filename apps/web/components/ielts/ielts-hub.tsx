@@ -49,7 +49,7 @@ export function IeltsHub({
 }) {
   const vocabularyResources = ieltsVocabularyResources(lang);
   return (
-    <main className="app-container page-stack flex-1">
+    <main id="main-content" tabIndex={-1} className="app-container page-stack flex-1">
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -98,7 +98,7 @@ export function IeltsHub({
         </div>
         <div className="border-t border-line bg-brand-600/8 px-6 py-3 dark:bg-brand-950/45 sm:px-8">
           <p className="flex items-center gap-2 text-xs font-bold text-brand-800 dark:text-ink-soft">
-            <LibraryBig className="size-4 text-accent-500" aria-hidden />
+            <LibraryBig className="size-4 text-accent-text" aria-hidden />
             {t.brandNote}
           </p>
         </div>
@@ -140,7 +140,7 @@ export function IeltsHub({
       <section className="mt-10">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="type-label text-accent-500">{t.skillsKicker}</p>
+            <p className="type-label text-accent-text">{t.skillsKicker}</p>
             <h2 className="type-h2 mt-1 text-ink">{t.skillsTitle}</h2>
           </div>
         </div>
@@ -186,11 +186,11 @@ export function IeltsHub({
 
       <section className="mt-10">
         <div className="mb-4 flex items-center gap-3">
-          <span className="icon-tile size-10 rounded-lg text-accent-500">
+          <span className="icon-tile size-10 rounded-lg text-accent-text">
             <ChartNoAxesCombined className="size-4" aria-hidden />
           </span>
           <div>
-            <p className="type-label text-accent-500">{t.vocabularyKicker}</p>
+            <p className="type-label text-accent-text">{t.vocabularyKicker}</p>
             <h2 className="type-h3 text-ink">{t.vocabularyTitle}</h2>
           </div>
         </div>
@@ -202,7 +202,7 @@ export function IeltsHub({
               className="group flex items-center justify-between gap-4 rounded-xl border border-line bg-card p-4 shadow-[2px_3px_0_rgb(84,37,15,0.12)] transition-all duration-150 hover:-translate-y-0.5 hover:border-brand-400 hover:bg-raised"
             >
               <span>
-                <p className="type-caption text-accent-500">{resource.eyebrow}</p>
+                <p className="type-caption text-accent-text">{resource.eyebrow}</p>
                 <h3 className="mt-1 text-sm font-bold leading-5 text-ink">{resource.title}</h3>
               </span>
               <ArrowUpRight className="size-4 shrink-0 text-ink-soft transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ink" />

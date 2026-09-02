@@ -49,7 +49,7 @@ function QuestCard({ lang, quest, gam }: { lang: string; quest: DailyQuest; gam:
       className="group relative overflow-hidden rounded-lg border border-line bg-card/82 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-brand-400/55 hover:shadow-[0_18px_45px_rgba(12,89,76,0.13)]"
     >
       <div className="flex items-start gap-3">
-        <span className={quest.completed ? "icon-tile size-10 bg-success/12 text-success" : "icon-tile size-10 text-brand-600 dark:text-brand-300"}>
+        <span className={quest.completed ? "icon-tile size-10 bg-success/12 text-success-text" : "icon-tile size-10 text-brand-600 dark:text-brand-300"}>
           {quest.completed ? <Check className="size-5" aria-hidden /> : <Icon className="size-5" aria-hidden />}
         </span>
         <div className="min-w-0 flex-1">

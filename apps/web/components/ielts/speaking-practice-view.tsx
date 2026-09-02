@@ -59,7 +59,7 @@ export function SpeakingPracticeView({ t }: { t: Copy }) {
 
 function SpeakingPracticeSkeleton() {
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <div className="h-64 animate-pulse rounded-lg border border-line bg-card/60" />
     </main>
   );
@@ -113,7 +113,7 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <section className="surface-panel overflow-hidden rounded-lg p-5 sm:p-7">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div>
@@ -164,7 +164,7 @@ function SpeakingPractice({ scope, t }: { scope: string; t: Copy }) {
               )}
             >
               <span className="block text-sm font-black">{part.label}</span>
-              <span className="hidden text-[10px] font-bold opacity-80 sm:block">{part.helper}</span>
+              <span className="hidden text-[10px] font-bold sm:block">{part.helper}</span>
             </button>
           ))}
         </div>
@@ -227,7 +227,7 @@ function TopicCard({
         className={cn(
           "flex size-11 shrink-0 items-center justify-center rounded-lg border",
           completed
-            ? "border-success/25 bg-success/10 text-success"
+            ? "border-success/25 bg-success/10 text-success-text"
             : "border-brand-400/20 bg-brand-600/8 text-brand-600"
         )}
       >
@@ -236,7 +236,7 @@ function TopicCard({
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-2">
           <span className="text-base font-black text-ink">{topic.title}</span>
-          {saved && <BookmarkCheck className="size-4 text-accent-500" aria-hidden />}
+          {saved && <BookmarkCheck className="size-4 text-accent-text" aria-hidden />}
         </span>
         <span className="mt-1 block text-sm leading-6 text-ink-soft">{topic.description}</span>
         <span className="mt-2 inline-flex items-center gap-2 rounded-full bg-brand-600/8 px-2.5 py-1 text-xs font-bold text-brand-700 dark:text-brand-200">
@@ -298,7 +298,7 @@ function SpeakingTopicDetail({
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <button
         type="button"
         onClick={onBack}

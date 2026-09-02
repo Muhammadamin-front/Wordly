@@ -512,8 +512,8 @@ export function CrosswordGame({
                         inActiveWord(r, c) && "bg-brand-600/12",
                         isActive && "z-10 ring-2 ring-inset ring-brand-500",
                         hinted[r][c] && "bg-accent-500/12 text-accent-700 dark:text-accent-300",
-                        state === "correct" && "bg-success/15 text-success",
-                        state === "wrong" && "bg-danger/12 text-danger"
+                        state === "correct" && "bg-success/15 text-success-text",
+                        state === "wrong" && "bg-danger/12 text-danger-text"
                       )}
                     >
                       {number && (
@@ -581,8 +581,8 @@ export function CrosswordGame({
                     exit={{ opacity: 0 }}
                     className={cn(
                       "mt-4 flex items-start gap-2 rounded-lg px-3 py-2 text-xs font-semibold leading-5",
-                      feedback === "correct" && "bg-success/12 text-success",
-                      feedback === "wrong" && "bg-danger/10 text-danger",
+                      feedback === "correct" && "bg-success/12 text-success-text",
+                      feedback === "wrong" && "bg-danger/10 text-danger-text",
                       feedback === "incomplete" && "bg-accent-500/12 text-accent-700 dark:text-accent-300",
                       feedback === "hint" && "bg-brand-600/10 text-brand-700 dark:text-brand-200"
                     )}
@@ -647,8 +647,8 @@ export function CrosswordGame({
                           onClick={() => selectPlacement(p)}
                           className={cn(
                             "w-full rounded-lg px-2 py-2 text-left text-sm text-ink transition-colors hover:bg-brand-600/8",
-                            wordState[p.cardId] === "correct" && "text-success",
-                            wordState[p.cardId] === "wrong" && "text-danger",
+                            wordState[p.cardId] === "correct" && "text-success-text",
+                            wordState[p.cardId] === "wrong" && "text-danger-text",
                             activePlacement?.cardId === p.cardId && "bg-brand-600/10"
                           )}
                         >

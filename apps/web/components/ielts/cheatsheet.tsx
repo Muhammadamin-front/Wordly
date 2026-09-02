@@ -50,7 +50,7 @@ export function CheatsheetPanel({ sheet, t }: { sheet: Cheatsheet; t: Ielts }) {
               key={i}
               className="flex items-start gap-2 rounded-xl border border-danger/20 bg-danger/5 px-4 py-2.5 text-sm text-ink"
             >
-              <span className="mt-0.5 text-danger">✗</span>
+              <span className="mt-0.5 text-danger-text">✗</span>
               {mistake}
             </div>
           ))}

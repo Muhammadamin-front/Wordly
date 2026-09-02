@@ -106,7 +106,7 @@ export function WordForm({
   }
 
   const selectClass =
-    "h-11 w-full rounded-xl border border-line bg-card px-3 text-sm text-ink focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30";
+    "h-11 w-full rounded-xl border border-line bg-card px-3 text-sm text-ink focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus";
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">

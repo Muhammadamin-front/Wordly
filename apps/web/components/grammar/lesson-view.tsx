@@ -207,7 +207,7 @@ export function LessonView({
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
       <div className="mb-5 flex items-center justify-between gap-3">
         <Link
           href={`/${lang}/grammar`}
@@ -224,7 +224,7 @@ export function LessonView({
       <section className="surface-panel light-sweep rounded-lg p-6 sm:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.35fr_0.75fr] lg:items-end">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-text">
               <BookOpenCheck className="size-4" aria-hidden />
               {t.lessonEyebrow}
             </span>
@@ -238,7 +238,7 @@ export function LessonView({
           {lesson.formula && (
             <div className="premium-card rounded-lg p-5">
               <p className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink-soft">
-                <Sparkles className="size-4 text-accent-500" aria-hidden />
+                <Sparkles className="size-4 text-accent-text" aria-hidden />
                 {t.formula}
               </p>
               <p className="mt-3 font-mono text-sm font-extrabold leading-6 text-brand-600 dark:text-brand-300">
@@ -253,7 +253,7 @@ export function LessonView({
         <div className="space-y-5">
           <section className="surface-panel rounded-lg p-5">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-              <Highlighter className="size-4 text-accent-500" aria-hidden />
+              <Highlighter className="size-4 text-accent-text" aria-hidden />
               {t.keyTerms}
             </h2>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -334,7 +334,7 @@ export function LessonView({
               <span
                 className={cn(
                   "icon-tile mx-auto size-14 rounded-lg",
-                  passed ? "text-success" : "text-warning"
+                  passed ? "text-success-text" : "text-warning-text"
                 )}
               >
                 {passed ? <BadgeCheck className="size-7" aria-hidden /> : <Target className="size-7" aria-hidden />}
@@ -376,7 +376,7 @@ export function LessonView({
         <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <section className="surface-panel rounded-lg p-4">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-              <AlertTriangle className="size-4 text-warning" aria-hidden />
+              <AlertTriangle className="size-4 text-warning-text" aria-hidden />
               {t.importantNotes}
             </h2>
             <div className="mt-3 space-y-2">
@@ -390,7 +390,7 @@ export function LessonView({
 
           <section className="surface-panel rounded-lg p-4">
             <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-              <Sparkles className="size-4 text-accent-500" aria-hidden />
+              <Sparkles className="size-4 text-accent-text" aria-hidden />
               {t.ieltsFocus}
             </h2>
             <div className="mt-3 space-y-2">
@@ -427,7 +427,7 @@ function LessonPatternLab({
     <section className="surface-panel rounded-lg p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-xs font-extrabold uppercase text-accent-500">
+          <p className="flex items-center gap-2 text-xs font-extrabold uppercase text-accent-text">
             <ScanText className="size-4" aria-hidden />
             {t.deepLab}
           </p>
@@ -472,7 +472,7 @@ function LessonPatternLab({
 
         <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
           <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
-            <Target className="size-4 text-accent-500" aria-hidden />
+            <Target className="size-4 text-accent-text" aria-hidden />
             {t.productionLadder}
           </h3>
           <ol className="mt-3 space-y-2">
@@ -483,7 +483,7 @@ function LessonPatternLab({
               t.ladder4,
             ].map((step, index) => (
               <li key={step} className="flex gap-3 text-sm leading-6 text-ink-soft">
-                <span className="font-black text-accent-500">{index + 1}.</span>
+                <span className="font-black text-accent-text">{index + 1}.</span>
                 {step}
               </li>
             ))}
@@ -498,7 +498,7 @@ function LessonExamples({ lesson, terms, t }: { lesson: GrammarLesson; terms: st
   return (
     <section className="surface-panel rounded-lg p-5">
       <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-        <Quote className="size-4 text-accent-500" aria-hidden />
+        <Quote className="size-4 text-accent-text" aria-hidden />
         {t.examples}
       </h2>
       <div className="mt-3 grid gap-2">
@@ -523,7 +523,7 @@ function LessonForms({ lesson, terms }: { lesson: GrammarLesson; terms: string[]
     <section className="surface-panel rounded-lg p-5">
       <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><PanelsTopLeft className="size-4 text-brand-500" aria-hidden />Forms</h2>
       <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        {lesson.forms.map((form) => <div key={`${form.label}-${form.example}`} className="min-w-0 rounded-lg border border-line bg-card/60 p-4"><p className="text-xs font-extrabold uppercase text-accent-500">{form.label}</p><p className="mt-2 break-words font-mono text-xs font-bold leading-5 text-brand-600 dark:text-brand-300">{form.formula}</p><p className="mt-2 text-sm font-semibold leading-6 text-ink">{highlightText(form.example, terms)}</p></div>)}
+        {lesson.forms.map((form) => <div key={`${form.label}-${form.example}`} className="min-w-0 rounded-lg border border-line bg-card/60 p-4"><p className="text-xs font-extrabold uppercase text-accent-text">{form.label}</p><p className="mt-2 break-words font-mono text-xs font-bold leading-5 text-brand-600 dark:text-brand-300">{form.formula}</p><p className="mt-2 text-sm font-semibold leading-6 text-ink">{highlightText(form.example, terms)}</p></div>)}
       </div>
     </section>
   );
@@ -533,7 +533,7 @@ function LessonComparisons({ lesson, terms }: { lesson: GrammarLesson; terms: st
   if (!lesson.comparisons?.length) return null;
   return (
     <section className="surface-panel rounded-lg p-5">
-      <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><ScanText className="size-4 text-accent-500" aria-hidden />Compare</h2>
+      <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink"><ScanText className="size-4 text-accent-text" aria-hidden />Compare</h2>
       <div className="mt-3 space-y-3">{lesson.comparisons.map((comparison) => <div key={comparison.title} className="rounded-lg border border-line bg-card/60 p-4"><h3 className="font-extrabold text-ink">{comparison.title}</h3><div className="mt-3 grid gap-2 sm:grid-cols-2"><p className="rounded-lg border border-success/20 bg-success/5 p-3 text-sm font-semibold leading-6 text-ink">{highlightText(comparison.left, terms)}</p><p className="rounded-lg border border-warning/20 bg-warning/5 p-3 text-sm font-semibold leading-6 text-ink">{highlightText(comparison.right, terms)}</p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{comparison.explanation}</p></div>)}</div>
     </section>
   );
@@ -543,19 +543,19 @@ function LessonMistakes({ lesson, terms, t }: { lesson: GrammarLesson; terms: st
   return (
     <section className="surface-panel rounded-lg p-5">
       <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-        <AlertTriangle className="size-4 text-warning" aria-hidden />
+        <AlertTriangle className="size-4 text-warning-text" aria-hidden />
         {t.mistakes}
       </h2>
       <div className="mt-3 space-y-2">
         {lesson.mistakes.map((m, i) => (
           <div key={i} className="rounded-lg border border-line bg-card/60 px-4 py-3">
             <p className="flex flex-wrap items-center gap-2 text-sm">
-              <span className="inline-flex items-center gap-1.5 text-danger line-through decoration-danger/60">
+              <span className="inline-flex items-center gap-1.5 text-danger-text line-through decoration-danger/60">
                 <XCircle className="size-4" aria-hidden />
                 {m.wrong}
               </span>
               <ArrowRight className="size-4 text-ink-soft" aria-hidden />
-              <span className="inline-flex items-center gap-1.5 font-semibold text-success">
+              <span className="inline-flex items-center gap-1.5 font-semibold text-success-text">
                 <CheckCircle2 className="size-4" aria-hidden />
                 {m.right}
               </span>
@@ -595,7 +595,7 @@ function LessonExercises({
   return (
     <section className="surface-panel rounded-lg p-5">
       <h2 className="flex items-center gap-2 text-sm font-extrabold uppercase tracking-wide text-ink">
-        <ListChecks className="size-4 text-accent-500" aria-hidden />
+        <ListChecks className="size-4 text-accent-text" aria-hidden />
         {t.quiz}
       </h2>
       <div className="mt-3 space-y-3">
@@ -621,8 +621,8 @@ function LessonExercises({
                       onClick={() => setAnswers((prev) => prev.map((answer, index) => index === qi ? option : answer))}
                       className={cn(
                         "min-h-12 rounded-lg border px-3 py-2 text-left text-sm font-semibold leading-6 transition active:translate-y-px",
-                        isAnswer && "border-success bg-success/10 text-success",
-                        isWrongChoice && "border-danger bg-danger/10 text-danger",
+                        isAnswer && "border-success bg-success/10 text-success-text",
+                        isWrongChoice && "border-danger bg-danger/10 text-danger-text",
                         !checked && chosen === option && "border-brand-500 bg-brand-600/10 text-ink",
                         !checked && chosen !== option && "border-line text-ink hover:bg-line/40",
                         checked && !isAnswer && !isWrongChoice && "border-line text-ink-soft"
@@ -632,7 +632,7 @@ function LessonExercises({
                     </button>
                   );
                 })}
-              </div> : item.type === "sentence-builder" && item.words?.length ? <div className="mt-3"><div className="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border border-line bg-raised/50 p-3 text-sm font-semibold text-ink">{chosen || labels.placeholder}</div><div className="mt-2 flex flex-wrap gap-2">{item.words.map((word, index) => <button key={`${word}-${index}`} type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? `${answer}${answer ? " " : ""}${word}` : answer))} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm font-bold text-ink active:translate-y-px">{word}</button>)}<button type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? "" : answer))} className="min-h-11 rounded-lg px-3 text-sm font-bold text-danger">{labels.clear}</button></div></div> : <input value={chosen} disabled={checked} onChange={(event) => setAnswers((prev) => prev.map((answer, index) => index === qi ? event.target.value : answer))} placeholder={labels.placeholder} autoCapitalize="sentences" autoComplete="off" spellCheck={false} className="mt-3 min-h-12 w-full rounded-lg border border-line bg-raised/70 px-3 text-base text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20" />}
+              </div> : item.type === "sentence-builder" && item.words?.length ? <div className="mt-3"><div className="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border border-line bg-raised/50 p-3 text-sm font-semibold text-ink">{chosen || labels.placeholder}</div><div className="mt-2 flex flex-wrap gap-2">{item.words.map((word, index) => <button key={`${word}-${index}`} type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? `${answer}${answer ? " " : ""}${word}` : answer))} className="min-h-11 rounded-lg border border-line bg-card px-3 text-sm font-bold text-ink active:translate-y-px">{word}</button>)}<button type="button" disabled={checked} onClick={() => setAnswers((prev) => prev.map((answer, answerIndex) => answerIndex === qi ? "" : answer))} className="min-h-11 rounded-lg px-3 text-sm font-bold text-danger-text">{labels.clear}</button></div></div> : <input value={chosen} disabled={checked} onChange={(event) => setAnswers((prev) => prev.map((answer, index) => index === qi ? event.target.value : answer))} placeholder={labels.placeholder} autoCapitalize="sentences" autoComplete="off" spellCheck={false} className="mt-3 min-h-12 w-full rounded-lg border border-line bg-raised/70 px-3 text-base text-ink outline-none focus:border-brand-500 focus:ring-2 focus:ring-focus" />}
               {checked && <div className={cn("mt-3 rounded-lg border p-3 text-sm leading-6", correct ? "border-success/25 bg-success/5" : "border-danger/25 bg-danger/5")}><p className="font-extrabold text-ink">{correct ? "✓" : "✕"} {labels.answer}: {item.correctAnswer}</p><p className="mt-1 text-ink-soft">{item.explanation}</p></div>}
             </div>
           );

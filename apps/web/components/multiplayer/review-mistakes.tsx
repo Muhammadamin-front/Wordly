@@ -27,8 +27,8 @@ export function ReviewMistakes({ mp, items }: { mp: Dictionary["mp"]; items: Rev
                   key={opt}
                   className={cn(
                     "rounded-lg border px-3 py-2 text-sm font-semibold",
-                    isAnswer && "border-success bg-success/10 text-success",
-                    !isAnswer && isYours && "border-danger bg-danger/10 text-danger",
+                    isAnswer && "border-success bg-success/10 text-success-text",
+                    !isAnswer && isYours && "border-danger bg-danger/10 text-danger-text",
                     !isAnswer && !isYours && "border-line bg-raised text-ink-soft"
                   )}
                 >

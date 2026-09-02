@@ -91,7 +91,7 @@ export function MasteryMapView({
 
   if (error || !data) {
     return (
-      <main className="mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-16 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-3xl flex-1 items-center px-4 py-16 sm:px-6">
         <Alert tone="error" className="w-full">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <span>{t.loadError}</span>
@@ -105,7 +105,7 @@ export function MasteryMapView({
   }
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 pb-16 pt-6 sm:px-6 lg:pt-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 pb-16 pt-6 sm:px-6 lg:pt-10">
       <section className="surface-panel rounded-lg px-5 py-7 sm:px-8 sm:py-9 lg:px-10">
         <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
           <div className="max-w-3xl">
@@ -298,7 +298,7 @@ function SummaryStat({ label, value }: { label: string; value: string }) {
 
 function MasteryLoading({ label }: { label: string }) {
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6" aria-label={label}>
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6" aria-label={label}>
       <div className="surface-panel h-72 animate-pulse rounded-lg bg-card/60" />
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (

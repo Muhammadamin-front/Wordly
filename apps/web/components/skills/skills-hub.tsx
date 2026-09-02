@@ -30,9 +30,9 @@ export function SkillsHub({ lang, skills }: { lang: string; skills: Dictionary["
   }, [ready, user, router, lang]);
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
       <section className="surface-panel light-sweep rounded-lg p-6 sm:p-8">
-        <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+        <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-text">
           <Sparkles className="size-4" aria-hidden />
           Skill lab
         </span>

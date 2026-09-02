@@ -79,8 +79,8 @@ export function QuestionCard({
                 !revealed && accent.ring,
                 !revealed && !locked && accent.wash,
                 !revealed && i === selected && "ring-2 ring-brand-500",
-                isAnswer && "border-success bg-success/10 text-success",
-                isWrongPick && "border-danger bg-danger/10 text-danger",
+                isAnswer && "border-success bg-success/10 text-success-text",
+                isWrongPick && "border-danger bg-danger/10 text-danger-text",
                 dimmed && "border-line bg-card text-ink-soft opacity-60",
                 locked && !revealed && i !== selected && "opacity-50"
               )}
@@ -104,7 +104,7 @@ export function QuestionCard({
         <motion.p
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-4 text-center text-sm font-bold text-success"
+          className="mt-4 text-center text-sm font-bold text-success-text"
         >
           {mp.answerSubmitted} · {mp.waitingForOthers}
         </motion.p>

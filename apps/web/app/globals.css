@@ -168,18 +168,25 @@
   --text-inverse: #fff8ea;
   --semantic-primary: #b94e28;
   --semantic-primary-hover: #8f351e;
+  --semantic-primary-contrast: #fff8ea;
   --semantic-hover: rgb(84 37 15 / 0.07);
   --semantic-selected: rgb(185 78 40 / 0.14);
   --semantic-disabled: rgb(108 73 53 / 0.42);
   --semantic-focus: #467878;
+  --semantic-accent-text: #315d5d;
+  --semantic-success-text: #166534;
+  --semantic-danger-text: #b91c1c;
+  --semantic-warning-text: #92400e;
   --home-field-top: #f3e6cb;
   --home-field-bottom: #e6d0ae;
   --home-card: #24130c;
   --home-card-soft: #382015;
   --home-ink: #fff8ea;
   --home-muted: #e6caa8;
-  --home-accent: #c75b31;
-  --home-accent-hover: #e27b48;
+  --home-accent: #b94e28;
+  --home-accent-hover: #8f351e;
+  --home-accent-contrast: #fff8ea;
+  --home-marker: #d69c63;
   --home-accent-soft: #6c9390;
   --home-line: rgb(255 248 234 / 0.2);
   --home-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.88), 0 28px 48px rgb(84 37 15 / 0.2);
@@ -192,8 +199,9 @@
   --auth-muted: #6c4935;
   --auth-field: #fff8ea;
   --auth-field-line: rgb(84 37 15 / 0.42);
-  --auth-primary: #b94e28;
-  --auth-primary-hover: #8f351e;
+  --auth-primary: #a83a25;
+  --auth-primary-hover: #7e2d1c;
+  --auth-primary-contrast: #fff8ea;
   --auth-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.44), 0 30px 60px rgb(84 37 15 / 0.16);
   --auth-glass: rgb(255 248 234 / 0.78);
   --auth-glass-line: rgb(84 37 15 / 0.34);
@@ -212,6 +220,8 @@
   --home-muted: #6c4935;
   --home-accent: #a83a25;
   --home-accent-hover: #7e2d1c;
+  --home-accent-contrast: #fff8ea;
+  --home-marker: #7e2d1c;
   --home-accent-soft: #467878;
   --home-line: rgb(84 37 15 / 0.2);
   --home-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 28px 48px rgb(0 0 0 / 0.35);
@@ -224,10 +234,15 @@
   --text-inverse: #24130c;
   --semantic-primary: #e17a47;
   --semantic-primary-hover: #f29a64;
+  --semantic-primary-contrast: #24130c;
   --semantic-hover: rgb(255 241 212 / 0.08);
   --semantic-selected: rgb(108 147 144 / 0.24);
   --semantic-disabled: rgb(223 197 162 / 0.42);
   --semantic-focus: #a1c2bd;
+  --semantic-accent-text: #a1c2bd;
+  --semantic-success-text: #86efac;
+  --semantic-danger-text: #fca5a5;
+  --semantic-warning-text: #fcd34d;
   --auth-page: #24130c;
   --auth-sheet: #382015;
   --auth-ink: #fff1d4;
@@ -236,6 +251,7 @@
   --auth-field-line: rgb(250 241 221 / 0.2);
   --auth-primary: #e17a47;
   --auth-primary-hover: #f29a64;
+  --auth-primary-contrast: #24130c;
   --auth-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 30px 60px rgb(0 0 0 / 0.35);
   --auth-glass: rgb(71 39 23 / 0.82);
   --auth-glass-line: rgb(250 241 221 / 0.2);
@@ -281,16 +297,23 @@ html[data-theme="dark"] {
   --color-border: var(--border-subtle);
   --color-primary: var(--semantic-primary);
   --color-primary-hover: var(--semantic-primary-hover);
+  --color-primary-contrast: var(--semantic-primary-contrast);
   --color-hover: var(--semantic-hover);
   --color-selected: var(--semantic-selected);
   --color-disabled: var(--semantic-disabled);
   --color-focus: var(--semantic-focus);
+  --color-accent-text: var(--semantic-accent-text);
+  --color-success-text: var(--semantic-success-text);
+  --color-danger-text: var(--semantic-danger-text);
+  --color-warning-text: var(--semantic-warning-text);
   --color-home-card: var(--home-card);
   --color-home-card-soft: var(--home-card-soft);
   --color-home-ink: var(--home-ink);
   --color-home-muted: var(--home-muted);
   --color-home-accent: var(--home-accent);
   --color-home-accent-hover: var(--home-accent-hover);
+  --color-home-accent-contrast: var(--home-accent-contrast);
+  --color-home-marker: var(--home-marker);
   --color-home-accent-soft: var(--home-accent-soft);
   --color-home-line: var(--home-line);
   --shadow-home-card: var(--home-card-shadow);
@@ -302,6 +325,7 @@ html[data-theme="dark"] {
   --color-auth-line: var(--auth-field-line);
   --color-auth-primary: var(--auth-primary);
   --color-auth-primary-hover: var(--auth-primary-hover);
+  --color-auth-primary-contrast: var(--auth-primary-contrast);
   --shadow-auth-card: var(--auth-card-shadow);
   --color-auth-glass: var(--auth-glass);
   --color-auth-glass-line: var(--auth-glass-line);
@@ -373,6 +397,42 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+input,
+textarea,
+select {
+  accent-color: var(--semantic-primary);
+  caret-color: var(--semantic-primary);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.72;
+}
+
+html {
+  scrollbar-color: color-mix(in srgb, var(--text-secondary) 58%, transparent) var(--surface-page);
+}
+
+::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-page);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid var(--surface-page);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-secondary) 62%, transparent);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--semantic-primary);
 }
 
 .type-display {
@@ -590,6 +650,10 @@ body::after {
 :focus-visible {
   outline: 2px solid var(--semantic-focus);
   outline-offset: 2px;
+}
+
+.home-field :focus-visible {
+  outline-color: var(--home-accent);
 }
 
 /* Shared premium surfaces. */
@@ -876,73 +940,6 @@ html.theme-switching *::after {
 
 /* Vocora's paper-led editorial world. Shared primitives intentionally carry
    this treatment so learning flows inherit it without changing their logic. */
-:root {
-  --font-manrope: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --surface-page: #f3e6cb;
-  --surface-card: #faf1dd;
-  --surface-raised: #fff8ea;
-  --border-subtle: rgb(84 37 15 / 0.38);
-  --text-primary: #24130c;
-  --text-secondary: #6c4935;
-  --text-inverse: #fff8ea;
-  --semantic-primary: #b94e28;
-  --semantic-primary-hover: #8f351e;
-  --semantic-hover: rgb(84 37 15 / 0.07);
-  --semantic-selected: rgb(185 78 40 / 0.14);
-  --semantic-disabled: rgb(108 73 53 / 0.42);
-  --semantic-focus: #467878;
-  --home-field-top: #f3e6cb;
-  --home-field-bottom: #e6d0ae;
-  --home-card: #24130c;
-  --home-card-soft: #382015;
-  --home-ink: #fff8ea;
-  --home-muted: #e6caa8;
-  --home-accent: #c75b31;
-  --home-accent-hover: #e27b48;
-  --home-accent-soft: #6c9390;
-  --home-line: rgb(255 248 234 / 0.2);
-  --home-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.88), 0 28px 48px rgb(84 37 15 / 0.2);
-  --home-nav-scrim: rgb(36 19 12 / 0.88);
-  --shadow-card: 5px 7px 0 rgb(84 37 15 / 0.2), 0 16px 32px rgb(84 37 15 / 0.09);
-  --shadow-raised: 8px 10px 0 rgb(84 37 15 / 0.3), 0 24px 40px rgb(84 37 15 / 0.14);
-  --auth-page: #f3e6cb;
-  --auth-sheet: #faf1dd;
-  --auth-ink: #24130c;
-  --auth-muted: #6c4935;
-  --auth-field: #fff8ea;
-  --auth-field-line: rgb(84 37 15 / 0.42);
-  --auth-primary: #b94e28;
-  --auth-primary-hover: #8f351e;
-  --auth-card-shadow: 12px 14px 0 rgb(84 37 15 / 0.44), 0 30px 60px rgb(84 37 15 / 0.16);
-}
-
-[data-theme="dark"] {
-  --surface-page: #24130c;
-  --surface-card: #382015;
-  --surface-raised: #472717;
-  --border-subtle: rgb(250 241 221 / 0.2);
-  --text-primary: #fff1d4;
-  --text-secondary: #dfc5a2;
-  --text-inverse: #24130c;
-  --semantic-primary: #e17a47;
-  --semantic-primary-hover: #f29a64;
-  --semantic-hover: rgb(255 241 212 / 0.08);
-  --semantic-selected: rgb(108 147 144 / 0.24);
-  --semantic-disabled: rgb(223 197 162 / 0.42);
-  --semantic-focus: #a1c2bd;
-  --home-field-top: #24130c;
-  --home-field-bottom: #160b07;
-  --home-card: #f3e6cb;
-  --home-card-soft: #fff8ea;
-  --home-ink: #24130c;
-  --home-muted: #6c4935;
-  --home-accent: #a83a25;
-  --home-accent-hover: #7e2d1c;
-  --home-accent-soft: #467878;
-  --home-line: rgb(84 37 15 / 0.2);
-  --home-card-shadow: 12px 14px 0 rgb(0 0 0 / 0.54), 0 28px 48px rgb(0 0 0 / 0.35);
-}
-
 .type-display,
 .type-h1,
 .type-h2,
@@ -1116,12 +1113,89 @@ main h1 {
   }
 }
 
+/* Route continuity: content leaves quickly, then the next page settles like a
+   fresh study sheet. The navigation stays fixed as the user's spatial anchor. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.vocora-page-exit) {
+  animation: 130ms cubic-bezier(0.4, 0, 1, 1) both vocora-page-fade-out;
+}
+
+::view-transition-new(.vocora-page-enter) {
+  animation: 240ms cubic-bezier(0.16, 1, 0.3, 1) 35ms both vocora-page-fade-in;
+}
+
+::view-transition-group(site-header) {
+  z-index: 100;
+  animation: none;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+@keyframes vocora-page-fade-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes vocora-page-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(7px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.vocora-page-exit) {
+    animation: 70ms linear both vocora-page-opacity-out;
+  }
+
+  ::view-transition-new(.vocora-page-enter) {
+    animation: 90ms linear both vocora-page-opacity-in;
+  }
+}
+
+@keyframes vocora-page-opacity-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vocora-page-opacity-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Motion thesis: the landing hero arrives like a printed study poster being
    revealed, then its learning pillars type once and stop. Supporting cards
    use a bounded ink trace only on interaction—there are no ambient loops. */
 .typing-line {
   min-height: 1.4rem;
-  color: var(--home-accent);
+  color: var(--home-marker);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.68rem;
   font-weight: 800;
@@ -1364,7 +1438,17 @@ main h1 {
   scroll-padding-inline: max(1rem, calc((100% - var(--word-carousel-card)) / 2));
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  touch-action: pan-x pinch-zoom;
+  touch-action: pan-x pan-y pinch-zoom;
+}
+
+.word-carousel-headword,
+.word-carousel-slide-title {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.word-carousel-slide-title {
+  display: block;
 }
 
 .word-carousel-track::-webkit-scrollbar {

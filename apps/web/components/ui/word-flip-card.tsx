@@ -16,6 +16,7 @@ type WordFlipCardProps = {
   backLabel: string;
   flipTitle: string;
   unflipTitle: string;
+  onOpen?: () => void;
   className?: string;
   minHeight?: number;
   responsiveHeightClass?: string;
@@ -30,6 +31,7 @@ export function WordFlipCard({
   backLabel,
   flipTitle,
   unflipTitle,
+  onOpen,
   className,
   minHeight = 272,
   responsiveHeightClass,
@@ -120,10 +122,11 @@ export function WordFlipCard({
             <button
               type="button"
               aria-label={frontLabel}
-              title={flipTitle}
+              title={onOpen ? frontLabel : flipTitle}
               onClick={() => {
                 resetTilt();
-                setFlipped(true);
+                if (onOpen) onOpen();
+                else setFlipped(true);
               }}
               className="absolute inset-0 z-10 cursor-pointer rounded-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-inset"
             />
@@ -133,10 +136,25 @@ export function WordFlipCard({
                 {frontActions}
               </div>
             )}
-            <FlipHorizontal2
-              aria-hidden
-              className="pointer-events-none absolute bottom-2 right-2 z-20 size-3 text-ink-soft/45 transition-transform duration-300 group-hover:scale-110 sm:bottom-4 sm:right-4 sm:size-4"
-            />
+            {onOpen ? (
+              <button
+                type="button"
+                aria-label={flipTitle}
+                title={flipTitle}
+                onClick={() => {
+                  resetTilt();
+                  setFlipped(true);
+                }}
+                className="absolute bottom-1 right-1 z-30 flex size-11 items-center justify-center rounded-lg text-ink-soft/60 transition-colors hover:bg-ink/5 hover:text-ink sm:bottom-2 sm:right-2"
+              >
+                <FlipHorizontal2 aria-hidden className="size-4" />
+              </button>
+            ) : (
+              <FlipHorizontal2
+                aria-hidden
+                className="pointer-events-none absolute bottom-2 right-2 z-20 size-3 text-ink-soft/45 transition-transform duration-300 group-hover:scale-110 sm:bottom-4 sm:right-4 sm:size-4"
+              />
+            )}
           </div>
         </section>
 

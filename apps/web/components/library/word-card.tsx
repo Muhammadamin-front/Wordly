@@ -36,10 +36,11 @@ export function WordCard({
 
   return (
     <WordFlipCard
-      frontLabel={`${word.headword}. ${labels.flip}`}
+      frontLabel={`${word.headword}. ${labels.details}`}
       backLabel={`${word.headword}. ${labels.unflip}`}
       flipTitle={labels.flip}
       unflipTitle={labels.unflip}
+      onOpen={onOpen}
       minHeight={292}
       responsiveHeightClass="min-h-[218px] sm:min-h-73"
       frontActions={
@@ -71,7 +72,7 @@ export function WordCard({
             className={cn(
               "flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-md px-2 text-[11px] font-bold transition-all sm:gap-2 sm:rounded-lg sm:px-3 sm:text-sm",
               added
-                ? "border border-success/20 bg-success/10 text-success"
+                ? "border border-success/20 bg-success/10 text-success-text"
                 : "border border-brand-400/20 bg-brand-600/10 text-brand-600 hover:-translate-y-0.5 hover:bg-brand-600/16 dark:text-brand-300"
             )}
           >

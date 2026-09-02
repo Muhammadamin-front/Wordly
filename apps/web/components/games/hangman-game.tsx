@@ -81,8 +81,8 @@ function HangmanRound({
           transition={solved || lost ? { duration: 0.45 } : { repeat: Infinity, duration: 2.4 }}
           className={cn(
             "mx-auto flex size-16 items-center justify-center rounded-full border",
-            solved && "border-success/35 bg-success/10 text-success",
-            lost && "border-danger/35 bg-danger/10 text-danger",
+            solved && "border-success/35 bg-success/10 text-success-text",
+            lost && "border-danger/35 bg-danger/10 text-danger-text",
             !solved && !lost && "border-brand-400/35 bg-brand-500/10 text-brand-600 dark:text-brand-200"
           )}
         >
@@ -91,7 +91,7 @@ function HangmanRound({
         <div className="mt-4 flex justify-center gap-1.5" aria-label={`${MAX_WRONG - wrong} lives`}>
           {Array.from({ length: MAX_WRONG }, (_, index) =>
             index < MAX_WRONG - wrong ? (
-              <Heart key={index} className="size-4 fill-danger text-danger" aria-hidden />
+              <Heart key={index} className="size-4 fill-danger text-danger-text" aria-hidden />
             ) : (
               <HeartCrack key={index} className="size-4 text-ink-soft/35" aria-hidden />
             )
@@ -117,7 +117,7 @@ function HangmanRound({
           )}
         </div>
         {lost && (
-          <p className="mt-3 text-sm font-semibold text-danger">
+          <p className="mt-3 text-sm font-semibold text-danger-text">
             → {answer}
           </p>
         )}
@@ -137,8 +137,8 @@ function HangmanRound({
               className={cn(
                 "aspect-square rounded-lg border text-sm font-bold transition-colors",
                 !used && "border-line bg-card text-ink hover:border-brand-400 hover:bg-brand-600/10",
-                hit && "border-success/40 bg-success/20 text-success",
-                used && !hit && "border-danger/30 bg-danger/15 text-danger"
+                hit && "border-success/40 bg-success/20 text-success-text",
+                used && !hit && "border-danger/30 bg-danger/15 text-danger-text"
               )}
               whileTap={!used ? { scale: 0.88 } : undefined}
             >

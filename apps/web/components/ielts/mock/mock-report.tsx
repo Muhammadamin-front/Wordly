@@ -40,7 +40,7 @@ export function MockReport({
   const abandoned = session.status === "abandoned";
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ export function MockReport({
           </>
         ) : (
           <>
-            <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-accent-400/12 text-accent-500">
+            <span className="mx-auto flex size-16 items-center justify-center rounded-full bg-accent-400/12 text-accent-text">
               <Trophy className="size-8" aria-hidden />
             </span>
             <p className="mt-4 text-sm font-black uppercase tracking-wide text-ink-soft">

@@ -62,7 +62,7 @@ export function MockSpeakingLeg({
 
   if (!character || !coachSession) {
     return (
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" aria-hidden />
         {error && <Alert tone="error">{error}</Alert>}
       </main>
@@ -70,7 +70,7 @@ export function MockSpeakingLeg({
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 sm:px-6">
       {error && (
         <Alert tone="error" className="mt-4">
           {error}

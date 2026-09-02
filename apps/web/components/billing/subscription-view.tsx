@@ -44,7 +44,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
 
   if (!ready || !user || (!loadError && (sub === null || referral === null))) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -52,7 +52,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
 
   if (loadError || sub === null || referral === null) {
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <Alert tone="error">{t.loadError}</Alert>
         <Button className="mt-4" variant="secondary" onClick={() => setReloadKey((n) => n + 1)}>
           {t.retry}
@@ -64,7 +64,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
   const expires = formatApiDate(sub.expires_at, lang);
 
   return (
-    <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-lg flex-1 px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-extrabold tracking-tight text-ink">{t.manageTitle}</h1>
 
       <Card className="mt-5">
@@ -74,7 +74,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
               <CardTitle className="text-brand-600 dark:text-brand-300">
                 ✨ {t.premiumActive}
               </CardTitle>
-              <span className="rounded-full bg-success/10 px-2.5 py-1 text-xs font-bold text-success">
+              <span className="rounded-full bg-success/10 px-2.5 py-1 text-xs font-bold text-success-text">
                 {sub.plan_code}
               </span>
             </div>
@@ -89,7 +89,7 @@ export function SubscriptionView({ lang, t }: { lang: string; t: Dictionary["bil
               <Button
                 variant="ghost"
                 size="sm"
-                className="mt-4 text-danger"
+                className="mt-4 text-danger-text"
                 loading={cancelling}
                 onClick={async () => {
                   if (cancelling) return;

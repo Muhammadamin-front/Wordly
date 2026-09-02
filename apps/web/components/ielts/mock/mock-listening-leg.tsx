@@ -152,7 +152,7 @@ export function MockListeningLeg({
 
   if (!test || !section) {
     return (
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-4 px-4 py-16 text-center">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" aria-hidden />
         <p className="text-sm font-bold text-ink-soft">{t.listeningPreparing}</p>
         {error && <Alert tone="error">{error}</Alert>}
@@ -161,7 +161,7 @@ export function MockListeningLeg({
   }
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <div className="flex items-center justify-between gap-3">
         <MockLegHeader
           label={t.legListening}
@@ -175,7 +175,7 @@ export function MockListeningLeg({
         <span
           className={cn(
             "rounded-full px-3 py-1 text-sm font-bold tabular-nums",
-            secondsLeft < 60 ? "bg-danger/10 text-danger" : "bg-brand-600/10 text-brand-600 dark:text-brand-300"
+            secondsLeft < 60 ? "bg-danger/10 text-danger-text" : "bg-brand-600/10 text-brand-600 dark:text-brand-300"
           )}
         >
           ⏱ {fmt(secondsLeft)}
@@ -215,7 +215,7 @@ export function MockListeningLeg({
           </Button>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-bold text-ink">{test.title}</p>
-            <p className={cn("mt-1 text-[11px] leading-4", audioFailed ? "font-bold text-danger" : "text-ink-soft")}>
+            <p className={cn("mt-1 text-[11px] leading-4", audioFailed ? "font-bold text-danger-text" : "text-ink-soft")}>
               {audioFailed ? t.error : t.listeningIntro}
             </p>
           </div>

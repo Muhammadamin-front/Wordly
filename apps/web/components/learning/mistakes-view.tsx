@@ -36,7 +36,7 @@ export function MistakesView({
 
   if (!ready || !user || !notebook) {
     return (
-      <main className="flex min-h-[60vh] flex-1 items-center justify-center px-4">
+      <main id="main-content" tabIndex={-1} className="flex min-h-[60vh] flex-1 items-center justify-center px-4">
         {error ? (
           <Alert tone="error">{t.loadError}</Alert>
         ) : (
@@ -52,7 +52,7 @@ export function MistakesView({
   const needsPractice = notebook.items.filter((item) => item.status === "needs_practice").length;
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7 lg:p-8">
         <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>
@@ -88,7 +88,7 @@ export function MistakesView({
 
       {notebook.items.length === 0 ? (
         <section className="mt-5 rounded-lg border border-line bg-card/70 px-5 py-16 text-center">
-          <CheckCircle2 className="mx-auto size-12 text-success" aria-hidden />
+          <CheckCircle2 className="mx-auto size-12 text-success-text" aria-hidden />
           <h2 className="mt-5 text-2xl font-black text-ink">{t.mistakesEmpty}</h2>
           <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-ink-soft">
             {t.mistakesEmptyDesc}
@@ -129,8 +129,8 @@ export function MistakesView({
                   <span
                     className={`rounded-md px-2.5 py-1 text-xs font-black ${
                       improving
-                        ? "bg-success/12 text-success"
-                        : "bg-danger/10 text-danger"
+                        ? "bg-success/12 text-success-text"
+                        : "bg-danger/10 text-danger-text"
                     }`}
                   >
                     {improving ? t.improving : t.needsPractice}

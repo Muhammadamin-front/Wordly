@@ -81,7 +81,7 @@ export function TodayView({
 
   if (!ready || !user || !plan) {
     return (
-      <main className="app-container flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container flex-1 py-8">
         {error ? (
           <EmptyState
             className="mx-auto max-w-lg"
@@ -163,7 +163,7 @@ export function TodayView({
   }
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-[18px] p-5 sm:p-7 lg:p-8">
         <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
           <div>
@@ -237,7 +237,7 @@ export function TodayView({
                     aria-label={isDone ? t.markIncomplete : t.markComplete}
                     className={`flex size-9 items-center justify-center rounded-lg border transition-colors ${
                       isDone
-                        ? "border-success/30 bg-success/12 text-success"
+                        ? "border-success/30 bg-success/12 text-success-text"
                         : "border-line bg-card text-ink-soft hover:text-ink"
                     }`}
                   >

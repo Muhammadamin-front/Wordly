@@ -109,7 +109,7 @@ export function DashboardView({
 
   if (!ready || !user) {
     return (
-      <main className="flex flex-1 items-center justify-center">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center">
         <span
           aria-label={dict.common.loading}
           className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent"
@@ -131,8 +131,8 @@ export function DashboardView({
     : dict.dashboard.dailyPathDesc;
 
   return (
-    <main className="app-container page-stack flex-1">
-      <section className="surface-panel rounded-[18px] p-4 sm:p-6 lg:p-8">
+    <main id="main-content" tabIndex={-1} className="app-container page-stack flex-1">
+      <section className="motion-enter surface-panel rounded-[18px] p-4 sm:p-6 lg:p-8">
         <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:gap-8">
           <div className="min-w-0">
             <p className="print-label inline-flex items-center gap-2 border-accent-400 bg-accent-400/10 text-accent-600 dark:text-accent-300">
@@ -249,7 +249,7 @@ export function DashboardView({
 
       <DailyQuestsPanel lang={lang} gam={gam} />
 
-      <section className="section-stack">
+      <section className="motion-enter motion-delay-2 section-stack">
         <div>
           <p className="type-label text-accent-600 dark:text-accent-300">
             {copy.recommendations}
@@ -334,7 +334,7 @@ function ContextCard({
   body: string;
 }) {
   return (
-    <Link href={href} className="premium-card group flex min-h-44 flex-col rounded-2xl p-5">
+    <Link href={href} className="motion-border-card premium-card group flex min-h-44 flex-col rounded-2xl p-5">
       <div className="flex items-start justify-between gap-4">
         <span className="icon-tile size-11 rounded-lg">
           <Icon className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />

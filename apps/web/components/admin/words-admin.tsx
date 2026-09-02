@@ -81,7 +81,7 @@ export function WordsAdmin({ lang, admin }: { lang: string; admin: Dictionary["a
   const lastPage = data ? Math.max(1, Math.ceil(data.total / data.page_size)) : 1;
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-extrabold tracking-tight text-ink">{admin.title}</h1>
         <div className="flex gap-2">
@@ -177,8 +177,8 @@ export function WordsAdmin({ lang, admin }: { lang: string; admin: Dictionary["a
                   <span
                     className={cn(
                       "rounded-full px-2 py-0.5 text-[11px] font-bold",
-                      word.status === "published" && "bg-success/10 text-success",
-                      word.status === "review" && "bg-warning/10 text-warning",
+                      word.status === "published" && "bg-success/10 text-success-text",
+                      word.status === "review" && "bg-warning/10 text-warning-text",
                       word.status === "draft" && "bg-line/60 text-ink-soft"
                     )}
                   >
@@ -195,7 +195,7 @@ export function WordsAdmin({ lang, admin }: { lang: string; admin: Dictionary["a
                   <button
                     type="button"
                     onClick={() => void onDelete(word.id)}
-                    className="ml-3 text-xs font-semibold text-danger hover:underline"
+                    className="ml-3 text-xs font-semibold text-danger-text hover:underline"
                   >
                     {admin.deleteWord}
                   </button>

@@ -21,10 +21,10 @@ type Phase = "loading" | "empty" | "front" | "back" | "done";
 const RATING_KEYS: Record<string, Rating> = { "1": "again", "2": "hard", "3": "good", "4": "easy" };
 
 const RATING_STYLES: Record<Rating, string> = {
-  again: "bg-danger/10 text-danger hover:bg-danger/20",
-  hard: "bg-warning/10 text-warning hover:bg-warning/20",
+  again: "bg-danger/10 text-danger-text hover:bg-danger/20",
+  hard: "bg-warning/10 text-warning-text hover:bg-warning/20",
   good: "bg-brand-600/10 text-brand-600 hover:bg-brand-600/20 dark:text-brand-300",
-  easy: "bg-success/10 text-success hover:bg-success/20",
+  easy: "bg-success/10 text-success-text hover:bg-success/20",
 };
 
 export function ReviewSession({

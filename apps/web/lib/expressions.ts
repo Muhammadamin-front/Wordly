@@ -73,7 +73,7 @@ export const CEFR_COLOR = (cefr: string): string => {
     case "B2":
       return "text-accent-600 dark:text-accent-300";
     case "C1":
-      return "text-accent-500 dark:text-accent-300";
+      return "text-accent-text dark:text-accent-300";
     case "C2":
       return "text-brand-800 dark:text-brand-200";
     default:

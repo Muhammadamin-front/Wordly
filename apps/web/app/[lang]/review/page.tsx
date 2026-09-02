@@ -20,7 +20,7 @@ export default async function ReviewPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
         <Suspense>
           <ReviewSession
             lang={lang}

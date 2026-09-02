@@ -26,7 +26,7 @@ export function QuestionTimer({
       <span
         className={cn(
           "min-w-[2ch] text-center font-display text-2xl tabular-nums",
-          urgent ? "text-danger" : "text-ink"
+          urgent ? "text-danger-text" : "text-ink"
         )}
         aria-live="polite"
       >

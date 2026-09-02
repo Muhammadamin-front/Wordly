@@ -69,7 +69,7 @@ export default async function VocabularyPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="app-container flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container flex-1 py-8">
         <PageHeader title={vocab.title} subtitle={vocab.subtitle} />
 
         {/* Search (plain GET form — works without JS, SEO-crawlable) */}
@@ -81,7 +81,7 @@ export default async function VocabularyPage({
             name="q"
             defaultValue={q ?? ""}
             placeholder={vocab.searchPlaceholder}
-            className="h-11 w-full max-w-md rounded-xl border border-line bg-card px-4 text-sm text-ink placeholder:text-ink-soft/60 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30"
+            className="h-11 w-full max-w-md rounded-xl border border-line bg-card px-4 text-sm text-ink placeholder:text-ink-soft/60 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus"
           />
           <button
             type="submit"
@@ -96,7 +96,7 @@ export default async function VocabularyPage({
           <Link
             href={filterHref(lang, { category, q })}
             className={cn(
-              "rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
+              "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
               !level ? "bg-brand-600 text-white" : "border border-line text-ink-soft hover:text-ink"
             )}
           >
@@ -107,7 +107,7 @@ export default async function VocabularyPage({
               key={cefr}
               href={filterHref(lang, { level: cefr, category, q })}
               className={cn(
-                "rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
+                "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-bold transition-colors",
                 level === cefr
                   ? "bg-brand-600 text-white"
                   : "border border-line text-ink-soft hover:text-ink"
@@ -123,7 +123,7 @@ export default async function VocabularyPage({
           <Link
             href={filterHref(lang, { level, q })}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+              "inline-flex min-h-11 items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
               !category
                 ? "bg-accent-500/15 text-accent-600 dark:text-accent-300"
                 : "text-ink-soft hover:text-ink"
@@ -136,7 +136,7 @@ export default async function VocabularyPage({
               key={cat.slug}
               href={filterHref(lang, { level, q, category: cat.slug })}
               className={cn(
-                "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
+                "inline-flex min-h-11 items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
                 category === cat.slug
                   ? "bg-accent-500/15 text-accent-600 dark:text-accent-300"
                   : "text-ink-soft hover:text-ink"

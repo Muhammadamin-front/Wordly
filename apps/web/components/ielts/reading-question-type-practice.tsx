@@ -82,12 +82,12 @@ export function ReadingQuestionTypePractice({
   if (complete) {
     const percentage = Math.round((score / items.length) * 100);
     return (
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
         <button type="button" onClick={onBack} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft transition-colors hover:text-ink">
           <ArrowLeft className="size-4" /> Question type practice
         </button>
         <section className="surface-panel mt-5 rounded-lg p-6 text-center sm:p-10">
-          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-success/10 text-success"><CheckCircle2 className="size-7" /></span>
+          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-success/10 text-success-text"><CheckCircle2 className="size-7" /></span>
           <p className="type-label mt-5 text-brand-600 dark:text-brand-300">Drill complete</p>
           <h1 className="mt-2 text-4xl font-black tracking-tight text-ink">{score} / {items.length}</h1>
           <p className="mt-2 text-lg font-bold text-ink">{percentage}% accuracy in {guide.title}</p>
@@ -105,7 +105,7 @@ export function ReadingQuestionTypePractice({
   const promptId = `focused-reading-${item.question.id}-prompt`;
   const instructionId = item.question.instruction ? `focused-reading-${item.question.id}-instruction` : undefined;
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <button type="button" onClick={onBack} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft transition-colors hover:text-ink">
         <ArrowLeft className="size-4" /> Question type practice
       </button>
@@ -124,21 +124,21 @@ export function ReadingQuestionTypePractice({
           </div>
         </div>
         <ol className="mt-5 grid gap-2 border-t border-line pt-5 text-sm leading-6 text-ink-soft sm:grid-cols-3">
-          {guide.strategy.map((tip, tipIndex) => <li key={tip} className="flex gap-2"><span className="font-black text-accent-500">{tipIndex + 1}.</span>{tip}</li>)}
+          {guide.strategy.map((tip, tipIndex) => <li key={tip} className="flex gap-2"><span className="font-black text-accent-text">{tipIndex + 1}.</span>{tip}</li>)}
         </ol>
       </section>
 
       <section className="mt-5 grid gap-5 lg:grid-cols-[0.72fr_1.28fr]">
         <PassageContext item={item} />
         <article className="rounded-lg border border-line bg-card p-5 shadow-[0_10px_28px_rgba(27,64,55,0.055)] sm:p-6">
-          <p className="type-label text-accent-500">{item.question.group}</p>
+          <p className="type-label text-accent-text">{item.question.group}</p>
           <h2 id={promptId} className="mt-2 text-xl font-black leading-7 text-ink">{item.question.prompt}</h2>
           {item.question.instruction && <p id={instructionId} className="mt-2 text-xs font-black uppercase tracking-wide text-ink-soft">{item.question.instruction}</p>}
           <div className="mt-5"><PracticeQuestionInput question={item.question} value={answer} disabled={checked} labelledBy={promptId} describedBy={instructionId} onChange={setAnswer} /></div>
 
           {checked && (
             <div className={cn("mt-5 rounded-lg border p-4", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-danger/5")} aria-live="polite">
-              <p className={cn("font-black", correct ? "text-success" : "text-danger")}>{correct ? "Correct. Good evidence reading." : "Not quite. Check the evidence carefully."}</p>
+              <p className={cn("font-black", correct ? "text-success-text" : "text-danger-text")}>{correct ? "Correct. Good evidence reading." : "Not quite. Check the evidence carefully."}</p>
               {!correct && <p className="mt-2 text-sm text-ink-soft">Correct answer: <strong className="text-ink">{formatAnswer(item.question.answer)}</strong></p>}
               <p className="mt-3 text-sm leading-6 text-ink-soft">{item.question.explanation}</p>
               <p className="mt-3 border-l-2 border-brand-400 bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">Evidence: “{item.question.evidence}”</p>
@@ -173,10 +173,10 @@ function PassageContext({ item }: { item: ReadingQuestionPracticeItem }) {
 
 function PracticeQuestionInput({ question, value, disabled, labelledBy, describedBy, onChange }: { question: ReadingQuestion; value: AnswerValue | undefined; disabled: boolean; labelledBy: string; describedBy?: string; onChange: (value: AnswerValue) => void }) {
   if (TEXT_QUESTION_KINDS.has(question.kind)) {
-    return <input aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder="Type your answer" className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70" />;
+    return <input aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder="Type your answer" className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus disabled:opacity-70" />;
   }
   if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") {
-    return <select aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20 disabled:opacity-70"><option value="">Choose an answer</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
+    return <select aria-labelledby={labelledBy} aria-describedby={describedBy} disabled={disabled} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-12 w-full rounded-lg border border-line bg-raised px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus disabled:opacity-70"><option value="">Choose an answer</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
   }
   if (question.kind === "multiple-answer") {
     const current = Array.isArray(value) ? value : [];

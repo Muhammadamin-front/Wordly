@@ -72,7 +72,7 @@ export function SkillView({
   }, [content.sections.length, lang, skill]);
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href={`/${lang}/ielts`}
         className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink-soft transition-transform hover:-translate-y-0.5 hover:text-ink"
@@ -88,7 +88,7 @@ export function SkillView({
       >
         <div className="grid gap-7 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-text">
               <Icon className="size-4" aria-hidden />
               {content.eyebrow}
             </span>
@@ -114,7 +114,7 @@ export function SkillView({
         <section id="practice" className="mt-5 scroll-mt-24">
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-extrabold uppercase text-accent-500">Writing practice desk</p>
+              <p className="text-xs font-extrabold uppercase text-accent-text">Writing practice desk</p>
               <h2 className="mt-1 text-2xl font-black text-ink">Choose a task, then write with a clear plan</h2>
             </div>
             <span className="hidden rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft sm:block">
@@ -128,7 +128,7 @@ export function SkillView({
       {skill === "listening" && ieltsT && (
         <section id="practice" className="mt-5 scroll-mt-24">
           <div className="mb-4">
-            <p className="text-xs font-extrabold uppercase text-accent-500">{t.listeningTestEyebrow}</p>
+            <p className="text-xs font-extrabold uppercase text-accent-text">{t.listeningTestEyebrow}</p>
             <h2 className="mt-1 text-2xl font-black text-ink">{t.listeningTestTitle}</h2>
           </div>
           <ComprehensionTest lang={lang} kind="listening" t={ieltsT} />
@@ -175,11 +175,11 @@ export function SkillView({
 
       <section className="mt-10">
         <div className="mb-4 flex items-center gap-3">
-          <span className="icon-tile size-10 rounded-lg text-accent-500">
+          <span className="icon-tile size-10 rounded-lg text-accent-text">
             <BookMarked className="size-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-extrabold uppercase text-accent-500">
+            <p className="text-xs font-extrabold uppercase text-accent-text">
               {t.vocabularyNext}
             </p>
             <h2 className="text-2xl font-black text-ink">{t.continueVocabulary}</h2>
@@ -192,7 +192,7 @@ export function SkillView({
               href={`/${lang}/ielts/resources/${resource.slug}`}
               className="premium-card group rounded-lg p-4 transition-transform hover:-translate-y-1"
             >
-              <p className="text-[10px] font-extrabold uppercase text-accent-500">
+              <p className="text-[10px] font-extrabold uppercase text-accent-text">
                 {resource.eyebrow}
               </p>
               <h3 className="mt-2 text-base font-black leading-5 text-ink">{resource.title}</h3>
@@ -225,7 +225,7 @@ function GuideSection({
     >
       <div className="grid gap-6 lg:grid-cols-[0.75fr_1.25fr]">
         <div>
-          <p className="text-xs font-extrabold uppercase text-accent-500">{section.eyebrow}</p>
+          <p className="text-xs font-extrabold uppercase text-accent-text">{section.eyebrow}</p>
           <h2 className="mt-2 text-2xl font-black text-ink">{section.title}</h2>
           <p className="mt-3 text-sm leading-7 text-ink-soft">{section.description}</p>
         </div>
@@ -253,7 +253,7 @@ function GuideSection({
           {section.example && (
             <div className="rounded-lg border border-accent-400/20 bg-accent-400/5 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
-                <Quote className="size-4 text-accent-500" aria-hidden />
+                <Quote className="size-4 text-accent-text" aria-hidden />
                 {t.modelExample}
               </h3>
               <p className="mt-3 border-l-2 border-accent-400/40 pl-4 text-sm leading-7 text-ink">
@@ -265,7 +265,7 @@ function GuideSection({
           {section.vocabulary && (
             <div className="rounded-lg border border-line bg-card/60 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
-                <Sparkles className="size-4 text-accent-500" aria-hidden />
+                <Sparkles className="size-4 text-accent-text" aria-hidden />
                 {t.vocabularyHighlight}
               </h3>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -284,13 +284,13 @@ function GuideSection({
           {section.traps && (
             <div className="rounded-lg border border-warning/20 bg-warning/8 p-4">
               <h3 className="flex items-center gap-2 text-xs font-extrabold uppercase text-ink">
-                <AlertTriangle className="size-4 text-warning" aria-hidden />
+                <AlertTriangle className="size-4 text-warning-text" aria-hidden />
                 {t.commonTraps}
               </h3>
               <ul className="mt-3 space-y-2">
                 {section.traps.map((trap) => (
                   <li key={trap} className="flex gap-2 text-sm leading-6 text-ink-soft">
-                    <CircleDot className="mt-1 size-3.5 shrink-0 text-warning" aria-hidden />
+                    <CircleDot className="mt-1 size-3.5 shrink-0 text-warning-text" aria-hidden />
                     {trap}
                   </li>
                 ))}
@@ -310,7 +310,7 @@ function SpeakingTopics({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }
     <section id="topics" className="mt-8 scroll-mt-24">
       <div className="mb-4 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-extrabold uppercase text-accent-500">{t.cueCardBank}</p>
+          <p className="text-xs font-extrabold uppercase text-accent-text">{t.cueCardBank}</p>
           <h2 className="mt-1 text-2xl font-black text-ink">{topicCount} {t.commonTopics}</h2>
         </div>
         <span className="rounded-lg border border-line bg-card/60 px-3 py-2 text-xs font-bold text-ink-soft">
@@ -327,7 +327,7 @@ function SpeakingTopics({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }
             <ul className="mt-3 space-y-2">
               {topics.map((topic) => (
                 <li key={topic} className="flex gap-2 text-xs leading-5 text-ink-soft">
-                  <Check className="mt-0.5 size-3.5 shrink-0 text-accent-500" aria-hidden />
+                  <Check className="mt-0.5 size-3.5 shrink-0 text-accent-text" aria-hidden />
                   {topic}
                 </li>
               ))}
@@ -336,7 +336,7 @@ function SpeakingTopics({ lang, t }: { lang: string; t: Dictionary["ieltsHub"] }
         ))}
       </div>
       <div className="mt-3 flex items-center gap-2 rounded-lg border border-success/20 bg-success/8 p-4 text-sm text-ink-soft">
-        <BadgeCheck className="size-5 shrink-0 text-success" aria-hidden />
+        <BadgeCheck className="size-5 shrink-0 text-success-text" aria-hidden />
         {t.dailyChallenge}
       </div>
     </section>

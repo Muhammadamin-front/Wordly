@@ -151,7 +151,7 @@ export function MockOrchestrator({
 
   if (!ready || !user || loading) {
     return (
-      <main className="flex flex-1 items-center justify-center py-24">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-24">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" aria-label={t.loadingSession} />
       </main>
     );

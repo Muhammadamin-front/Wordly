@@ -172,7 +172,7 @@ export function LibraryView({
 
   if (!ready || !user || (!loadError && (shelves === null || decks === null))) {
     return (
-      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-10">
         <Skeleton className="mx-auto h-11 w-72 rounded-2xl" />
         <Skeleton className="mx-auto mt-4 h-14 w-full max-w-2xl rounded-2xl" />
         <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4 2xl:grid-cols-5">
@@ -186,7 +186,7 @@ export function LibraryView({
 
   if (loadError || shelves === null || decks === null) {
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <Alert tone="error">{t.loadError}</Alert>
         <Button className="mt-4" variant="secondary" onClick={reload}>
           {t.retry}
@@ -216,7 +216,7 @@ export function LibraryView({
   };
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-3 py-6 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-3 py-6 sm:px-6 sm:py-10">
       {/* Hero with circular progress */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}
@@ -266,7 +266,7 @@ export function LibraryView({
           <div className="flex items-end justify-start lg:justify-end">
             <div className="relative min-h-52 w-full max-w-sm overflow-hidden rounded-[18px] border-2 border-brand-950 bg-sand-100 p-5 text-brand-950 shadow-[6px_7px_0_rgba(0,0,0,0.32)]">
               <div aria-hidden className="absolute -right-10 -top-8 h-40 w-24 rotate-12 border border-brand-800/28 bg-brand-500/18" />
-              <div className="relative text-accent-500">
+              <div className="relative text-accent-text">
                 <CircularProgress percent={progressPercent} size={136} />
               </div>
               <div className="relative mt-4">

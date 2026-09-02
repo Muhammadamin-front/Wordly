@@ -161,7 +161,7 @@ export function WordDetailModal({
             className={cn(
               "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
               added
-                ? "bg-success/10 text-success"
+                ? "bg-success/10 text-success-text"
                 : "border border-brand-950 bg-brand-600 text-white shadow-[3px_4px_0_rgb(84,37,15,0.32)] hover:-translate-y-0.5 hover:bg-brand-700"
             )}
           >
@@ -171,100 +171,133 @@ export function WordDetailModal({
         </div>
 
         <div className="min-h-0 flex-1 touch-pan-y overflow-y-auto px-5 py-5 pr-4 [overscroll-behavior:contain] sm:px-6 sm:py-6 sm:pr-5">
-          {loading ? (
-            <div className="space-y-5">
-              <Skeleton className="h-20 rounded-lg" />
-              <Skeleton className="h-28 rounded-lg" />
-              <Skeleton className="h-24 rounded-lg" />
-            </div>
-          ) : detail ? (
-            <div className="space-y-6">
-              {detail.senses.map((sense, index) => (
-                <section key={sense.id ?? index} className="border-b border-line/70 pb-6 last:border-0 last:pb-0">
-                  {detail.senses.length > 1 && (
-                    <p className="text-xs font-black uppercase text-brand-600 dark:text-brand-200">
-                      {copy.meaning} {index + 1}
-                    </p>
-                  )}
-                  <p className="mt-1 text-base font-bold text-ink">
-                    {localizedTranslation(sense, lang)}
-                  </p>
-                  <Section title={labels.definition}>
-                    <p>{sense.definition_en}</p>
-                    {sense.usage_note && (
-                      <p className="mt-2 flex gap-2 rounded-lg border border-accent-500/20 bg-accent-500/8 p-3 text-ink-soft">
-                        <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent-600 dark:text-accent-300" aria-hidden />
-                        {sense.usage_note}
-                      </p>
-                    )}
-                  </Section>
-
-                  {sense.examples.length > 0 && (
-                    <Section title={labels.examples}>
-                      <ul className="space-y-2">
-                        {sense.examples.slice(0, 3).map((example, exampleIndex) => {
-                          const exampleTranslation =
-                            lang === "uz"
-                              ? example.text_uz
-                              : lang === "ru"
-                                ? example.text_ru
-                                : null;
-                          return (
-                            <li
-                              key={example.id ?? exampleIndex}
-                              className="rounded-lg border border-line/70 bg-page/64 p-3"
-                            >
-                              <p className="font-semibold text-ink">{example.text_en}</p>
-                              {exampleTranslation && (
-                                <p className="mt-1 text-sm text-ink-soft">{exampleTranslation}</p>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </Section>
-                  )}
-                </section>
-              ))}
-
-              <RelatedWords detail={detail} labels={labels} />
-
-              {detail.word_family && (
-                <Section title={labels.wordFamily}>
-                  <p>{detail.word_family}</p>
-                </Section>
-              )}
-
-              {detail.common_mistake && (
-                <div className="rounded-lg border border-danger/25 bg-danger/6 p-4">
-                  <p className="flex items-center gap-2 text-xs font-black uppercase text-danger">
-                    <AlertTriangle className="size-4" aria-hidden />
-                    {labels.commonMistake}
-                  </p>
-                  <p className="mt-2 text-sm leading-7 text-ink">{detail.common_mistake}</p>
-                </div>
-              )}
-
-              <div className="rounded-lg border border-accent-500/25 bg-accent-500/8 p-4">
-                <p className="flex items-center gap-2 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
-                  <Sparkles className="size-4" aria-hidden />
-                  {copy.promptTitle}
-                </p>
-                <p className="mt-2 text-sm leading-7 text-ink">
-                  {copy.prompt(summary.headword, categoryName)}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <p className="py-8 text-center text-sm text-ink-soft">{copy.error}</p>
-          )}
+          <WordDetailContent
+            summary={summary}
+            detail={detail}
+            loading={loading}
+            lang={lang}
+            labels={labels}
+            categoryName={categoryName}
+          />
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-function localizedTranslation(sense: Sense | undefined, lang: string): string | null {
+export function WordDetailContent({
+  summary,
+  detail,
+  loading,
+  lang,
+  labels,
+  categoryName,
+}: {
+  summary: WordListItem;
+  detail: Word | null;
+  loading: boolean;
+  lang: string;
+  labels: VocabLabels;
+  categoryName: string | null;
+}) {
+  const copy = modalCopy[lang as keyof typeof modalCopy] ?? modalCopy.en;
+
+  if (loading) {
+    return (
+      <div className="space-y-5" aria-label={copy.loading}>
+        <Skeleton className="h-20 rounded-lg" />
+        <Skeleton className="h-28 rounded-lg" />
+        <Skeleton className="h-24 rounded-lg" />
+      </div>
+    );
+  }
+
+  if (!detail) {
+    return <p className="py-8 text-center text-sm text-ink-soft">{copy.error}</p>;
+  }
+
+  return (
+    <div className="space-y-6">
+      {detail.senses.map((sense, index) => (
+        <section key={sense.id ?? index} className="border-b border-line/70 pb-6 last:border-0 last:pb-0">
+          {detail.senses.length > 1 && (
+            <p className="text-xs font-black uppercase text-brand-600 dark:text-brand-200">
+              {copy.meaning} {index + 1}
+            </p>
+          )}
+          <p className="mt-1 text-base font-bold text-ink">
+            {localizedTranslation(sense, lang)}
+          </p>
+          <Section title={labels.definition}>
+            <p>{sense.definition_en}</p>
+            {sense.usage_note && (
+              <p className="mt-2 flex gap-2 rounded-lg border border-accent-500/20 bg-accent-500/8 p-3 text-ink-soft">
+                <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent-600 dark:text-accent-300" aria-hidden />
+                {sense.usage_note}
+              </p>
+            )}
+          </Section>
+
+          {sense.examples.length > 0 && (
+            <Section title={labels.examples}>
+              <ul className="space-y-2">
+                {sense.examples.slice(0, 3).map((example, exampleIndex) => {
+                  const exampleTranslation =
+                    lang === "uz"
+                      ? example.text_uz
+                      : lang === "ru"
+                        ? example.text_ru
+                        : null;
+                  return (
+                    <li
+                      key={example.id ?? exampleIndex}
+                      className="rounded-lg border border-line/70 bg-page/64 p-3"
+                    >
+                      <p className="font-semibold text-ink">{example.text_en}</p>
+                      {exampleTranslation && (
+                        <p className="mt-1 text-sm text-ink-soft">{exampleTranslation}</p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </Section>
+          )}
+        </section>
+      ))}
+
+      <RelatedWords detail={detail} labels={labels} />
+
+      {detail.word_family && (
+        <Section title={labels.wordFamily}>
+          <p>{detail.word_family}</p>
+        </Section>
+      )}
+
+      {detail.common_mistake && (
+        <div className="rounded-lg border border-danger/25 bg-danger/6 p-4">
+          <p className="flex items-center gap-2 text-xs font-black uppercase text-danger-text">
+            <AlertTriangle className="size-4" aria-hidden />
+            {labels.commonMistake}
+          </p>
+          <p className="mt-2 text-sm leading-7 text-ink">{detail.common_mistake}</p>
+        </div>
+      )}
+
+      <div className="rounded-lg border border-accent-500/25 bg-accent-500/8 p-4">
+        <p className="flex items-center gap-2 text-xs font-black uppercase text-accent-600 dark:text-accent-300">
+          <Sparkles className="size-4" aria-hidden />
+          {copy.promptTitle}
+        </p>
+        <p className="mt-2 text-sm leading-7 text-ink">
+          {copy.prompt(summary.headword, categoryName)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export function localizedTranslation(sense: Sense | undefined, lang: string): string | null {
   if (!sense) return null;
   if (lang === "ru") return sense.translation_ru;
   if (lang === "en") return sense.definition_en;
@@ -318,6 +351,7 @@ const modalCopy = {
   uz: {
     listen: "Tinglash",
     close: "Yopish",
+    loading: "So'z tafsilotlari yuklanmoqda",
     add: "Kartalarimga qo'shish",
     added: "Qo'shildi",
     meaning: "Ma'no",
@@ -330,6 +364,7 @@ const modalCopy = {
   ru: {
     listen: "Слушать",
     close: "Закрыть",
+    loading: "Загружаются сведения о слове",
     add: "Добавить в мои карточки",
     added: "Добавлено",
     meaning: "Значение",
@@ -342,6 +377,7 @@ const modalCopy = {
   en: {
     listen: "Listen",
     close: "Close",
+    loading: "Loading word details",
     add: "Add to my cards",
     added: "Added",
     meaning: "Meaning",

@@ -8,6 +8,7 @@ import { GrammarProgressSync } from "@/components/grammar/grammar-progress-sync"
 import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
+import { SkipLink } from "@/components/site/skip-link";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
@@ -106,6 +107,11 @@ export default async function RootLayout({
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
   const layoutDict = await getDictionary(lang);
+  const skipLabel = {
+    uz: "Asosiy mazmunga o'tish",
+    ru: "Перейти к основному содержанию",
+    en: "Skip to main content",
+  }[lang];
 
   // No data-theme attribute here on purpose: the inline script below sets it
   // before paint, and React leaves an attribute it does not render alone.
@@ -119,6 +125,7 @@ export default async function RootLayout({
       </head>
       <body className="flex min-h-dvh flex-col">
         <ThemeProvider>
+          <SkipLink label={skipLabel} />
           <AuthProvider>
             <AnalyticsProvider />
             <GrammarProgressSync />

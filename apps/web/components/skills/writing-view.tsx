@@ -66,7 +66,7 @@ export function WritingView({ lang, skills }: { lang: string; skills: Dictionary
   const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
       <h1 className="text-3xl font-extrabold tracking-tight text-ink">
         ✍️ {skills.writing.name}
       </h1>
@@ -123,7 +123,7 @@ export function WritingView({ lang, skills }: { lang: string; skills: Dictionary
       {feedback && (
         <div className="mt-6 space-y-4">
           <div className="rounded-xl2 border border-success/30 bg-success/5 p-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-success">
+            <p className="text-xs font-bold uppercase tracking-wide text-success-text">
               {skills.corrected}
             </p>
             <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink">

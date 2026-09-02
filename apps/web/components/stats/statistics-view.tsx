@@ -97,7 +97,7 @@ export function StatisticsView({
 
   if (!ready || !user || (stats === null && !error)) {
     return (
-      <main className="app-container flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container flex-1 py-8">
         <PageHeader title={t.title} subtitle={t.subtitle} />
         <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label={t.title}>
           {Array.from({ length: 4 }).map((_, index) => (
@@ -112,7 +112,7 @@ export function StatisticsView({
 
   if (error || stats === null) {
     return (
-      <main className="app-container flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container flex-1 py-8">
         <PageHeader title={t.title} subtitle={t.subtitle} />
         <EmptyState
           className="mt-6"
@@ -134,12 +134,12 @@ export function StatisticsView({
     lang === "uz" ? c.name_uz : lang === "ru" ? c.name_ru : c.name_en;
 
   return (
-    <main className="app-container max-w-4xl flex-1 py-8">
+    <main id="main-content" tabIndex={-1} className="app-container max-w-4xl flex-1 py-8">
       <PageHeader title={t.title} subtitle={t.subtitle} />
 
       {/* Stat tiles */}
       <section className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <Tile label={t.mastered} value={String(stats.cards.mastered)} accent="text-success" />
+        <Tile label={t.mastered} value={String(stats.cards.mastered)} accent="text-success-text" />
         <Tile label={t.accuracy} value={`${stats.accuracy_all}%`} accent="text-brand-600 dark:text-brand-300" />
         <Tile label={t.totalReviews} value={String(stats.total_reviews)} accent="text-ink" />
         <Tile
@@ -286,7 +286,7 @@ export function StatisticsView({
                         className="flex items-center justify-between text-sm hover:underline"
                       >
                         <span className="font-medium text-ink">{w.headword}</span>
-                        <span className="text-danger">
+                        <span className="text-danger-text">
                           {w.lapses} {t.lapses}
                         </span>
                       </Link>

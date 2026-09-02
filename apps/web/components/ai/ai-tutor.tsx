@@ -43,14 +43,14 @@ export function AiTutor({ lang, ai }: { lang: string; ai: Dictionary["ai"] }) {
 
   if (!ready || !user) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-3xl font-extrabold tracking-tight text-ink">🐆 {ai.title}</h1>
