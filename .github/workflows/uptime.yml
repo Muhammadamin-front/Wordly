@@ -1,0 +1,75 @@
+name: Uptime
+
+# The host-side probe (ops/monitoring/uptime-check.sh) cannot report that the
+# host itself, or the Cloudflare tunnel in front of it, is down. This one runs
+# off-box: a failed run emails the repo owner, and posts to Telegram when
+# ALERT_BOT_TOKEN / ALERT_CHAT_ID are configured as repository secrets.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    name: Public endpoints
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Probe web and API
+        id: probe
+        run: |
+          set -uo pipefail
+          failures=""
+
+          # Three attempts before alerting: a single timeout is usually a
+          # cold edge or a deploy swap, not an outage worth waking anyone.
+          probe() {
+            local name="$1" url="$2" expect="${3:-}"
+            for attempt in 1 2 3; do
+              body="$(curl -fsS --max-time 20 "$url" 2>/dev/null)" && {
+                if [ -z "$expect" ] || [[ "$body" == *"$expect"* ]]; then
+                  echo "ok: $name"
+                  return 0
+                fi
+              }
+              sleep 15
+            done
+            failures="${failures}${name} ($url)"$'\n'
+            return 1
+          }
+
+          probe "web home" "https://vocora.uz/uz" "<html"
+          probe "pricing" "https://vocora.uz/uz/pricing" "<html"
+          probe "API health" "https://api.vocora.uz/health/detail" '"database":"ok"'
+
+          if [ -n "$failures" ]; then
+            {
+              echo "failures<<EOF"
+              printf '%s' "$failures"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            printf 'DOWN:\n%s' "$failures" >&2
+            exit 1
+          fi
+
+      - name: Alert on Telegram
+        if: failure()
+        env:
+          TOKEN: ${{ secrets.ALERT_BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.ALERT_CHAT_ID }}
+          FAILURES: ${{ steps.probe.outputs.failures }}
+        run: |
+          if [ -z "${TOKEN:-}" ] || [ -z "${CHAT_ID:-}" ]; then
+            echo "No Telegram secrets configured; the failed run itself is the alert."
+            exit 0
+          fi
+          curl -fsS -o /dev/null --max-time 20 \
+            "https://api.telegram.org/bot${TOKEN}/sendMessage" \
+            --data-urlencode "chat_id=${CHAT_ID}" \
+            --data-urlencode "text=🚨 Vocora is unreachable from outside:
+${FAILURES:-see the workflow run}
+${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

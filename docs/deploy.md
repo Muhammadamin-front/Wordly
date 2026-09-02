@@ -252,6 +252,33 @@ sudo ufw status verbose               # or: sudo iptables -L -n
 - [`performance-monitoring.md`](./performance-monitoring.md) defines the
   baseline, safe response telemetry, and measurement-first investigation flow.
 
+### Uptime alerting
+
+Two probes, because neither alone is sufficient:
+
+- **Off-box** — `.github/workflows/uptime.yml` hits `vocora.uz` and
+  `api.vocora.uz` every 10 minutes from GitHub's runners, so it still fires
+  when the host or the Cloudflare tunnel is gone. A failed run emails the repo
+  owner; set the `ALERT_BOT_TOKEN` and `ALERT_CHAT_ID` repository secrets to
+  also get a Telegram message.
+- **On-box** — `ops/monitoring/uptime-check.sh`, run every 5 minutes by
+  `ops/systemd/vocora-uptime.timer`, catches what a public probe cannot see:
+  an exited container, a degraded database behind a still-serving API, and a
+  filling disk. It alerts once per incident and once on recovery.
+
+Install the on-box probe:
+
+```bash
+sudo install -m 600 /dev/stdin /etc/vocora/monitoring.env <<'ENV'
+VOCORA_ALERT_BOT_TOKEN=<telegram-bot-token>
+VOCORA_ALERT_CHAT_ID=<chat-id>
+ENV
+sudo cp ops/systemd/vocora-uptime.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now vocora-uptime.timer
+systemctl list-timers vocora-uptime.timer
+```
+
 ## 6. Backups & state
 
 All durable state is in Postgres (`pgdata` volume): users, SRS history, corpus,

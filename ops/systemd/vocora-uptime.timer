@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Vocora health probe every 5 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=5min
+AccuracySec=30s
+Unit=vocora-uptime.service
+
+[Install]
+WantedBy=timers.target

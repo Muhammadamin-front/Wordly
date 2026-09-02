@@ -1,0 +1,12 @@
+[Unit]
+Description=Vocora health probe (API, web, containers, disk)
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/kitsune/Wordly
+EnvironmentFile=/etc/vocora/monitoring.env
+ExecStart=/home/kitsune/Wordly/ops/monitoring/uptime-check.sh
+NoNewPrivileges=true
+PrivateTmp=true
