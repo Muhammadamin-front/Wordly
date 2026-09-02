@@ -28,6 +28,7 @@ import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
 import { HomeHero, type HomeHeroCopy } from "@/components/site/home-hero";
 import { Reveal } from "@/components/site/reveal";
+import { Testimonials } from "@/components/site/testimonials";
 import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
 import { getWordsLabel } from "@/lib/nav-labels";
@@ -371,6 +372,12 @@ export default async function LandingPage({
                 <ArrowRight className="size-4" aria-hidden />
               </span>
             </Link>
+          </Reveal>
+        </section>
+
+        <section className="mx-auto mt-5 max-w-370">
+          <Reveal>
+            <Testimonials lang={lang as Locale} />
           </Reveal>
         </section>
 

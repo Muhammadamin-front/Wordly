@@ -64,14 +64,41 @@ export function MockListeningLeg({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  // Every play path is async (token, fetch, play()), so leaving the mock has
+  // to be recorded explicitly: without this, a request that resolves after
+  // the leg unmounted still started playback with nothing left on screen to
+  // stop it.
+  const disposedRef = useRef(false);
   const submitRef = useRef<() => void>(() => {});
   const section = test?.sections[sectionIndex];
   const lastSection = test ? sectionIndex === test.sections.length - 1 : false;
+
+  /** Silences and fully releases the current clip — pausing alone leaves a
+   *  live element and a blob URL behind. */
+  function stopAudio() {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.onplay = null;
+      audio.onpause = null;
+      audio.onended = null;
+      audio.pause();
+      audio.removeAttribute("src");
+      audio.load();
+    }
+    audioRef.current = null;
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+    setAudioPlaying(false);
+  }
 
   async function playSection(sectionNumber: number) {
     if (!test) return;
     setAudioFailed(false);
     setAudioFinished(false);
+    stopAudio();
     try {
       const token = await waitForAccessToken();
       const resp = await fetch(
@@ -80,28 +107,38 @@ export function MockListeningLeg({
       );
       if (!resp.ok) throw new Error(String(resp.status));
       const url = URL.createObjectURL(await resp.blob());
-      audioRef.current?.pause();
+      if (disposedRef.current) {
+        URL.revokeObjectURL(url);
+        return;
+      }
       const audio = new Audio(url);
       audio.onplay = () => setAudioPlaying(true);
       audio.onpause = () => setAudioPlaying(false);
       audio.onended = () => {
         setAudioPlaying(false);
         setAudioFinished(true);
-        URL.revokeObjectURL(url);
       };
       audioRef.current = audio;
+      audioUrlRef.current = url;
       await audio.play();
+      // play() resolves a tick later; the learner may already be gone.
+      if (disposedRef.current) stopAudio();
     } catch {
-      audioRef.current = null;
-      setAudioFailed(true);
+      stopAudio();
+      if (!disposedRef.current) setAudioFailed(true);
     }
   }
 
   // Start section 1's audio once the test is resolved.
   useEffect(() => {
     if (!test) return;
-    window.setTimeout(() => void playSection(test.sections[0].number), 400);
-    return () => audioRef.current?.pause();
+    disposedRef.current = false;
+    const timer = window.setTimeout(() => void playSection(test.sections[0].number), 400);
+    return () => {
+      disposedRef.current = true;
+      window.clearTimeout(timer);
+      stopAudio();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [test?.slug]);
 
@@ -130,7 +167,7 @@ export function MockListeningLeg({
   async function submit() {
     if (!test || submitting) return;
     setSubmitting(true);
-    audioRef.current?.pause();
+    stopAudio();
     try {
       const allQuestions = test.sections.flatMap((s) => s.questions);
       const correct = allQuestions.filter((q) => isListeningCorrect(q, answers[q.id])).length;
@@ -166,7 +203,14 @@ export function MockListeningLeg({
         <MockLegHeader
           label={t.legListening}
           exitLabel={t.exit}
-          onAbandon={onAbandon}
+          onAbandon={() => {
+            // abandonSession() is awaited before the leg unmounts, so the
+            // clip has to be cut here — otherwise it keeps playing over the
+            // screen the learner just left for.
+            disposedRef.current = true;
+            stopAudio();
+            onAbandon();
+          }}
           exitConfirmTitle={t.exitConfirmTitle}
           exitConfirmBody={t.exitConfirmBody}
           exitConfirmStay={t.exitConfirmStay}
