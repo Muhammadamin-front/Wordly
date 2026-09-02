@@ -10,3 +10,11 @@ docs
 skills-lock.json
 *.md
 .env*
+
+# Duplicate trees (see .gitignore): never part of the build context — they
+# added ~500MB to every image build.
+* 2
+* 2/
+node_modules 2
+apps 2
+.git 2

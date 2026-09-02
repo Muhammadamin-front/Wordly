@@ -67,3 +67,9 @@ apps/api/scripts/data/phrasal_idioms_ru_cache.json
 .claude/settings.local.json
 .expo/
 .impeccable/
+
+# Finder/iCloud "Foo 2" duplicates. A copy of the whole tree was committed
+# once (including node_modules and a nested .git); these patterns keep that
+# from happening again.
+* 2
+* 2/
