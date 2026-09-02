@@ -181,7 +181,10 @@ export function PricingView({
     }
   }
 
-  if (!ready || (!loadError && (plans === null || paymentStatus === null))) {
+  // Auth resolving is not a reason to withhold the prices: with the plans
+  // rendered on the server, waiting on it would put a spinner in the HTML
+  // and undo the point of fetching them there.
+  if ((!ready && plans === null) || (!loadError && (plans === null || paymentStatus === null))) {
     return (
       <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
@@ -343,7 +346,10 @@ export function PricingView({
                     </span>
                   ) : (
                     <button className={styles.chooseButton} onClick={choose}>
-                      {user ? t.choosePlan : t.signInToChoose}
+                      {/* Before auth resolves, the neutral label is the safe
+                          one: choose() sends a signed-out visitor to login
+                          anyway, so it never promises the wrong thing. */}
+                      {user || !ready ? t.choosePlan : t.signInToChoose}
                       <ArrowRight aria-hidden />
                     </button>
                   )}
