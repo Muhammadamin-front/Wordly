@@ -114,7 +114,7 @@ describe("LoginForm", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("navigates to the dashboard on success", async () => {
+  it("sends a signed-in learner to today's plan", async () => {
     mockFetch((url) => {
       if (url.includes("/auth/refresh")) return json(401, { detail: "No refresh token" });
       if (url.includes("/auth/login")) return json(200, PAIR);
@@ -130,7 +130,7 @@ describe("LoginForm", () => {
     await userEvent.type(screen.getByLabelText(en.auth.password), "correct-password");
     await userEvent.click(screen.getByRole("button", { name: en.auth.loginButton }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/en/dashboard"));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/en/today"));
   });
 
   it("continues an incomplete account into onboarding", async () => {

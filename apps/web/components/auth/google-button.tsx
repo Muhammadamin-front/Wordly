@@ -37,7 +37,7 @@ export function GoogleButton({ lang, divider }: { lang: string; divider: string 
         const pair = await authApi.google(response.credential);
         applySession(pair);
         router.push(
-          `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+          `/${lang}/${pair.user.profile.onboarding_completed ? "today" : "onboarding"}`
         );
       } catch {
         // Surfacing Google-side failures is handled by the form's generic error UI paths;

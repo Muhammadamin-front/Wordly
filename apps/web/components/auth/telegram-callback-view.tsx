@@ -39,7 +39,7 @@ export function TelegramCallbackView({ lang, auth }: { lang: string; auth: Dicti
       const pair = await authApi.telegram(fields);
       applySession(pair);
       router.replace(
-        `/${startLang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        `/${startLang}/${pair.user.profile.onboarding_completed ? "today" : "onboarding"}`
       );
     }
 

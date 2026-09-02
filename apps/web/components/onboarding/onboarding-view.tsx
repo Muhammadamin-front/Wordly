@@ -60,7 +60,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   useEffect(() => {
     if (ready && !user) router.replace(`/${lang}/auth/login`);
     if (ready && user?.profile.onboarding_completed && !loading) {
-      router.replace(`/${lang}/dashboard`);
+      router.replace(`/${lang}/today`);
     }
   }, [ready, user, loading, router, lang]);
 

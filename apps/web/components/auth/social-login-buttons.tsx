@@ -124,7 +124,7 @@ export function SocialLoginButtons({
     (pair: Awaited<ReturnType<typeof authApi.google>>) => {
       applySession(pair);
       router.push(
-        `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        `/${lang}/${pair.user.profile.onboarding_completed ? "today" : "onboarding"}`
       );
     },
     [applySession, lang, router]

@@ -36,7 +36,7 @@ export function VerifyEmailView({ lang, auth }: { lang: string; auth: Dictionary
     return (
       <div className="space-y-5">
         <Alert tone="success">{auth.verifySuccess}</Alert>
-        <Link href={`/${lang}/dashboard`}>
+        <Link href={`/${lang}/today`}>
           <Button fullWidth>{auth.goToDashboard}</Button>
         </Link>
       </div>

@@ -313,7 +313,16 @@
     "openWord": "Open word",
     "backToRoute": "Back to today's route",
     "loadError": "Your learning data could not be loaded. Please try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "minutesShort": "min",
+    "planTotal": "Today's plan",
+    "wordsUnit": "words",
+    "readingStep": "One reading passage",
+    "readingStepDesc": "A real exam-format passage with questions, under time.",
+    "grammarStep": "Grammar lesson",
+    "grammarStepDesc": "A short lesson and immediate practice, explained in your language.",
+    "planDone": "Today's plan is done",
+    "planDoneDesc": "Keep going if you want — extra review is never wasted."
   },
   "mastery": {
     "navTitle": "Word mastery map",

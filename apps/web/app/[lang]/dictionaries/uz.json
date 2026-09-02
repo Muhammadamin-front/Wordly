@@ -313,7 +313,16 @@
     "openWord": "So'zni ochish",
     "backToRoute": "Bugungi yo'lga qaytish",
     "loadError": "O'rganish ma'lumotlarini yuklab bo'lmadi. Qayta urinib ko'ring.",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "minutesShort": "daq",
+    "planTotal": "Bugungi reja",
+    "wordsUnit": "so'z",
+    "readingStep": "Bitta Reading passage",
+    "readingStepDesc": "Haqiqiy imtihon formatidagi matn va savollar — vaqt bilan.",
+    "grammarStep": "Grammatika darsi",
+    "grammarStepDesc": "Qisqa dars va darrov mashq — o'zbekcha izoh bilan.",
+    "planDone": "Bugungi reja bajarildi",
+    "planDoneDesc": "Xohlasangiz davom eting — takrorlash hech qachon ortiqcha emas."
   },
   "mastery": {
     "navTitle": "So'zlarni o'zlashtirish xaritasi",

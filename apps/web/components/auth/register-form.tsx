@@ -24,7 +24,7 @@ export function RegisterForm({ lang, auth }: { lang: string; auth: Dictionary["a
   useEffect(() => {
     if (ready && user) {
       router.replace(
-        `/${lang}/${user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        `/${lang}/${user.profile.onboarding_completed ? "today" : "onboarding"}`
       );
     }
   }, [ready, user, router, lang]);

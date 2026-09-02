@@ -27,15 +27,34 @@ import { notFound } from "next/navigation";
 import { HeroCta } from "@/components/site/hero-cta";
 import { SiteHeader } from "@/components/site/header";
 import { HomeHero, type HomeHeroCopy } from "@/components/site/home-hero";
+import { ProofBand } from "@/components/site/proof-band";
 import { Reveal } from "@/components/site/reveal";
 import { Testimonials } from "@/components/site/testimonials";
 import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/lib/locales";
 import { getWordsLabel } from "@/lib/nav-labels";
+import { API_URL } from "@/lib/api";
+import type { Plan } from "@/lib/billing";
 import { fetchCatalogMeta } from "@/lib/vocab";
 import { ALL_LESSONS } from "@/lib/grammar";
 import { getSeoCopy } from "@/lib/seo-copy";
 import { getDictionary, hasLocale, locales } from "./dictionaries";
+
+/** Cheapest monthly plan, for the price shown on the landing page. Read from
+ *  the live plan list so the page can never advertise a stale number; a
+ *  failure just hides the figure rather than breaking the page. */
+async function cheapestMonthlyPrice(): Promise<number | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/v1/billing/plans`, { next: { revalidate: 300 } });
+    if (!response.ok) return null;
+    const { plans } = (await response.json()) as { plans: Plan[] };
+    const monthly = plans.filter((plan) => plan.code.endsWith("_monthly") && plan.price_som > 0);
+    if (monthly.length === 0) return null;
+    return Math.min(...monthly.map((plan) => plan.price_som));
+  } catch {
+    return null;
+  }
+}
 
 const LEVELS = [
   { slug: "a1", level: "A1", tone: "bg-brand-400" },
@@ -79,8 +98,11 @@ export default async function LandingPage({
   const { lang } = await params;
   if (!hasLocale(lang)) notFound();
 
-  const dict = await getDictionary(lang);
-  const catalog = await fetchCatalogMeta().catch(() => null);
+  const [dict, catalog, priceSom] = await Promise.all([
+    getDictionary(lang),
+    fetchCatalogMeta().catch(() => null),
+    cheapestMonthlyPrice(),
+  ]);
   const { common, landing, library, nav } = dict;
   const copy = homeCopy[lang as Locale];
   const shelfLabels = library.shelves as Record<string, { name: string; desc: string }>;
@@ -140,6 +162,8 @@ export default async function LandingPage({
       />
 
       <main id="main-content" tabIndex={-1} className="flex-1 px-3 pb-8 sm:px-5">
+
+        <ProofBand lang={lang as Locale} priceSom={priceSom} />
 
         <section className="mx-auto mt-5 grid max-w-370 gap-5 xl:grid-cols-[2.1fr_1fr]">
           <Reveal className="xl:h-full">
@@ -565,9 +589,9 @@ const homeCopy: Record<
     mockTime: "Taxminan 2 soat",
     hero: {
       eyebrow: "Aniq reja. Haqiqiy natija.",
-      title: "Ingliz tili shu yerdan boshlanadi",
+      title: "IELTS 7+ uchun kuniga 15 daqiqa",
       subtitle:
-        "O'zbek tilidagi izohlar, aqlli takrorlash va IELTS uchun amaliy mashqlar — bir joyda, har kuni.",
+        "Har kuni tayyor reja: takrorlash, grammatika va imtihon mashqlari. Barcha izohlar o'zbek tilida, insholaringiz esa gap-bagap tekshiriladi.",
       heroImageAlt: "Kofe va kitob bilan ingliz tilini o'rganayotgan Vocora mushugi",
       pillars: ["So'z boyligi", "Grammatika", "Talaffuz", "IELTS"],
       shelfTitle: "To'liq ingliz tili yo'li",
@@ -648,9 +672,9 @@ const homeCopy: Record<
     mockTime: "Около 2 часов",
     hero: {
       eyebrow: "Чёткий план. Реальный результат.",
-      title: "Английский начинается здесь",
+      title: "15 минут в день до IELTS 7+",
       subtitle:
-        "Объяснения на узбекском, умное повторение и практика для IELTS — в одном месте, каждый день.",
+        "Готовый план на каждый день: повторение, грамматика и экзаменационная практика. Объяснения на родном языке, эссе разбираются по предложениям.",
       heroImageAlt: "Кот Vocora изучает английский с кофе и книгой",
       pillars: ["Словарь", "Грамматика", "Произношение", "IELTS"],
       shelfTitle: "Полный путь в английском",
@@ -731,9 +755,9 @@ const homeCopy: Record<
     mockTime: "About 2 hours",
     hero: {
       eyebrow: "A clear plan. Real progress.",
-      title: "English starts right here",
+      title: "Fifteen minutes a day to IELTS 7+",
       subtitle:
-        "Uzbek explanations, spaced repetition and hands-on IELTS practice — in one place, every day.",
+        "A ready plan every day: review, grammar and exam practice. Explanations in your own language, and essays marked sentence by sentence.",
       heroImageAlt: "The Vocora cat studying English with coffee and a book",
       pillars: ["Vocabulary", "Grammar", "Pronunciation", "IELTS"],
       shelfTitle: "The complete English path",

@@ -32,7 +32,7 @@ export function LoginForm({
   useEffect(() => {
     if (ready && user) {
       router.replace(
-        `/${lang}/${user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        `/${lang}/${user.profile.onboarding_completed ? "today" : "onboarding"}`
       );
     }
   }, [ready, user, router, lang]);
@@ -50,7 +50,7 @@ export function LoginForm({
       applySession(pair);
       trackEvent("login_completed", { locale: lang, provider: "password" });
       router.push(
-        `/${lang}/${pair.user.profile.onboarding_completed ? "dashboard" : "onboarding"}`
+        `/${lang}/${pair.user.profile.onboarding_completed ? "today" : "onboarding"}`
       );
     } catch (err) {
       setError(authErrorMessage(err, auth));

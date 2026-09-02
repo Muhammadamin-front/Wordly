@@ -23,7 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { learningApi, type LearningPlan } from "@/lib/learning";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-type StepKey = "review" | "mistakes" | "adaptive" | "story";
+type StepKey = "review" | "mistakes" | "adaptive" | "story" | "reading" | "grammar";
 
 interface RouteStep {
   key: StepKey;
@@ -32,6 +32,17 @@ interface RouteStep {
   description: string;
   href: string;
   meta: string;
+  /** Shown on the card and summed into the plan's total. A learner deciding
+   *  whether they have time for this right now needs the number more than any
+   *  other detail on the card. */
+  minutes: number;
+}
+
+/** Roughly 25 seconds a card at review speed, floored so a two-word day still
+ *  reads as a real task and capped so a large backlog does not look
+ *  impossible. */
+function reviewMinutes(cards: number): number {
+  return Math.min(20, Math.max(3, Math.round((cards * 25) / 60)));
 }
 
 export function TodayView({
@@ -114,6 +125,11 @@ export function TodayView({
   if (plan.mistake_count === 0) autoDone.push("mistakes");
   const done = new Set([...manualDone, ...autoDone]);
 
+  // The last two steps follow the goal the learner set during onboarding:
+  // someone preparing for IELTS gets a timed passage and a grammar lesson
+  // where a general learner gets the practice games. Same shape either way,
+  // so the plan is always four steps.
+  const forIelts = user.profile.learning_goal === "ielts";
   const steps: RouteStep[] = [
     {
       key: "review",
@@ -121,7 +137,8 @@ export function TodayView({
       title: t.reviewStep,
       description: t.reviewStepDesc,
       href: `/${lang}/review`,
-      meta: `${plan.reviewed_today}/${reviewTarget} ${t.reviewedToday.toLowerCase()}`,
+      meta: `${reviewTarget} ${t.wordsUnit} · ${plan.reviewed_today}/${reviewTarget}`,
+      minutes: reviewMinutes(reviewTarget),
     },
     {
       key: "mistakes",
@@ -130,26 +147,55 @@ export function TodayView({
       description: t.mistakesStepDesc,
       href: `/${lang}/mistakes`,
       meta: `${plan.mistake_count} ${t.mistakesCount}`,
+      minutes: Math.min(10, Math.max(3, Math.round(plan.mistake_count / 2))),
     },
-    {
-      key: "adaptive",
-      icon: Gauge,
-      title: t.adaptiveStep,
-      description: t.adaptiveStepDesc,
-      href: `/${lang}/games/${plan.recommended_game}`,
-      meta: `${t.adaptiveLevel}: ${t[plan.difficulty]}`,
-    },
-    {
-      key: "story",
-      icon: Map,
-      title: t.storyStep,
-      description: t.storyStepDesc,
-      href: `/${lang}/games/fill_blank`,
-      meta: t.storyMeta,
-    },
+    forIelts
+      ? {
+          key: "reading",
+          icon: BookOpenCheck,
+          title: t.readingStep,
+          description: t.readingStepDesc,
+          href: `/${lang}/ielts/reading`,
+          meta: "IELTS Reading",
+          minutes: 12,
+        }
+      : {
+          key: "adaptive",
+          icon: Gauge,
+          title: t.adaptiveStep,
+          description: t.adaptiveStepDesc,
+          href: `/${lang}/games/${plan.recommended_game}`,
+          meta: `${t.adaptiveLevel}: ${t[plan.difficulty]}`,
+          minutes: 6,
+        },
+    forIelts
+      ? {
+          key: "grammar",
+          icon: Map,
+          title: t.grammarStep,
+          description: t.grammarStepDesc,
+          href: `/${lang}/grammar`,
+          meta: user.profile.cefr_level,
+          minutes: 6,
+        }
+      : {
+          key: "story",
+          icon: Map,
+          title: t.storyStep,
+          description: t.storyStepDesc,
+          href: `/${lang}/games/fill_blank`,
+          meta: t.storyMeta,
+          minutes: 6,
+        },
   ];
   const completed = steps.filter((step) => done.has(step.key)).length;
   const nextStep = steps.find((step) => !done.has(step.key)) ?? steps[0];
+  const allDone = completed === steps.length;
+  // Only what is still outstanding: a learner who has done half the plan
+  // wants to know what the rest costs them, not what the whole day cost.
+  const minutesLeft = steps
+    .filter((step) => !done.has(step.key))
+    .reduce((total, step) => total + step.minutes, 0);
 
   function toggleDone(key: StepKey) {
     if (autoDone.includes(key)) return;
@@ -174,18 +220,50 @@ export function TodayView({
               {t.todayEyebrow}
             </p>
             <h1 className="type-h1 mt-3 max-w-3xl text-ink">
-              {t.todayTitle}
+              {allDone ? t.planDone : t.todayTitle}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
-              {t.todaySubtitle}
+              {allDone ? t.planDoneDesc : t.todaySubtitle}
             </p>
+
+            {/* The plan itself, in one glance: what is left and what it
+                costs. Everything below is the detail behind these lines. */}
+            {!allDone && (
+              <ol className="mt-6 flex max-w-xl flex-col gap-2">
+                {steps
+                  .filter((step) => !done.has(step.key))
+                  .map((step) => (
+                    <li key={step.key} className="flex items-baseline justify-between gap-4 border-b border-line/70 pb-2 text-sm">
+                      <span className="font-bold text-ink">{step.title}</span>
+                      <span className="shrink-0 font-bold tabular-nums text-ink-soft">
+                        {step.minutes} {t.minutesShort}
+                      </span>
+                    </li>
+                  ))}
+                <li className="flex items-baseline justify-between gap-4 pt-1 text-sm">
+                  <span className="font-black text-ink">{t.planTotal}</span>
+                  <span className="shrink-0 font-black tabular-nums text-brand-700 dark:text-brand-200">
+                    {minutesLeft} {t.minutesShort}
+                  </span>
+                </li>
+              </ol>
+            )}
           </div>
+          {/* One primary action, and it says which step it opens — the
+              learner should never have to choose where to begin. */}
           <Link
             href={nextStep.href}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-md border-2 border-brand-950 bg-brand-600 px-6 text-sm font-black text-white shadow-[4px_5px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[6px_7px_0_#54250f]"
+            className="inline-flex min-h-13 flex-col items-center justify-center gap-0.5 rounded-md border-2 border-brand-950 bg-brand-600 px-6 py-2 text-center text-white shadow-[4px_5px_0_#54250f] transition-all hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[6px_7px_0_#54250f]"
           >
-            {completed === steps.length ? t.startAgain : t.continue}
-            <ChevronRight className="size-4" aria-hidden />
+            <span className="inline-flex items-center gap-2 text-sm font-black">
+              {allDone ? t.startAgain : t.start}
+              <ChevronRight className="size-4" aria-hidden />
+            </span>
+            {!allDone && (
+              <span className="text-[0.7rem] font-bold text-white/80">
+                {nextStep.title} · {nextStep.minutes} {t.minutesShort}
+              </span>
+            )}
           </Link>
         </div>
 
@@ -204,7 +282,7 @@ export function TodayView({
             <p className="mt-1 text-sm text-ink-soft">{t.routeDescription}</p>
           </div>
           <span className="text-sm font-black text-brand-700 dark:text-brand-200">
-            {completed}/4
+            {completed}/{steps.length}
           </span>
         </div>
         <Progress
@@ -245,7 +323,7 @@ export function TodayView({
                   </button>
                 </div>
                 <p className="print-label mt-5 inline-flex border-accent-500 bg-accent-400/10 text-accent-600 dark:text-accent-300">
-                  {index + 1}. {step.meta}
+                  {index + 1}. {step.meta} · {step.minutes} {t.minutesShort}
                 </p>
                 <h3 className="mt-3 font-display text-3xl tracking-wide text-ink">{step.title}</h3>
                 <p className="mt-2 min-h-12 text-sm leading-6 text-ink-soft">{step.description}</p>
