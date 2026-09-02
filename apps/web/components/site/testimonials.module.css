@@ -1,30 +1,78 @@
+/* Continuous marquee. The track holds the reviews twice, so translating it
+   by exactly half its width lands on an identical frame and the loop has no
+   visible seam or pause. */
 .viewport {
-  display: flex;
-  gap: clamp(0.75rem, 2vw, 1.25rem);
-  margin: 0;
-  padding: 0.25rem;
-  list-style: none;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  scroll-behavior: smooth;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  touch-action: pan-x pan-y pinch-zoom;
+  position: relative;
+  overflow: hidden;
+  /* Cards dissolve into the slab at both edges instead of being cut off. */
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
 }
 
-.viewport::-webkit-scrollbar {
-  display: none;
+.track {
+  display: flex;
+  width: max-content;
+  /* Spacing lives on the slide, not as a flex gap: with a gap the track's
+     width is 2N cards plus 2N-1 gaps, so translating by exactly -50% lands
+     half a gap out of register and the loop shows a small jump. A uniform
+     per-slide margin makes each half exactly equal. */
+  padding: 0.25rem 0;
+  margin: 0;
+  list-style: none;
+  animation: marquee var(--marquee-duration, 64s) linear infinite;
+}
+
+.reverse {
+  animation-direction: reverse;
 }
 
 .slide {
-  flex: 0 0 min(100%, 22rem);
+  flex: 0 0 19rem;
   min-width: 0;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  margin-right: 1rem;
 }
 
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Motion that never stops is exactly what a vestibular-sensitivity setting
+   asks to be spared, so the second row is dropped and the first is left
+   still and readable. */
 @media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    gap: 1rem;
+  }
+
   .viewport {
-    scroll-behavior: auto;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  .secondRow {
+    display: none;
+  }
+
+  .slide {
+    flex: 1 1 18rem;
+    max-width: 22rem;
+    margin-right: 0;
+  }
+}
+
+/* Only the duplicated half is hidden when the marquee is stilled, so the
+   wrapped grid shows each review once. */
+@media (prefers-reduced-motion: reduce) {
+  .clone {
+    display: none;
   }
 }

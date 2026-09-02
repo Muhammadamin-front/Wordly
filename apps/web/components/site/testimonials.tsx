@@ -1,14 +1,14 @@
-"use client";
-
-import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Quote, Star } from "lucide-react";
+import type { CSSProperties } from "react";
 
 import type { Locale } from "@/lib/locales";
 import { cn } from "@/lib/utils";
 
 import styles from "./testimonials.module.css";
 
-const AUTOPLAY_MS = 5500;
+/** Seconds for one full pass. Scaled by row so the two rows never fall into
+ *  step with each other, which would read as one block sliding. */
+const ROW_SECONDS = [64, 78];
 
 type Review = {
   /** Stable across locales so the same person keeps the same slide. */
@@ -22,9 +22,6 @@ type TestimonialsCopy = {
   kicker: string;
   title: string;
   rated: string;
-  previous: string;
-  next: string;
-  goTo: string;
   starsLabel: string;
   reviews: Review[];
 };
@@ -34,9 +31,6 @@ const COPY: Record<Locale, TestimonialsCopy> = {
     kicker: "O'quvchilar fikri",
     title: "Vocora bilan o'z natijasiga yetganlar",
     rated: "5 dan 5",
-    previous: "Oldingi fikr",
-    next: "Keyingi fikr",
-    goTo: "Fikrga o'tish",
     starsLabel: "5 yulduzdan 5",
     reviews: [
       {
@@ -87,9 +81,6 @@ const COPY: Record<Locale, TestimonialsCopy> = {
     kicker: "Отзывы учеников",
     title: "Те, кто дошёл до своего результата с Vocora",
     rated: "5 из 5",
-    previous: "Предыдущий отзыв",
-    next: "Следующий отзыв",
-    goTo: "Перейти к отзыву",
     starsLabel: "5 звёзд из 5",
     reviews: [
       {
@@ -140,9 +131,6 @@ const COPY: Record<Locale, TestimonialsCopy> = {
     kicker: "Learner reviews",
     title: "People who reached their score with Vocora",
     rated: "5 out of 5",
-    previous: "Previous review",
-    next: "Next review",
-    goTo: "Go to review",
     starsLabel: "5 stars out of 5",
     reviews: [
       {
@@ -195,163 +183,119 @@ function Stars({ label }: { label: string }) {
   return (
     <span className="inline-flex items-center gap-0.5" role="img" aria-label={label}>
       {[0, 1, 2, 3, 4].map((i) => (
-        <Star key={i} className="size-4 fill-accent-500 text-accent-500" aria-hidden />
+        <Star key={i} className="size-4 fill-accent-400 text-accent-400" aria-hidden />
       ))}
     </span>
   );
 }
 
+function ReviewCard({ review, starsLabel }: { review: Review; starsLabel: string }) {
+  return (
+    <figure className="relative flex h-full flex-col gap-3 overflow-hidden rounded-[18px] border border-sand-100/16 bg-white/6 p-5 backdrop-blur-sm">
+      <Quote className="absolute -right-2 -top-2 size-16 text-sand-100/8" aria-hidden />
+      <Stars label={starsLabel} />
+      <blockquote className="relative text-sm leading-6 text-sand-100/88">
+        &ldquo;{review.quote}&rdquo;
+      </blockquote>
+      <figcaption className="mt-auto flex items-center gap-3 pt-1">
+        <span
+          aria-hidden
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-accent-400 text-sm font-black text-brand-950"
+        >
+          {review.name.slice(0, 1)}
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-sm font-black text-white">{review.name}</span>
+          <span className="block truncate text-xs font-semibold text-sand-100/64">
+            {review.role}
+          </span>
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/** One endlessly scrolling row. The reviews are rendered twice: the loop
+ *  translates the track by half its width, so it returns to an identical
+ *  frame and repeats without a jump. The second copy is decorative. */
+function MarqueeRow({
+  reviews,
+  starsLabel,
+  seconds,
+  reverse,
+  className,
+}: {
+  reviews: Review[];
+  starsLabel: string;
+  seconds: number;
+  reverse?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={cn(styles.viewport, className)}>
+      <ul
+        className={cn(styles.track, reverse && styles.reverse)}
+        style={{ "--marquee-duration": `${seconds}s` } as CSSProperties}
+      >
+        {[0, 1].map((copy) =>
+          reviews.map((review) => (
+            <li
+              key={`${copy}-${review.id}`}
+              className={cn(styles.slide, copy === 1 && styles.clone)}
+              aria-hidden={copy === 1}
+            >
+              <ReviewCard review={review} starsLabel={starsLabel} />
+            </li>
+          ))
+        )}
+      </ul>
+    </div>
+  );
+}
+
 export function Testimonials({ lang }: { lang: Locale }) {
   const copy = COPY[lang];
-  const trackRef = useRef<HTMLUListElement>(null);
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const count = copy.reviews.length;
-
-  const scrollTo = useCallback((next: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const slide = track.children[next] as HTMLElement | undefined;
-    if (!slide) return;
-    track.scrollTo({ left: slide.offsetLeft - track.offsetLeft });
-  }, []);
-
-  // The visible index follows the scroll position rather than the click that
-  // caused it, so dragging the track by hand keeps the dots honest.
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    let frame = 0;
-    function onScroll() {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const slides = Array.from(track!.children) as HTMLElement[];
-        const left = track!.scrollLeft + track!.offsetLeft;
-        let nearest = 0;
-        let best = Infinity;
-        slides.forEach((slide, i) => {
-          const distance = Math.abs(slide.offsetLeft - left);
-          if (distance < best) {
-            best = distance;
-            nearest = i;
-          }
-        });
-        setIndex(nearest);
-      });
-    }
-    track.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      cancelAnimationFrame(frame);
-      track.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (paused) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const timer = window.setTimeout(() => {
-      const next = (index + 1) % count;
-      setIndex(next);
-      scrollTo(next);
-    }, AUTOPLAY_MS);
-    return () => window.clearTimeout(timer);
-  }, [paused, index, count, scrollTo]);
-
-  function step(delta: number) {
-    const next = (index + delta + count) % count;
-    setIndex(next);
-    scrollTo(next);
-  }
+  const half = Math.ceil(copy.reviews.length / 2);
+  const rows = [copy.reviews.slice(0, half), copy.reviews.slice(half)];
 
   return (
-    <div
-      className="surface-panel rounded-[22px] p-6 sm:p-8"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
+    <section
+      aria-labelledby="testimonials-title"
+      className="relative overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 py-8 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)]"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-black uppercase text-brand-600">{copy.kicker}</p>
-          <h2 className="mt-3 max-w-2xl text-3xl font-black text-brand-950 dark:text-white sm:text-4xl">
-            {copy.title}
-          </h2>
-          <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-ink-soft">
-            <Stars label={copy.starsLabel} />
-            {copy.rated}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => step(-1)}
-            aria-label={copy.previous}
-            className="inline-flex size-11 items-center justify-center rounded-full border border-line bg-card text-ink transition-colors hover:bg-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-            <ChevronLeft className="size-5" aria-hidden />
-          </button>
-          <button
-            type="button"
-            onClick={() => step(1)}
-            aria-label={copy.next}
-            className="inline-flex size-11 items-center justify-center rounded-full border border-line bg-card text-ink transition-colors hover:bg-raised focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
-          >
-            <ChevronRight className="size-5" aria-hidden />
-          </button>
-        </div>
+      {/* Same architectural ring the mock-exam banner uses, so this reads as
+          part of the page rather than a widget dropped onto it. */}
+      <div aria-hidden className="absolute -left-24 -top-28 size-80 rounded-full border-24 border-accent-400/22" />
+
+      <div className="relative mx-auto flex max-w-3xl flex-col items-center px-6 text-center">
+        <span className="print-label inline-flex w-fit items-center gap-2 border-sand-100/45 bg-sand-100/10 text-sand-100">
+          <Star className="size-3.5 fill-accent-400 text-accent-400" aria-hidden />
+          {copy.kicker}
+        </span>
+        <h2
+          id="testimonials-title"
+          className="mt-4 text-balance text-3xl font-black leading-tight sm:text-4xl"
+        >
+          {copy.title}
+        </h2>
+        <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-sand-100/76">
+          <Stars label={copy.starsLabel} />
+          {copy.rated}
+        </p>
       </div>
 
-      <ul ref={trackRef} className={cn(styles.viewport, "mt-6")}>
-        {copy.reviews.map((review) => (
-          <li key={review.id} className={styles.slide}>
-            <figure className="flex h-full flex-col gap-4 rounded-[18px] border border-line bg-card p-5">
-              <Stars label={copy.starsLabel} />
-              <blockquote className="text-sm leading-6 text-ink">“{review.quote}”</blockquote>
-              <figcaption className="mt-auto flex items-center gap-3">
-                <span
-                  aria-hidden
-                  className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-sm font-black text-white"
-                >
-                  {review.name.slice(0, 1)}
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-black text-brand-950 dark:text-white">
-                    {review.name}
-                  </span>
-                  <span className="block truncate text-xs font-semibold text-ink-soft">
-                    {review.role}
-                  </span>
-                </span>
-              </figcaption>
-            </figure>
-          </li>
-        ))}
-      </ul>
-
-      <div className="mt-5 flex justify-center gap-2">
-        {copy.reviews.map((review, i) => (
-          <button
-            key={review.id}
-            type="button"
-            aria-label={`${copy.goTo} ${i + 1}`}
-            aria-current={i === index ? "true" : undefined}
-            onClick={() => {
-              setIndex(i);
-              scrollTo(i);
-            }}
-            className="group inline-flex h-11 items-center px-1 focus-visible:outline-none"
-          >
-            <span
-              aria-hidden
-              className={cn(
-                "block h-2 rounded-full transition-all group-focus-visible:ring-2 group-focus-visible:ring-focus",
-                i === index ? "w-6 bg-brand-600" : "w-2 bg-line group-hover:bg-brand-400"
-              )}
-            />
-          </button>
+      <div className="relative mt-7 flex flex-col gap-4">
+        {rows.map((rowReviews, index) => (
+          <MarqueeRow
+            key={index}
+            reviews={rowReviews}
+            starsLabel={copy.starsLabel}
+            seconds={ROW_SECONDS[index]}
+            reverse={index === 1}
+            className={index === 1 ? styles.secondRow : undefined}
+          />
         ))}
       </div>
-    </div>
+    </section>
   );
 }
