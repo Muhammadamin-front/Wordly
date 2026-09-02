@@ -52,6 +52,12 @@ echo "=== Validate migration graph inside release image ==="
 heads_count="$(docker compose --profile production run --rm --no-deps api alembic heads | grep -c '(head)')"
 test "$heads_count" -eq 1
 
+echo "=== Apply migrations and content import ==="
+# Ahead of the swap, once, instead of on every container start: a second
+# replica would otherwise race the same alembic upgrade.
+retry 2 docker compose --profile production run --rm api alembic upgrade head
+retry 2 docker compose --profile production run --rm api python -m scripts.import_expressions
+
 echo "=== Apply containers ==="
 docker compose --profile production up -d --remove-orphans
 

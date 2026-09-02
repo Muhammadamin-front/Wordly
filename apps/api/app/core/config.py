@@ -255,6 +255,11 @@ class Settings(BaseSettings):
             if value.strip()
         )
 
+    # Database pool, per uvicorn worker. See init_engine() for the ceiling
+    # this implies on Postgres connections.
+    DB_POOL_SIZE: int = 5
+    DB_MAX_OVERFLOW: int = 10
+
     # Response cache (public corpus reads). TTLs in seconds.
     CACHE_ENABLED: bool = True
     CACHE_TTL_CATEGORIES: int = 300

@@ -15,8 +15,16 @@ _session_factory: async_sessionmaker = None  # type: ignore[assignment]
 
 def init_engine(database_url: str = "") -> AsyncEngine:
     global _engine, _session_factory
-    url = database_url or get_settings().DATABASE_URL
-    _engine = create_async_engine(url, pool_pre_ping=True)
+    settings = get_settings()
+    url = database_url or settings.DATABASE_URL
+    # Every uvicorn worker builds its own pool, so the ceiling on Postgres
+    # connections is workers x (pool_size + max_overflow). Keep that product
+    # under the server's max_connections when raising UVICORN_WORKERS.
+    kwargs = {"pool_pre_ping": True}
+    if url.startswith("postgresql"):
+        kwargs["pool_size"] = settings.DB_POOL_SIZE
+        kwargs["max_overflow"] = settings.DB_MAX_OVERFLOW
+    _engine = create_async_engine(url, **kwargs)
     _session_factory = async_sessionmaker(_engine, expire_on_commit=False)
     return _engine
 
