@@ -74,7 +74,12 @@ const PRIMARY_NAV: NavItem[] = [
   { key: "decks", href: "decks", icon: LibraryBig },
   { key: "ielts", href: "ielts", icon: GraduationCap },
   { key: "mastery", href: "mastery", icon: Map },
+  { key: "billing", href: "billing", icon: CreditCard },
 ];
+
+// The bottom bar is a fixed five-column grid; Premium lives in the desktop
+// header and the mobile drawer instead of squeezing a sixth column in.
+const MOBILE_BOTTOM_NAV: NavItem[] = PRIMARY_NAV.filter((item) => item.key !== "billing");
 
 const SECONDARY_NAV: NavItem[] = [
   { key: "games", href: "games", icon: Gamepad2 },
@@ -84,7 +89,6 @@ const SECONDARY_NAV: NavItem[] = [
   { key: "leaderboard", href: "leaderboard", icon: Trophy },
   { key: "friends", href: "friends", icon: Users },
   { key: "classes", href: "classes", icon: Sparkles },
-  { key: "billing", href: "billing", icon: CreditCard },
 ];
 
 function isActive(pathname: string, lang: string, href: string): boolean {
@@ -770,7 +774,7 @@ function MobileBottomNav({
       className="mobile-bottom-nav fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-5 rounded-[22px] border border-line bg-raised/94 p-1 shadow-[0_14px_42px_rgba(7,58,53,0.14)] backdrop-blur-md lg:hidden"
       aria-label={nav.menu}
     >
-      {PRIMARY_NAV.map((item) => {
+      {MOBILE_BOTTOM_NAV.map((item) => {
         const Icon = item.icon;
         const active = isActive(pathname, lang, item.href);
         return (

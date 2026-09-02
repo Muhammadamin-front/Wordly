@@ -2,7 +2,7 @@
 
 import { ArrowRight, Check, Copy, CreditCard, Send, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -19,6 +19,7 @@ import {
   type Plan,
   type Subscription,
 } from "@/lib/billing";
+import { useModalFocus } from "@/lib/use-modal-focus";
 import { cn } from "@/lib/utils";
 
 import styles from "./pricing-view.module.css";
@@ -187,6 +188,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
   const checkoutEnabled = paymentStatus.checkout_enabled;
   const planByCode = new Map(plans.map((plan) => [plan.code, plan]));
+  const selectedPlan = selected ? planByCode.get(selected) : undefined;
   const monthlyByTier: Partial<Record<Tier, Plan>> = {
     plus: planByCode.get("plus_monthly"),
     pro: planByCode.get("pro_monthly"),
@@ -259,8 +261,9 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
             const popular = tier === "pro";
             const saving = discount(plan, monthlyByTier[tier]);
             const perUnit = isFree ? "" : duration === "monthly" ? t.perMonth : duration === "quarterly" ? t.perQuarter : t.perYear;
-            const canPurchase =
-              isFree || !user || (paymentStatus.checkout_enabled || paymentStatus.sandbox_enabled);
+            // Always selectable for a paid plan: even with every card gateway
+            // switched off, the dialog still offers the manual card-transfer
+            // route, so a disabled button here would be a dead end.
             const tone = TIER_TONE[tier];
 
             function choose() {
@@ -315,7 +318,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                   <span>{t.som}{perUnit}</span>
                 </div>
 
-                <div className={cn(styles.actionDock, isSelecting && styles.actionDockExpanded)}>
+                <div className={styles.actionDock}>
                   {isCurrent ? (
                     <span className={styles.currentPlan}>
                       <Check aria-hidden /> {t.currentPlan}
@@ -324,30 +327,8 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
                     <span className={styles.currentPlan}>
                       <Check aria-hidden /> {t.freeIncludes}
                     </span>
-                  ) : isSelecting ? (
-                    <div className={styles.providerGrid}>
-                      <span className={styles.providerLabel} aria-live="polite">
-                        {busy ? t.redirecting : t.payWith}
-                      </span>
-                      {paymentStatus.checkout_enabled && (
-                        <>
-                          {paymentStatus.providers.payme && (
-                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "payme")}>{t.payme}</button>
-                          )}
-                          {paymentStatus.providers.click && (
-                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "click")}>{t.click}</button>
-                          )}
-                          {paymentStatus.providers.uzum && (
-                            <button aria-busy={busy} disabled={busy} onClick={() => void pay(plan.code, "uzum")}>Uzum</button>
-                          )}
-                        </>
-                      )}
-                      {paymentStatus.sandbox_enabled && (
-                        <button aria-busy={busy} disabled={busy} onClick={() => void demoActivate(plan.code)}>{t.sandboxActivate}</button>
-                      )}
-                    </div>
                   ) : (
-                    <button className={styles.chooseButton} disabled={!canPurchase} onClick={choose}>
+                    <button className={styles.chooseButton} onClick={choose}>
                       {user ? t.choosePlan : t.signInToChoose}
                       <ArrowRight aria-hidden />
                     </button>
@@ -360,6 +341,23 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
         <PaymentMethods t={t} />
 
+        {selectedPlan && (
+          <CheckoutDialog
+            t={t}
+            plan={selectedPlan}
+            perUnit={
+              selectedPlan.code === "free"
+                ? ""
+                : duration === "monthly" ? t.perMonth : duration === "quarterly" ? t.perQuarter : t.perYear
+            }
+            status={paymentStatus}
+            busy={busy}
+            onPay={(provider) => void pay(selectedPlan.code, provider)}
+            onSandbox={() => void demoActivate(selectedPlan.code)}
+            onClose={() => setSelected(null)}
+          />
+        )}
+
         <footer className={styles.boardFooter}>
           <p>{t.honestBody}</p>
           <p><ShieldCheck aria-hidden /> {t.paymentGate}</p>
@@ -367,6 +365,109 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
         {paymentStatus.sandbox_enabled && <p className={styles.sandboxNote}>{t.sandboxNote}</p>}
       </section>
     </main>
+  );
+}
+
+/** Opens on plan selection and carries every way to actually pay for it.
+ *  Card gateways appear here only while they are switched on; the manual
+ *  route below is always present, which is why choosing a plan is never a
+ *  dead end even with checkout disabled. */
+function CheckoutDialog({
+  t,
+  plan,
+  perUnit,
+  status,
+  busy,
+  onPay,
+  onSandbox,
+  onClose,
+}: {
+  t: Dictionary["billing"];
+  plan: Plan;
+  perUnit: string;
+  status: BillingStatus;
+  busy: boolean;
+  onPay: (provider: PaymentProvider) => void;
+  onSandbox: () => void;
+  onClose: () => void;
+}) {
+  const dialogRef = useRef<HTMLElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useModalFocus({ containerRef: dialogRef, initialFocusRef: closeRef, onDismiss: onClose });
+
+  const gateways: Array<[PaymentProvider, string]> = [
+    ["payme", t.payme],
+    ["click", t.click],
+    ["uzum", "Uzum"],
+  ];
+  const liveGateways = status.checkout_enabled
+    ? gateways.filter(([provider]) => status.providers[provider])
+    : [];
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/55 p-4"
+      role="presentation"
+      onMouseDown={onClose}
+    >
+      <section
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="checkout-dialog-title"
+        tabIndex={-1}
+        onMouseDown={(event) => event.stopPropagation()}
+        className="max-h-[85dvh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[rgba(232,201,154,0.24)] bg-[#24130c] p-5 text-brand-50 shadow-2xl"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-xs font-black uppercase tracking-widest text-[rgba(243,230,203,0.68)]">
+              {t.payWith}
+            </p>
+            <h2 id="checkout-dialog-title" className="mt-1 truncate text-xl font-extrabold">
+              {planName(tierOf(plan.code), plan.code.split("_")[1] as Duration, t)}
+            </h2>
+            <p className="mt-1 text-sm font-bold text-[#8fc3b9]">
+              {formatSom(plan.price_som)} {t.som}{perUnit}
+            </p>
+          </div>
+          <Button ref={closeRef} size="sm" variant="ghost" onClick={onClose}>
+            {t.cancel}
+          </Button>
+        </div>
+
+        {liveGateways.length > 0 && (
+          <div className="mt-4 grid gap-2">
+            {liveGateways.map(([provider, label]) => (
+              <button
+                key={provider}
+                type="button"
+                aria-busy={busy}
+                disabled={busy}
+                onClick={() => onPay(provider)}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[#f4a57e] bg-[#e37b4d] px-4 text-sm font-black text-[#21120c] transition-transform hover:-translate-y-0.5 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+              >
+                {busy ? t.redirecting : label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {status.sandbox_enabled && (
+          <button
+            type="button"
+            aria-busy={busy}
+            disabled={busy}
+            onClick={onSandbox}
+            className="mt-2 inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-[rgba(143,195,185,0.5)] px-4 text-sm font-bold text-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          >
+            {t.sandboxActivate}
+          </button>
+        )}
+
+        <PaymentMethods t={t} />
+      </section>
+    </div>
   );
 }
 
