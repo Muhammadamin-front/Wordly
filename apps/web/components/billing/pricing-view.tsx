@@ -27,8 +27,8 @@ import styles from "./pricing-view.module.css";
 // pending approval: the learner transfers the plan's price to this card and
 // sends the receipt on Telegram, and Premium is granted by hand from the
 // admin panel (see the subscription grant/revoke controls there).
-const TELEGRAM_HANDLE = "@Muhammad1803";
-const TELEGRAM_URL = "https://t.me/Muhammad1803";
+const TELEGRAM_HANDLE = "@Muhammad0318";
+const TELEGRAM_URL = "https://t.me/Muhammad0318";
 // Grouped for reading; copied without spaces, since banking apps commonly
 // reject a pasted number that still contains them.
 const TRANSFER_CARD_NUMBER = "5614 6821 1273 2054";
