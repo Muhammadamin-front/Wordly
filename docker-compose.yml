@@ -55,6 +55,10 @@ services:
       ELEVENLABS_VOICE_ID: ${ELEVENLABS_VOICE_ID:-pNInz6obpgDQGcFmaJgB}
       ELEVENLABS_MODEL: ${ELEVENLABS_MODEL:-eleven_flash_v2_5}
       ELEVENLABS_OUTPUT_FORMAT: ${ELEVENLABS_OUTPUT_FORMAT:-mp3_44100_128}
+      ELEVENLABS_SPEED: ${ELEVENLABS_SPEED:-1.0}
+      # Slower than default synthesis: the mock listening test has to be
+      # transcribable, spelled-out names included.
+      ELEVENLABS_LISTENING_SPEED: ${ELEVENLABS_LISTENING_SPEED:-0.88}
       SERPER_API_KEY: ${SERPER_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       BEDROCK_API_KEY: ${BEDROCK_API_KEY:-}

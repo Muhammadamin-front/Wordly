@@ -15,10 +15,21 @@ audio library only if that turns out to be audibly bad in practice.
 """
 import hashlib
 import pathlib
+import re
 from typing import Optional
 
 from app.core.config import get_settings
 from app.services import listening_content, tts
+
+
+# "O-S-E-I" read at speed sounds like one word; the learner is supposed to
+# write those letters down. Commas give the synthesizer a beat between each
+# one. Three letters or more, so ordinary hyphenated words are untouched.
+_SPELLED_OUT = re.compile(r"\b(?:[A-Z]-){2,}[A-Z]\b")
+
+
+def _spoken_text(text: str) -> str:
+    return _SPELLED_OUT.sub(lambda match: ", ".join(match.group(0).split("-")), text)
 
 
 def _voice_for_role(role: str) -> Optional[str]:
@@ -43,9 +54,12 @@ def _section_cache_path(slug: str, section: int, turns: list) -> pathlib.Path:
     voice_b = settings.ELEVENLABS_VOICE_ID_B or settings.ELEVENLABS_VOICE_ID
     fingerprint = "|".join("{}:{}".format(t["role"], t["text"]) for t in turns)
     digest = hashlib.sha1(
-        "{}:{}:{}:{}:{}:{}".format(
+        # Speed belongs in the key for the same reason it does in tts.py: a
+        # section rendered at the old rate must not be served after a change.
+        "{}:{}:{}:{}:{}:{}:{}".format(
             slug, section, settings.ELEVENLABS_MODEL,
-            settings.ELEVENLABS_VOICE_ID, voice_b, fingerprint,
+            settings.ELEVENLABS_VOICE_ID, voice_b,
+            settings.ELEVENLABS_LISTENING_SPEED, fingerprint,
         ).encode("utf-8")
     ).hexdigest()
     return _section_cache_dir() / "{}.mp3".format(digest)
@@ -62,9 +76,16 @@ async def synthesize_section(slug: str, section: int) -> Optional[bytes]:
     if cache_path.exists():
         return cache_path.read_bytes()
 
+    settings = get_settings()
     parts = []
     for turn in turns:
-        audio = await tts.synthesize(turn["text"], voice_id=_voice_for_role(turn["role"]))
+        audio = await tts.synthesize(
+            _spoken_text(turn["text"]),
+            voice_id=_voice_for_role(turn["role"]),
+            # Exam listening is delivered noticeably slower than default
+            # synthesis; at full speed learners could not keep up with it.
+            speed=settings.ELEVENLABS_LISTENING_SPEED,
+        )
         parts.append(audio)
     combined = b"".join(parts)
     cache_path.write_bytes(combined)

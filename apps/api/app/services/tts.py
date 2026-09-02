@@ -20,22 +20,29 @@ class TtsError(Exception):
     """Upstream synthesis failed (quota, auth, network)."""
 
 
-def _cache_path(text: str, voice_id: Optional[str] = None) -> pathlib.Path:
+def _cache_path(text: str, voice_id: Optional[str] = None, speed: Optional[float] = None) -> pathlib.Path:
     settings = get_settings()
     resolved_voice = voice_id or settings.ELEVENLABS_VOICE_ID
+    resolved_speed = settings.ELEVENLABS_SPEED if speed is None else speed
     digest = hashlib.sha1(
-        "{}:{}:{}".format(resolved_voice, settings.ELEVENLABS_MODEL, text)
+        # Speed is part of the key: without it, audio synthesized at the old
+        # rate would be served forever for the same text and voice.
+        "{}:{}:{}:{}".format(resolved_voice, settings.ELEVENLABS_MODEL, resolved_speed, text)
         .encode("utf-8")
     ).hexdigest()
     return pathlib.Path(settings.TTS_CACHE_DIR) / "{}.mp3".format(digest)
 
 
-def cached_audio(text: str, voice_id: Optional[str] = None) -> Optional[bytes]:
-    path = _cache_path(text, voice_id)
+def cached_audio(
+    text: str, voice_id: Optional[str] = None, speed: Optional[float] = None
+) -> Optional[bytes]:
+    path = _cache_path(text, voice_id, speed)
     return path.read_bytes() if path.exists() else None
 
 
-async def synthesize(text: str, voice_id: Optional[str] = None) -> bytes:
+async def synthesize(
+    text: str, voice_id: Optional[str] = None, speed: Optional[float] = None
+) -> bytes:
     """Return MP3 audio for `text`, from disk cache or ElevenLabs.
 
     `voice_id` overrides the default configured voice — used for multi-speaker
@@ -43,12 +50,13 @@ async def synthesize(text: str, voice_id: Optional[str] = None) -> bytes:
     different voices. Cache key includes the resolved voice so two voices of
     the same text never collide on one cache file.
     """
-    cached = cached_audio(text, voice_id)
+    cached = cached_audio(text, voice_id, speed)
     if cached is not None:
         return cached
 
     settings = get_settings()
     resolved_voice = voice_id or settings.ELEVENLABS_VOICE_ID
+    resolved_speed = settings.ELEVENLABS_SPEED if speed is None else speed
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             ELEVENLABS_URL.format(voice_id=resolved_voice),
@@ -66,6 +74,7 @@ async def synthesize(text: str, voice_id: Optional[str] = None) -> bytes:
                     "similarity_boost": settings.ELEVENLABS_SIMILARITY_BOOST,
                     "style": settings.ELEVENLABS_STYLE,
                     "use_speaker_boost": settings.ELEVENLABS_USE_SPEAKER_BOOST,
+                    "speed": resolved_speed,
                 },
             },
         )
@@ -74,7 +83,7 @@ async def synthesize(text: str, voice_id: Optional[str] = None) -> bytes:
         raise TtsError("elevenlabs returned {}: {}".format(response.status_code, detail))
 
     audio = response.content
-    path = _cache_path(text, voice_id)
+    path = _cache_path(text, voice_id, speed)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(audio)
     return audio

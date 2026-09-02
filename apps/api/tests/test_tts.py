@@ -126,6 +126,35 @@ async def test_synthesize_hits_network_once_then_disk(tmp_path, monkeypatch):
     assert calls["n"] == 1
 
 
+async def test_speed_is_sent_and_kept_out_of_the_shared_cache_entry(tmp_path, monkeypatch):
+    """A slower rendering must not be served for a normal-speed request, or
+    the other way round — the mock listening test asks for 0.88."""
+    settings = get_settings()
+    monkeypatch.setattr(settings, "ELEVENLABS_API_KEY", "test-key")
+    monkeypatch.setattr(settings, "TTS_CACHE_DIR", str(tmp_path))
+    speeds = []
+
+    class FakeResponse:
+        status_code = 200
+        content = b"AUDIO"
+
+    class FakeClient:
+        def __init__(self, **kwargs): ...
+        async def __aenter__(self):
+            return self
+        async def __aexit__(self, *args):
+            return False
+        async def post(self, *args, **kwargs):
+            speeds.append(kwargs["json"]["voice_settings"]["speed"])
+            return FakeResponse()
+
+    monkeypatch.setattr(tts.httpx, "AsyncClient", FakeClient)
+    await tts.synthesize("same words", speed=0.88)
+    await tts.synthesize("same words", speed=0.88)  # disk cache
+    await tts.synthesize("same words")  # different speed, so a fresh render
+    assert speeds == [0.88, settings.ELEVENLABS_SPEED]
+
+
 async def test_synthesize_raises_on_upstream_error(tmp_path, monkeypatch):
     settings = get_settings()
     monkeypatch.setattr(settings, "ELEVENLABS_API_KEY", "test-key")

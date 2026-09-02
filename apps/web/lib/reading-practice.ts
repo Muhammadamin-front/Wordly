@@ -77,6 +77,16 @@ const tfng: ReadingOption[] = [
   { value: "NOT GIVEN", label: "NOT GIVEN" },
 ];
 
+/** The answer set for these two kinds is fixed by the exam itself, so a
+ *  question that omits `options` still has exactly one correct list. The UI
+ *  falls back to these rather than rendering a question with nothing to
+ *  choose — which is what happened to 26 questions across the full tests. */
+export function defaultOptionsFor(kind: ReadingQuestionKind): ReadingOption[] | null {
+  if (kind === "true-false-not-given") return tfng;
+  if (kind === "yes-no-not-given") return yng;
+  return null;
+}
+
 const yng: ReadingOption[] = [
   { value: "YES", label: "YES" },
   { value: "NO", label: "NO" },

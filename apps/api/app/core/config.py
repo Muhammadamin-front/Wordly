@@ -128,6 +128,12 @@ class Settings(BaseSettings):
     ELEVENLABS_VOICE_ID_RAJ: Optional[str] = None
     ELEVENLABS_MODEL: str = "eleven_flash_v2_5"
     ELEVENLABS_OUTPUT_FORMAT: str = "mp3_44100_128"
+    # Delivery rate, 0.7-1.2 at the provider. Word pronunciation is fine at
+    # normal speed; the mock listening test is not — a learner has to hear a
+    # spelled-out name well enough to write it down, and the real exam is
+    # noticeably slower than the default synthesis.
+    ELEVENLABS_SPEED: float = 1.0
+    ELEVENLABS_LISTENING_SPEED: float = 0.88
     ELEVENLABS_STABILITY: float = 0.42
     ELEVENLABS_SIMILARITY_BOOST: float = 0.82
     ELEVENLABS_STYLE: float = 0.16

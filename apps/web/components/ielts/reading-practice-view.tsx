@@ -36,6 +36,7 @@ import {
   READING_PRACTICE_TESTS,
   READING_QUESTION_TYPE_GUIDES,
   allReadingQuestions,
+  defaultOptionsFor,
   getReadingTest,
   readingBand,
   getQuestionsForReadingQuestionType,
@@ -1149,7 +1150,11 @@ function QuestionInput({ question, value, onChange, labelledBy, describedBy, t }
   if (isText) return <input aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder={t.typeAnswer} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus" />;
   if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") return <select aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus"><option value="">{t.chooseAnswer}</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
   if (question.kind === "multiple-answer") { const current = Array.isArray(value) ? value : []; return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span><strong>{option.value}.</strong> {option.label.replace(/^[A-Z]\.\s*/, "")}</span></label>)}</fieldset>; }
-  return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="radio" name={question.id} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
+  // True/False/Not Given and Yes/No/Not Given have a fixed answer set, so a
+  // question that shipped without `options` still gets its three choices
+  // instead of rendering an unanswerable prompt.
+  const options = question.options?.length ? question.options : defaultOptionsFor(question.kind);
+  return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="radio" name={question.id} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
 }
 
 function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, onClose, t }: { range: SelectedRange; onHighlight: (color: HighlightColor) => void; onRemove: () => void; onNote: () => void; onSaveWord: () => void; onClose: () => void; t: Copy }) {

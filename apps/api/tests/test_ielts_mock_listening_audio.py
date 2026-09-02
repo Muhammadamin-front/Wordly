@@ -9,7 +9,7 @@ from tests.test_ielts_mock import learner, premium_learner
 
 FAKE_TURNS = [
     {"speaker": "Receptionist", "role": "a", "text": "Good morning, how can I help?"},
-    {"speaker": "Student", "role": "b", "text": "I'd like to ask about enrolling."},
+    {"speaker": "Student", "role": "b", "text": "My surname is O-S-E-I."},
 ]
 
 
@@ -50,8 +50,8 @@ async def test_section_audio_concatenates_turns_with_per_role_voice(client, monk
 
     calls = []
 
-    async def fake_synthesize(text, voice_id=None):
-        calls.append((text, voice_id))
+    async def fake_synthesize(text, voice_id=None, speed=None):
+        calls.append((text, voice_id, speed))
         return b"A" if voice_id != "voice-b" else b"B"
 
     # A fresh dir per test run — a fixed path would let the section-level
@@ -65,12 +65,14 @@ async def test_section_audio_concatenates_turns_with_per_role_voice(client, monk
         ELEVENLABS_MODEL="eleven_flash_v2_5",
         ELEVENLABS_VOICE_ID="voice-a",
         ELEVENLABS_VOICE_ID_B="voice-b",
+        ELEVENLABS_LISTENING_SPEED=0.88,
     ))
     monkeypatch.setattr(listening_audio, "get_settings", lambda: SimpleNamespace(
         TTS_CACHE_DIR=cache_dir,
         ELEVENLABS_MODEL="eleven_flash_v2_5",
         ELEVENLABS_VOICE_ID="voice-a",
         ELEVENLABS_VOICE_ID_B="voice-b",
+        ELEVENLABS_LISTENING_SPEED=0.88,
     ))
     monkeypatch.setattr(listening_content, "get_section_turns", lambda slug, section: FAKE_TURNS)
     monkeypatch.setattr(tts_service, "synthesize", fake_synthesize)
@@ -79,7 +81,18 @@ async def test_section_audio_concatenates_turns_with_per_role_voice(client, monk
     assert resp.status_code == 200, resp.text
     assert resp.headers["content-type"] == "audio/mpeg"
     assert resp.content == b"AB"  # concatenated, in turn order
+    # Exam pace, not default synthesis pace, and the spelled-out surname is
+    # broken into separate letters so a learner can write it down.
     assert calls == [
-        ("Good morning, how can I help?", "voice-a"),
-        ("I'd like to ask about enrolling.", "voice-b"),
+        ("Good morning, how can I help?", "voice-a", 0.88),
+        ("My surname is O, S, E, I.", "voice-b", 0.88),
     ]
+
+
+def test_spelled_out_letters_get_a_beat_between_them():
+    assert listening_audio._spoken_text("My surname is O-S-E-I.") == "My surname is O, S, E, I."
+
+
+def test_ordinary_hyphenated_words_are_left_alone():
+    for text in ("A well-known e-mail address", "X-ray and T-shirt", "state-of-the-art"):
+        assert listening_audio._spoken_text(text) == text
