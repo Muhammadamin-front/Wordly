@@ -1225,6 +1225,7 @@
     "letterSupply": "Letter supply",
     "remaining": "{count} words remaining",
     "restricted": "Fallback letter active",
+    "fallbackLetterUsed": "(that letter was running low, so the next one is {letter})",
     "rules": "How to play",
     "ruleChain": "Start with the final letter of the previous word.",
     "ruleUnique": "Every English word can be used only once.",
