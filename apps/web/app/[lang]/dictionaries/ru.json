@@ -963,7 +963,14 @@
     "toggleQuarterly": "Поквартально",
     "toggleYearly": "Ежегодно",
     "saveLabel": "скидка",
-    "regularPrice": "Обычная цена"
+    "regularPrice": "Обычная цена",
+    "paymentMethodsTitle": "Способы оплаты",
+    "notAvailableYet": "Пока недоступно",
+    "manualPaymentTitle": "Оплата переводом на карту",
+    "manualPaymentBody": "Оплата через Payme и Click пока не подключена. Пока что: откройте номер карты ниже, переведите стоимость тарифа и отправьте скриншот чека в Telegram {handle} — после подтверждения Premium активируется вручную.",
+    "manualPaymentReveal": "Показать номер карты",
+    "manualPaymentCopy": "Копировать",
+    "manualPaymentCopied": "Скопировано!"
   },
   "teacher": {
     "title": "Панель учителя",
