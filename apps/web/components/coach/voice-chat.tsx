@@ -56,7 +56,7 @@ function CorrectionCard({ correction }: { correction: Correction }) {
       <p className="font-semibold text-ink-soft line-through decoration-warning/70">
         {correction.original}
       </p>
-      <p className="mt-0.5 font-bold text-success">✓ {correction.correction}</p>
+      <p className="mt-0.5 font-bold text-success-text">✓ {correction.correction}</p>
       {correction.explanation && (
         <p className="mt-1 text-ink-soft">{correction.explanation}</p>
       )}
@@ -92,7 +92,7 @@ function Bubble({
       </div>
       {isUser && message.corrections.length > 0 && (
         <div className="mt-1 w-full max-w-[85%]">
-          <p className="text-[11px] font-bold uppercase tracking-wide text-warning">
+          <p className="text-[11px] font-bold uppercase tracking-wide text-warning-text">
             {t.corrections}
           </p>
           {message.corrections.map((c, i) => (
@@ -339,7 +339,7 @@ export function VoiceChat({
               recognition.stop();
               setLive(true);
             }}
-            className="flex items-center gap-1 rounded-full bg-danger/10 px-3 py-1.5 text-xs font-bold text-danger transition-colors hover:bg-danger/20"
+            className="flex items-center gap-1 rounded-full bg-danger/10 px-3 py-1.5 text-xs font-bold text-danger-text transition-colors hover:bg-danger/20"
             title={t.liveCall}
           >
             ● {t.liveCall}

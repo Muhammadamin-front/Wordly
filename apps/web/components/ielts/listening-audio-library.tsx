@@ -132,7 +132,7 @@ export function ListeningAudioLibrary() {
     <section id="audio-library" className="mt-6 scroll-mt-24">
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-extrabold uppercase text-accent-500">Audio practice library</p>
+          <p className="text-xs font-extrabold uppercase text-accent-text">Audio practice library</p>
           <h2 className="mt-1 text-2xl font-black text-ink">100 real-world listening conversations</h2>
           <p className="mt-1 max-w-2xl text-sm leading-6 text-ink-soft">Listen first, then open the transcript to check the words you missed.</p>
         </div>
@@ -170,8 +170,8 @@ export function ListeningAudioLibrary() {
 
         <div className="surface-panel rounded-lg p-5 sm:p-6">
           <div className="flex items-start gap-3">
-            <span className="icon-tile size-10 rounded-lg text-accent-500"><Headphones className="size-5" aria-hidden /></span>
-            <div><p className="text-xs font-extrabold uppercase text-accent-500">Conversation {String(selected.number).padStart(2, "0")}</p><h3 className="mt-1 text-2xl font-black text-ink">{selected.title}</h3><p className="mt-1 text-sm text-ink-soft">{selected.group} listening practice</p></div>
+            <span className="icon-tile size-10 rounded-lg text-accent-text"><Headphones className="size-5" aria-hidden /></span>
+            <div><p className="text-xs font-extrabold uppercase text-accent-text">Conversation {String(selected.number).padStart(2, "0")}</p><h3 className="mt-1 text-2xl font-black text-ink">{selected.title}</h3><p className="mt-1 text-sm text-ink-soft">{selected.group} listening practice</p></div>
           </div>
           <audio key={selected.file} controls preload="metadata" className="mt-7 w-full" aria-label={`${selected.title} audio`}>
             <source src={`/audio/conversations/${selected.file}`} type="audio/mpeg" />

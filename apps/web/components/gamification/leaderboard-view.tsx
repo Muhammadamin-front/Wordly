@@ -48,7 +48,7 @@ export function LeaderboardView({
 
   if (!ready || !user || (board === null && !error)) {
     return (
-      <main className="app-container max-w-2xl flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container max-w-2xl flex-1 py-8">
         <PageHeader centered title={t.title} subtitle={t.subtitle} />
         <div className="mt-6 space-y-2">
           {Array.from({ length: 8 }).map((_, index) => (
@@ -61,7 +61,7 @@ export function LeaderboardView({
 
   if (error || board === null) {
     return (
-      <main className="app-container max-w-2xl flex-1 py-8">
+      <main id="main-content" tabIndex={-1} className="app-container max-w-2xl flex-1 py-8">
         <PageHeader centered title={t.title} subtitle={t.subtitle} />
         <EmptyState
           className="mt-6"
@@ -79,7 +79,7 @@ export function LeaderboardView({
   const relegationStart = board.members.length - board.relegate_bottom;
 
   return (
-    <main className="app-container max-w-2xl flex-1 py-8">
+    <main id="main-content" tabIndex={-1} className="app-container max-w-2xl flex-1 py-8">
       <PageHeader centered eyebrow={t.thisWeek} title={tierName} subtitle={t.subtitle} />
 
       {board.members.length === 0 ? (
@@ -101,12 +101,12 @@ export function LeaderboardView({
             return (
               <li key={member.user_id}>
                 {i === 0 && (
-                  <p className="mb-1 px-2 text-[11px] font-bold uppercase tracking-wide text-success">
+                  <p className="mb-1 px-2 text-[11px] font-bold uppercase tracking-wide text-success-text">
                     ▲ {t.promotionZone}
                   </p>
                 )}
                 {i === relegationStart && inRelegation && (
-                  <p className="mb-1 mt-3 px-2 text-[11px] font-bold uppercase tracking-wide text-danger">
+                  <p className="mb-1 mt-3 px-2 text-[11px] font-bold uppercase tracking-wide text-danger-text">
                     ▼ {t.relegationZone}
                   </p>
                 )}
@@ -124,7 +124,7 @@ export function LeaderboardView({
                     className={cn(
                       "w-6 text-center text-sm font-extrabold",
                       i === 0 && "text-brand-600",
-                      i === 1 && "text-accent-500",
+                      i === 1 && "text-accent-text",
                       i === 2 && "text-brand-800",
                       i > 2 && "text-ink-soft"
                     )}

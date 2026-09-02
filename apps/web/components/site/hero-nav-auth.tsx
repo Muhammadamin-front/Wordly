@@ -25,7 +25,7 @@ export function HeroNavAuth({
     return (
       <Link
         href={`/${lang}/dashboard`}
-        className="inline-flex min-h-10 min-w-36 items-center justify-center rounded-md border border-sand-100/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
+        className="inline-flex min-h-11 min-w-36 items-center justify-center rounded-md border border-sand-100/35 bg-home-accent px-4 text-sm font-black text-home-accent-contrast shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
       >
         {dashboard}
       </Link>
@@ -36,13 +36,13 @@ export function HeroNavAuth({
     <>
       <Link
         href={`/${lang}/auth/login`}
-        className="inline-flex min-h-10 items-center px-2 text-sm font-bold text-home-muted transition-colors hover:text-home-ink"
+        className="inline-flex min-h-11 items-center px-2 text-sm font-bold text-home-muted transition-colors hover:text-home-ink"
       >
         {signIn}
       </Link>
       <Link
         href={`/${lang}/auth/register`}
-        className="inline-flex min-h-10 min-w-36 items-center justify-center rounded-md border border-sand-100/35 bg-home-accent px-4 text-sm font-black text-white shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
+        className="inline-flex min-h-11 min-w-36 items-center justify-center rounded-md border border-sand-100/35 bg-home-accent px-4 text-sm font-black text-home-accent-contrast shadow-[3px_4px_0_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-home-accent-hover"
       >
         {signUp}
       </Link>

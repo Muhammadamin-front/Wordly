@@ -402,7 +402,7 @@ export function GamePlayer({
             +{sessionXp} XP · {gam.sessionXp}
           </span>
           {questCompletions.length > 0 && (
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/35 bg-success/10 px-3 py-2 text-sm font-black text-success">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-success/35 bg-success/10 px-3 py-2 text-sm font-black text-success-text">
               <Check className="size-4" aria-hidden />
               {questCompletions.length} {gam.questsUnlocked}
             </span>
@@ -471,7 +471,7 @@ export function GamePlayer({
               initial={{ opacity: 0, scale: 0.7, y: 5 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              className={`flex size-9 items-center justify-center rounded-full ${lastResult ? "bg-success/14 text-success" : "bg-danger/14 text-danger"}`}
+              className={`flex size-9 items-center justify-center rounded-full ${lastResult ? "bg-success/14 text-success-text" : "bg-danger/14 text-danger-text"}`}
               aria-label={lastResult ? games.correct : games.wrong}
             >
               {lastResult ? <Check className="size-5" /> : <X className="size-5" />}

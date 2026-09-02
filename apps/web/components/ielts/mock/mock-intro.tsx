@@ -51,7 +51,7 @@ export function MockIntro({
   const [track, setTrack] = useState<MockTrack>("academic");
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ export function MockIntro({
           IELTS
         </span>
         <div className="relative">
-          <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-black uppercase text-accent-500">
+          <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-black uppercase text-accent-text">
             <Sparkles className="size-4" aria-hidden />
             {t.eyebrow}
           </span>
@@ -127,7 +127,7 @@ export function MockIntro({
         </motion.section>
       ) : (
         <section className="mt-6">
-          <p className="type-label text-accent-500">{t.trackLabel}</p>
+          <p className="type-label text-accent-text">{t.trackLabel}</p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <TrackCard
               active={track === "academic"}
@@ -157,7 +157,7 @@ export function MockIntro({
 
       {history.length > 0 && (
         <section className="mt-10">
-          <p className="type-label text-accent-500">{t.pastAttempts}</p>
+          <p className="type-label text-accent-text">{t.pastAttempts}</p>
           <div className="mt-3 space-y-2">
             {history.map((item) => (
               <button

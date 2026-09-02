@@ -60,14 +60,14 @@ export function ClassesView({ lang, t }: { lang: string; t: Dictionary["classes"
 
   if (!ready || !user || classes === null) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink">🎒 {t.myClasses}</h1>
         <Link
@@ -123,9 +123,9 @@ export function ClassesView({ lang, t }: { lang: string; t: Dictionary["classes"
                     className={cn(
                       "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-bold",
                       a.done
-                        ? "bg-success/10 text-success"
+                        ? "bg-success/10 text-success-text"
                         : a.overdue
-                          ? "bg-danger/10 text-danger"
+                          ? "bg-danger/10 text-danger-text"
                           : "bg-line/60 text-ink-soft"
                     )}
                   >

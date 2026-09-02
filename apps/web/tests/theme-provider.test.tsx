@@ -15,6 +15,11 @@ describe("ThemeProvider", () => {
     pathname = "/uz/grammar";
     document.documentElement.dataset.theme = "light";
     document.documentElement.classList.remove("theme-switching");
+    document.querySelector('meta[name="theme-color"]')?.remove();
+    const themeColor = document.createElement("meta");
+    themeColor.name = "theme-color";
+    themeColor.content = "#f3e6cb";
+    document.head.appendChild(themeColor);
   });
 
   it("switches themes and persists the preference", async () => {
@@ -27,6 +32,8 @@ describe("ThemeProvider", () => {
     fireEvent.click(screen.getByRole("button", { name: "Switch to dark mode" }));
 
     expect(document.documentElement.dataset.theme).toBe("dark");
+    expect(document.documentElement.style.colorScheme).toBe("dark");
+    expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute("content", "#24130c");
     expect(window.localStorage.getItem("vocora-theme")).toBe("dark");
     expect(screen.getByRole("button", { name: "Switch to light mode" })).toBeInTheDocument();
   });

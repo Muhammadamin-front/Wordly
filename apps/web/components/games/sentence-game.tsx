@@ -104,7 +104,7 @@ function SentenceRound({
           )}
         </div>
         {result === "wrong" && (
-          <p className="mt-2 text-sm text-success">✓ {item.words.join(" ")}</p>
+          <p className="mt-2 text-sm text-success-text">✓ {item.words.join(" ")}</p>
         )}
       </div>
 

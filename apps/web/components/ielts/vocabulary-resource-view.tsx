@@ -27,7 +27,7 @@ export function VocabularyResourceView({
   }, [lang, resource]);
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
       <Link
         href={`/${lang}/ielts`}
         className="inline-flex items-center gap-2 rounded-lg border border-line bg-card/60 px-3 py-2 text-sm font-bold text-ink-soft transition-transform hover:-translate-y-0.5 hover:text-ink"
@@ -37,7 +37,7 @@ export function VocabularyResourceView({
       </Link>
 
       <section className="surface-panel mt-5 rounded-lg p-6 sm:p-8">
-        <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-500">
+        <span className="inline-flex items-center gap-2 rounded-lg border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-extrabold uppercase text-accent-text">
           <BookMarked className="size-4" aria-hidden />
           {resource.eyebrow}
         </span>
@@ -60,7 +60,7 @@ export function VocabularyResourceView({
               {index + 1}
             </span>
             <p className="mt-3 flex items-start gap-2 text-sm font-bold leading-6 text-ink">
-              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent-500" aria-hidden />
+              <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-accent-text" aria-hidden />
               {step}
             </p>
           </div>
@@ -70,7 +70,7 @@ export function VocabularyResourceView({
       <div className="mt-6 space-y-5">
         {resource.groups.map((group) => (
           <section key={group.title} className="surface-panel rounded-lg p-5 sm:p-6">
-            <p className="text-xs font-extrabold uppercase text-accent-500">{t.wordBank}</p>
+            <p className="text-xs font-extrabold uppercase text-accent-text">{t.wordBank}</p>
             <h2 className="mt-1 text-2xl font-black text-ink">{group.title}</h2>
             <p className="mt-2 text-sm text-ink-soft">{group.note}</p>
             <div className="mt-5 grid gap-3">
@@ -86,7 +86,7 @@ export function VocabularyResourceView({
                     <p className="mt-1 text-lg font-black text-ink">{item.basic}</p>
                   </div>
                   <div>
-                    <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-accent-500">
+                    <p className="flex items-center gap-2 text-[10px] font-extrabold uppercase text-accent-text">
                       <Sparkles className="size-3.5" aria-hidden />
                       {t.preciseAlternatives}
                     </p>

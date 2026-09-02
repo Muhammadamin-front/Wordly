@@ -26,7 +26,7 @@ export function PageHeader({
       )}
     >
       <div className={cn("min-w-0", centered && "mx-auto")}>
-        {eyebrow && <p className="type-label text-accent-500">{eyebrow}</p>}
+        {eyebrow && <p className="type-label text-accent-text">{eyebrow}</p>}
         <h1 className="type-h2 text-ink">{title}</h1>
         {subtitle && <p className="type-body-small mt-2 max-w-2xl text-ink-soft">{subtitle}</p>}
       </div>

@@ -62,7 +62,7 @@ export function SavedWordCard({
             onClick={onDelete}
             aria-label={labels.delete}
             title={labels.delete}
-            className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-danger/20 bg-danger/10 text-danger transition-all hover:-translate-y-0.5 hover:bg-danger/20"
+            className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-danger/20 bg-danger/10 text-danger-text transition-all hover:-translate-y-0.5 hover:bg-danger/20"
           >
             <Trash2 className="size-4" />
           </button>

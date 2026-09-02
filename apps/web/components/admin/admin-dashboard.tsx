@@ -56,7 +56,7 @@ export function AdminDashboard({
       deniedMessage={deniedMessage}
       allowedRoles={["support", "admin", "super_admin"]}
     >
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:py-10">
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-6">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.15em] text-brand-600 dark:text-brand-300">Vocora operations</p>
@@ -207,7 +207,7 @@ function UsersTab({ t, lang, role }: { t: Dictionary["adminPanel"]; lang: string
         value={query}
         onChange={(event) => { setError(false); setQuery(event.target.value); }}
         placeholder={t.search}
-        className="h-11 w-full max-w-sm rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-focus/20"
+        className="h-11 w-full max-w-sm rounded-lg border border-line bg-raised px-3 text-sm text-ink outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-focus"
       />
       {error ? <LoadError t={t} retry={reload} /> : !users ? <Spinner /> : (
         <div className="mt-4 overflow-x-auto rounded-xl border border-line">
@@ -224,9 +224,9 @@ function UsersTab({ t, lang, role }: { t: Dictionary["adminPanel"]; lang: string
                   <td className="px-4 py-3">
                     {isSuperAdmin ? <select aria-label={t.role} value={item.role} onChange={(event) => setPending({ user: item, kind: "role", role: event.target.value as StaffRole })} className="rounded-md border border-line bg-raised px-2 py-1 text-xs text-ink"><RoleOptions /></select> : <span className="rounded-full bg-hover px-2 py-1 text-xs font-bold text-ink-soft">{item.role}</span>}
                   </td>
-                  <td className="px-4 py-3"><span className={cn("rounded-full px-2 py-1 text-[11px] font-bold", item.is_active ? "bg-success/10 text-success" : "bg-danger/10 text-danger")}>{item.is_active ? t.active : t.banned}</span></td>
+                  <td className="px-4 py-3"><span className={cn("rounded-full px-2 py-1 text-[11px] font-bold", item.is_active ? "bg-success/10 text-success-text" : "bg-danger/10 text-danger-text")}>{item.is_active ? t.active : t.banned}</span></td>
                   <td className="px-4 py-3 text-xs text-ink-soft">{formatApiDate(item.created_at, lang) ?? "—"}</td>
-                  <td className="px-4 py-3 text-right">{canSuspend && <button type="button" onClick={() => setPending({ user: item, kind: item.is_active ? "ban" : "unban" })} className={cn("min-h-11 px-2 text-xs font-bold hover:underline", item.is_active ? "text-danger" : "text-success")}>{item.is_active ? t.ban : t.unban}</button>}</td>
+                  <td className="px-4 py-3 text-right">{canSuspend && <button type="button" onClick={() => setPending({ user: item, kind: item.is_active ? "ban" : "unban" })} className={cn("min-h-11 px-2 text-xs font-bold hover:underline", item.is_active ? "text-danger-text" : "text-success-text")}>{item.is_active ? t.ban : t.unban}</button>}</td>
                 </tr>
               ))}
             </tbody>
@@ -268,7 +268,7 @@ function ConfirmUserAction({ t, pending, onClose, onDone }: { t: Dictionary["adm
     } catch (caught) { setError(caught instanceof Error ? caught.message : t.loadingError); } finally { setSaving(false); }
   };
   const actionLabel = pending.kind === "ban" ? t.ban : pending.kind === "unban" ? t.unban : `${t.role}: ${pending.role}`;
-  return <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4" role="presentation" onMouseDown={onClose}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title" tabIndex={-1} className="w-full max-w-md rounded-xl2 border border-line bg-card p-5 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><h2 id="admin-confirm-title" className="text-lg font-extrabold text-ink">{t.confirmAction}</h2><p className="mt-2 text-sm leading-relaxed text-ink-soft">{pending.user.email} · {actionLabel}</p><label className="mt-5 block text-sm font-bold text-ink"><span className="sr-only">{t.reasonOptional}</span><textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} placeholder={t.reasonOptional} className="min-h-24 w-full rounded-lg border border-line bg-raised p-3 text-sm text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20" /></label>{error && <Alert className="mt-3" tone="error">{error}</Alert>}<div className="mt-5 flex justify-end gap-2"><Button ref={cancelButtonRef} variant="ghost" onClick={onClose} disabled={saving}>{t.cancel}</Button><Button variant={pending.kind === "ban" ? "danger" : "primary"} onClick={submit} loading={saving}>{t.confirm}</Button></div></section></div>;
+  return <div className="fixed inset-0 z-50 grid place-items-center bg-black/45 px-4" role="presentation" onMouseDown={onClose}><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="admin-confirm-title" tabIndex={-1} className="w-full max-w-md rounded-xl2 border border-line bg-card p-5 shadow-2xl" onMouseDown={(event) => event.stopPropagation()}><h2 id="admin-confirm-title" className="text-lg font-extrabold text-ink">{t.confirmAction}</h2><p className="mt-2 text-sm leading-relaxed text-ink-soft">{pending.user.email} · {actionLabel}</p><label className="mt-5 block text-sm font-bold text-ink"><span className="sr-only">{t.reasonOptional}</span><textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={500} placeholder={t.reasonOptional} className="min-h-24 w-full rounded-lg border border-line bg-raised p-3 text-sm text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus" /></label>{error && <Alert className="mt-3" tone="error">{error}</Alert>}<div className="mt-5 flex justify-end gap-2"><Button ref={cancelButtonRef} variant="ghost" onClick={onClose} disabled={saving}>{t.cancel}</Button><Button variant={pending.kind === "ban" ? "danger" : "primary"} onClick={submit} loading={saving}>{t.confirm}</Button></div></section></div>;
 }
 
 function UserDetailDialog({

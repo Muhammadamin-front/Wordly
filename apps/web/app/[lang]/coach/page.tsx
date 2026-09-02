@@ -15,7 +15,7 @@ export default async function CoachPage({ params }: { params: Promise<{ lang: st
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto flex w-full max-w-md flex-1 items-center px-4 py-16">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-md flex-1 items-center px-4 py-16">
         <div className="w-full rounded-2xl border border-line bg-card p-8 text-center">
           <p className="text-5xl" aria-hidden>
             🔒

@@ -27,7 +27,7 @@ export function AuthCard({
 }) {
   if (!showcase) {
     return (
-      <main className="relative flex flex-1 items-center justify-center px-4 py-12">
+      <main id="main-content" tabIndex={-1} className="relative flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="mb-6 flex justify-center">
             <Logo lang={lang} className="text-2xl" />
@@ -43,7 +43,7 @@ export function AuthCard({
   }
 
   return (
-    <main className="relative flex min-h-dvh flex-1 items-center justify-center overflow-hidden bg-auth-page p-0 lg:p-10">
+    <main id="main-content" tabIndex={-1} className="relative flex min-h-dvh flex-1 items-center justify-center overflow-hidden bg-auth-page p-0 lg:p-10">
       {/* Full-bleed foliage behind the floating card. Hidden once the split
           card takes over, where the artwork lives inside the card instead. */}
       <div aria-hidden className="absolute inset-0 lg:hidden">

@@ -126,7 +126,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
   const pageCount = Math.max(1, Math.ceil(total / 24));
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel rounded-lg p-5 sm:p-7">
         <div className="flex items-end justify-between gap-3">
           <div>
@@ -157,7 +157,7 @@ export function ExpressionsView({ lang, t }: { lang: string; t: T }) {
               value={q}
               onChange={(e) => reset(() => setQ(e.target.value))}
               placeholder={t.searchPlaceholder}
-              className="h-12 w-full rounded-lg border border-line bg-card/72 pl-11 pr-4 text-sm font-medium text-ink shadow-inner shadow-brand-950/5 backdrop-blur-xl placeholder:text-ink-soft/55 transition-all focus:-translate-y-0.5 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/25"
+              className="h-12 w-full rounded-lg border border-line bg-card/72 pl-11 pr-4 text-sm font-medium text-ink shadow-inner shadow-brand-950/5 backdrop-blur-xl placeholder:text-ink-soft/55 transition-all focus:-translate-y-0.5 focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus"
             />
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -451,7 +451,7 @@ function DetailModal({
               className={cn(
                 "mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-black transition-all",
                 isAdded
-                  ? "bg-success/10 text-success"
+                  ? "bg-success/10 text-success-text"
                   : "bg-brand-600 text-white shadow-[0_18px_50px_rgba(40,135,115,0.24)] hover:-translate-y-0.5 hover:bg-brand-700"
               )}
             >
@@ -496,7 +496,7 @@ function DetailModal({
               <Section title={t.mistakes}>
                 <ul className="space-y-2">
                   {expr.common_mistakes.map((m, i) => (
-                    <li key={i} className="flex gap-2 text-danger">
+                    <li key={i} className="flex gap-2 text-danger-text">
                       <AlertTriangle className="mt-1 size-4 shrink-0" aria-hidden />
                       <span>{m}</span>
                     </li>

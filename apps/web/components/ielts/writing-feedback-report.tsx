@@ -376,7 +376,7 @@ export function WritingFeedbackReport({
               </p>
             </div>
             <span className="inline-flex items-center gap-2 rounded-lg border border-line bg-card px-3 py-2 text-xs font-bold text-ink-soft">
-              <FileCheck2 className="size-4 text-accent-500" aria-hidden />
+              <FileCheck2 className="size-4 text-accent-text" aria-hidden />
               +{score.reward.xp_gained} {copy.reward}
             </span>
           </div>

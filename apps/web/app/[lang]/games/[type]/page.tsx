@@ -32,7 +32,7 @@ export default async function GameTypePage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6">
         <div className="mb-4 flex items-center justify-between">
           <Link
             href={`/${lang}/games`}

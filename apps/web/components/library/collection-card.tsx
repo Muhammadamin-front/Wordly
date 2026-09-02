@@ -79,7 +79,7 @@ export function CollectionCard({
         <Button size="sm" variant="ghost" onClick={onExport} title={labels.export}>
           <Download className="size-4" />
         </Button>
-        <Button size="sm" variant="ghost" className="text-danger" onClick={onDelete} title={labels.delete}>
+        <Button size="sm" variant="ghost" className="text-danger-text" onClick={onDelete} title={labels.delete}>
           <Trash2 className="size-4" />
         </Button>
       </div>

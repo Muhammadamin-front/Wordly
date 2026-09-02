@@ -53,7 +53,7 @@ export function AiExplain({ wordId, ai }: { wordId: string; ai: Dictionary["ai"]
         </Button>
       </div>
 
-      {error && <p className="mt-3 text-sm text-danger">{error}</p>}
+      {error && <p className="mt-3 text-sm text-danger-text">{error}</p>}
 
       {text && !error && (
         <div className="mt-3">
@@ -61,7 +61,7 @@ export function AiExplain({ wordId, ai }: { wordId: string; ai: Dictionary["ai"]
           <div className="mt-2 flex items-center gap-3">
             <span className="text-[11px] italic text-ink-soft/70">✨ {ai.aiLabel}</span>
             {reported ? (
-              <span className="text-[11px] text-success">{ai.reported}</span>
+              <span className="text-[11px] text-success-text">{ai.reported}</span>
             ) : (
               <button
                 type="button"

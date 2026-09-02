@@ -236,12 +236,12 @@ function bandGuidance(
           : t.bandBuild;
   const tone =
     band >= 8
-      ? "text-success"
+      ? "text-success-text"
       : band >= 7
         ? "text-brand-600 dark:text-brand-300"
         : band >= 6
-          ? "text-accent-500"
-          : "text-warning";
+          ? "text-accent-text"
+          : "text-warning-text";
   // A short set cannot resolve a single band, so show the half-band either side.
   const display = approximate
     ? `${(band - 0.5).toFixed(1)}-${(band + 0.5).toFixed(1)}`
@@ -271,8 +271,8 @@ function questionKindTone(kind: ReadingQuestionKind) {
   return PRODUCE_KINDS.has(kind)
     ? {
         icon: PenLine,
-        badge: "border-accent-400/25 bg-accent-400/10 text-accent-500",
-        chip: "border-accent-400/25 bg-accent-400/10 text-accent-500",
+        badge: "border-accent-400/25 bg-accent-400/10 text-accent-text",
+        chip: "border-accent-400/25 bg-accent-400/10 text-accent-text",
       }
     : {
         icon: ListChecks,
@@ -488,7 +488,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
   const completedFullTests = READING_FULL_TESTS.filter((fullTest) => history[fullTest.id]?.completed).length;
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-7 sm:px-6 sm:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-7 sm:px-6 sm:py-10">
       <section className="surface-panel relative overflow-hidden rounded-lg p-6 sm:p-8 lg:p-10">
         <div className="absolute! -right-24 -top-28 size-72 rounded-full bg-brand-400/10 blur-3xl" aria-hidden />
         <div className="relative grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
@@ -508,7 +508,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
                 <p className="type-label text-ink-soft">{t.journey}</p>
                 <p className="mt-1 text-3xl font-black text-ink">{completedFullTests}<span className="text-ink-soft">/{READING_FULL_TESTS.length}</span></p>
               </div>
-              <span className="icon-tile size-12 text-accent-500"><LibraryBig className="size-5" /></span>
+              <span className="icon-tile size-12 text-accent-text"><LibraryBig className="size-5" /></span>
             </div>
             <p className="mt-4 text-sm leading-6 text-ink-soft">Choose a single passage to build skill, then complete one of ten full tests under exam conditions.</p>
           </div>
@@ -534,7 +534,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
               )}
             >
               <span className="block text-sm font-black">{part.label}</span>
-              <span className="hidden text-[10px] font-bold opacity-80 sm:block">{part.helper}</span>
+              <span className="hidden text-[10px] font-bold sm:block">{part.helper}</span>
             </button>
           ))}
         </div>
@@ -543,7 +543,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
       <section className="mt-7">
         <div className="mb-4 flex items-end justify-between gap-4">
           <div>
-            <p className="type-label text-accent-500">Academic Reading · {selectedPart.label}</p>
+            <p className="type-label text-accent-text">Academic Reading · {selectedPart.label}</p>
             <h2 className="mt-1 text-2xl font-black text-ink">{selectedPart.title}</h2>
           </div>
           <span className="hidden text-sm font-semibold text-ink-soft sm:block">
@@ -576,7 +576,7 @@ function ReadingLibrary({ history, onOpen, onQuestionType, t }: { history: TestH
 
       <section className="mt-10">
         <div className="mb-4 max-w-2xl">
-          <p className="type-label text-accent-500">{t.targeted}</p>
+          <p className="type-label text-accent-text">{t.targeted}</p>
           <h2 className="mt-1 text-2xl font-black text-ink">{t.targetedBody}</h2>
           <p className="mt-2 text-sm leading-6 text-ink-soft">Choose a format, follow its strategy, then get instant evidence-based feedback after every answer.</p>
         </div>
@@ -620,7 +620,7 @@ function TestCard({ test, history, featured = false, onOpen, t }: { test: Readin
     <article className={cn("group rounded-lg border border-line bg-card/80 p-5 shadow-[3px_4px_0_rgba(84,37,15,0.1)] transition-all hover:-translate-y-0.5 hover:border-brand-400/55 hover:bg-raised hover:shadow-[5px_6px_0_rgba(84,37,15,0.16)]", featured && "bg-[linear-gradient(135deg,#24130c,#54250f)] text-white dark:bg-[linear-gradient(135deg,#382015,#24130c)]" )}>
       <div className="flex items-start justify-between gap-3">
         <span className={cn("inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-[11px] font-black uppercase", featured ? "bg-white/12 text-brand-100" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}>{test.track}</span>
-        {history?.completed && <span className={cn("inline-flex items-center gap-1 text-xs font-bold", featured ? "text-brand-100" : "text-success")}><CheckCircle2 className="size-4" /> Completed</span>}
+        {history?.completed && <span className={cn("inline-flex items-center gap-1 text-xs font-bold", featured ? "text-brand-100" : "text-success-text")}><CheckCircle2 className="size-4" /> Completed</span>}
       </div>
       <h3 className={cn("mt-5 text-xl font-black leading-tight", !featured && "text-ink")}>{test.title}</h3>
       <p className={cn("mt-2 text-sm leading-6", featured ? "text-brand-100/85" : "text-ink-soft")}>{test.description}</p>
@@ -644,10 +644,10 @@ function Meta({ label, value, inverse }: { label: string; value: string; inverse
 function ReadingStartScreen({ test, mode, onBack, onStart, t }: { test: ReadingPracticeTest; mode: StudyMode; onBack: () => void; onStart: (mode: StudyMode) => void; t: Copy }) {
   const [selectedMode, setSelectedMode] = useState<StudyMode>(mode);
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-7 sm:px-6 sm:py-12">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-4 py-7 sm:px-6 sm:py-12">
       <button type="button" onClick={onBack} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft transition-colors hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button>
       <section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-10">
-        <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-black uppercase text-accent-500"><FileText className="size-4" /> {test.track}</span>
+        <span className="inline-flex items-center gap-2 rounded-full border border-accent-400/25 bg-accent-400/10 px-3 py-1.5 text-xs font-black uppercase text-accent-text"><FileText className="size-4" /> {test.track}</span>
         <h1 className="mt-5 text-4xl font-black tracking-tight text-ink sm:text-6xl">{test.title}</h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">{test.description}</p>
         <div className="mt-7 grid gap-3 sm:grid-cols-3">
@@ -895,7 +895,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
   };
 
   return (
-    <main className="reading-workspace mx-auto w-full max-w-375 flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
+    <main id="main-content" tabIndex={-1} className="reading-workspace mx-auto w-full max-w-375 flex-1 px-3 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:px-5 sm:py-5 lg:pb-5">
       <section className="flex flex-col overflow-hidden max-sm:fixed max-sm:inset-0 max-sm:z-40 max-sm:pt-[env(safe-area-inset-top)] sm:rounded-lg sm:border sm:border-line sm:bg-page sm:shadow-[5px_7px_0_rgba(84,37,15,0.14),0_20px_44px_rgba(84,37,15,0.08)] max-sm:bg-page">
         <header className="z-30 flex shrink-0 flex-wrap items-center justify-between gap-3 border-b border-line bg-raised/96 px-4 py-3 backdrop-blur max-sm:gap-2 max-sm:py-2 sm:px-5">
           <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
@@ -903,7 +903,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
             <div className="min-w-0"><p className="truncate text-sm font-black text-ink">{test.title}</p><p className="truncate text-xs text-ink-soft">{t.passageProgress.replace("{index}", String(passageIndex + 1)).replace("{total}", String(test.passages.length)).replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</p></div>
           </div>
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {studyMode === "exam" ? <span className={cn("inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 font-black tabular-nums max-sm:px-2 max-sm:text-sm", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden min-h-11 rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
+            {studyMode === "exam" ? <span className={cn("inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 font-black tabular-nums max-sm:px-2 max-sm:text-sm", secondsLeft < 120 ? "border-danger/30 bg-danger/10 text-danger-text" : "border-brand-400/25 bg-brand-600/8 text-brand-700 dark:text-brand-200")}><Clock3 className="size-4" />{formatTime(secondsLeft)}</span> : <span className="hidden min-h-11 rounded-lg bg-brand-600/8 px-3 py-2 text-xs font-black text-brand-700 dark:text-brand-200 sm:inline-flex">{t.practiceMode}</span>}
             {studyMode === "exam" && <button type="button" onClick={onPause} aria-label={paused ? t.resume : t.pause} title={paused ? t.resume : t.pause} className="inline-flex size-11 items-center justify-center rounded-lg border border-line text-ink-soft hover:bg-hover hover:text-ink">{paused ? <Play className="size-4" /> : <Pause className="size-4" />}</button>}
             <button type="button" onClick={() => setConfirmEnd(true)} aria-label={t.submitAnswers} title={t.submitAnswers} className="inline-flex size-11 items-center justify-center rounded-lg bg-primary text-white dark:text-brand-950 sm:hidden"><Send className="size-4" /></button>
             <Button size="sm" variant="secondary" onClick={() => setConfirmEnd(true)} className="hidden sm:inline-flex"><Send className="size-4" /> {t.submitAnswers}</Button>
@@ -912,7 +912,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
 
         <div className="flex shrink-0 items-center justify-between gap-3 border-b border-line bg-card/55 px-4 py-2 text-xs font-semibold text-ink-soft max-sm:px-3 max-sm:py-0.5 sm:px-5">
           <div className="flex items-center gap-1"><button type="button" className="inline-flex size-11 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.max(14, size - 1))} aria-label={t.smallerText} title={t.smallerText}><Minimize2 className="size-3.5" /></button><span className="min-w-9 text-center">{fontSize}px</span><button type="button" className="inline-flex size-11 items-center justify-center rounded-md hover:bg-hover" onClick={() => setFontSize((size) => Math.min(21, size + 1))} aria-label={t.largerText} title={t.largerText}><Maximize2 className="size-3.5" /></button></div>
-          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} title={t.myNotes} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><NotebookPen className="size-3.5" /> <span className="sr-only">{t.myNotes}</span> <span aria-hidden>{notes.length}</span></button><button type="button" onClick={() => setDrawer("vocabulary")} title={t.myVocabulary} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><Bookmark className="size-3.5" /> <span className="sr-only">{t.myVocabulary}</span> <span aria-hidden>{vocabulary.length}</span></button><button type="button" onClick={() => setClearConfirm(true)} title={t.clearHighlights} aria-label={t.clearHighlights} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md text-ink-soft hover:bg-hover hover:text-danger"><Eraser className="size-3.5" /></button></div>
+          <div className="flex items-center gap-1.5"><button type="button" onClick={() => setDrawer("notes")} title={t.myNotes} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><NotebookPen className="size-3.5" /> <span className="sr-only">{t.myNotes}</span> <span aria-hidden>{notes.length}</span></button><button type="button" onClick={() => setDrawer("vocabulary")} title={t.myVocabulary} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md hover:bg-hover"><Bookmark className="size-3.5" /> <span className="sr-only">{t.myVocabulary}</span> <span aria-hidden>{vocabulary.length}</span></button><button type="button" onClick={() => setClearConfirm(true)} title={t.clearHighlights} aria-label={t.clearHighlights} className="inline-flex size-11 items-center justify-center gap-1.5 rounded-md text-ink-soft hover:bg-hover hover:text-danger-text"><Eraser className="size-3.5" /></button></div>
         </div>
 
         <div className="hidden items-center gap-2 overflow-x-auto border-b border-line bg-card/45 px-4 py-2 sm:flex">
@@ -966,7 +966,7 @@ function ReadingWorkspace({ test, studyMode, answers, flagged, secondsLeft, paus
         </div>
 
         <nav className="reading-question-nav z-20 shrink-0 border-t border-line bg-raised/96 px-3 py-3 backdrop-blur max-sm:py-2 max-sm:pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:sticky sm:bottom-0 sm:px-5" aria-label={t.questionNavigation}>
-          <div ref={navRef} className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 max-sm:pb-0"><span className="sticky left-0 z-10 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.answeredShort.replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" data-question-nav={question.id} onClick={() => navigateQuestion(question)} className={cn("relative flex size-11 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === activeQuestionId ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
+          <div ref={navRef} className="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto pb-1 max-sm:pb-0"><span className="sticky left-0 z-10 shrink-0 bg-raised pr-1 text-xs font-black text-ink-soft">{t.answeredShort.replace("{done}", String(answeredCount)).replace("{questions}", String(countQuestions(test)))}</span>{allReadingQuestions(test).map((question) => { const value = answers[question.id]; const answered = Array.isArray(value) ? value.length > 0 : Boolean(value); return <button key={question.id} type="button" data-question-nav={question.id} onClick={() => navigateQuestion(question)} className={cn("relative flex size-11 shrink-0 items-center justify-center rounded-md border text-xs font-black transition-colors", question.id === activeQuestionId ? "border-brand-400 bg-brand-600/10 text-brand-700 dark:text-brand-200" : answered ? "border-success/35 bg-success/10 text-success-text" : "border-line text-ink-soft hover:bg-hover", flagged.includes(question.id) && "after:absolute after:-right-0.5 after:-top-0.5 after:size-2 after:rounded-full after:bg-accent-400")}>{question.number}</button>; })}</div>
         </nav>
       </section>
 
@@ -1034,7 +1034,7 @@ function renderTappableWords(text: string, wordLookup: Record<string, WordLookup
           event.preventDefault();
           onWordTap(word);
         } : undefined}
-        className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/35" : undefined}
+        className={translatable ? "cursor-pointer rounded-sm decoration-brand-400/50 decoration-dotted underline-offset-4 hover:bg-brand-600/10 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus" : undefined}
       >
         {word}
       </span>
@@ -1134,7 +1134,7 @@ function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, 
             <p id={promptId} className="text-sm font-bold leading-6 text-ink">{question.prompt}</p>
             {question.instruction && <p id={instructionId} className="mt-1 text-xs font-bold uppercase tracking-wide text-ink-soft">{question.instruction}</p>}
           </div>
-          <button type="button" onClick={onFlag} aria-label={`${t.markForReview}: ${question.prompt}`} aria-pressed={flagged} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-500" : "text-ink-soft hover:bg-hover")}>
+          <button type="button" onClick={onFlag} aria-label={`${t.markForReview}: ${question.prompt}`} aria-pressed={flagged} title={t.markForReview} className={cn("inline-flex size-11 shrink-0 items-center justify-center rounded-md", flagged ? "bg-accent-400/15 text-accent-text" : "text-ink-soft hover:bg-hover")}>
             <Flag aria-hidden className={cn("size-4", flagged && "fill-current")} />
           </button>
         </div>
@@ -1146,8 +1146,8 @@ function QuestionCard({ question, answer, flagged, setRef, showGroup, onAnswer, 
 
 function QuestionInput({ question, value, onChange, labelledBy, describedBy, t }: { question: ReadingQuestion; value: AnswerValue | undefined; onChange: (value: AnswerValue) => void; labelledBy: string; describedBy?: string; t: Copy }) {
   const isText = ["sentence-completion", "summary-completion", "table-completion", "form-completion", "diagram-labelling", "short-answer"].includes(question.kind);
-  if (isText) return <input aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder={t.typeAnswer} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus/20" />;
-  if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") return <select aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus/20"><option value="">{t.chooseAnswer}</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
+  if (isText) return <input aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} placeholder={t.typeAnswer} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink outline-none transition-colors placeholder:text-ink-soft/70 focus:border-brand-400 focus:ring-2 focus:ring-focus" />;
+  if (question.kind === "matching-headings" || question.kind === "matching-information" || question.kind === "matching-features") return <select aria-labelledby={labelledBy} aria-describedby={describedBy} value={typeof value === "string" ? value : ""} onChange={(event) => onChange(event.target.value)} className="min-h-11 w-full rounded-lg border border-line bg-card px-3 text-sm font-semibold text-ink outline-none focus:border-brand-400 focus:ring-2 focus:ring-focus"><option value="">{t.chooseAnswer}</option>{question.options?.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select>;
   if (question.kind === "multiple-answer") { const current = Array.isArray(value) ? value : []; return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", current.includes(option.value) ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="checkbox" checked={current.includes(option.value)} onChange={() => onChange(current.includes(option.value) ? current.filter((item) => item !== option.value) : [...current, option.value])} className="mt-0.5 size-4 accent-brand-600" /><span><strong>{option.value}.</strong> {option.label.replace(/^[A-Z]\.\s*/, "")}</span></label>)}</fieldset>; }
   return <fieldset aria-labelledby={labelledBy} aria-describedby={describedBy} className="min-w-0 space-y-2 border-0 p-0">{question.options?.map((option) => <label key={option.value} className={cn("flex cursor-pointer items-start gap-3 rounded-lg border p-3 text-sm transition-colors", value === option.value ? "border-brand-400 bg-brand-600/8 text-ink" : "border-line text-ink-soft hover:bg-hover")}><input type="radio" name={question.id} checked={value === option.value} onChange={() => onChange(option.value)} className="mt-0.5 size-4 accent-brand-600" /><span>{option.label}</span></label>)}</fieldset>;
 }
@@ -1172,7 +1172,7 @@ function SelectionToolbar({ range, onHighlight, onRemove, onNote, onSaveWord, on
           <Highlighter className="mx-auto size-4" />
         </button>
       ))}
-      <button type="button" onClick={onRemove} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-danger" title={t.removeHighlight}>
+      <button type="button" onClick={onRemove} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-danger-text" title={t.removeHighlight}>
         <Eraser className="size-4" />
       </button>
       <button type="button" onClick={onNote} className="inline-flex size-11 items-center justify-center rounded-md text-ink-soft hover:bg-hover hover:text-ink" title={t.addNote}>
@@ -1236,10 +1236,10 @@ function ReadingDrawer({ drawer, notes, vocabulary, selectedRange, noteDraft, se
                   <Button size="sm" onClick={onSaveNote} className="mt-3"><Save className="size-4" /> Save note</Button>
                 </div>
               )}
-              {notes.length ? <div className="mt-4 space-y-3">{notes.map((note) => <article key={note.id} className="rounded-lg border border-line bg-card/70 p-4"><p className="text-sm font-bold italic text-ink">“{note.quote}”</p><p className="mt-2 text-sm leading-6 text-ink-soft">{note.body}</p><button type="button" onClick={() => onDeleteNote(note.id)} className="mt-3 inline-flex min-h-9 items-center gap-1.5 text-xs font-black text-danger"><Trash2 className="size-3.5" /> Delete</button></article>)}</div> : <EmptyDrawer icon={NotebookPen} title={t.notesEmpty} text={t.notesHint} />}
+              {notes.length ? <div className="mt-4 space-y-3">{notes.map((note) => <article key={note.id} className="rounded-lg border border-line bg-card/70 p-4"><p className="text-sm font-bold italic text-ink">“{note.quote}”</p><p className="mt-2 text-sm leading-6 text-ink-soft">{note.body}</p><button type="button" onClick={() => onDeleteNote(note.id)} className="mt-3 inline-flex min-h-9 items-center gap-1.5 text-xs font-black text-danger-text"><Trash2 className="size-3.5" /> Delete</button></article>)}</div> : <EmptyDrawer icon={NotebookPen} title={t.notesEmpty} text={t.notesHint} />}
             </>
           ) : vocabulary.length ? (
-            <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-500" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 text-xs italic leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder={t.personalNote} className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? t.learned : t.markLearned}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger"><Trash2 className="size-3.5" /></button></div></article>)}</div>
+            <div className="space-y-3">{vocabulary.map((word) => <article key={word.id} className="rounded-lg border border-line bg-card/70 p-4"><div className="flex items-start justify-between gap-3"><div><p className="text-lg font-black text-ink">{word.word}</p><p className="mt-1 text-sm font-bold text-brand-600 dark:text-brand-300">{word.translation}</p></div><button type="button" onClick={() => onUpdateVocabulary(word.id, { favourite: !word.favourite })} className={cn("inline-flex size-8 items-center justify-center rounded-md", word.favourite ? "text-accent-text" : "text-ink-soft hover:bg-hover")}><BookmarkCheck className={cn("size-4", word.favourite && "fill-current")} /></button></div><p className="mt-3 text-sm leading-6 text-ink-soft">{word.definition}</p><p className="mt-3 text-xs italic leading-5 text-ink-soft">{word.example}</p><p className="mt-2 text-[11px] font-bold uppercase text-ink-soft">{word.passageTitle}</p><textarea value={word.note} onChange={(event) => onUpdateVocabulary(word.id, { note: event.target.value })} placeholder={t.personalNote} className="mt-3 min-h-18 w-full rounded-md border border-line bg-raised p-2 text-xs text-ink outline-none focus:border-brand-400" /><div className="mt-3 flex items-center justify-between"><button type="button" onClick={() => onUpdateVocabulary(word.id, { learned: !word.learned })} className={cn("inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-xs font-black", word.learned ? "bg-success/10 text-success-text" : "bg-brand-600/8 text-brand-700 dark:text-brand-200")}><CheckCircle2 className="size-3.5" />{word.learned ? t.learned : t.markLearned}</button><button type="button" onClick={() => onDeleteVocabulary(word.id)} className="inline-flex size-9 items-center justify-center text-danger-text"><Trash2 className="size-3.5" /></button></div></article>)}</div>
           ) : <EmptyDrawer icon={Bookmark} title={t.vocabularyEmpty} text={t.vocabularyHint} />}
         </div>
         <div className="shrink-0 border-t border-line bg-raised px-5 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 sm:hidden">
@@ -1286,5 +1286,5 @@ function ConfirmDialog({ title, text, action, destructive, onCancel, onConfirm, 
 function ReadingResultScreen({ test, result, answers, onLibrary, onRetry, onReview, onNext, t }: { test: ReadingPracticeTest; result: TestResult; answers: Record<string, AnswerValue>; onLibrary: () => void; onRetry: () => void; onReview: () => void; onNext: () => void; t: Copy }) {
   const questions = allReadingQuestions(test);
   const band = bandGuidance(result.score, result.total, test.track, t);
-  return <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success"><CheckCircle2 className="size-4" /> {t.testComplete}</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">{t.bandApproximate}</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-500">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success" : "bg-danger/10 text-danger")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success" : "text-danger"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
+  return <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-7 sm:px-6 sm:py-10"><button type="button" onClick={onLibrary} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-line bg-card/70 px-3 py-2 text-sm font-bold text-ink-soft hover:text-ink"><ArrowLeft className="size-4" /> {t.readingLibrary}</button><section className="surface-panel mt-5 overflow-hidden rounded-lg p-6 sm:p-9"><div className="grid gap-7 lg:grid-cols-[1fr_0.8fr] lg:items-center"><div><span className="inline-flex items-center gap-2 rounded-full bg-success/10 px-3 py-1.5 text-xs font-black uppercase text-success-text"><CheckCircle2 className="size-4" /> {t.testComplete}</span><h1 className="mt-4 text-4xl font-black tracking-tight text-ink sm:text-5xl">{result.score} / {result.total}</h1><p className="mt-2 text-xl font-black text-ink">{t.estimatedBand}{" "}<span className={band.tone}>{band.band}</span></p>{band.approximate && <p className="mt-1 text-xs leading-5 text-ink-soft">{t.bandApproximate}</p>}<p className="mt-2 text-sm leading-6 text-ink-soft">{band.label}. {t.timeUsed.replace("{time}", formatTime(result.timeUsed))} {result.unanswered.length ? t.unanswered.replace("{list}", result.unanswered.join(", ")) : t.allAnswered}</p></div><div className="rounded-lg border border-brand-400/25 bg-brand-600/8 p-5"><p className="type-label text-brand-700 dark:text-brand-200">{t.whatNext}</p><p className="mt-2 text-sm leading-7 text-ink">{t.whatNextBody}</p><div className="mt-5 flex flex-wrap gap-2"><Button size="sm" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button size="sm" variant="secondary" onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button></div></div></div></section><section className="mt-7"><div className="mb-4"><p className="type-label text-accent-text">{t.answerReview}</p><h2 className="mt-1 text-2xl font-black text-ink">{t.evidenceTrail}</h2></div><div className="space-y-3">{questions.map((question) => { const correct = isCorrect(question, answers[question.id]); const userAnswer = answers[question.id]; const shownAnswer = Array.isArray(userAnswer) ? userAnswer.join(", ") : userAnswer || t.noAnswer; const answer = Array.isArray(question.answer) ? question.answer.join(", ") : question.answer; return <article key={question.id} className={cn("rounded-lg border p-5", correct ? "border-success/25 bg-success/5" : "border-danger/20 bg-card")}><div className="flex items-start gap-3"><span className={cn("flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-black", correct ? "bg-success/15 text-success-text" : "bg-danger/10 text-danger-text")}>{correct ? <CheckCircle2 className="size-4" /> : question.number}</span><div className="min-w-0 flex-1"><p className="font-black text-ink">{question.prompt}</p><div className="mt-3 grid gap-2 text-sm sm:grid-cols-2"><p className="text-ink-soft">{t.yourAnswer}{" "}<strong className={correct ? "text-success-text" : "text-danger-text"}>{shownAnswer}</strong></p><p className="text-ink-soft">{t.correctAnswer}{" "}<strong className="text-success-text">{answer}</strong></p></div><p className="mt-3 text-sm leading-6 text-ink-soft">{question.explanation}</p><p className="mt-3 rounded-md bg-brand-600/6 px-3 py-2 text-sm italic leading-6 text-ink">{t.evidence}: “{question.evidence}”</p></div></div></article>; })}</div></section><div className="mt-7 flex flex-wrap gap-3"><Button onClick={onRetry}><RotateCcw className="size-4" /> {t.retryTest}</Button><Button variant="secondary" onClick={onReview}><SearchCheck className="size-4" /> {t.reviewMistakes}</Button><Button variant="secondary" onClick={onNext}>{t.nextPassage}{" "}<ArrowRight className="size-4" /></Button></div></main>;
 }

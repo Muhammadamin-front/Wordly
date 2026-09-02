@@ -138,7 +138,7 @@ export default async function LandingPage({
         dashboard={nav.dashboard}
       />
 
-      <main className="flex-1 px-3 pb-8 sm:px-5">
+      <main id="main-content" tabIndex={-1} className="flex-1 px-3 pb-8 sm:px-5">
 
         <section className="mx-auto mt-5 grid max-w-370 gap-5 xl:grid-cols-[2.1fr_1fr]">
           <Reveal className="xl:h-full">
@@ -167,7 +167,7 @@ export default async function LandingPage({
                     <Reveal delay={index * 0.05} key={item.level}>
                       <Link
                         href={`/${lang}/preview/${item.slug}`}
-                        className="group flex h-full min-h-[258px] flex-col overflow-hidden rounded-xl border border-line/80 bg-raised/72 p-4 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
+                        className="motion-border-card group flex h-full min-h-[258px] flex-col overflow-hidden rounded-xl border border-line/80 bg-raised/72 p-4 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <span
@@ -327,7 +327,7 @@ export default async function LandingPage({
                   <Reveal delay={index * 0.05} key={skill.slug}>
                     <Link
                       href={`/${lang}/ielts/${skill.slug}`}
-                      className="group flex h-full flex-col rounded-xl border border-line/80 bg-raised/60 p-5 transition-all hover:-translate-y-1 hover:border-brand-400/60"
+                      className="motion-border-card group flex h-full flex-col rounded-xl border border-line/80 bg-raised/60 p-5 transition-all hover:-translate-y-1 hover:border-brand-400/60"
                     >
                       <span className="flex size-10 items-center justify-center rounded-lg bg-accent-500/10 text-accent-600 dark:text-accent-300">
                         <skill.icon className="size-5" aria-hidden />
@@ -349,7 +349,7 @@ export default async function LandingPage({
           <Reveal>
             <Link
               href={`/${lang}/ielts/mock`}
-              className="group relative flex flex-col gap-6 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-6 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)] transition-transform hover:-translate-y-1 sm:flex-row sm:items-center sm:justify-between sm:p-8"
+              className="motion-border-card group relative flex flex-col gap-6 overflow-hidden rounded-[22px] border-2 border-brand-950 bg-brand-950 p-6 text-white shadow-[9px_11px_0_rgba(84,37,15,0.58)] transition-transform hover:-translate-y-1 sm:flex-row sm:items-center sm:justify-between sm:p-8"
             >
               <div aria-hidden className="absolute -right-16 -top-20 size-72 rounded-full border-24 border-accent-400/30" />
               <div className="relative">

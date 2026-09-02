@@ -158,7 +158,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
   if (!ready || (!loadError && (plans === null || paymentStatus === null))) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -166,7 +166,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
 
   if (loadError || plans === null || paymentStatus === null) {
     return (
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center px-4 py-20 text-center">
         <Alert tone="error">{t.loadError}</Alert>
         <Button className="mt-4" variant="secondary" onClick={() => setReloadKey((n) => n + 1)}>
           {t.retry}
@@ -189,7 +189,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
     .filter((plan): plan is Plan => Boolean(plan));
 
   return (
-    <main className={styles.page}>
+    <main id="main-content" tabIndex={-1} className={styles.page}>
       <section className={styles.board} aria-labelledby="pricing-title">
         <header className={styles.boardHeader}>
           <Logo
@@ -215,7 +215,7 @@ export function PricingView({ lang, t }: { lang: string; t: Dictionary["billing"
               onClick={() => setDuration(d)}
               aria-pressed={duration === d}
               className={cn(
-                "rounded-full px-4 py-1.5 text-xs font-bold transition-colors",
+                "inline-flex min-h-11 items-center rounded-full px-4 py-1.5 text-xs font-bold transition-colors",
                 duration === d ? "bg-brand-50 text-brand-950" : "text-[rgba(243,230,203,0.68)] hover:text-brand-50"
               )}
             >

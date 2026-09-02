@@ -1,0 +1,385 @@
+.gameCard {
+  --game-color: var(--color-brand-500);
+  --game-ink: color-mix(in srgb, var(--game-color) 68%, var(--text-primary));
+  --art-turn: -8deg;
+  --art-x: 0;
+  --art-y: 0;
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 14.75rem;
+  height: 100%;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--game-color) 28%, var(--border-subtle));
+  border-radius: 0.9rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--game-color) 13%, var(--surface-card)) 0%,
+    var(--surface-card) 58%
+  );
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--game-color) 18%, transparent);
+  color: var(--text-primary);
+  padding: 1.25rem;
+  text-decoration: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.gameCard::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 0.25rem;
+  background: var(--game-color);
+  content: "";
+}
+
+.gameCard::after {
+  position: absolute;
+  z-index: -2;
+  top: -4rem;
+  right: -3.25rem;
+  width: 12rem;
+  height: 12rem;
+  border: 1px solid color-mix(in srgb, var(--game-color) 24%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--game-color) 8%, transparent);
+  content: "";
+}
+
+.gameCard:hover {
+  border-color: color-mix(in srgb, var(--game-color) 56%, var(--border-subtle));
+  box-shadow: 5px 6px 0 color-mix(in srgb, var(--game-color) 26%, transparent);
+  transform: translate(-1px, -2px);
+}
+
+.gameCard:focus-visible {
+  outline: 3px solid var(--semantic-focus);
+  outline-offset: 3px;
+}
+
+.gameCard:active {
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--game-color) 20%, transparent);
+  transform: translate(1px, 1px);
+}
+
+.cardHeader {
+  display: flex;
+  min-height: 3.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.iconTile {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid color-mix(in srgb, var(--game-color) 42%, transparent);
+  border-radius: 0.7rem;
+  background: color-mix(in srgb, var(--game-color) 14%, var(--surface-raised));
+  color: var(--game-ink);
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.artIcon {
+  width: 5.25rem;
+  height: 5.25rem;
+  margin: -0.45rem -0.55rem 0 0;
+  color: color-mix(in srgb, var(--game-color) 66%, transparent);
+  opacity: 0.72;
+  transform: translate(var(--art-x), var(--art-y)) rotate(var(--art-turn));
+  transition: color 180ms ease, opacity 180ms ease, transform 220ms cubic-bezier(0.2, 0.75, 0.3, 1);
+}
+
+.gameCard:hover .iconTile {
+  background: var(--game-color);
+  color: var(--text-primary);
+  transform: rotate(-4deg) translateY(-1px);
+}
+
+.gameCard:hover .artIcon {
+  color: var(--game-ink);
+  opacity: 0.9;
+  transform: translate(calc(var(--art-x) + 0.2rem), calc(var(--art-y) - 0.25rem)) rotate(calc(var(--art-turn) + 5deg));
+}
+
+.cardCopy {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  max-width: 17rem;
+  padding-top: 1.15rem;
+}
+
+.cardTitle {
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 2.8vw, 2rem);
+  line-height: 0.98;
+  letter-spacing: 0.035em;
+}
+
+.cardDescription {
+  margin-top: 0.65rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.playMark {
+  width: 3.5rem;
+  height: 0.22rem;
+  margin-top: 1rem;
+  background: var(--game-color);
+  opacity: 0.82;
+  transition: width 180ms ease;
+}
+
+.gameCard:hover .playMark {
+  width: 5.25rem;
+}
+
+.locked {
+  filter: saturate(0.56);
+  opacity: 0.78;
+}
+
+.lockedLabel {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--game-color) 36%, var(--border-subtle));
+  border-radius: 999px;
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  padding: 0.24rem 0.45rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.unlockCopy {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.75rem;
+  color: var(--game-ink);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.gameCard[data-game="word_match"] {
+  --game-color: var(--color-accent-500);
+  --art-turn: -14deg;
+}
+
+.gameCard[data-game="word_match"]::after {
+  border-radius: 1.75rem;
+  background: radial-gradient(circle at 28% 28%, var(--game-color) 0 0.65rem, transparent 0.72rem) 0 0 / 2rem 2rem;
+  transform: rotate(18deg);
+}
+
+.gameCard[data-game="speed_quiz"] {
+  --game-color: var(--color-quiz-orange);
+  --art-turn: 12deg;
+  --art-x: -0.2rem;
+}
+
+.gameCard[data-game="speed_quiz"]::after {
+  border-width: 0.55rem;
+  border-style: double;
+  background: transparent;
+}
+
+.gameCard[data-game="fill_blank"] {
+  --game-color: var(--color-brand-400);
+  --art-turn: 0deg;
+}
+
+.gameCard[data-game="fill_blank"]::after {
+  width: 13rem;
+  height: 8.25rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 1.35rem,
+    color-mix(in srgb, var(--game-color) 38%, transparent) 1.42rem 1.55rem
+  );
+  transform: rotate(-10deg);
+}
+
+.gameCard[data-game="audio_guess"] {
+  --game-color: var(--color-quiz-purple);
+  --art-turn: -10deg;
+  --art-y: 0.15rem;
+}
+
+.gameCard[data-game="audio_guess"]::after {
+  width: 10rem;
+  height: 11rem;
+  border: 0;
+  border-radius: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 0.65rem,
+    color-mix(in srgb, var(--game-color) 36%, transparent) 0.72rem 0.96rem,
+    transparent 1rem 1.45rem
+  );
+  transform: rotate(8deg);
+}
+
+.gameCard[data-game="typing_race"] {
+  --game-color: var(--color-quiz-blue);
+  --art-turn: 6deg;
+}
+
+.gameCard[data-game="typing_race"]::after {
+  width: 10rem;
+  height: 7.5rem;
+  border-radius: 0.85rem;
+  background: repeating-linear-gradient(90deg, transparent 0 1.2rem, color-mix(in srgb, var(--game-color) 28%, transparent) 1.25rem 1.52rem);
+  transform: rotate(-16deg);
+}
+
+.gameCard[data-game="memory"] {
+  --game-color: var(--color-brand-700);
+  --art-turn: -5deg;
+}
+
+.gameCard[data-game="memory"]::after {
+  border-radius: 1rem;
+  background: conic-gradient(
+    from 90deg,
+    color-mix(in srgb, var(--game-color) 21%, transparent) 0 25%,
+    transparent 0 50%,
+    color-mix(in srgb, var(--game-color) 15%, transparent) 0 75%,
+    transparent 0
+  );
+  transform: rotate(24deg);
+}
+
+.gameCard[data-game="hangman"] {
+  --game-color: var(--color-brand-600);
+  --art-turn: 11deg;
+  --art-x: -0.15rem;
+}
+
+.gameCard[data-game="hangman"]::after {
+  width: 9rem;
+  height: 12rem;
+  border: 0;
+  border-left: 0.42rem solid color-mix(in srgb, var(--game-color) 36%, transparent);
+  border-bottom: 0.42rem solid color-mix(in srgb, var(--game-color) 36%, transparent);
+  border-radius: 0;
+  background: transparent;
+  transform: rotate(-12deg);
+}
+
+.gameCard[data-game="spelling_bee"] {
+  --game-color: var(--color-brand-300);
+  --art-turn: -11deg;
+}
+
+.gameCard[data-game="spelling_bee"]::after {
+  clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  border: 0;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--game-color) 20%, transparent);
+  transform: rotate(14deg);
+}
+
+.gameCard[data-game="sentence_builder"] {
+  --game-color: var(--color-accent-400);
+  --art-turn: 0deg;
+  --art-x: -0.1rem;
+}
+
+.gameCard[data-game="sentence_builder"]::after {
+  width: 13rem;
+  height: 7rem;
+  border: 0;
+  border-radius: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--game-color) 32%, transparent) 0 0.24rem,
+    transparent 0.24rem 1.35rem
+  );
+  transform: rotate(-4deg);
+}
+
+.gameCard[data-game="word_search"] {
+  --game-color: var(--color-quiz-green);
+  --art-turn: 10deg;
+}
+
+.gameCard[data-game="word_search"]::after {
+  border-radius: 0.65rem;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--game-color) 24%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in srgb, var(--game-color) 24%, transparent) 1px, transparent 1px);
+  background-size: 1.1rem 1.1rem;
+  transform: rotate(9deg);
+}
+
+.gameCard[data-game="crossword"] {
+  --game-color: var(--color-brand-500);
+  --art-turn: -7deg;
+}
+
+.gameCard[data-game="crossword"]::after {
+  border: 0;
+  border-radius: 0;
+  background: conic-gradient(
+    from 90deg,
+    color-mix(in srgb, var(--game-color) 27%, transparent) 25%,
+    transparent 0 50%,
+    color-mix(in srgb, var(--game-color) 18%, transparent) 0 75%,
+    transparent 0
+  );
+  background-size: 2.1rem 2.1rem;
+  transform: rotate(-11deg);
+}
+
+@media (max-width: 39.99rem) {
+  .gameCard {
+    min-height: 13.5rem;
+    padding: 1.1rem;
+  }
+
+  .artIcon {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .cardCopy {
+    max-width: 15.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gameCard,
+  .iconTile,
+  .artIcon,
+  .playMark {
+    transition: none;
+  }
+
+  .gameCard:hover,
+  .gameCard:active,
+  .gameCard:hover .iconTile,
+  .gameCard:hover .artIcon {
+    transform: none;
+  }
+}

@@ -81,7 +81,7 @@ export function ListeningQuestionInput({
             <label
               key={option.value}
               className={cn(
-                "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus/35",
+                "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus",
                 checked ? "border-brand-500 bg-brand-600/10" : "border-line",
                 disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-line/40"
               )}
@@ -118,7 +118,7 @@ export function ListeningQuestionInput({
         <label
           key={option.value}
           className={cn(
-            "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus/35",
+            "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm text-ink focus-within:ring-2 focus-within:ring-focus",
             value === option.value ? "border-brand-500 bg-brand-600/10" : "border-line",
             disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer hover:bg-line/40"
           )}

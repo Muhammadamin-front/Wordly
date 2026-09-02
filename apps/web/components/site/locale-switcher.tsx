@@ -14,7 +14,7 @@ export function LocaleSwitcher({
   tone = "default",
 }: {
   current: Locale;
-  tone?: "default" | "dark";
+  tone?: "default" | "dark" | "home";
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -30,7 +30,11 @@ export function LocaleSwitcher({
     <div
       className={cn(
         "flex items-center gap-0.5 rounded-lg border p-0.5",
-        tone === "dark" ? "border-white/12 bg-white/5" : "border-line"
+        tone === "dark"
+          ? "border-white/12 bg-white/5"
+          : tone === "home"
+            ? "border-home-line bg-home-ink/5"
+            : "border-line"
       )}
     >
       {LOCALES.map((locale) => (
@@ -45,9 +49,13 @@ export function LocaleSwitcher({
             locale === current
               ? tone === "dark"
                 ? "bg-white text-brand-950"
+                : tone === "home"
+                  ? "bg-home-ink text-home-card"
                 : "bg-brand-600 text-white"
               : tone === "dark"
                 ? "text-white/62 hover:bg-white/10 hover:text-white"
+                : tone === "home"
+                  ? "text-home-muted hover:bg-home-ink/10 hover:text-home-ink"
                 : "text-ink-soft hover:bg-line/60 hover:text-ink"
           )}
         >

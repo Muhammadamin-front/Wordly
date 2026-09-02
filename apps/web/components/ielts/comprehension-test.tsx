@@ -246,7 +246,7 @@ export function ComprehensionTest({
               >
                 <div className="min-w-0">
                   <p className="font-semibold text-ink max-sm:text-balance sm:truncate">
-                    {item.done && <span className="mr-1 text-success">✓</span>}
+                    {item.done && <span className="mr-1 text-success-text">✓</span>}
                     {item.title}
                   </p>
                   <div className="mt-0.5 flex items-center gap-2 text-xs text-ink-soft">
@@ -299,7 +299,7 @@ export function ComprehensionTest({
                 className={cn(
                   "rounded-full px-3 py-1 text-sm font-bold tabular-nums",
                   secondsLeft < 60
-                    ? "bg-danger/10 text-danger"
+                    ? "bg-danger/10 text-danger-text"
                     : "bg-brand-600/10 text-brand-600 dark:text-brand-300"
                 )}
               >
@@ -334,8 +334,8 @@ export function ComprehensionTest({
                             }
                             className={cn(
                               "flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors",
-                              correct && "border-success bg-success/10 text-success",
-                              wrongChosen && "border-danger bg-danger/10 text-danger",
+                              correct && "border-success bg-success/10 text-success-text",
+                              wrongChosen && "border-danger bg-danger/10 text-danger-text",
                               !result && chosen && "border-brand-500 bg-brand-600/10 text-ink",
                               !result && !chosen && "border-line text-ink hover:bg-line/40",
                               result && !correct && !wrongChosen && "border-line text-ink-soft"
@@ -428,7 +428,7 @@ export function ComprehensionTest({
                           style={{ width: `${played * 100}%` }}
                         />
                       </div>
-                      <p className={cn("mt-1.5 text-[11px] leading-4", audioFailed ? "font-bold text-danger" : "text-ink-soft")}>
+                      <p className={cn("mt-1.5 text-[11px] leading-4", audioFailed ? "font-bold text-danger-text" : "text-ink-soft")}>
                         {audioFailed ? t.error : result ? t.listeningHint : t.listeningPlaysOnce}
                       </p>
                     </div>

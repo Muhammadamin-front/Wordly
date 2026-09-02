@@ -24,7 +24,7 @@ export function DeleteAccountView({ lang }: { lang: string }) {
   const [exportError, setExportError] = useState("");
   const text = copy[lang as keyof typeof copy] ?? copy.en;
 
-  if (!ready) return <main className="mx-auto w-full max-w-xl px-5 py-16" />;
+  if (!ready) return <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-xl px-5 py-16" />;
   if (!user) {
     router.replace(`/${lang}/auth/login`);
     return null;
@@ -56,21 +56,21 @@ export function DeleteAccountView({ lang }: { lang: string }) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-xl px-5 py-16">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-xl px-5 py-16">
       <div className="surface-panel rounded-2xl p-6 sm:p-8">
         <Download className="size-8 text-ink-soft" aria-hidden />
         <h2 className="mt-5 font-display text-3xl tracking-wide text-ink">{text.exportTitle}</h2>
         <p className="mt-2 text-sm leading-6 text-ink-soft">{text.exportBody}</p>
-        {exportError && <p className="mt-3 text-sm font-semibold text-danger">{exportError}</p>}
+        {exportError && <p className="mt-3 text-sm font-semibold text-danger-text">{exportError}</p>}
         <div className="mt-5"><Button variant="secondary" loading={exporting} onClick={download}>{text.exportAction}</Button></div>
       </div>
 
       <div className="mt-6 rounded-2xl border-2 border-danger/35 bg-raised p-6 shadow-[4px_5px_0_rgba(127,29,29,0.22)] sm:p-8">
-        <AlertTriangle className="size-8 text-danger" aria-hidden />
+        <AlertTriangle className="size-8 text-danger-text" aria-hidden />
         <h1 className="mt-5 font-display text-4xl tracking-wide text-ink">{text.title}</h1>
         <p className="mt-3 text-sm leading-6 text-ink-soft">{text.body}</p>
         <label className="mt-7 flex items-start gap-3 text-sm font-medium text-ink"><input className="mt-1 size-4 accent-danger" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} type="checkbox" /> {text.confirm}</label>
-        {error && <p className="mt-4 text-sm font-semibold text-danger">{error}</p>}
+        {error && <p className="mt-4 text-sm font-semibold text-danger-text">{error}</p>}
         <div className="mt-8 flex flex-wrap gap-3"><Button variant="danger" loading={loading} disabled={!confirmed} onClick={remove}>{text.remove}</Button><Button variant="secondary" onClick={() => router.back()}>{text.cancel}</Button></div>
       </div>
     </main>

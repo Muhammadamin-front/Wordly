@@ -55,7 +55,7 @@ export function WritingMasterHub({ lang }: { lang: string }) {
   const goal = user?.profile.target_band_score ?? null;
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
       <div className="flex items-center gap-2 text-brand-700">
         <PenLine className="size-5" />
         <span className="text-xs font-black uppercase tracking-wide">Master Writing</span>
@@ -120,7 +120,7 @@ export function WritingMasterHub({ lang }: { lang: string }) {
             >
               {locked && <Lock className="absolute right-4 top-4 size-4 text-ink-soft" />}
               {mastered && (
-                <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black text-success">
+                <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-[11px] font-black text-success-text">
                   <Trophy className="size-3" /> Mastered
                 </span>
               )}

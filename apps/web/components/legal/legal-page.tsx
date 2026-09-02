@@ -6,7 +6,7 @@ import { getLegalContent } from "@/lib/legal-content";
 export function LegalPage({ lang, page }: { lang: Locale; page: "privacy" | "terms" | "support" }) {
   const content = getLegalContent(lang, page);
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 py-14 sm:py-20">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl px-5 py-14 sm:py-20">
       <p className="text-xs font-black uppercase tracking-[0.16em] text-brand-600">{content.eyebrow}</p>
       <h1 className="mt-3 text-4xl font-black tracking-tight text-ink sm:text-5xl">{content.title}</h1>
       <p className="mt-5 max-w-2xl text-lg leading-8 text-ink-soft">{content.intro}</p>

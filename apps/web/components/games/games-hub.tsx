@@ -2,18 +2,21 @@
 
 import { motion } from "framer-motion";
 import {
+  AlignJustify,
   AudioLines,
   BrainCircuit,
+  CaseUpper,
   CircleDot,
   Gamepad2,
+  Grid2x2,
   Headphones,
   Keyboard,
   Lock,
   Mic2,
   Puzzle,
-  Search,
-  SpellCheck,
+  ScanSearch,
   Swords,
+  TextCursorInput,
   Timer,
   type LucideIcon,
 } from "lucide-react";
@@ -27,36 +30,22 @@ import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { FREE_GAME_TYPES, GAME_TYPES, type GameType } from "@/lib/games";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
+import styles from "./games-hub.module.css";
+
 const GAME_ICONS: Record<GameType, LucideIcon> = {
   word_match: Puzzle,
   speed_quiz: Timer,
-  fill_blank: SpellCheck,
+  fill_blank: TextCursorInput,
   audio_guess: Headphones,
   typing_race: Keyboard,
   memory: BrainCircuit,
   hangman: CircleDot,
-  spelling_bee: SpellCheck,
-  sentence_builder: Puzzle,
-  word_search: Search,
-  crossword: Gamepad2,
+  spelling_bee: CaseUpper,
+  sentence_builder: AlignJustify,
+  word_search: ScanSearch,
+  crossword: Grid2x2,
   listening: AudioLines,
   speaking: Mic2,
-};
-
-const GAME_ACCENT: Record<GameType, string> = {
-  word_match: "from-brand-400/24 via-card to-accent-400/10",
-  speed_quiz: "from-[#c88a55]/24 via-card to-brand-400/10",
-  fill_blank: "from-accent-400/24 via-card to-brand-400/10",
-  audio_guess: "from-brand-600/24 via-card to-accent-400/10",
-  typing_race: "from-accent-500/22 via-card to-brand-400/10",
-  memory: "from-brand-700/24 via-card to-accent-400/10",
-  hangman: "from-[#c88a55]/24 via-card to-brand-400/10",
-  spelling_bee: "from-brand-200/34 via-card to-accent-400/10",
-  sentence_builder: "from-accent-400/20 via-card to-brand-400/10",
-  word_search: "from-accent-500/22 via-card to-brand-400/10",
-  crossword: "from-[#c88a55]/24 via-card to-brand-400/10",
-  listening: "from-brand-600/24 via-card to-accent-400/10",
-  speaking: "from-accent-500/22 via-card to-brand-400/10",
 };
 
 export function GamesHub({
@@ -79,7 +68,7 @@ export function GamesHub({
   }, [ready, user, router, lang]);
 
   return (
-    <main className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-(--app-container-width) flex-1 px-4 py-8 sm:px-6 lg:py-10">
       <section className="surface-panel relative overflow-hidden rounded-[18px] p-5 sm:p-7">
         <span aria-hidden className="absolute -right-5 -top-6 font-display text-[10rem] leading-none tracking-wide text-brand-600/8">PLAY</span>
         <span className="icon-tile size-12 rounded-lg">
@@ -146,29 +135,31 @@ export function GamesHub({
               <Link
                 href={locked ? `/${lang}/pricing` : `/${lang}/games/${type}`}
                 aria-label={locked ? `${meta.name} — ${games.unlockPremium}` : meta.name}
-                className={`premium-card group relative flex h-full min-h-44 flex-col rounded-[14px] bg-linear-to-br ${GAME_ACCENT[type]} p-5 active:scale-[0.98] ${locked ? "opacity-70 grayscale-[0.4]" : ""}`}
+                data-game={type}
+                className={`${styles.gameCard} ${locked ? styles.locked : ""}`}
               >
                 {locked && (
-                  <span className="print-label absolute right-3 top-3 flex items-center gap-1 border-brand-950 bg-card/90 text-ink-soft">
+                  <span className={styles.lockedLabel}>
                     <Lock className="size-3" aria-hidden />
                     {games.premiumLocked}
                   </span>
                 )}
-                <div className="flex items-start justify-between gap-4">
-                  <span className="icon-tile size-12 rounded-lg">
-                    <Icon className="size-6 text-ink" aria-hidden />
+                <div className={styles.cardHeader}>
+                  <span className={styles.iconTile}>
+                    <Icon className="size-6" aria-hidden />
                   </span>
-                  {!locked && (
-                    <span className="h-1 w-14 bg-brand-500 opacity-70 transition-all group-hover:w-20" />
-                  )}
+                  <Icon className={styles.artIcon} strokeWidth={1.45} aria-hidden />
                 </div>
-                <h2 className="mt-6 font-display text-3xl tracking-wide text-ink">{meta.name}</h2>
-                <p className="mt-2 text-sm leading-6 text-ink-soft">{meta.desc}</p>
+                <div className={styles.cardCopy}>
+                  <h2 className={styles.cardTitle}>{meta.name}</h2>
+                  <p className={styles.cardDescription}>{meta.desc}</p>
+                </div>
                 {locked && (
-                  <p className="mt-auto pt-3 text-xs font-bold text-brand-600 dark:text-brand-300">
+                  <p className={styles.unlockCopy}>
                     {games.unlockPremium}
                   </p>
                 )}
+                {!locked && <span className={styles.playMark} aria-hidden />}
               </Link>
             </motion.div>
           );

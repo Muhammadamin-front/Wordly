@@ -74,7 +74,7 @@ export function ReadingView({ lang, skills }: { lang: string; skills: Dictionary
   if (passage) {
     const allAnswered = answers.every((a) => a >= 0);
     return (
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
         <button type="button" onClick={close} className="text-sm font-medium text-ink-soft hover:text-ink">
           ← {skills.reading.name}
         </button>
@@ -100,7 +100,7 @@ export function ReadingView({ lang, skills }: { lang: string; skills: Dictionary
               <p className="font-semibold text-ink">
                 {qi + 1}. {q.prompt_en}
                 {result && (
-                  <span className={cn("ml-2", result.results[qi] ? "text-success" : "text-danger")}>
+                  <span className={cn("ml-2", result.results[qi] ? "text-success-text" : "text-danger-text")}>
                     {result.results[qi] ? "✓" : "✗"}
                   </span>
                 )}
@@ -119,8 +119,8 @@ export function ReadingView({ lang, skills }: { lang: string; skills: Dictionary
                       answers[qi] === oi
                         ? result
                           ? result.results[qi]
-                            ? "border-success bg-success/10 text-success"
-                            : "border-danger bg-danger/10 text-danger"
+                            ? "border-success bg-success/10 text-success-text"
+                            : "border-danger bg-danger/10 text-danger-text"
                           : "border-brand-400 bg-brand-500/5 text-ink"
                         : "border-line bg-card text-ink hover:border-brand-400",
                       result && answers[qi] !== oi && "opacity-60"
@@ -160,7 +160,7 @@ export function ReadingView({ lang, skills }: { lang: string; skills: Dictionary
 
   // --- Passage list ---
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:px-6">
       <h1 className="text-3xl font-extrabold tracking-tight text-ink">
         📖 {skills.reading.name}
       </h1>

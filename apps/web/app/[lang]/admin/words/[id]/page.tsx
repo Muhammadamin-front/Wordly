@@ -22,7 +22,7 @@ export default async function EditWordPage({
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
       <AdminGuard lang={lang} deniedMessage={dict.admin.accessDenied} allowedRoles={["content_manager", "admin", "super_admin"]}>
-        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+        <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
           <h1 className="mb-6 text-2xl font-extrabold tracking-tight text-ink">
             {dict.admin.edit}
           </h1>

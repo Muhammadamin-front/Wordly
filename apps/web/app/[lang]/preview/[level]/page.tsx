@@ -34,7 +34,7 @@ export default async function PublicLevelPreview({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10">
         <Link
           href={`/${lang}/vocabulary`}
           className="inline-flex items-center gap-2 text-sm font-bold text-ink-soft transition-colors hover:text-ink"

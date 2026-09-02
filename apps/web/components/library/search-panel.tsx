@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { WordCarouselModal } from "@/components/library/word-carousel-modal";
 import { WordCard } from "@/components/library/word-card";
-import { WordDetailModal } from "@/components/library/word-detail-modal";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
@@ -169,6 +169,12 @@ export function SearchPanel({
     setWordDetailLoading(false);
   }, []);
 
+  const carouselWords = openWord
+    ? results?.some((word) => word.id === openWord.id)
+      ? results
+      : [openWord, ...(results ?? []).filter((word) => word.id !== openWord.id)]
+    : [];
+
   return (
     <section className="mt-8">
       <div className="relative mx-auto max-w-2xl">
@@ -177,7 +183,7 @@ export function SearchPanel({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           placeholder={t.searchAll}
-          className="h-14 w-full rounded-2xl border border-line bg-card pl-12 pr-12 text-base text-ink shadow-sm placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30"
+          className="h-14 w-full rounded-2xl border border-line bg-card pl-12 pr-12 text-base text-ink shadow-sm placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus"
         />
         {query && (
           <button
@@ -254,14 +260,16 @@ export function SearchPanel({
 
       <AnimatePresence>
         {openWord && (
-          <WordDetailModal
-            summary={openWord}
+          <WordCarouselModal
+            words={carouselWords}
+            activeWord={openWord}
             detail={wordDetail}
             loading={wordDetailLoading}
             lang={lang}
             labels={vocab}
-            added={added.has(openWord.id)}
-            onAdd={() => onAdd(openWord)}
+            addedIds={added}
+            onAdd={onAdd}
+            onSelect={onOpenWord}
             onClose={onCloseWord}
           />
         )}

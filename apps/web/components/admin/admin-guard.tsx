@@ -28,7 +28,7 @@ export function AdminGuard({
 
   if (!ready || !user) {
     return (
-      <main className="flex flex-1 items-center justify-center">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -36,7 +36,7 @@ export function AdminGuard({
 
   if (!allowedRoles.includes(user.role as StaffRole)) {
     return (
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
         <Alert tone="error">{deniedMessage}</Alert>
       </main>
     );

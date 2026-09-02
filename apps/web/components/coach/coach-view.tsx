@@ -48,7 +48,7 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
 
   if (!ready || !user) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -56,7 +56,7 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
 
   if (session && selected) {
     return (
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-2xl flex-1 px-4 sm:px-6">
         <VoiceChat
           character={selected}
           session={session}
@@ -74,7 +74,7 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
   const progressByKey = new Map(dashboard?.progress.map((p) => [p.character, p]) ?? []);
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink">🎙️ {t.title}</h1>
         <p className="mt-1 text-sm text-ink-soft">{t.subtitle}</p>
@@ -177,7 +177,7 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
               <Card key={i} className="flex flex-wrap items-center gap-x-2 gap-y-1 py-3 text-sm">
                 <span className="text-ink-soft line-through decoration-danger/60">{e.original}</span>
                 <span className="text-ink-soft">→</span>
-                <span className="font-semibold text-success">{e.correction}</span>
+                <span className="font-semibold text-success-text">{e.correction}</span>
                 {e.explanation && (
                   <span className="w-full text-xs text-ink-soft">{e.explanation}</span>
                 )}

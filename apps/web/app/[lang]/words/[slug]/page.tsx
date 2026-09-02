@@ -58,7 +58,7 @@ export default async function WordPage({
   return (
     <>
       <SiteHeader lang={lang as Locale} nav={dict.nav} />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-6">
         <Link
           href={`/${lang}/vocabulary`}
           className="text-sm font-medium text-brand-600 hover:underline dark:text-brand-300"
@@ -143,7 +143,7 @@ export default async function WordPage({
 
         {word.common_mistake && (
           <Card className="mt-5 border-warning/40 bg-warning/5">
-            <CardTitle className="text-sm text-warning">⚠️ {vocab.commonMistake}</CardTitle>
+            <CardTitle className="text-sm text-warning-text">⚠️ {vocab.commonMistake}</CardTitle>
             <p className="mt-1 text-sm text-ink-soft">{word.common_mistake}</p>
           </Card>
         )}

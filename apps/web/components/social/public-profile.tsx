@@ -49,7 +49,7 @@ export function PublicProfileView({
 
   if (error) {
     return (
-      <main className="mx-auto max-w-md flex-1 px-4 py-16">
+      <main id="main-content" tabIndex={-1} className="mx-auto max-w-md flex-1 px-4 py-16">
         <Alert tone="error">{social.invalidCode}</Alert>
       </main>
     );
@@ -57,7 +57,7 @@ export function PublicProfileView({
 
   if (!profile) {
     return (
-      <main className="flex flex-1 items-center justify-center py-20">
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
       </main>
     );
@@ -70,7 +70,7 @@ export function PublicProfileView({
   ];
 
   return (
-    <main className="mx-auto w-full max-w-md flex-1 px-4 py-10 sm:px-6">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-md flex-1 px-4 py-10 sm:px-6">
       <div className="surface-panel rounded-[18px] p-8 text-center">
         <div className="mx-auto flex size-20 items-center justify-center rounded-[18px] border-2 border-brand-950 bg-brand-600 font-display text-5xl tracking-wide text-white shadow-[4px_5px_0_#54250f]">
           {profile.display_name.charAt(0).toUpperCase()}

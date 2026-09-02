@@ -140,7 +140,7 @@ export function WritingPractice({
               )}
             >
               <span className="block text-sm font-black">{task.key === "task1" ? t.task1 : t.task2}</span>
-              <span className="hidden text-[10px] font-bold opacity-80 sm:block">{task.helper}</span>
+              <span className="hidden text-[10px] font-bold sm:block">{task.helper}</span>
             </button>
           ))}
         </div>

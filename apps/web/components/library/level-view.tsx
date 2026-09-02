@@ -16,8 +16,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { ProgressBar } from "@/components/library/progress-bar";
+import { WordCarouselModal } from "@/components/library/word-carousel-modal";
 import { WordCard } from "@/components/library/word-card";
-import { WordDetailModal } from "@/components/library/word-detail-modal";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { ApiError } from "@/lib/api";
@@ -176,7 +176,7 @@ export function LevelView({
   ];
 
   return (
-    <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-8">
+    <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-8">
       <Link
         href={`/${lang}/decks`}
         className="inline-flex items-center gap-1 text-sm font-medium text-ink-soft transition-colors hover:text-ink"
@@ -241,7 +241,7 @@ export function LevelView({
             value={query}
             onChange={(e) => onSearch(e.target.value)}
             placeholder={t.searchPlaceholder}
-            className="h-11 w-full rounded-xl border border-line bg-card pl-9 pr-4 text-sm text-ink placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-400/30"
+            className="h-11 w-full rounded-xl border border-line bg-card pl-9 pr-4 text-sm text-ink placeholder:text-ink-soft/60 transition-colors focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-focus"
           />
         </div>
         <p className="text-sm text-ink-soft">
@@ -302,14 +302,16 @@ export function LevelView({
 
       <AnimatePresence>
         {openWord && (
-          <WordDetailModal
-            summary={openWord}
+          <WordCarouselModal
+            words={words}
+            activeWord={openWord}
             detail={wordDetail}
             loading={wordDetailLoading}
             lang={lang}
             labels={vocab}
-            added={added.has(openWord.id)}
-            onAdd={() => onAdd(openWord)}
+            addedIds={added}
+            onAdd={onAdd}
+            onSelect={onOpenWord}
             onClose={onCloseWord}
           />
         )}
