@@ -31,7 +31,14 @@ export function GameLobby({
   const isOnlineMatch = state.matchmaking_status !== null;
 
   const copyCode = async () => {
-    await navigator.clipboard.writeText(state.code);
+    try {
+      await navigator.clipboard.writeText(state.code);
+    } catch {
+      // Clipboard access can be denied (permissions, non-HTTPS, some
+      // in-app browsers) — the room code stays visible on screen either
+      // way, so this must never surface as an unhandled rejection.
+      return;
+    }
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   };

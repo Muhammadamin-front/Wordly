@@ -1225,6 +1225,7 @@
     "letterSupply": "Harf zaxirasi",
     "remaining": "{count} ta so'z qoldi",
     "restricted": "Zaxira harf qo'llanmoqda",
+    "fallbackLetterUsed": "(bu harf kamayib qolgani uchun keyingi harf {letter})",
     "rules": "Qanday o'ynaladi",
     "ruleChain": "Oldingi so'zning oxirgi harfi bilan boshlang.",
     "ruleUnique": "Har bir inglizcha so'zni faqat bir marta ishlatish mumkin.",

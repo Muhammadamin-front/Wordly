@@ -180,11 +180,19 @@ export function WordChainGame({
             });
         }
         if (message.state.last_event?.kind === "word_accepted" && message.state.turn !== previousTurn) {
+          const base = message.state.last_event.challenge_completed
+            ? copy.challengeComplete
+            : copy.validWord;
           showFeedback({
             tone: "good",
-            message: message.state.last_event.challenge_completed
-              ? copy.challengeComplete
-              : copy.validWord,
+            // The server can pick a different next letter than the word's own
+            // last letter when that one is running low (see WordChainRoom.
+            // _next_letter) — "Start with the final letter" is the headline
+            // rule, but silently breaking it here would look like a bug
+            // instead of the deliberate fairness fallback it is.
+            message: message.state.last_event.fallback_used
+              ? `${base} ${template(copy.fallbackLetterUsed, { letter: message.state.current_letter })}`
+              : base,
             word: message.state.last_event.word?.toUpperCase(),
           });
         }

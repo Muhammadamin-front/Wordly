@@ -15,26 +15,52 @@ class WordChainRoomStore(Protocol):
 
 
 class MemoryWordChainRoomStore:
+    """Single-process store used in development and tests.
+
+    Tracks a real per-room version, same contract as ``RedisWordChainRoomStore``
+    (``create`` starts at 1, ``save`` requires a matching ``expected_version``
+    and bumps it). A single process has no cross-worker race to defend
+    against, but callers everywhere use ``word_chain_room_version(room)``, so
+    this store must honor that contract rather than silently accepting any
+    version — a caller that reused a stale version by mistake should see the
+    same rejection here as it would against Redis in production.
+    """
+
     def __init__(self) -> None:
         self._rooms: Dict[str, WordChainRoom] = {}
+        self._versions: Dict[str, int] = {}
 
     async def load(self, code: str) -> Optional[WordChainRoom]:
-        return self._rooms.get(code)
+        room = self._rooms.get(code)
+        if room is not None:
+            room._store_version = self._versions.get(code)  # type: ignore[attr-defined]
+        return room
 
     async def save(self, room: WordChainRoom, *, expected_version: Optional[int]) -> bool:
-        del expected_version
+        if room.code not in self._rooms or self._versions.get(room.code) != expected_version:
+            return False
+        next_version = (expected_version or 0) + 1
+        self._versions[room.code] = next_version
         self._rooms[room.code] = room
+        room._store_version = next_version  # type: ignore[attr-defined]
         return True
 
     async def create(self, room: WordChainRoom) -> bool:
         if room.code in self._rooms:
             return False
         self._rooms[room.code] = room
+        self._versions[room.code] = 1
+        room._store_version = 1  # type: ignore[attr-defined]
         return True
 
     async def delete(self, code: str, *, expected_version: Optional[int] = None) -> bool:
-        del expected_version
-        return self._rooms.pop(code, None) is not None
+        if code not in self._rooms:
+            return False
+        if expected_version is not None and self._versions.get(code) != expected_version:
+            return False
+        self._rooms.pop(code, None)
+        self._versions.pop(code, None)
+        return True
 
 
 class RedisWordChainRoomStore:
