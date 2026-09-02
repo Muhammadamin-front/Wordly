@@ -356,7 +356,13 @@
 
 .tableCenter {
   position: relative;
-  z-index: 1;
+  /* Above .seat (z-index: 3) — a seat near the top/bottom of the circular
+     layout (seatPosition's y-radius is 34%, deliberately less than the
+     tableCenter's own vertical extent so labels stay clear of the stage
+     edge on narrow screens) geometrically overlaps this block for several
+     player counts. It must never cover the timer, the one piece of state
+     a player cannot afford to lose sight of mid-turn. */
+  z-index: 5;
   display: grid;
   width: min(72%, 30rem);
   justify-items: center;
@@ -395,7 +401,9 @@
   border: 2px solid #a9d0c7;
   border-radius: 50%;
   color: #fff5dc;
-  background: rgb(7 41 35 / 0.82);
+  /* Solid, not translucent: a seat can sit directly behind this circle (see
+     .tableCenter's z-index note) and must not show through the countdown. */
+  background: #072923;
   font-variant-numeric: tabular-nums;
   font-size: 1.65rem;
   font-weight: 900;
