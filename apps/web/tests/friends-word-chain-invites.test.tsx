@@ -56,16 +56,27 @@ describe("FriendsView Word Chain invitations", () => {
     render(<FriendsView lang="en" social={en.social} />);
 
     expect(await screen.findByText(en.social.wordChainInvites)).toBeVisible();
-    expect(screen.getByText(en.social.wordChainInviteFrom)).toBeVisible();
-    expect(screen.getByRole("link", { name: "Invite to Word Chain: Aziz" })).toHaveAttribute(
-      "href",
-      "/en/multiplayer/word-chain?invite=friend-1"
-    );
+    // The heading renders during the loading state too (friends-view.tsx
+    // shows the section while wordChainInvitesLoading is true), so the row
+    // itself has to be awaited separately rather than queried synchronously
+    // off the back of the heading.
+    expect(await screen.findByText(en.social.wordChainInviteFrom)).toBeVisible();
+    expect(
+      await screen.findByRole("link", { name: "Invite to Word Chain: Aziz" })
+    ).toHaveAttribute("href", "/en/multiplayer/word-chain?invite=friend-1");
 
     await userEvent.click(screen.getByRole("button", { name: en.social.wordChainInviteJoin }));
     await waitFor(() =>
       expect(push).toHaveBeenCalledWith("/en/multiplayer/word-chain?join=CHAIN1")
     );
-    await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(11));
+    // Assert the accept call actually happened, rather than a total request
+    // count — that number moves with any unrelated fetch in this view.
+    expect(
+      fetchMock.mock.calls.some(
+        ([input, init]) =>
+          String(input).endsWith("/word-chain/invitations/invite-1/accept") &&
+          (init as RequestInit | undefined)?.method === "POST"
+      )
+    ).toBe(true);
   });
 });
