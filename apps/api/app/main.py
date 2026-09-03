@@ -67,7 +67,6 @@ SECURITY_HEADERS = {
 async def lifespan(app: FastAPI):
     settings = get_settings()
     settings.validate_runtime()
-    app.state.request_latency = LatencyWindow()
     init_engine()
     if settings.REDIS_URL:
         app.state.rate_limit_storage = RedisStorage(settings.REDIS_URL)
@@ -107,6 +106,10 @@ def create_app() -> FastAPI:
         docs_url="/docs" if not is_prod else None,
         redoc_url=None,
     )
+    # Set here rather than in the lifespan: the middleware below writes to it
+    # on every request, and an app built without startup (as the tests do)
+    # would otherwise 500 on the first one.
+    app.state.request_latency = LatencyWindow()
 
     app.add_middleware(
         CORSMiddleware,

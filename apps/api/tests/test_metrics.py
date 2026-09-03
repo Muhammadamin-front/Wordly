@@ -33,3 +33,13 @@ async def test_metrics_reports_the_numbers_worth_watching(client, monkeypatch):
         "vocora_jobs_running",
     ):
         assert metric in body
+
+
+async def test_requests_work_without_a_lifespan_startup(client):
+    """The latency window is part of the app, not of a successful startup.
+
+    It used to be created in the lifespan, which the test client never runs,
+    so the timing middleware raised on every single request and the whole
+    suite went red. Any endpoint answering here proves it is set at
+    construction instead."""
+    assert (await client.get("/health")).status_code == 200
