@@ -16,13 +16,14 @@ from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.ielts_mock import MOCK_SKILLS
 from app.models.user import User
+from app.schemas.ielts import MockQuotaOut
 from app.schemas.ielts_mock import (
     LegCompleteRequest,
     MockSessionCreate,
     MockSessionListItem,
     MockSessionOut,
 )
-from app.services import ielts_mock, listening_audio, tts
+from app.services import coins, ielts_mock, listening_audio, subscriptions, tts
 from app.services.plans import COIN_COST_MOCK_ATTEMPT
 
 router = APIRouter(
@@ -65,6 +66,23 @@ async def start_session(
     session = await ielts_mock.create_session(db, user, track=payload.track)
     await db.commit()
     return session
+
+
+@router.get("/quota", response_model=MockQuotaOut)
+async def mock_quota(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """What starting a mock costs this learner right now, so the answer is
+    on the card instead of arriving as a 402 after they commit two hours."""
+    sub = await subscriptions.active_subscription(db, user.id)
+    premium = sub is not None
+    return MockQuotaOut(
+        free_attempt_available=not await ielts_mock.used_free_monthly_mock(db, user),
+        premium=premium,
+        coin_cost=COIN_COST_MOCK_ATTEMPT,
+        coin_balance=await coins.balance(db, user.id),
+    )
 
 
 @router.get("/sessions", response_model=list[MockSessionListItem])

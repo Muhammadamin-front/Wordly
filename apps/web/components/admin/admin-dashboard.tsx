@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Activity, BookOpen, ShieldCheck, UsersRound } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -18,6 +18,7 @@ import {
   type AdminUser,
   type AiReport,
   type GrantablePlanCode,
+  type ManualPaymentRow,
   type StaffRole,
 } from "@/lib/admin-panel";
 import { formatSom } from "@/lib/billing";
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { useModalFocus } from "@/lib/use-modal-focus";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
-type Tab = "analytics" | "reports" | "users" | "audit";
+type Tab = "analytics" | "reports" | "users" | "payments2" | "audit";
 type UserAction = { user: AdminUser; kind: "ban" | "unban" | "role"; role?: StaffRole };
 
 export function AdminDashboard({
@@ -44,7 +45,10 @@ export function AdminDashboard({
   const canManageContent = role === "admin" || role === "super_admin";
   const isSupportOnly = role === "support";
   const tabs = useMemo(
-    () => (isSupportOnly ? (["users"] as Tab[]) : (["analytics", "reports", "users", "audit"] as Tab[])),
+    () =>
+      isSupportOnly
+        ? (["users"] as Tab[])
+        : (["analytics", "reports", "users", "payments2", "audit"] as Tab[]),
     [isSupportOnly]
   );
 
@@ -93,6 +97,7 @@ export function AdminDashboard({
           {activeTab === "analytics" && <AnalyticsTab t={t} />}
           {activeTab === "reports" && <ReportsTab t={t} />}
           {activeTab === "users" && <UsersTab t={t} lang={lang} role={role} />}
+          {activeTab === "payments2" && <ManualPaymentsTab t={t} lang={lang} />}
           {activeTab === "audit" && <AuditTab t={t} lang={lang} />}
         </section>
       </main>
@@ -365,6 +370,79 @@ function SubscriptionActions({
 }
 
 function Stat({ label, value }: { label: string; value: string }) { return <div className="rounded-lg bg-hover p-3"><p className="text-lg font-extrabold text-ink">{value}</p><p className="mt-1 text-[11px] font-bold uppercase tracking-wide text-ink-soft">{label}</p></div>; }
+
+/** The card-transfer queue: who says they paid, for which plan, and how long
+ *  they have been waiting. Resolving a row only closes the ticket — granting
+ *  the subscription stays the separate, audited action in the user drawer, so
+ *  a mis-click here never hands out access. */
+function ManualPaymentsTab({ t, lang }: { t: Dictionary["adminPanel"]; lang: string }) {
+  const [rows, setRows] = useState<ManualPaymentRow[] | null>(null);
+  const [error, setError] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const load = useCallback(() => {
+    adminApi
+      .manualPayments()
+      .then((data) => {
+        setRows(data);
+        setError(false);
+      })
+      .catch(() => setError(true));
+  }, []);
+
+  useEffect(load, [load]);
+
+  async function resolve(id: string, status: "activated" | "rejected") {
+    setBusyId(id);
+    try {
+      await adminApi.resolveManualPayment(id, status);
+      load();
+    } catch {
+      setError(true);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  if (error) return <Alert tone="error">{t.loadingError}</Alert>;
+  if (!rows) return <Spinner />;
+  if (rows.length === 0) return <p className="text-sm text-ink-soft">{t.noPendingPayments}</p>;
+
+  return (
+    <ul className="divide-y divide-line rounded-lg border border-line">
+      {rows.map((row) => (
+        <li key={row.id} className="flex flex-wrap items-center justify-between gap-3 p-4">
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-ink">
+              {row.display_name} · {row.email}
+            </p>
+            <p className="mt-0.5 text-xs text-ink-soft">
+              <span className="font-mono font-bold">{row.reference}</span> · {row.plan_code} ·{" "}
+              {formatSom(row.amount_som)} {t.som} · {formatApiDate(row.created_at, lang) ?? "—"}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <Button
+              size="sm"
+              loading={busyId === row.id}
+              onClick={() => void resolve(row.id, "activated")}
+            >
+              {t.markActivated}
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              disabled={busyId === row.id}
+              onClick={() => void resolve(row.id, "rejected")}
+            >
+              {t.markRejected}
+            </Button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 function AuditTab({ t, lang }: { t: Dictionary["adminPanel"]; lang: string }) {
   const [items, setItems] = useState<AdminAuditLog[] | null>(null);

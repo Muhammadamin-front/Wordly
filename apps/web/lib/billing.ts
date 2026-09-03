@@ -45,7 +45,28 @@ export interface ReferralInfo {
   reward_days: number;
 }
 
+export interface ManualPayment {
+  reference: string;
+  plan_code: string;
+  amount_som: number;
+  status: string;
+  created_at: string;
+}
+
 export const billingApi = {
+  /** Records that the learner says they transferred the price to the card.
+   *  Grants nothing — staff activate by hand — but gives them a reference
+   *  and gives us a queue. */
+  requestManualPayment: (planCode: string) =>
+    apiFetch<ManualPayment>("/billing/manual-payment", {
+      method: "POST",
+      body: { plan_code: planCode },
+      auth: true,
+    }),
+
+  manualPayment: () =>
+    apiFetch<ManualPayment | null>("/billing/manual-payment", { auth: true }),
+
   plans: () => apiFetch<{ plans: Plan[] }>("/billing/plans"),
 
   status: () => apiFetch<BillingStatus>("/billing/status"),

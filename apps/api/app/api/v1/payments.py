@@ -1,4 +1,5 @@
 import re
+import secrets
 from typing import Optional
 from urllib.parse import urljoin, urlparse
 
@@ -9,8 +10,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_current_user
 from app.core.config import get_settings
+from app.core.rate_limit import rate_limit
 from app.db.session import get_db
 from app.models.billing import Payment
+from app.models.manual_payment import MANUAL_PAYMENT_PENDING, ManualPaymentRequest
 from app.models.user import User
 from app.schemas.billing import (
     BillingStatusOut,
@@ -19,6 +22,8 @@ from app.schemas.billing import (
     CoinPackOut,
     CoinPacksOut,
     CoinTransactionOut,
+    ManualPaymentCreate,
+    ManualPaymentOut,
     MessageOut,
     PlanOut,
     PlansOut,
@@ -105,6 +110,83 @@ async def plans():
             for p in public_plans()
         ]
     )
+
+
+@router.post(
+    "/manual-payment",
+    response_model=ManualPaymentOut,
+    status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(rate_limit("manual_payment", "10/3600"))],
+)
+async def request_manual_payment(
+    payload: ManualPaymentCreate,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Records that a learner says they have transferred the price to the
+    card. It grants nothing — staff still activate the subscription by hand
+    after checking the receipt — but it turns an invisible Telegram message
+    into a tracked request with a reference the learner can quote."""
+    plan = get_plan(payload.plan_code)
+    if plan is None or plan.code not in SELLABLE_PLAN_CODES:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Unknown plan")
+
+    existing = await db.scalar(
+        select(ManualPaymentRequest).where(
+            ManualPaymentRequest.user_id == user.id,
+            ManualPaymentRequest.status == MANUAL_PAYMENT_PENDING,
+        )
+    )
+    if existing is not None:
+        # Pressing the button twice must not open a second ticket; the first
+        # one is still what staff are working from.
+        return _manual_payment_out(existing)
+
+    request_row = ManualPaymentRequest(
+        user_id=user.id,
+        plan_code=plan.code,
+        amount_som=plan.price_som,
+        reference=_manual_payment_reference(),
+    )
+    db.add(request_row)
+    await db.commit()
+    await db.refresh(request_row)
+    return _manual_payment_out(request_row)
+
+
+@router.get("/manual-payment", response_model=Optional[ManualPaymentOut])
+async def latest_manual_payment(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """The learner's open request, so the pricing page can show "received,
+    waiting for activation" instead of the payment instructions again."""
+    row = await db.scalar(
+        select(ManualPaymentRequest)
+        .where(
+            ManualPaymentRequest.user_id == user.id,
+            ManualPaymentRequest.status == MANUAL_PAYMENT_PENDING,
+        )
+        .order_by(ManualPaymentRequest.created_at.desc())
+    )
+    return _manual_payment_out(row) if row is not None else None
+
+
+def _manual_payment_out(row: ManualPaymentRequest) -> ManualPaymentOut:
+    return ManualPaymentOut(
+        reference=row.reference,
+        plan_code=row.plan_code,
+        amount_som=row.amount_som,
+        status=row.status,
+        created_at=row.created_at,
+    )
+
+
+def _manual_payment_reference() -> str:
+    """Short and unambiguous when read aloud or typed into Telegram: no
+    vowels (so it spells nothing), no 0/O or 1/I."""
+    alphabet = "ACDEFGHJKLMNPQRTUVWXY2345679"
+    return "VP-" + "".join(secrets.choice(alphabet) for _ in range(6))
 
 
 @router.get("/coin-packs", response_model=CoinPacksOut)

@@ -1001,7 +1001,14 @@
     "manualPaymentBody": "Оплата через Payme и Click пока не подключена. Пока что: откройте номер карты ниже, переведите стоимость тарифа и отправьте скриншот чека в Telegram {handle} — после подтверждения Premium активируется вручную.",
     "manualPaymentReveal": "Показать номер карты",
     "manualPaymentCopy": "Копировать",
-    "manualPaymentCopied": "Скопировано!"
+    "manualPaymentCopied": "Скопировано!",
+    "manualPaymentSla": "Проверяем перевод в течение 24 часов — обычно активируем за 1–2 часа.",
+    "manualPaymentDone": "Я оплатил",
+    "manualPaymentPending": "Заявка принята",
+    "manualPaymentPendingBody": "Ваш номер: {reference}. Отправьте скриншот в Telegram и укажите этот номер. Сообщим после активации.",
+    "manualPaymentTelegramText": "Здравствуйте! Оплатил {amount} сум за тариф {plan}. Номер заявки: {reference}",
+    "manualPaymentSelectPlan": "Сначала выберите тариф",
+    "manualPaymentError": "Заявка не отправлена. Попробуйте ещё раз."
   },
   "teacher": {
     "title": "Панель учителя",
@@ -1104,7 +1111,13 @@
     "revoke": "Отозвать",
     "reasonRequired": "Для отзыва подписки нужна причина.",
     "reasonForRecord": "Причина (сохраняется в журнале)",
-    "grantDefaultReason": "Выдано из панели администратора"
+    "grantDefaultReason": "Выдано из панели администратора",
+    "payments2": "Платежи",
+    "noPendingPayments": "Ожидающих платежей нет",
+    "markActivated": "Активирован",
+    "markRejected": "Отклонить",
+    "reference": "Номер",
+    "waiting": "Ожидает"
   },
   "social": {
     "friends": "Друзья",

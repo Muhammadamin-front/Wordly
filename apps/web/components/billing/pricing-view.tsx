@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Check, Copy, CreditCard, Send, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Clock3, Copy, CreditCard, Send, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -16,6 +16,7 @@ import {
   formatSom,
   type BillingStatus,
   type PaymentProvider,
+  type ManualPayment,
   type Plan,
   type Subscription,
 } from "@/lib/billing";
@@ -485,7 +486,11 @@ function CheckoutDialog({
           </button>
         )}
 
-        <PaymentMethods t={t} />
+        <PaymentMethods
+          t={t}
+          plan={plan}
+          planLabel={planName(tierOf(plan.code), plan.code.split("_")[1] as Duration, t)}
+        />
       </section>
     </div>
   );
@@ -495,9 +500,59 @@ function CheckoutDialog({
  *  and Click are shown deliberately, marked unavailable, rather than hidden:
  *  learners recognize them and would otherwise assume the site takes no
  *  Uzbek payment at all. */
-function PaymentMethods({ t }: { t: Dictionary["billing"] }) {
+function PaymentMethods({
+  t,
+  plan,
+  planLabel,
+}: {
+  t: Dictionary["billing"];
+  /** Present only inside the checkout dialog, where a plan has been chosen:
+   *  it turns the generic instructions into a tracked request for that plan. */
+  plan?: Plan;
+  planLabel?: string;
+}) {
   const [showCard, setShowCard] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [pending, setPending] = useState<ManualPayment | null>(null);
+  const [sending, setSending] = useState(false);
+  const [requestError, setRequestError] = useState(false);
+
+  // An open request outranks the instructions: someone who already pressed
+  // "I have paid" needs their reference, not the card number again.
+  useEffect(() => {
+    let cancelled = false;
+    billingApi
+      .manualPayment()
+      .then((row) => {
+        if (!cancelled) setPending(row);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  async function declarePayment() {
+    if (!plan || sending) return;
+    setSending(true);
+    setRequestError(false);
+    try {
+      setPending(await billingApi.requestManualPayment(plan.code));
+    } catch {
+      setRequestError(true);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  const telegramHref = pending
+    ? `${TELEGRAM_URL}?text=${encodeURIComponent(
+        t.manualPaymentTelegramText
+          .replace("{plan}", planLabel ?? pending.plan_code)
+          .replace("{amount}", formatSom(pending.amount_som))
+          .replace("{reference}", pending.reference)
+      )}`
+    : TELEGRAM_URL;
 
   async function copyCard() {
     try {
@@ -530,7 +585,7 @@ function PaymentMethods({ t }: { t: Dictionary["billing"] }) {
         ))}
 
         <a
-          href={TELEGRAM_URL}
+          href={telegramHref}
           target="_blank"
           rel="noreferrer noopener"
           className="flex items-center gap-3 rounded-xl border border-[rgba(143,195,185,0.45)] bg-[rgba(143,195,185,0.1)] p-3 transition-colors hover:bg-[rgba(143,195,185,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
@@ -572,6 +627,42 @@ function PaymentMethods({ t }: { t: Dictionary["billing"] }) {
             <CreditCard className="size-3.5" aria-hidden />
             {t.manualPaymentReveal}
           </button>
+        )}
+
+        {/* How long this takes, said before the money moves rather than left
+            to the learner to wonder about. */}
+        <p className="mt-3 flex items-start gap-2 text-[11px] leading-relaxed text-[rgba(243,230,203,0.72)]">
+          <Clock3 className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+          {t.manualPaymentSla}
+        </p>
+
+        {pending ? (
+          <div className="mt-3 rounded-xl border border-[rgba(143,195,185,0.45)] bg-[rgba(143,195,185,0.1)] p-3">
+            <p className="flex items-center gap-1.5 text-sm font-bold text-brand-50">
+              <Check className="size-4 shrink-0 text-[#8fc3b9]" aria-hidden />
+              {t.manualPaymentPending}
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-[rgba(243,230,203,0.78)]">
+              {t.manualPaymentPendingBody.replace("{reference}", pending.reference)}
+            </p>
+          </div>
+        ) : (
+          plan && (
+            <button
+              type="button"
+              onClick={() => void declarePayment()}
+              aria-busy={sending}
+              disabled={sending}
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-lg border border-[#f4a57e] bg-[#e37b4d] px-4 text-sm font-black text-[#21120c] transition-transform hover:-translate-y-0.5 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            >
+              <Check className="size-4" aria-hidden />
+              {t.manualPaymentDone}
+            </button>
+          )
+        )}
+
+        {requestError && (
+          <p className="mt-2 text-[11px] font-bold text-[#f4a57e]">{t.manualPaymentError}</p>
         )}
       </div>
     </section>

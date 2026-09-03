@@ -1001,7 +1001,14 @@
     "manualPaymentBody": "Payme va Click orqali to'lov hali yoqilmagan. Shu vaqt ichida: quyidagi karta raqamini oching, tarif narxini o'tkazing va chek skrinshotini Telegramda {handle} ga yuboring — tasdiqlangach Premium qo'lda faollashtiriladi.",
     "manualPaymentReveal": "Karta raqamini ko'rsatish",
     "manualPaymentCopy": "Nusxalash",
-    "manualPaymentCopied": "Nusxalandi!"
+    "manualPaymentCopied": "Nusxalandi!",
+    "manualPaymentSla": "To'lovni 24 soat ichida tekshiramiz — odatda 1–2 soatda faollashadi.",
+    "manualPaymentDone": "To'lov qildim",
+    "manualPaymentPending": "So'rovingiz qabul qilindi",
+    "manualPaymentPendingBody": "Raqamingiz: {reference}. Skrinshotni Telegramga yuboring — shu raqamni ham yozing. Faollashtirgach xabar beramiz.",
+    "manualPaymentTelegramText": "Salom! {plan} rejasi uchun {amount} so'm o'tkazdim. So'rov raqami: {reference}",
+    "manualPaymentSelectPlan": "Avval rejani tanlang",
+    "manualPaymentError": "So'rov yuborilmadi. Qayta urinib ko'ring."
   },
   "teacher": {
     "title": "O'qituvchi paneli",
@@ -1104,7 +1111,13 @@
     "revoke": "Bekor qilish",
     "reasonRequired": "Obunani bekor qilish uchun sabab kiritish shart.",
     "reasonForRecord": "Sabab (audit jurnalida saqlanadi)",
-    "grantDefaultReason": "Admin panelidan berildi"
+    "grantDefaultReason": "Admin panelidan berildi",
+    "payments2": "To'lovlar",
+    "noPendingPayments": "Kutayotgan to'lov yo'q",
+    "markActivated": "Faollashtirildi",
+    "markRejected": "Rad etish",
+    "reference": "Raqam",
+    "waiting": "Kutmoqda"
   },
   "social": {
     "friends": "Do'stlar",

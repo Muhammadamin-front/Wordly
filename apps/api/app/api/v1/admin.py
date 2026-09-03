@@ -13,6 +13,7 @@ from app.db.session import get_db
 from app.models.ai import AiReport
 from app.models.audit import AdminAuditLog
 from app.models.billing import Payment, Subscription
+from app.models.manual_payment import MANUAL_PAYMENT_PENDING, ManualPaymentRequest
 from app.models.flashcards import Card, ReviewLog
 from app.models.user import OneTimeToken, Profile, RefreshToken, User
 from app.schemas.admin import (
@@ -25,8 +26,10 @@ from app.schemas.admin import (
     AdminUserOut,
     AdminUserPage,
     AiReportOut,
-    MessageOut,
+    ManualPaymentResolve,
+    ManualPaymentRowOut,
     ManualSubscriptionGrant,
+    MessageOut,
     RoleUpdate,
 )
 from app.services import auth as auth_service
@@ -381,6 +384,69 @@ async def set_role(
     )
     await db.commit()
     return MessageOut(message="Role updated")
+
+
+@router.get(
+    "/manual-payments",
+    response_model=list[ManualPaymentRowOut],
+    dependencies=[Depends(require_admin)],
+)
+async def list_manual_payments(db: AsyncSession = Depends(get_db)):
+    """Learners who pressed "I have paid" and are waiting. Oldest first —
+    the person who has been waiting longest is the one to serve next."""
+    rows = await db.execute(
+        # Profile is joined rather than lazy-loaded per row: a lazy access
+        # inside an async session raises, and this is a list view.
+        select(ManualPaymentRequest, User.email, Profile.display_name)
+        .join(User, User.id == ManualPaymentRequest.user_id)
+        .join(Profile, Profile.user_id == User.id)
+        .where(ManualPaymentRequest.status == MANUAL_PAYMENT_PENDING)
+        .order_by(ManualPaymentRequest.created_at)
+        .limit(200)
+    )
+    return [
+        ManualPaymentRowOut(
+            id=row.id,
+            user_id=row.user_id,
+            email=email,
+            display_name=display_name,
+            reference=row.reference,
+            plan_code=row.plan_code,
+            amount_som=row.amount_som,
+            created_at=row.created_at,
+        )
+        for row, email, display_name in rows.all()
+    ]
+
+
+@router.post("/manual-payments/{request_id}/resolve", response_model=MessageOut)
+async def resolve_manual_payment(
+    request_id: UUID,
+    payload: ManualPaymentResolve,
+    request: Request,
+    admin: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Closes the ticket. It grants nothing by itself — the subscription is
+    granted through the audited endpoint below — so a mistake here costs a
+    row's status, never a learner's access."""
+    row = await db.get(ManualPaymentRequest, request_id)
+    if row is None or row.status != MANUAL_PAYMENT_PENDING:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request not found")
+    row.status = payload.status
+    row.resolved_at = utcnow()
+    row.resolved_by = admin.id
+    await record_admin_action(
+        db,
+        actor=admin,
+        request=request,
+        action="manual_payment.resolve",
+        target_type="manual_payment",
+        target_id=str(row.id),
+        new_value={"status": payload.status, "reference": row.reference},
+    )
+    await db.commit()
+    return MessageOut(message="Request resolved")
 
 
 @router.post("/users/{user_id}/subscription/grant", response_model=MessageOut)

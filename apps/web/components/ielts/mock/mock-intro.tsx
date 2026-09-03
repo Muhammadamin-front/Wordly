@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import {
   BookOpen,
   Clock3,
+  Coins,
   Headphones,
   Lock,
   Mic2,
@@ -16,7 +17,8 @@ import { useState } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { BAND_COLOR } from "@/lib/ielts";
-import type { MockSessionListItem, MockTrack } from "@/lib/ielts-mock";
+import { ieltsMockApi, type MockSessionListItem, type MockTrack } from "@/lib/ielts-mock";
+import { useApi } from "@/lib/use-api";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -28,6 +30,62 @@ const SKILL_ROW = [
   { key: "legWriting", icon: PenLine },
   { key: "legSpeaking", icon: Mic2 },
 ] as const;
+
+const COST_COPY: Record<string, { free: string; premium: string; coins: string; short: string }> = {
+  uz: {
+    free: "Bu oy: 1 ta bepul mock qoldi",
+    premium: "Premium: cheksiz mock",
+    coins: "Bu oygi bepul mock ishlatilgan · {cost} tanga",
+    short: "Tangalar yetarli emas ({balance}/{cost})",
+  },
+  ru: {
+    free: "В этом месяце: 1 бесплатный пробный",
+    premium: "Premium: без ограничений",
+    coins: "Бесплатный за месяц использован · {cost} монет",
+    short: "Монет недостаточно ({balance}/{cost})",
+  },
+  en: {
+    free: "This month: 1 free mock left",
+    premium: "Premium: unlimited mocks",
+    coins: "Free monthly mock used · {cost} coins",
+    short: "Not enough coins ({balance}/{cost})",
+  },
+};
+
+/** The price of pressing Start, stated up front. Previously a free learner
+ *  who had already used the month's attempt found out through a 402 after
+ *  choosing a track. */
+function MockCostLine({ lang }: { lang: string }) {
+  const { data } = useApi("ielts:mock-quota", () => ieltsMockApi.quota());
+  if (!data) return null;
+
+  const copy = COST_COPY[lang] ?? COST_COPY.en;
+  if (data.premium) return <CostText>{copy.premium}</CostText>;
+  if (data.free_attempt_available) return <CostText>{copy.free}</CostText>;
+
+  const affordable = data.coin_balance >= data.coin_cost;
+  const text = affordable
+    ? copy.coins.replace("{cost}", String(data.coin_cost))
+    : copy.short
+        .replace("{balance}", String(data.coin_balance))
+        .replace("{cost}", String(data.coin_cost));
+  return <CostText warn={!affordable}>{text}</CostText>;
+}
+
+function CostText({ children, warn }: { children: React.ReactNode; warn?: boolean }) {
+  return (
+    <p
+      className={
+        warn
+          ? "mt-5 inline-flex items-center gap-2 rounded-lg border border-danger/40 bg-danger/8 px-3 py-2 text-xs font-bold text-danger-text"
+          : "mt-5 inline-flex items-center gap-2 rounded-lg border border-line bg-card px-3 py-2 text-xs font-bold text-ink-soft"
+      }
+    >
+      <Coins className="size-3.5 shrink-0" aria-hidden />
+      {children}
+    </p>
+  );
+}
 
 export function MockIntro({
   t,
@@ -144,9 +202,12 @@ export function MockIntro({
               badge={t.comingSoon}
             />
           </div>
+          {/* What this attempt costs, before two hours are committed to it. */}
+          <MockCostLine lang={lang} />
+
           <Button
             size="lg"
-            className="mt-5 w-full sm:w-auto"
+            className="mt-4 w-full sm:w-auto"
             loading={starting}
             onClick={() => onStart(track)}
           >

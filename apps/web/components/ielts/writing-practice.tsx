@@ -6,6 +6,8 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { ieltsApi, type WritingScore, type WritingTask } from "@/lib/ielts";
+import { useApi } from "@/lib/use-api";
+import { WritingQuotaBadge } from "./quota-badge";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { WritingFeedbackReport } from "./writing-feedback-report";
@@ -66,6 +68,11 @@ export function WritingPractice({
   const [loadError, setLoadError] = useState(false);
   const locale = lang === "uz" || lang === "ru" ? lang : "en";
   const copy = COMPOSER_COPY[locale];
+  // Read before the learner writes, and revalidated after each submission so
+  // the counter matches what the server will enforce next time.
+  const { data: quota, mutate: mutateQuota } = useApi("ielts:writing-quota", () =>
+    ieltsApi.writingQuota()
+  );
   const taskOptions = [
     { key: "task1" as const, helper: copy.task1Helper },
     { key: "task2" as const, helper: copy.task2Helper },
@@ -85,6 +92,7 @@ export function WritingPractice({
     setError(null);
     try {
       setScore(await ieltsApi.scoreWriting(taskType, currentTask.prompt, essay, lang));
+      void mutateQuota();
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 429
@@ -181,6 +189,17 @@ export function WritingPractice({
         <Alert tone="error" className="mt-4">
           {error}
         </Alert>
+      )}
+
+      {quota && (
+        <WritingQuotaBadge
+          lang={locale}
+          className="mt-4"
+          used={quota.used}
+          limit={quota.limit}
+          remaining={quota.remaining}
+          period={quota.period}
+        />
       )}
 
       <label htmlFor="ielts-writing-response" className="sr-only">

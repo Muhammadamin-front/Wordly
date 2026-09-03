@@ -91,6 +91,17 @@ export const GRANTABLE_PLAN_CODES: GrantablePlanCode[] = [
   "max_monthly", "max_quarterly", "max_yearly",
 ];
 
+export interface ManualPaymentRow {
+  id: string;
+  user_id: string;
+  email: string;
+  display_name: string;
+  reference: string;
+  plan_code: string;
+  amount_som: number;
+  created_at: string;
+}
+
 export const adminApi = {
   analytics: () => apiFetch<AdminAnalytics>("/admin/analytics", { auth: true }),
 
@@ -134,6 +145,17 @@ export const adminApi = {
     }),
 
   auditLogs: () => apiFetch<AdminAuditLog[]>("/admin/audit-logs", { auth: true }),
+
+  /** Learners who declared a card transfer and are waiting for activation. */
+  manualPayments: () =>
+    apiFetch<ManualPaymentRow[]>("/admin/manual-payments", { auth: true }),
+
+  resolveManualPayment: (id: string, status: "activated" | "rejected") =>
+    apiFetch<{ message: string }>(`/admin/manual-payments/${id}/resolve`, {
+      method: "POST",
+      body: { status },
+      auth: true,
+    }),
 
   // Both super-admin only, mirroring the backend's require_super_admin on
   // these two routes — a plain "admin" cannot grant/revoke, only ban.

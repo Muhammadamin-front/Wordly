@@ -188,6 +188,26 @@ class WritingAnalysisOut(BaseModel):
     next_steps: List[str]
 
 
+class WritingQuotaOut(BaseModel):
+    """What the essay composer shows before the learner starts writing, so a
+    limit is never discovered by hitting it."""
+
+    # "week" on the free plan, "day" on a paid one — the two tiers are capped
+    # over different windows.
+    period: Literal["week", "day"]
+    limit: int
+    used: int
+    remaining: int
+    premium: bool
+
+
+class MockQuotaOut(BaseModel):
+    free_attempt_available: bool
+    premium: bool
+    coin_cost: int
+    coin_balance: int
+
+
 class QueuedJobOut(BaseModel):
     """202 response for work handed to the background worker; poll
     GET /jobs/{job_id} for the result."""

@@ -19,6 +19,14 @@ export interface IeltsHistoryItem {
   created_at: string;
 }
 
+export interface WritingQuota {
+  period: "week" | "day";
+  limit: number;
+  used: number;
+  remaining: number;
+  premium: boolean;
+}
+
 export interface IeltsOverview {
   best_bands: Record<string, number>;
   recent: IeltsHistoryItem[]; // newest first
@@ -233,6 +241,10 @@ export interface BankItem {
 
 export const ieltsApi = {
   overview: () => apiFetch<IeltsOverview>("/ielts/overview", { auth: true }),
+
+  /** The essay allowance, shown before the learner writes rather than
+   *  discovered when they submit. */
+  writingQuota: () => apiFetch<WritingQuota>("/ielts/writing/quota", { auth: true }),
 
   bank: (kind: ComprehensionKind) =>
     apiFetch<BankItem[]>(`/ielts/${kind}/bank`, { auth: true }),

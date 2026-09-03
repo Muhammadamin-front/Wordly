@@ -1001,7 +1001,14 @@
     "manualPaymentBody": "Card payment through Payme and Click is not switched on yet. In the meantime: show the card number below, transfer your plan's price, then send the receipt screenshot to {handle} on Telegram — your Premium is activated by hand as soon as it's confirmed.",
     "manualPaymentReveal": "Show card number",
     "manualPaymentCopy": "Copy",
-    "manualPaymentCopied": "Copied!"
+    "manualPaymentCopied": "Copied!",
+    "manualPaymentSla": "We check transfers within 24 hours — activation usually takes 1–2.",
+    "manualPaymentDone": "I have paid",
+    "manualPaymentPending": "Request received",
+    "manualPaymentPendingBody": "Your reference is {reference}. Send the receipt on Telegram and quote it. We will message you once it is active.",
+    "manualPaymentTelegramText": "Hello! I transferred {amount} so'm for the {plan} plan. Reference: {reference}",
+    "manualPaymentSelectPlan": "Choose a plan first",
+    "manualPaymentError": "The request was not sent. Please try again."
   },
   "teacher": {
     "title": "Teacher panel",
@@ -1104,7 +1111,13 @@
     "revoke": "Revoke",
     "reasonRequired": "A reason is required to revoke a subscription.",
     "reasonForRecord": "Reason (kept in the audit log)",
-    "grantDefaultReason": "Granted from the admin panel"
+    "grantDefaultReason": "Granted from the admin panel",
+    "payments2": "Payments",
+    "noPendingPayments": "No payments waiting",
+    "markActivated": "Activated",
+    "markRejected": "Reject",
+    "reference": "Reference",
+    "waiting": "Waiting"
   },
   "social": {
     "friends": "Friends",

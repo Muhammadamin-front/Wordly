@@ -26,6 +26,7 @@ from app.schemas.ielts import (
     QueuedJobOut,
     RewardOut,
     SubmitRequest,
+    WritingQuotaOut,
     WritingScoreOut,
     WritingScoreRequest,
     WritingTask,
@@ -185,6 +186,37 @@ async def _essay_quota_gate(db: AsyncSession, user: User) -> Optional[str]:
             ),
         )
     return plan_code
+
+
+@router.get("/writing/quota", response_model=WritingQuotaOut)
+async def writing_quota(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """The essay allowance, read-only. Deliberately reports the same numbers
+    the gate enforces, from the same helpers, so the counter on screen and
+    the 429 can never disagree."""
+    sub = await subscriptions.active_subscription(db, user.id)
+    plan = get_plan(sub.plan_code) if sub is not None else None
+    if plan is not None and plan.tier == "premium" and sub is not None:
+        limit = writing_essay_subcap_per_day(sub.plan_code)
+        used = await ielts.essay_checks_used_today(db, user.id)
+        return WritingQuotaOut(
+            period="day",
+            limit=limit,
+            used=min(used, limit),
+            remaining=max(0, limit - used),
+            premium=True,
+        )
+    used = await ielts.free_writing_checks_used(db, user.id)
+    limit = ielts.FREE_WRITING_CHECKS_PER_WEEK
+    return WritingQuotaOut(
+        period="week",
+        limit=limit,
+        used=min(used, limit),
+        remaining=max(0, limit - used),
+        premium=False,
+    )
 
 
 @router.post("/writing/score", response_model=WritingScoreOut)

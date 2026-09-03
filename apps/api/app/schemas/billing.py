@@ -12,6 +12,21 @@ class PlanOut(BaseModel):
     seats: int
 
 
+class ManualPaymentOut(BaseModel):
+    """A card-transfer request the learner has raised. `reference` is what
+    they quote on Telegram so staff can match the receipt to this row."""
+
+    reference: str
+    plan_code: str
+    amount_som: int
+    status: str
+    created_at: datetime
+
+
+class ManualPaymentCreate(BaseModel):
+    plan_code: str = Field(max_length=24)
+
+
 class PlansOut(BaseModel):
     plans: List[PlanOut]
 

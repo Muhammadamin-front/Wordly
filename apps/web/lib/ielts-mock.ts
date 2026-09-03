@@ -39,7 +39,16 @@ export interface MockSessionListItem {
   overall_band: number | null;
 }
 
+export interface MockQuota {
+  free_attempt_available: boolean;
+  premium: boolean;
+  coin_cost: number;
+  coin_balance: number;
+}
+
 export const ieltsMockApi = {
+  quota: () => apiFetch<MockQuota>("/ielts/mock/quota", { auth: true }),
+
   listSessions: () => apiFetch<MockSessionListItem[]>("/ielts/mock/sessions", { auth: true }),
 
   createSession: (track: MockTrack) =>

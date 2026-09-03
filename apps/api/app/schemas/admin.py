@@ -80,6 +80,26 @@ class AdminActionRequest(BaseModel):
     reason: Optional[str] = Field(default=None, max_length=500)
 
 
+class ManualPaymentRowOut(BaseModel):
+    """One learner waiting for a card transfer to be checked."""
+
+    id: UUID
+    user_id: UUID
+    email: str
+    display_name: str
+    reference: str
+    plan_code: str
+    amount_som: int
+    created_at: datetime
+
+
+class ManualPaymentResolve(BaseModel):
+    # "activated" once the subscription has been granted, "rejected" when no
+    # transfer arrived. Neither changes the subscription itself: granting is
+    # the separate, audited action above.
+    status: Literal["activated", "rejected"]
+
+
 class ManualSubscriptionGrant(BaseModel):
     plan_code: Literal[
         "plus_monthly", "plus_quarterly", "plus_yearly",

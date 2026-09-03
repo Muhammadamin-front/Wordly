@@ -1891,6 +1891,19 @@ async def _writing_checks_since(db: AsyncSession, user_id: UUID, since) -> int:
     return count or 0
 
 
+async def free_writing_checks_used(db: AsyncSession, user_id: UUID) -> int:
+    """How many of the free weekly essay checks are already spent. Same
+    window and same source as the gate below, so the number the learner is
+    shown can never disagree with the one that blocks them."""
+    since = utcnow() - timedelta(days=7)
+    return await _writing_checks_since(db, user_id, since)
+
+
+async def essay_checks_used_today(db: AsyncSession, user_id: UUID) -> int:
+    since = utcnow() - timedelta(days=1)
+    return await _writing_actions_since(db, user_id, since, kind="essay")
+
+
 async def has_free_writing_quota(db: AsyncSession, user_id: UUID) -> bool:
     """Free tier: 3 writing checks per rolling 7 days — tighter than the
     general daily AI-action quota, and specific to this one feature.
