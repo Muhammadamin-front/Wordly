@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import { useAuth } from "@/components/auth/auth-provider";
+import { ValueCase } from "@/components/billing/value-case";
 import { Logo } from "@/components/site/logo";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import {
   type Plan,
   type Subscription,
 } from "@/lib/billing";
+import type { Locale } from "@/lib/locales";
 import { useModalFocus } from "@/lib/use-modal-focus";
 import { cn } from "@/lib/utils";
 
@@ -237,7 +239,11 @@ export function PricingView({
           </span>
         </header>
 
-        <div className="mx-auto mt-6 flex w-fit gap-1 rounded-full border border-[rgba(232,201,154,0.2)] bg-[rgba(255,248,234,0.06)] p-1">
+        {/* Value before price: the plans below mean nothing to a visitor who
+            has not yet been told what they are for. */}
+        <ValueCase lang={lang as Locale} />
+
+        <div className="mx-auto mt-9 flex w-fit gap-1 rounded-full border border-[rgba(232,201,154,0.2)] bg-[rgba(255,248,234,0.06)] p-1">
           {DURATIONS.map((d) => (
             <button
               key={d}

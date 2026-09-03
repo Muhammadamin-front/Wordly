@@ -31,24 +31,30 @@ const SKILL_ROW = [
   { key: "legSpeaking", icon: Mic2 },
 ] as const;
 
-const COST_COPY: Record<string, { free: string; premium: string; coins: string; short: string }> = {
+const COST_COPY: Record<
+  string,
+  { free: string; premium: string; coins: string; short: string; shortCta: string }
+> = {
   uz: {
     free: "Bu oy: 1 ta bepul mock qoldi",
     premium: "Premium: cheksiz mock",
     coins: "Bu oygi bepul mock ishlatilgan · {cost} tanga",
     short: "Tangalar yetarli emas ({balance}/{cost})",
+    shortCta: "Premium bilan cheksiz",
   },
   ru: {
     free: "В этом месяце: 1 бесплатный пробный",
     premium: "Premium: без ограничений",
     coins: "Бесплатный за месяц использован · {cost} монет",
     short: "Монет недостаточно ({balance}/{cost})",
+    shortCta: "С Premium — без лимита",
   },
   en: {
     free: "This month: 1 free mock left",
     premium: "Premium: unlimited mocks",
     coins: "Free monthly mock used · {cost} coins",
     short: "Not enough coins ({balance}/{cost})",
+    shortCta: "Unlimited with Premium",
   },
 };
 
@@ -64,12 +70,26 @@ function MockCostLine({ lang }: { lang: string }) {
   if (data.free_attempt_available) return <CostText>{copy.free}</CostText>;
 
   const affordable = data.coin_balance >= data.coin_cost;
-  const text = affordable
-    ? copy.coins.replace("{cost}", String(data.coin_cost))
-    : copy.short
+  if (affordable) {
+    return <CostText>{copy.coins.replace("{cost}", String(data.coin_cost))}</CostText>;
+  }
+
+  // Out of both the free attempt and the coins to buy another: the one point
+  // where the learner wants a mock and cannot have one, and so the one place
+  // the alternative is worth naming rather than leaving them stuck.
+  return (
+    <CostText warn>
+      {copy.short
         .replace("{balance}", String(data.coin_balance))
-        .replace("{cost}", String(data.coin_cost));
-  return <CostText warn={!affordable}>{text}</CostText>;
+        .replace("{cost}", String(data.coin_cost))}
+      <Link
+        href={`/${lang}/billing`}
+        className="font-black underline underline-offset-2 hover:no-underline"
+      >
+        {copy.shortCta}
+      </Link>
+    </CostText>
+  );
 }
 
 function CostText({ children, warn }: { children: React.ReactNode; warn?: boolean }) {
