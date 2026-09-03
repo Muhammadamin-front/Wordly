@@ -16,9 +16,7 @@ import {
   RefreshCw,
   ShieldCheck,
   Sparkles,
-  Trophy,
   UserRound,
-  Users,
   X,
   type LucideIcon,
 } from "lucide-react";
@@ -85,14 +83,16 @@ const MOBILE_BOTTOM_NAV: NavItem[] = PRIMARY_NAV;
 
 // Still listed in the mobile drawer, which is a menu rather than a top-level
 // bar; on desktop these are reached through /me.
+//
+// The social surfaces (friends, league, Word Chain) and teaching are
+// deliberately absent: an empty leaderboard makes the product look
+// abandoned, and classes are a different product entirely. /me shows the
+// first once the learner has a friend, and the second only to teachers.
 const SECONDARY_NAV: NavItem[] = [
   { key: "games", href: "games", icon: Gamepad2 },
   { key: "grammar", href: "grammar", icon: Boxes },
   { key: "skills", href: "skills", icon: BookOpen },
   { key: "statistics", href: "statistics", icon: BarChart3 },
-  { key: "leaderboard", href: "leaderboard", icon: Trophy },
-  { key: "friends", href: "friends", icon: Users },
-  { key: "classes", href: "classes", icon: Sparkles },
   { key: "mastery", href: "mastery", icon: Map },
   { key: "dashboard", href: "dashboard", icon: Sparkles },
   { key: "billing", href: "billing", icon: CreditCard },

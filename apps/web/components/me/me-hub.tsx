@@ -9,19 +9,16 @@ import {
   CreditCard,
   Crown,
   Gamepad2,
-  LibraryBig,
   LifeBuoy,
   Map,
   Medal,
   Mic2,
-  Swords,
-  Trophy,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 
 import type { Dictionary } from "@/app/[lang]/dictionaries";
+import { MeSocialSection } from "@/components/me/me-social-section";
 import type { Locale } from "@/lib/locales";
 
 type Entry = {
@@ -35,13 +32,15 @@ type Entry = {
 };
 type Group = { title: string; entries: Entry[] };
 
-const SECTION_TITLES: Record<Locale, { progress: string; practice: string; social: string; account: string; title: string; subtitle: string }> = {
+const SECTION_TITLES: Record<
+  Locale,
+  { progress: string; practice: string; account: string; title: string; subtitle: string }
+> = {
   uz: {
     title: "Men",
     subtitle: "Progressingiz, mashqlar va hisob sozlamalari — hammasi shu yerda.",
     progress: "Progress",
     practice: "Mashqlar",
-    social: "Ijtimoiy",
     account: "Hisob",
   },
   ru: {
@@ -49,7 +48,6 @@ const SECTION_TITLES: Record<Locale, { progress: string; practice: string; socia
     subtitle: "Ваш прогресс, практика и настройки аккаунта — всё здесь.",
     progress: "Прогресс",
     practice: "Практика",
-    social: "Сообщество",
     account: "Аккаунт",
   },
   en: {
@@ -57,7 +55,6 @@ const SECTION_TITLES: Record<Locale, { progress: string; practice: string; socia
     subtitle: "Your progress, practice and account settings, all in one place.",
     progress: "Progress",
     practice: "Practice",
-    social: "Community",
     account: "Account",
   },
 };
@@ -72,12 +69,6 @@ const SUPPORT_LABEL: Record<Locale, string> = {
   uz: "Yordam va aloqa",
   ru: "Поддержка и связь",
   en: "Help and contact",
-};
-
-const MULTIPLAYER_LABEL: Record<Locale, string> = {
-  uz: "Word Chain (do'st bilan)",
-  ru: "Word Chain (с друзьями)",
-  en: "Word Chain (with friends)",
 };
 
 const ACHIEVEMENTS_LABEL: Record<Locale, string> = {
@@ -118,15 +109,6 @@ export function MeHub({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
         { href: to("mistakes"), label: MISTAKES_LABEL[lang], icon: CircleAlert },
         { href: to("coach"), label: nav.coach, icon: Mic2, premium: true },
         { href: to("ai"), label: nav.ai, icon: Bot },
-      ],
-    },
-    {
-      title: t.social,
-      entries: [
-        { href: to("friends"), label: nav.friends, icon: Users },
-        { href: to("leaderboard"), label: nav.leaderboard, icon: Trophy },
-        { href: to("multiplayer/word-chain"), label: MULTIPLAYER_LABEL[lang], icon: Swords },
-        { href: to("classes"), label: nav.classes, icon: LibraryBig },
       ],
     },
     {
@@ -181,6 +163,10 @@ export function MeHub({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
             </ul>
           </section>
         ))}
+
+        {/* Last, and self-rendering: what it shows depends on whether the
+            learner has anyone to play with, and on their role. */}
+        <MeSocialSection lang={lang} />
       </div>
     </main>
   );
