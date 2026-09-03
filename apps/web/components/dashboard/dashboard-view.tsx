@@ -25,6 +25,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { DailyQuestsPanel } from "@/components/gamification/daily-quests";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { Progress } from "@/components/ui/progress";
 import { gamificationApi } from "@/lib/gamification";
 import { learningApi } from "@/lib/learning";
@@ -102,12 +103,7 @@ export function DashboardView({
 
   if (!ready || !user) {
     return (
-      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center">
-        <span
-          aria-label={dict.common.loading}
-          className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent"
-        />
-      </main>
+      <PageSkeleton label={dict.common.loading} cards={5} />
     );
   }
 

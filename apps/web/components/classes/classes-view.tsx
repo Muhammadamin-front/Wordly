@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { GraduationCap } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { ApiError } from "@/lib/api";
@@ -98,7 +100,7 @@ export function ClassesView({ lang, t }: { lang: string; t: Dictionary["classes"
       </Card>
 
       {classes.length === 0 ? (
-        <p className="mt-6 text-center text-sm text-ink-soft">{t.noClasses}</p>
+        <EmptyState className="mt-6" icon={GraduationCap} title={t.noClasses} body={t.noClassesBody} />
       ) : (
         classes.map((c) => (
           <Card key={c.id} className="mt-4">

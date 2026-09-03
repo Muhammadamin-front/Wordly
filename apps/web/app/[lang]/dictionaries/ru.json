@@ -705,7 +705,8 @@
     "balanced": "Сбалансированный",
     "challenge": "Испытание",
     "premiumLocked": "Премиум",
-    "unlockPremium": "Открыть по Premium"
+    "unlockPremium": "Открыть по Premium",
+    "premiumUnlocked": "Premium открыт"
   },
   "stats": {
     "title": "Статистика",
@@ -807,7 +808,9 @@
     "tapToStart": "Нажмите, чтобы начать звонок",
     "you": "Вы",
     "callMicDenied": "Для звонка нужен доступ к микрофону.",
-    "callUnavailable": "Голосовой режим сейчас недоступен. Попробуйте позже."
+    "callUnavailable": "Голосовой режим сейчас недоступен. Попробуйте позже.",
+    "voiceAllowance": "Speaking Coach — {perWeek} мин в неделю · осталось {left}",
+    "voicePremiumOnly": "Speaking Coach — дополнение Premium"
   },
   "ielts": {
     "title": "Подготовка к IELTS",
@@ -1054,7 +1057,8 @@
     "of": "из",
     "reviews": "повторений",
     "invalidCode": "Неверный код",
-    "becomeTeacher": "Панель учителя"
+    "becomeTeacher": "Панель учителя",
+    "noClassesBody": "Присоединитесь к классу по коду от преподавателя."
   },
   "adminPanel": {
     "title": "Панель управления",
@@ -1151,7 +1155,8 @@
     "multiplayer": "Мультиплеер",
     "profile": "Профиль",
     "achievements": "достижений",
-    "shareProfile": "Поделиться профилем"
+    "shareProfile": "Поделиться профилем",
+    "noFriendsBody": "Отправьте другу свой код — вы оба появитесь в рейтинге."
   },
   "mp": {
     "title": "Мультиплеер викторина",
@@ -1454,7 +1459,10 @@
     "manage": "Управление",
     "flipCard": "Перевернуть и увидеть перевод",
     "flipBack": "Вернуться к слову",
-    "viewDetails": "Подробнее"
+    "viewDetails": "Подробнее",
+    "noCardsBody": "Выберите уровень и добавьте первые слова.",
+    "noResultsBody": "Попробуйте другое слово.",
+    "browseLevels": "Смотреть уровни"
   },
   "grammar": {
     "title": "Грамматика",

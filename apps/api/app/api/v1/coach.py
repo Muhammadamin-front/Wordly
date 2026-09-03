@@ -29,8 +29,10 @@ from app.schemas.coach import (
     SessionOut,
     TurnRequest,
     TurnResponse,
+    VoiceQuotaOut,
 )
-from app.services import ai_quota, coach
+from app.services import ai_quota, coach, subscriptions, voice_minutes
+from app.services.plans import voice_seconds_per_week
 from app.services.ai_client import AiClient, AiError, get_ai_client
 from app.services.coach_streaming import stream_turn as stream_turn_stream
 from app.services.gamification import RewardSummary
@@ -141,6 +143,26 @@ async def characters():
         )
         for c in coach.list_characters()
     ]
+
+
+@router.get("/voice-quota", response_model=VoiceQuotaOut)
+async def voice_quota(
+    user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+):
+    """The weekly speaking allowance, readable before a session starts.
+
+    Live voice is the most expensive thing the product does, so the minutes
+    are finite by design — but a learner previously only discovered that by
+    running out mid-conversation."""
+    sub = await subscriptions.active_subscription(db, user.id)
+    allowance = voice_seconds_per_week(sub.plan_code) if sub is not None else 0
+    used = await voice_minutes.used_seconds_this_week(db, user.id)
+    return VoiceQuotaOut(
+        premium=sub is not None,
+        allowance_seconds=allowance,
+        used_seconds=min(used, allowance) if allowance else used,
+        remaining_seconds=max(0, allowance - used),
+    )
 
 
 @router.get("/dashboard", response_model=DashboardOut)

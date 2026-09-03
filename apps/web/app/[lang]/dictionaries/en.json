@@ -705,7 +705,8 @@
     "balanced": "Balanced",
     "challenge": "Challenge",
     "premiumLocked": "Premium",
-    "unlockPremium": "Unlock with Premium"
+    "unlockPremium": "Unlock with Premium",
+    "premiumUnlocked": "Premium unlocked"
   },
   "stats": {
     "title": "Statistics",
@@ -807,7 +808,9 @@
     "tapToStart": "Tap to start the call",
     "you": "You",
     "callMicDenied": "Microphone access is needed for the live call.",
-    "callUnavailable": "Live voice isn't available right now. Try again later."
+    "callUnavailable": "Live voice isn't available right now. Try again later.",
+    "voiceAllowance": "Speaking Coach — {perWeek} min a week · {left} left",
+    "voicePremiumOnly": "Speaking Coach — a Premium add-on"
   },
   "ielts": {
     "title": "IELTS Practice",
@@ -1054,7 +1057,8 @@
     "of": "of",
     "reviews": "reviews",
     "invalidCode": "Invalid code",
-    "becomeTeacher": "Teacher panel"
+    "becomeTeacher": "Teacher panel",
+    "noClassesBody": "Join a class with the code your teacher gave you."
   },
   "adminPanel": {
     "title": "Admin panel",
@@ -1151,7 +1155,8 @@
     "multiplayer": "Multiplayer",
     "profile": "Profile",
     "achievements": "achievements",
-    "shareProfile": "Share profile"
+    "shareProfile": "Share profile",
+    "noFriendsBody": "Send a friend your code — you will both appear on the leaderboard."
   },
   "mp": {
     "title": "Multiplayer Quiz",
@@ -1454,7 +1459,10 @@
     "manage": "Manage",
     "flipCard": "Flip to reveal the translation",
     "flipBack": "Flip back to the word",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "noCardsBody": "Pick a level and add your first words.",
+    "noResultsBody": "Try a different word.",
+    "browseLevels": "Browse levels"
   },
   "grammar": {
     "title": "Grammar",

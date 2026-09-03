@@ -6,6 +6,7 @@ import { CircleDollarSign, Flame, Medal } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Card } from "@/components/ui/card";
+import { PageSkeleton } from "@/components/ui/page-skeleton";
 import { gamificationApi } from "@/lib/gamification";
 import { apiKeys, useApi } from "@/lib/use-api";
 import { cn } from "@/lib/utils";
@@ -46,9 +47,7 @@ export function AchievementsView({
 
   if (!ready || !user || !items || !stats) {
     return (
-      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center py-20">
-        <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
-      </main>
+      <PageSkeleton label={page.title} cards={6} />
     );
   }
 

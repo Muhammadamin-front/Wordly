@@ -7,6 +7,7 @@ import {
   CalendarCheck,
   CircleAlert,
   CreditCard,
+  Crown,
   Gamepad2,
   LibraryBig,
   LifeBuoy,
@@ -23,7 +24,15 @@ import Link from "next/link";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 import type { Locale } from "@/lib/locales";
 
-type Entry = { href: string; label: string; icon: LucideIcon };
+type Entry = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  /** Marked as part of Premium rather than presented as an equal column:
+   *  live voice is the most expensive thing the product does, and a learner
+   *  should know that before they build an expectation around it. */
+  premium?: boolean;
+};
 type Group = { title: string; entries: Entry[] };
 
 const SECTION_TITLES: Record<Locale, { progress: string; practice: string; social: string; account: string; title: string; subtitle: string }> = {
@@ -107,7 +116,7 @@ export function MeHub({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
         { href: to("grammar"), label: nav.grammar, icon: Boxes },
         { href: to("skills"), label: nav.skills, icon: BookOpen },
         { href: to("mistakes"), label: MISTAKES_LABEL[lang], icon: CircleAlert },
-        { href: to("coach"), label: nav.coach, icon: Mic2 },
+        { href: to("coach"), label: nav.coach, icon: Mic2, premium: true },
         { href: to("ai"), label: nav.ai, icon: Bot },
       ],
     },
@@ -156,6 +165,12 @@ export function MeHub({ lang, nav }: { lang: Locale; nav: Dictionary["nav"] }) {
                     <span className="min-w-0 flex-1 truncate text-sm font-bold text-ink">
                       {entry.label}
                     </span>
+                    {entry.premium && (
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-accent-500/50 bg-accent-400/12 px-2 py-0.5 text-[0.6rem] font-black uppercase tracking-wider text-accent-700 dark:text-accent-300">
+                        <Crown className="size-3" aria-hidden />
+                        Premium
+                      </span>
+                    )}
                     <ArrowRight
                       className="size-4 shrink-0 text-ink-soft transition-transform group-hover:translate-x-0.5"
                       aria-hidden

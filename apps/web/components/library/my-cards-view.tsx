@@ -1,12 +1,14 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, Play, Search } from "lucide-react";
+import { ArrowLeft, Layers, Play, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SavedWordCard } from "@/components/library/saved-word-card";
 import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut } from "@/lib/flashcards";
@@ -93,14 +95,20 @@ export function MyCardsView({ lang, t }: { lang: string; t: Dictionary["library"
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-16">
-          <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+        <div className="grid gap-4 py-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-40 rounded-2xl" />
+          ))}
         </div>
       ) : cards.length === 0 ? (
-        <div className="py-16 text-center">
-          <p className="text-5xl" aria-hidden>🃏</p>
-          <p className="mt-4 text-ink-soft">{query ? t.noResults : t.noCards}</p>
-        </div>
+        <EmptyState
+          className="my-10"
+          icon={Layers}
+          title={query ? t.noResults : t.noCards}
+          body={query ? t.noResultsBody : t.noCardsBody}
+          actionLabel={query ? undefined : t.browseLevels}
+          actionHref={query ? undefined : `/${lang}/decks`}
+        />
       ) : (
         <>
           <ul className="mt-6 grid gap-4 sm:grid-cols-2">

@@ -11,6 +11,7 @@ import {
   Grid2x2,
   Headphones,
   Keyboard,
+  Crown,
   Lock,
   Mic2,
   Puzzle,
@@ -124,6 +125,9 @@ export function GamesHub({
           // unlocked rather than flashing a lock that then disappears —
           // the backend is the real gate either way, this is just a hint.
           const locked = isPremium === false && !FREE_GAME_TYPES.includes(type);
+          // The same tiles, once paid for: the lock becomes a crown in place,
+          // which is the only signal a subscriber gets that anything changed.
+          const premiumUnlocked = isPremium === true && !FREE_GAME_TYPES.includes(type);
           return (
             <motion.div
               key={type}
@@ -136,12 +140,18 @@ export function GamesHub({
                 href={locked ? `/${lang}/pricing` : `/${lang}/games/${type}`}
                 aria-label={locked ? `${meta.name} — ${games.unlockPremium}` : meta.name}
                 data-game={type}
-                className={`${styles.gameCard} ${locked ? styles.locked : ""}`}
+                className={`${styles.gameCard} ${locked ? styles.locked : ""} ${premiumUnlocked ? styles.premiumCard : ""}`}
               >
                 {locked && (
                   <span className={styles.lockedLabel}>
                     <Lock className="size-3" aria-hidden />
                     {games.premiumLocked}
+                  </span>
+                )}
+                {premiumUnlocked && (
+                  <span className={styles.premiumMark}>
+                    <Crown className="size-3" aria-hidden />
+                    {games.premiumUnlocked}
                   </span>
                 )}
                 <div className={styles.cardHeader}>

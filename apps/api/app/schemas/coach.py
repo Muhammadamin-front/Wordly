@@ -121,6 +121,16 @@ class CharacterProgressOut(BaseModel):
     friendship_level: int
 
 
+class VoiceQuotaOut(BaseModel):
+    """The weekly live-voice allowance. Zero allowance on the free plan: the
+    minutes are a named part of Premium, not a silently metered extra."""
+
+    premium: bool
+    allowance_seconds: int
+    used_seconds: int
+    remaining_seconds: int
+
+
 class DashboardOut(BaseModel):
     total_sessions: int
     total_turns: int

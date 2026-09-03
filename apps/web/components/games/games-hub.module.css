@@ -383,3 +383,35 @@
     transform: none;
   }
 }
+
+/* The unlocked counterpart of .lockedLabel, in the same corner: a learner
+   who has just paid sees the crown exactly where the lock used to be, so
+   what changed is unmistakable. Gold marks the transition, not every card —
+   the hairline below is the only other change, deliberately faint. */
+.premiumMark {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent-500) 55%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-accent-500) 14%, var(--surface-card));
+  color: var(--color-accent-700, #8a5a12);
+  padding: 0.24rem 0.45rem;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .premiumMark {
+  color: var(--color-accent-300, #e8c99a);
+}
+
+.premiumCard {
+  border-color: color-mix(in srgb, var(--color-accent-500) 34%, var(--border-subtle));
+}

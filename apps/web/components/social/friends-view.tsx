@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Swords } from "lucide-react";
+import { Swords, UserPlus } from "lucide-react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
@@ -292,9 +293,12 @@ export function FriendsView({ lang, social }: { lang: string; social: Dictionary
       <section className="mt-8">
         <h2 className="text-sm font-bold uppercase tracking-wide text-ink-soft">{social.friends}</h2>
         {!friendsLoading && !friendsLoadError && friends.length === 0 ? (
-          <p className="mt-3 rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-ink-soft">
-            {social.noFriends}
-          </p>
+          <EmptyState
+            className="mt-3"
+            icon={UserPlus}
+            title={social.noFriends}
+            body={social.noFriendsBody}
+          />
         ) : (
           <ul className="mt-3 space-y-2">
             {friends.map((f) => (

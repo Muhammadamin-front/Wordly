@@ -124,10 +124,21 @@ export interface CreateSessionBody {
   topic?: string;
 }
 
+export interface VoiceQuota {
+  premium: boolean;
+  allowance_seconds: number;
+  used_seconds: number;
+  remaining_seconds: number;
+}
+
 export const coachApi = {
   characters: () => apiFetch<Character[]>("/coach/characters", { auth: true }),
 
   dashboard: () => apiFetch<CoachDashboard>("/coach/dashboard", { auth: true }),
+
+  /** The weekly speaking allowance, so it can be shown before a session
+   *  rather than discovered when the minutes run out mid-conversation. */
+  voiceQuota: () => apiFetch<VoiceQuota>("/coach/voice-quota", { auth: true }),
 
   sessions: () => apiFetch<SessionListItem[]>("/coach/sessions", { auth: true }),
 

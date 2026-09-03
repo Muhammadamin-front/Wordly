@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { notifyStatsChanged } from "@/lib/gamification";
 import { skillsApi, type GrammarQuestion, type ReadingResult } from "@/lib/skills";
 import { cn } from "@/lib/utils";
@@ -96,8 +97,10 @@ export function GrammarView({ lang, skills }: { lang: string; skills: Dictionary
       </div>
 
       {questions === null ? (
-        <div className="flex justify-center py-16">
-          <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+        <div className="flex flex-col gap-3 py-6" aria-busy="true">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={index} className="h-24 rounded-2xl" />
+          ))}
         </div>
       ) : (
         <>

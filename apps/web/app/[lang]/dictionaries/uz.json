@@ -705,7 +705,8 @@
     "balanced": "Muvozanatli",
     "challenge": "Murakkab",
     "premiumLocked": "Premium",
-    "unlockPremium": "Premium bilan oching"
+    "unlockPremium": "Premium bilan oching",
+    "premiumUnlocked": "Premium ochiq"
   },
   "stats": {
     "title": "Statistika",
@@ -807,7 +808,9 @@
     "tapToStart": "Suhbatni boshlash uchun bosing",
     "you": "Siz",
     "callMicDenied": "Jonli suhbat uchun mikrofonga ruxsat kerak.",
-    "callUnavailable": "Jonli ovoz hozircha mavjud emas. Keyinroq urinib ko'ring."
+    "callUnavailable": "Jonli ovoz hozircha mavjud emas. Keyinroq urinib ko'ring.",
+    "voiceAllowance": "Speaking Coach — haftasiga {perWeek} daqiqa · {left} daq qoldi",
+    "voicePremiumOnly": "Speaking Coach — Premium qo'shimchasi"
   },
   "ielts": {
     "title": "IELTS mashqi",
@@ -1054,7 +1057,8 @@
     "of": "dan",
     "reviews": "takrorlash",
     "invalidCode": "Kod noto'g'ri",
-    "becomeTeacher": "O'qituvchi paneli"
+    "becomeTeacher": "O'qituvchi paneli",
+    "noClassesBody": "O'qituvchingiz bergan kod bilan sinfga qo'shiling."
   },
   "adminPanel": {
     "title": "Boshqaruv paneli",
@@ -1151,7 +1155,8 @@
     "multiplayer": "Ko'p o'yinchi",
     "profile": "Profil",
     "achievements": "yutuq",
-    "shareProfile": "Profilni ulashish"
+    "shareProfile": "Profilni ulashish",
+    "noFriendsBody": "Do'stingizga o'z kodingizni yuboring — ikkalangiz ham reytingda ko'rinasiz."
   },
   "mp": {
     "title": "Ko'p o'yinchi viktorina",
@@ -1454,7 +1459,10 @@
     "manage": "Boshqarish",
     "flipCard": "Tarjimani ko'rish uchun aylantirish",
     "flipBack": "So'z tomoniga qaytarish",
-    "viewDetails": "Batafsil ko'rish"
+    "viewDetails": "Batafsil ko'rish",
+    "noCardsBody": "Darajani tanlang va birinchi so'zlaringizni qo'shing.",
+    "noResultsBody": "Boshqa so'z bilan qidirib ko'ring.",
+    "browseLevels": "Darajalarni ko'rish"
   },
   "grammar": {
     "title": "Grammatika",

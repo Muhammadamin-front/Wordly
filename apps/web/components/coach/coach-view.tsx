@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Crown } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
@@ -17,10 +19,48 @@ import {
   type CoachMode,
   type CoachSession,
 } from "@/lib/coach";
+import { useApi } from "@/lib/use-api";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
 type Coach = Dictionary["coach"];
+
+/** "Speaking Coach — 10 minutes a week, 6 left." Shown before a session, and
+ *  as the upgrade line for a learner who has no minutes at all. */
+function VoiceAllowance({ lang, t }: { lang: string; t: Coach }) {
+  const { data } = useApi("coach:voice-quota", () => coachApi.voiceQuota());
+  if (!data) return null;
+
+  const perWeek = Math.round(data.allowance_seconds / 60);
+  const left = Math.floor(data.remaining_seconds / 60);
+
+  if (!data.premium || data.allowance_seconds === 0) {
+    return (
+      <Link
+        href={`/${lang}/billing`}
+        className="mt-3 inline-flex items-center gap-2 rounded-full border border-accent-500/50 bg-accent-400/12 px-3 py-1.5 text-xs font-black text-accent-700 transition-colors hover:bg-accent-400/20 dark:text-accent-300"
+      >
+        <Crown className="size-3.5" aria-hidden />
+        {t.voicePremiumOnly}
+      </Link>
+    );
+  }
+
+  const out = data.remaining_seconds <= 0;
+  return (
+    <p
+      className={cn(
+        "mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-black",
+        out
+          ? "border-danger/40 bg-danger/8 text-danger-text"
+          : "border-accent-500/50 bg-accent-400/12 text-accent-700 dark:text-accent-300"
+      )}
+    >
+      <Crown className="size-3.5" aria-hidden />
+      {t.voiceAllowance.replace("{perWeek}", String(perWeek)).replace("{left}", String(left))}
+    </p>
+  );
+}
 
 export function CoachView({ lang, t }: { lang: string; t: Coach }) {
   const { user, ready } = useAuth();
@@ -78,6 +118,9 @@ export function CoachView({ lang, t }: { lang: string; t: Coach }) {
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-ink">🎙️ {t.title}</h1>
         <p className="mt-1 text-sm text-ink-soft">{t.subtitle}</p>
+        {/* Live voice is the most expensive thing here, so it is a named,
+            finite part of Premium rather than a silently metered extra. */}
+        <VoiceAllowance lang={lang} t={t} />
       </div>
 
       {dashboard && !dashboard.enabled && (

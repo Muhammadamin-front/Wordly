@@ -20,6 +20,7 @@ import { WordCarouselModal } from "@/components/library/word-carousel-modal";
 import { WordCard } from "@/components/library/word-card";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApiError } from "@/lib/api";
 import { flashcardsApi } from "@/lib/flashcards";
 import { libraryApi, type Shelf, type ShelfMeta } from "@/lib/library";
@@ -258,8 +259,10 @@ export function LevelView({
           </Button>
         </div>
       ) : loading ? (
-        <div className="flex justify-center py-16">
-          <span className="size-8 animate-spin rounded-full border-[3px] border-brand-400 border-t-transparent" />
+        <div className="grid gap-4 py-6 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-44 rounded-2xl" />
+          ))}
         </div>
       ) : (
         <>
