@@ -1,3 +1,5 @@
--r requirements.txt
+# The pinned runtime, plus the test tooling. Installing the lock here means
+# the suite runs against exactly the versions production will install.
+-r requirements.lock.txt
 pytest>=8.2
 pytest-asyncio>=0.23

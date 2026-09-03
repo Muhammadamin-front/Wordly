@@ -84,6 +84,13 @@ export function validateReleaseEnv(root, mobile, { checkMobile = true } = {}) {
     errors.push("root .env: APPLE_CLIENT_ID must be uz.vocora.mobile for native Sign in with Apple");
   }
 
+  // Unset, and every learner shares one rate-limit bucket (see
+  // core/rate_limit.py client_ip): the limiter keys on the proxy's address.
+  requireValue(root, "TRUSTED_PROXY_CIDRS");
+  if (root.TRUSTED_PROXY_CIDRS?.includes("/0")) {
+    errors.push("root .env: TRUSTED_PROXY_CIDRS must not trust every address");
+  }
+
   if (root.API_BIND_HOST && !["127.0.0.1", "::1"].includes(root.API_BIND_HOST)) {
     errors.push("root .env: API_BIND_HOST must stay loopback-only when Cloudflare Tunnel is used");
   }

@@ -39,7 +39,13 @@ services:
       SECRET_KEY: ${SECRET_KEY:-dev-only-secret-change-me}
       DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://words:words@postgres:5432/words}
       REDIS_URL: redis://redis:6379/0
-      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-}
+      # Requests arrive through cloudflared on the host, and Docker's port
+      # publishing rewrites the source to the bridge gateway — so the API's
+      # socket peer is a 172.x address, never the learner's. Without this the
+      # rate limiter keys every request on that one address and a single
+      # learner can lock everyone out of login. Narrow it to the exact gateway
+      # /32 once you have read it from the API log (see docs/deploy.md).
+      TRUSTED_PROXY_CIDRS: ${TRUSTED_PROXY_CIDRS:-172.16.0.0/12}
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}

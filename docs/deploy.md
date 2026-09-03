@@ -175,6 +175,40 @@ certificate pairs with "SSL/TLS mode: Full (strict)" in the dashboard — see
   proxy-header parsing is disabled so this application allowlist is the single
   trust boundary.
 
+### With Cloudflare Tunnel (this deployment)
+
+There is no nginx here: `cloudflared` runs on the host and forwards to the
+published `127.0.0.1:8000`, and Docker's port publishing rewrites the source
+address to the bridge gateway. So the API's socket peer is a `172.x` address
+for every learner, and `TRUSTED_PROXY_CIDRS` must contain it — otherwise the
+rate limiter keys every request on that one address and a single learner can
+lock everyone out of login.
+
+The compose default (`172.16.0.0/12`) covers any Docker bridge. To narrow it
+to the exact gateway, read the address the API itself reports:
+
+```bash
+docker compose logs api | grep "untrusted peer" | tail -1
+# then, in .env:  TRUSTED_PROXY_CIDRS=172.18.0.1/32
+```
+
+That warning is logged once per peer, so an empty result means the current
+setting is already correct.
+
+### Rolling back
+
+`deploy.sh` records the commit of each deploy that passed the public smoke
+test, and the one before it:
+
+```bash
+./deploy.sh --rollback     # rebuilds and serves the previous good commit
+```
+
+Code rolls back; the schema does not. Migrations are additive by policy (add
+a column, never drop or rename in the same release), so older code runs
+against the newer schema. A migration that breaks that promise has to be
+reversed by hand, deliberately.
+
 If you'd rather use Caddy or a cloud LB instead of the nginx config above, the
 same three things still apply wherever TLS terminates: proxy the WebSocket
 routes with upgrade headers intact, enforce a body-size limit, and set

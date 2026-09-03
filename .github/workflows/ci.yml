@@ -21,6 +21,9 @@ jobs:
           cache-dependency-path: apps/api/requirements-dev.txt
       - run: pip install -r requirements-dev.txt
       - run: python -m pip check
+      # The lock is what production installs, so it is what gets audited.
+      - run: pip install pip-audit
+      - run: pip-audit --requirement requirements.lock.txt --strict
       - run: python -m pytest -q
 
   api-postgres:

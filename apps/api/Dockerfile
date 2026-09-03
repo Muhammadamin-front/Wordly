@@ -5,8 +5,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /srv/api
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# The lock, not the range list: two builds of the same commit must install
+# the same bytes. requirements.txt remains the declared direct dependencies.
+COPY requirements.lock.txt .
+RUN pip install --no-cache-dir -r requirements.lock.txt
 
 COPY . .
 

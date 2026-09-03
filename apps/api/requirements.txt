@@ -1,3 +1,7 @@
+# Direct dependencies only, with the ranges we support. Nothing installs from
+# this file directly: the image and CI install requirements.lock.txt, which is
+# the resolved, pinned version of exactly this list. Change a range here, then
+# regenerate the lock (see its header).
 fastapi>=0.115
 uvicorn[standard]>=0.30
 sqlalchemy[asyncio]>=2.0.30

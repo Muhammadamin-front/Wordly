@@ -1,3 +1,4 @@
+import logging
 import time
 from ipaddress import ip_address
 from typing import Dict, List, Optional, Protocol, Tuple
@@ -59,6 +60,11 @@ def parse_rule(rule: str) -> Tuple[int, int]:
     return int(max_requests), int(window)
 
 
+logger = logging.getLogger("words.api")
+
+# One warning per peer address, not one per request.
+_warned_untrusted_peers: set = set()
+
 MAX_FORWARDED_FOR_LENGTH = 2048
 MAX_FORWARDED_FOR_HOPS = 20
 
@@ -73,6 +79,17 @@ def client_ip(connection: HTTPConnection) -> str:
 
     trusted_networks = get_settings().trusted_proxy_networks
     if not any(peer_address in network for network in trusted_networks):
+        # A proxy is forwarding a client address but we are not configured to
+        # trust it, so every request through it shares one rate-limit key —
+        # one learner can then lock everyone out of login. Say so once per
+        # peer, naming the address to add to TRUSTED_PROXY_CIDRS.
+        if connection.headers.get("x-forwarded-for") and peer not in _warned_untrusted_peers:
+            _warned_untrusted_peers.add(peer)
+            logger.warning(
+                "X-Forwarded-For received from untrusted peer %s — rate limits are "
+                "keyed on the proxy, not the learner. Add it to TRUSTED_PROXY_CIDRS.",
+                peer,
+            )
         return str(peer_address)
 
     forwarded = connection.headers.get("x-forwarded-for", "")

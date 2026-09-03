@@ -73,3 +73,8 @@ apps/api/scripts/data/phrasal_idioms_ru_cache.json
 # from happening again.
 * 2
 * 2/
+
+# Written by deploy.sh on the production host to record what is deployed and
+# what to roll back to. Local to that machine.
+.deployed-sha
+.previous-deployed-sha

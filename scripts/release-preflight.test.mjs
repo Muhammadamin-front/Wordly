@@ -22,6 +22,7 @@ function validRoot() {
     GOOGLE_CLIENT_ID: webClient,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: webClient,
     APPLE_CLIENT_ID: "uz.vocora.mobile",
+    TRUSTED_PROXY_CIDRS: "172.16.0.0/12",
     API_BIND_HOST: "127.0.0.1",
     POSTGRES_PASSWORD: "strong-db-password",
     DATABASE_URL: "postgresql+asyncpg://words:strong-db-password@postgres:5432/words",
@@ -80,4 +81,20 @@ test("native Apple audience is required", () => {
   const root = validRoot();
   delete root.APPLE_CLIENT_ID;
   assert.ok(validateReleaseEnv(root, validMobile).errors.some((error) => error.includes("APPLE_CLIENT_ID")));
+});
+
+test("a proxy allowlist that trusts every address is rejected", () => {
+  const root = { ...validRoot(), TRUSTED_PROXY_CIDRS: "0.0.0.0/0" };
+  const { errors } = validateReleaseEnv(root, validMobile);
+  assert.ok(
+    errors.some((error) => error.includes("TRUSTED_PROXY_CIDRS")),
+    "trusting every address must fail preflight"
+  );
+});
+
+test("a missing proxy allowlist is rejected", () => {
+  const root = { ...validRoot() };
+  delete root.TRUSTED_PROXY_CIDRS;
+  const { errors } = validateReleaseEnv(root, validMobile);
+  assert.ok(errors.some((error) => error.includes("TRUSTED_PROXY_CIDRS")));
 });
