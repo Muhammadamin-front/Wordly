@@ -7,8 +7,10 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { buttonVariants, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/** Landing CTA that respects auth state: guests are sent to registration,
- *  signed-in learners straight to the library. */
+/** Landing CTA that respects auth state: a guest starts with the three
+ *  onboarding questions and is asked to register once they have answered
+ *  them, which is where signing up has actually earned itself; a signed-in
+ *  learner goes straight to the library. */
 export function HeroCta({
   lang,
   guestLabel,
@@ -31,7 +33,7 @@ export function HeroCta({
 
   return (
     <Link
-      href={signedIn ? `/${lang}/decks` : `/${lang}/auth/register`}
+      href={signedIn ? `/${lang}/decks` : `/${lang}/onboarding`}
       className={cn(buttonVariants({ size: "lg", variant }), className, linkClassName)}
     >
       <span className="relative z-10 inline-flex items-center gap-2">

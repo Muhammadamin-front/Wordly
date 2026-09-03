@@ -46,6 +46,52 @@ const MINUTES: Minutes[] = [5, 10, 15, 20];
 // The range learners actually sit for; below 5.5 nobody sets a goal, and 9.0
 // is not a target anyone plans a study schedule around.
 const BAND_CHOICES = [5.5, 6, 6.5, 7, 7.5, 8, 8.5];
+
+/** The three onboarding answers, parked while the learner registers. Local
+ *  to the device on purpose: there is no account to store them against yet. */
+type OnboardingDraft = {
+  level: Level;
+  goal: Goal;
+  minutes: Minutes;
+  targetBand: number;
+  examDate: string;
+};
+
+const DRAFT_KEY = "vocora:onboarding-draft";
+
+function writeDraft(draft: OnboardingDraft) {
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    // Private browsing or a full store: the learner just answers again.
+  }
+}
+
+function readDraft(): OnboardingDraft | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<OnboardingDraft>;
+    if (!parsed.level || !parsed.goal || !parsed.minutes) return null;
+    return {
+      level: parsed.level,
+      goal: parsed.goal,
+      minutes: parsed.minutes,
+      targetBand: parsed.targetBand ?? 7,
+      examDate: parsed.examDate ?? "",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function clearDraft() {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Nothing to do; a stale draft is discarded on the next completion.
+  }
+}
 const TODAY_ISO = new Date().toISOString().slice(0, 10);
 
 export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
@@ -65,14 +111,30 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
+  // A visitor answers the three questions before being asked for an account:
+  // by then they have made real choices and signing up is worth it, whereas a
+  // registration form as the first screen is where most of them stop. The
+  // answers survive the round trip through the auth pages in localStorage.
   useEffect(() => {
-    if (ready && !user) router.replace(`/${lang}/auth/login`);
     if (ready && user?.profile.onboarding_completed && !loading) {
       router.replace(`/${lang}/today`);
     }
   }, [ready, user, loading, router, lang]);
 
-  async function finish() {
+  function finish() {
+    // No account yet: keep the answers and ask for one now that they mean
+    // something. The register page sends them back here when it is done.
+    if (!user) {
+      writeDraft({ level, goal, minutes, targetBand, examDate });
+      trackEvent("onboarding_answers_saved", { locale: lang, level, goal, daily_minutes: minutes });
+      router.push(`/${lang}/auth/register`);
+      return;
+    }
+    void submit({ level, goal, minutes, targetBand, examDate });
+  }
+
+  async function submit(answers: OnboardingDraft) {
+    const { level, goal, minutes, targetBand, examDate } = answers;
     setLoading(true);
     setError(false);
     try {
@@ -105,6 +167,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
         daily_minutes: minutes,
         target_band: goal === "ielts" ? targetBand : undefined,
       });
+      clearDraft();
       router.replace(`/${lang}/review?deck=${result.starter_deck_id}&onboarding=1`);
     } catch {
       setError(true);
@@ -112,7 +175,22 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
     }
   }
 
-  if (!ready || !user) {
+  // Only the auth check itself is waited on — a signed-out visitor answers
+  // the questions and is asked to register at the end.
+  // Coming back from registration with the answers already given: finish
+  // without making them choose all over again. Deferred by a tick so the
+  // effect only starts the work rather than setting state during render.
+  useEffect(() => {
+    if (!ready || !user || user.profile.onboarding_completed || loading) return;
+    const draft = readDraft();
+    if (!draft) return;
+    const timer = window.setTimeout(() => void submit(draft), 0);
+    return () => window.clearTimeout(timer);
+    // Runs once, as soon as an authenticated learner arrives with a draft.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, user]);
+
+  if (!ready) {
     return (
       <div className="relative flex min-h-[70dvh] items-center justify-center">
         <span className="size-8 animate-spin rounded-full border-[3px] border-brand-500 border-t-transparent" />
@@ -333,6 +411,7 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                         />
                       ))}
                     </div>
+                    <PaceProjection copy={copy} minutes={minutes} />
                     <RoadmapPreview
                       copy={copy}
                       level={level}
@@ -364,8 +443,8 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
                     <ArrowRight className="size-4" />
                   </Button>
                 ) : (
-                  <Button type="button" onClick={() => void finish()} loading={loading}>
-                    {copy.startLesson}
+                  <Button type="button" onClick={finish} loading={loading}>
+                    {user ? copy.startLesson : copy.signUpAndStart}
                     <ArrowRight className="size-4" />
                   </Button>
                 )}
@@ -378,6 +457,28 @@ export function OnboardingView({ lang, copy }: { lang: string; copy: Copy }) {
   );
 }
 
+
+/** Turns "15 minutes" into something a learner can picture.
+ *
+ *  Grounded rather than invented: a review card takes roughly 25 seconds at
+ *  a comfortable pace (the same figure Today uses to estimate a session),
+ *  and about a third of the cards in a mature queue are new words rather
+ *  than repeats — so a minute a day is close to one new word a day. Rounded
+ *  down and marked as an estimate, because it is one. */
+function PaceProjection({ copy, minutes }: { copy: Copy; minutes: Minutes }) {
+  const cardsPerDay = Math.round((minutes * 60) / 25);
+  const newPerDay = Math.max(1, Math.floor(cardsPerDay * 0.35));
+  const inEightWeeks = Math.round((newPerDay * 56) / 10) * 10;
+
+  return (
+    <p className="mt-4 rounded-lg border border-line bg-card/60 px-4 py-3 text-sm font-bold text-ink">
+      {copy.pacePreview
+        .replace("{minutes}", String(minutes))
+        .replace("{perDay}", String(newPerDay))
+        .replace("{total}", String(inEightWeeks))}
+    </p>
+  );
+}
 
 function RoadmapPreview({
   copy,

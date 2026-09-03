@@ -200,7 +200,9 @@
     "bandLabel": "Нужный балл",
     "examDateLabel": "Дата экзамена",
     "examDateHint": "Можно примерную — потом измените.",
-    "examDateSkip": "Пока не знаю"
+    "examDateSkip": "Пока не знаю",
+    "pacePreview": "{minutes} мин/день ≈ {perDay} новых слов в день · ~{total} слов за 8 недель",
+    "signUpAndStart": "Зарегистрироваться и начать"
   },
   "ieltsHub": {
     "eyebrow": "Центр лексики IELTS",
@@ -452,7 +454,9 @@
     "memoryNote": "Заметка для запоминания",
     "noteSave": "Сохранить заметку",
     "notePlaceholder": "Напишите напоминание для себя...",
-    "progress": "Прогресс"
+    "progress": "Прогресс",
+    "streakDays": "Серия: {days} дн.",
+    "waitingTomorrow": "Завтра ждёт {count} повторений"
   },
   "gam": {
     "streak": "дней подряд",

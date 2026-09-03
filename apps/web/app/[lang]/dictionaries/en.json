@@ -200,7 +200,9 @@
     "bandLabel": "Band you need",
     "examDateLabel": "Exam date",
     "examDateHint": "An estimate is fine — you can change it later.",
-    "examDateSkip": "I don't know yet"
+    "examDateSkip": "I don't know yet",
+    "pacePreview": "{minutes} min/day ≈ {perDay} new words a day · about {total} in 8 weeks",
+    "signUpAndStart": "Sign up and start"
   },
   "ieltsHub": {
     "eyebrow": "IELTS vocabulary hub",
@@ -452,7 +454,9 @@
     "memoryNote": "Memory note",
     "noteSave": "Save note",
     "notePlaceholder": "Write a reminder for yourself...",
-    "progress": "Progress"
+    "progress": "Progress",
+    "streakDays": "Streak: day {days}",
+    "waitingTomorrow": "{count} reviews waiting tomorrow"
   },
   "gam": {
     "streak": "day streak",

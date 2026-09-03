@@ -200,7 +200,9 @@
     "bandLabel": "Kerakli band",
     "examDateLabel": "Imtihon sanasi",
     "examDateHint": "Taxminiy bo'lsa ham bo'ladi — keyin o'zgartirasiz.",
-    "examDateSkip": "Hali bilmayman"
+    "examDateSkip": "Hali bilmayman",
+    "pacePreview": "{minutes} daq/kun ≈ kuniga {perDay} ta yangi so'z · 8 haftada ~{total} so'z",
+    "signUpAndStart": "Ro'yxatdan o'tib boshlash"
   },
   "ieltsHub": {
     "eyebrow": "IELTS lug'at markazi",
@@ -452,7 +454,9 @@
     "memoryNote": "Eslab qolish uchun izoh",
     "noteSave": "Izohni saqlash",
     "notePlaceholder": "O'zingizga eslatma yozing...",
-    "progress": "Jarayon"
+    "progress": "Jarayon",
+    "streakDays": "Streak: {days}-kun",
+    "waitingTomorrow": "Ertaga {count} ta takrorlash kutmoqda"
   },
   "gam": {
     "streak": "kunlik seriya",

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowRight, BookOpenCheck, LibraryBig, Map as MapIcon, Route } from "lucide-react";
+import { ArrowRight, BookOpenCheck, Flame, LibraryBig, Map as MapIcon, Route } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -11,7 +11,9 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { flashcardsApi, type CardOut, type Queue, type Rating } from "@/lib/flashcards";
 import { speak } from "@/lib/games";
-import { notifyStatsChanged, type Reward } from "@/lib/gamification";
+import { gamificationApi, notifyStatsChanged, type Reward } from "@/lib/gamification";
+import { learningApi } from "@/lib/learning";
+import { apiKeys, useApi } from "@/lib/use-api";
 import { trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
@@ -208,6 +210,11 @@ export function ReviewSession({
           <p className="type-body-small mx-auto mt-3 max-w-md text-ink-soft">
             {isDone ? review.doneBody : review.emptyBody}
           </p>
+
+          {/* What today's work bought: the streak it kept alive and the
+              queue waiting tomorrow. Without them a finished session ends
+              on a number with no future in it. */}
+          {isDone && <SessionOutlook review={review} />}
 
           {isDone && reviewedCount > 0 && (
             <div className="mx-auto mt-6 grid max-w-md grid-cols-2 gap-3 rounded-[22px] border border-line bg-card/55 p-3">
@@ -455,5 +462,35 @@ export function ReviewSession({
         {review.keyboardHint}
       </p>
     </div>
+  );
+}
+
+/** The two facts that make a finished session point at tomorrow: the streak
+ *  it just kept alive, and how much is waiting. Both are already recorded —
+ *  this only reads them. Rendered only once they arrive, so a slow request
+ *  never delays the celebration. */
+function SessionOutlook({ review }: { review: Dictionary["review"] }) {
+  const { data: stats } = useApi(apiKeys.stats, () => gamificationApi.stats());
+  const { data: plan } = useApi(apiKeys.learningPlan, () => learningApi.plan());
+
+  const streak = stats?.current_streak ?? 0;
+  const dueTomorrow = plan ? plan.due_count + plan.new_count : null;
+  if (!streak && dueTomorrow === null) return null;
+
+  return (
+    <p className="mx-auto mt-4 flex max-w-md flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm font-bold text-ink-soft">
+      {streak > 0 && (
+        <span className="inline-flex items-center gap-1.5">
+          <Flame className="size-4 text-brand-500" aria-hidden />
+          {review.streakDays.replace("{days}", String(streak))}
+        </span>
+      )}
+      {dueTomorrow !== null && dueTomorrow > 0 && (
+        <span className="inline-flex items-center gap-1.5">
+          <Route className="size-4 text-brand-500" aria-hidden />
+          {review.waitingTomorrow.replace("{count}", String(dueTomorrow))}
+        </span>
+      )}
+    </p>
   );
 }
