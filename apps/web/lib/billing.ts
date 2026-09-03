@@ -17,6 +17,7 @@ export interface Subscription {
   seats: number;
   auto_renew: boolean;
   cancelled_at: string | null;
+  show_welcome: boolean;
 }
 
 export interface Checkout {
@@ -72,6 +73,14 @@ export const billingApi = {
   status: () => apiFetch<BillingStatus>("/billing/status"),
 
   subscription: () => apiFetch<Subscription>("/billing/subscription", { auth: true }),
+
+  /** Marks the "Premium is on" message as seen, so it appears once per
+   *  activation rather than on every page load. */
+  markWelcomed: () =>
+    apiFetch<{ message: string }>("/billing/subscription/welcomed", {
+      method: "POST",
+      auth: true,
+    }),
 
   checkout: (planCode: string, provider: PaymentProvider, returnUrl: string, idempotencyKey?: string) =>
     apiFetch<Checkout>("/billing/checkout", {

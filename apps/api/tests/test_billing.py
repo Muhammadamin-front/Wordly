@@ -593,3 +593,36 @@ async def test_referral_code_and_reward(client):
     assert updated["rewarded"] == 1
     referrer_sub = (await client.get("/api/v1/billing/subscription", headers=referrer_headers)).json()
     assert referrer_sub["is_premium"] is True
+
+
+async def test_a_new_subscription_is_announced_once(client):
+    """An activation the learner did not perform themselves (an admin grant,
+    a manual card transfer) previously produced no visible change at all."""
+    headers = await learner(client, email="welcome-once@words.uz")
+    await client.post(
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
+    )
+
+    first = (await client.get("/api/v1/billing/subscription", headers=headers)).json()
+    assert first["show_welcome"] is True
+
+    seen = await client.post("/api/v1/billing/subscription/welcomed", headers=headers)
+    assert seen.status_code == 200
+
+    after = (await client.get("/api/v1/billing/subscription", headers=headers)).json()
+    assert after["show_welcome"] is False
+
+
+async def test_renewing_an_active_subscription_is_not_announced_again(client):
+    headers = await learner(client, email="welcome-renew@words.uz")
+    await client.post(
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
+    )
+    await client.post("/api/v1/billing/subscription/welcomed", headers=headers)
+
+    # Still active, so this stacks days on — nothing newsworthy happened.
+    await client.post(
+        "/api/v1/billing/sandbox-activate", json={"plan_code": "plus_monthly"}, headers=headers
+    )
+    sub = (await client.get("/api/v1/billing/subscription", headers=headers)).json()
+    assert sub["show_welcome"] is False

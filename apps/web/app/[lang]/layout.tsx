@@ -9,6 +9,8 @@ import { AnalyticsProvider } from "@/components/site/analytics-provider";
 import { PwaInstallPrompt } from "@/components/site/pwa-install-prompt";
 import { PwaRegister } from "@/components/site/pwa-register";
 import { SkipLink } from "@/components/site/skip-link";
+import { PremiumWelcome } from "@/components/billing/premium-welcome";
+import type { Locale } from "@/lib/locales";
 import { SwrProvider } from "@/components/site/swr-provider";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { getSeoCopy } from "@/lib/seo-copy";
@@ -131,6 +133,7 @@ export default async function RootLayout({
             <AuthProvider>
               <AnalyticsProvider />
               <GrammarProgressSync />
+              <PremiumWelcome lang={lang as Locale} />
               {children}
             </AuthProvider>
           </SwrProvider>

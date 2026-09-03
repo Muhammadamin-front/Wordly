@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user
 from app.core.config import get_settings
 from app.core.rate_limit import rate_limit
+from app.core.security import utcnow
 from app.db.session import get_db
 from app.models.billing import Payment
 from app.models.manual_payment import MANUAL_PAYMENT_PENDING, ManualPaymentRequest
@@ -252,7 +253,22 @@ async def subscription(
         seats=sub.seats,
         auto_renew=sub.auto_renew,
         cancelled_at=sub.cancelled_at,
+        show_welcome=sub.welcomed_at is None,
     )
+
+
+@router.post("/subscription/welcomed", response_model=MessageOut)
+async def mark_subscription_welcomed(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Called once the learner has seen the "Premium is on" message, so it is
+    shown once per activation rather than on every page load."""
+    sub = await subscriptions.active_subscription(db, user.id)
+    if sub is not None and sub.welcomed_at is None:
+        sub.welcomed_at = utcnow()
+        await db.commit()
+    return MessageOut(message="ok")
 
 
 def _get_purchasable(code: str) -> "Optional[Plan | CoinPack]":

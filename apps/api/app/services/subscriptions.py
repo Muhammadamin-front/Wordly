@@ -84,6 +84,10 @@ async def grant(
         sub.cancelled_at = None
         sub.auto_renew = False
         sub.expires_at = base + timedelta(days=days)
+        # A renewal of a still-active subscription is not news; coming back
+        # from expired, or being granted access, is.
+        if base == now:
+            sub.welcomed_at = None
         if external_subscription_id is not None:
             sub.external_subscription_id = external_subscription_id
     await db.flush()

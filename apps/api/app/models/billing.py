@@ -42,6 +42,11 @@ class Subscription(Base):
     external_subscription_id: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     started_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    # When the learner was actually shown that Premium is on. Cleared on every
+    # grant, so a subscription bought or granted after an expiry is announced
+    # again — an admin granting access previously produced no visible change
+    # whatsoever on the learner's side.
+    welcomed_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utcnow, nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=utcnow, onupdate=utcnow, nullable=False

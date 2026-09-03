@@ -69,6 +69,9 @@ class SubscriptionOut(BaseModel):
     seats: int = 1
     auto_renew: bool = False
     cancelled_at: Optional[datetime] = None
+    # True until the learner has been shown that Premium is now on. The
+    # client clears it through POST /billing/subscription/welcomed.
+    show_welcome: bool = False
 
 
 class CheckoutRequest(BaseModel):
