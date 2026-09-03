@@ -184,16 +184,27 @@ for every learner, and `TRUSTED_PROXY_CIDRS` must contain it — otherwise the
 rate limiter keys every request on that one address and a single learner can
 lock everyone out of login.
 
-The compose default (`172.16.0.0/12`) covers any Docker bridge. To narrow it
-to the exact gateway, read the address the API itself reports:
+The compose default (`172.16.0.0/12`) covers any Docker bridge, and behind a
+tunnel the learner's address arrives in `CF-Connecting-IP`, which the API
+reads in preference to the forwarded chain — but only from a trusted peer.
+
+To check what the rate limiter is actually keying on:
 
 ```bash
-docker compose logs api | grep "untrusted peer" | tail -1
-# then, in .env:  TRUSTED_PROXY_CIDRS=172.18.0.1/32
+docker compose logs api | grep "Rate limits are keyed on" | tail -2
 ```
 
-That warning is logged once per peer, so an empty result means the current
-setting is already correct.
+Silence means it is keying on real client addresses. A line appears only when
+it is not, and says which of the two reasons applies — an untrusted peer (add
+it to `TRUSTED_PROXY_CIDRS`) or a trusted proxy that forwards nothing (fix the
+proxy). Either way it is logged once per peer, not once per request.
+
+The effective setting, if you want to see it directly:
+
+```bash
+docker compose exec api python -c \
+  "from app.core.config import get_settings; print(get_settings().TRUSTED_PROXY_CIDRS)"
+```
 
 ### Metrics
 

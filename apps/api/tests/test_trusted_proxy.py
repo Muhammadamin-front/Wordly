@@ -87,3 +87,36 @@ def test_websocket_uses_the_same_trusted_proxy_rules(trusted_proxies):
     websocket = websocket_connection("10.0.0.5", "203.0.113.20")
 
     assert client_ip(websocket) == "203.0.113.20"
+
+
+def cloudflare_connection(peer: str, connecting_ip: str = "", forwarded: str = "") -> Request:
+    headers = []
+    if connecting_ip:
+        headers.append((b"cf-connecting-ip", connecting_ip.encode("ascii")))
+    if forwarded:
+        headers.append((b"x-forwarded-for", forwarded.encode("ascii")))
+    return Request({"type": "http", "headers": headers, "client": (peer, 1234)})
+
+
+def test_cloudflare_connecting_ip_is_used_from_a_trusted_peer(trusted_proxies):
+    """Behind Cloudflare Tunnel this is the header that carries the learner."""
+    trusted_proxies("172.16.0.0/12")
+    request = cloudflare_connection("172.18.0.1", connecting_ip="203.0.113.7")
+
+    assert client_ip(request) == "203.0.113.7"
+
+
+def test_cloudflare_connecting_ip_from_an_untrusted_peer_is_ignored(trusted_proxies):
+    trusted_proxies("10.0.0.0/8")
+    request = cloudflare_connection("198.51.100.10", connecting_ip="203.0.113.7")
+
+    assert client_ip(request) == "198.51.100.10"
+
+
+def test_a_malformed_connecting_ip_falls_back_to_the_forwarded_chain(trusted_proxies):
+    trusted_proxies("172.16.0.0/12")
+    request = cloudflare_connection(
+        "172.18.0.1", connecting_ip="not-an-ip", forwarded="203.0.113.20"
+    )
+
+    assert client_ip(request) == "203.0.113.20"

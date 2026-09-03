@@ -69,6 +69,41 @@ MAX_FORWARDED_FOR_LENGTH = 2048
 MAX_FORWARDED_FOR_HOPS = 20
 
 
+def _warn_once_about_key(
+    peer: str, peer_address, connection: HTTPConnection, *, trusted: bool
+) -> None:
+    """Say, once per peer, when the rate-limit key is not a learner.
+
+    Both failure modes end the same way — every request through the proxy
+    shares one bucket, so one person hitting the login limit locks everyone
+    out — but they need different fixes, so the log says which one this is.
+    A private or loopback peer with nothing forwarded is infrastructure, not
+    a client, which is the case that is otherwise completely silent."""
+    if peer in _warned_untrusted_peers:
+        return
+    forwarded = connection.headers.get("x-forwarded-for")
+    real_ip = connection.headers.get("cf-connecting-ip")
+    if not trusted and not forwarded and not real_ip and peer_address.is_global:
+        return  # An ordinary direct client. Nothing to say.
+
+    _warned_untrusted_peers.add(peer)
+    if trusted:
+        logger.warning(
+            "Rate limits are keyed on %s: this peer is trusted but sends no "
+            "X-Forwarded-For%s. Configure the proxy to forward the client "
+            "address, or every learner shares one bucket.",
+            peer,
+            " (it does send CF-Connecting-IP)" if real_ip else "",
+        )
+    else:
+        logger.warning(
+            "Rate limits are keyed on %s, which is not a learner's address. "
+            "Add it to TRUSTED_PROXY_CIDRS (forwarded header %s).",
+            peer,
+            "present" if forwarded else "absent",
+        )
+
+
 def client_ip(connection: HTTPConnection) -> str:
     """Resolve the client without trusting headers from arbitrary peers."""
     peer = connection.client.host if connection.client else "unknown"
@@ -79,21 +114,25 @@ def client_ip(connection: HTTPConnection) -> str:
 
     trusted_networks = get_settings().trusted_proxy_networks
     if not any(peer_address in network for network in trusted_networks):
-        # A proxy is forwarding a client address but we are not configured to
-        # trust it, so every request through it shares one rate-limit key —
-        # one learner can then lock everyone out of login. Say so once per
-        # peer, naming the address to add to TRUSTED_PROXY_CIDRS.
-        if connection.headers.get("x-forwarded-for") and peer not in _warned_untrusted_peers:
-            _warned_untrusted_peers.add(peer)
-            logger.warning(
-                "X-Forwarded-For received from untrusted peer %s — rate limits are "
-                "keyed on the proxy, not the learner. Add it to TRUSTED_PROXY_CIDRS.",
-                peer,
-            )
+        _warn_once_about_key(peer, peer_address, connection, trusted=False)
         return str(peer_address)
+
+    # Cloudflare Tunnel sets CF-Connecting-IP to the single address the edge
+    # saw, and cloudflared overwrites whatever the client sent — so behind a
+    # tunnel it is both simpler and harder to spoof than walking the chain.
+    # Only read from a trusted peer, same rule as the forwarded chain below.
+    connecting_ip = connection.headers.get("cf-connecting-ip", "").strip()
+    if connecting_ip:
+        try:
+            return str(ip_address(connecting_ip))
+        except ValueError:
+            pass
 
     forwarded = connection.headers.get("x-forwarded-for", "")
     if not forwarded or len(forwarded) > MAX_FORWARDED_FOR_LENGTH:
+        # The peer is trusted but is not telling us who the client is, so the
+        # key is still the proxy's address: every learner shares one bucket.
+        _warn_once_about_key(peer, peer_address, connection, trusted=True)
         return str(peer_address)
 
     hops = [value.strip() for value in forwarded.split(",")]
