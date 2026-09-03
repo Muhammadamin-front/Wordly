@@ -210,7 +210,12 @@ class Settings(BaseSettings):
     # Rate limits: "<max_requests>/<window_seconds>"
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_LOGIN: str = "10/60"
-    RATE_LIMIT_REGISTER: str = "5/60"
+    # Registration answers "is this email taken?" with a 409, which is the
+    # honest UX (a learner needs to know they already have an account) but is
+    # also an enumeration oracle. The window is deliberately long rather than
+    # the response made vague: 20 attempts an hour is far more than a real
+    # signup needs and far less than a list is worth harvesting with.
+    RATE_LIMIT_REGISTER: str = "20/3600"
     RATE_LIMIT_FORGOT_PASSWORD: str = "3/60"
     RATE_LIMIT_RESEND_VERIFICATION: str = "3/60"
     RATE_LIMIT_AI: str = "20/60"  # AI calls are expensive (tokens + latency)
@@ -276,6 +281,10 @@ class Settings(BaseSettings):
     MAX_REQUEST_BYTES: int = 5 * 1024 * 1024  # reject oversized bodies (413)
     HSTS_MAX_AGE: int = 63072000  # 2 years; sent only in production (HTTPS)
     SLOW_REQUEST_MS: int = 1000  # log a warning above this
+
+    # Bearer token for GET /api/v1/metrics. Unset (the default) and the route
+    # returns 404: an unwatched endpoint is not worth exposing.
+    METRICS_TOKEN: Optional[str] = None
 
     # Error tracking (Sentry). Unset = errors stay in application logs only.
     SENTRY_DSN: Optional[str] = None

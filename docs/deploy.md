@@ -195,6 +195,27 @@ docker compose logs api | grep "untrusted peer" | tail -1
 That warning is logged once per peer, so an empty result means the current
 setting is already correct.
 
+### Metrics
+
+`GET /api/v1/metrics` returns four numbers in Prometheus format: p95 request
+duration, database pool checkouts, and the AI job queue's queued/running
+depth. It 404s unless `METRICS_TOKEN` is set, and requires
+`Authorization: Bearer <token>`:
+
+```bash
+curl -H "Authorization: Bearer $METRICS_TOKEN" https://api.vocora.uz/api/v1/metrics
+```
+
+Point Grafana Cloud's free agent at it, or just curl it when something feels
+slow — the point is that "slower than usual" is now visible at all.
+
+### Redis password
+
+`deploy.sh` generates one into `.env` on a host that has none, and Redis
+starts with `--requirepass` plus `--appendonly yes` (so a restart no longer
+drops multiplayer rooms in progress). Nothing to do by hand; to rotate it,
+delete the two `REDIS_*` lines from `.env` and deploy again.
+
 ### Rolling back
 
 `deploy.sh` records the commit of each deploy that passed the public smoke

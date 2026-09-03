@@ -20,6 +20,22 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    environment:
+      # Empty is still valid: the server then starts without auth exactly as
+      # before, so an existing deployment never breaks on upgrade. deploy.sh
+      # generates one on a host that has none.
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      # redis-cli reads this, so the healthcheck below needs no password on
+      # its command line (where it would show up in `ps`).
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-}
+    # The password is expanded by the container's own shell, not by compose,
+    # so it never lands in `docker compose config` output.
+    command: ["sh", "-c", "exec redis-server --appendonly yes $${REDIS_PASSWORD:+--requirepass \"$$REDIS_PASSWORD\"}"]
+    volumes:
+      # Rate-limit counters and cache are disposable, but live multiplayer
+      # rooms are not: persisting means a restart no longer drops a game in
+      # progress.
+      - redisdata:/data
     ports:
       # Override with REDIS_PORT if 6379 is taken on the host.
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
@@ -38,7 +54,7 @@ services:
       # Safe only for local development; production startup rejects this value.
       SECRET_KEY: ${SECRET_KEY:-dev-only-secret-change-me}
       DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://words:words@postgres:5432/words}
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       # Requests arrive through cloudflared on the host, and Docker's port
       # publishing rewrites the source to the bridge gateway — so the API's
       # socket peer is a 172.x address, never the learner's. Without this the
@@ -84,6 +100,7 @@ services:
       UZUM_WEBHOOK_SECRET: ${UZUM_WEBHOOK_SECRET:-}
       UZUM_API_BASE_URL: ${UZUM_API_BASE_URL:-https://developer.uzumbank.uz/api/v1}
       PAYMENTS_SANDBOX: ${PAYMENTS_SANDBOX:-true}
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0}
       # Each worker holds its own DB pool: workers x (DB_POOL_SIZE +
@@ -175,4 +192,5 @@ services:
 
 volumes:
   pgdata:
+  redisdata:
   tts_cache:

@@ -46,7 +46,43 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    // Report-only to begin with: a policy that silently breaks Google sign-in
+    // or Sentry is worse than no policy, so this collects violations first and
+    // is promoted to the enforcing header once the reports come back clean.
+    // Sources are the ones this app actually loads — Google Identity, Apple
+    // and Telegram sign-in, the API origin, and Sentry ingest.
+    const apiOrigin = process.env.NEXT_PUBLIC_API_URL ?? "";
+    const sentryOrigin = (() => {
+      try {
+        return process.env.NEXT_PUBLIC_SENTRY_DSN
+          ? new URL(process.env.NEXT_PUBLIC_SENTRY_DSN).origin
+          : "";
+      } catch {
+        return "";
+      }
+    })();
+    const csp = [
+      "default-src 'self'",
+      // Next injects inline bootstrap scripts and the theme script runs before
+      // hydration, so 'unsafe-inline' is required until this moves to nonces.
+      "script-src 'self' 'unsafe-inline' https://accounts.google.com https://appleid.cdn-apple.com https://oauth.telegram.org https://telegram.org",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https:",
+      "media-src 'self' data: blob:",
+      "font-src 'self' data:",
+      `connect-src 'self' ${apiOrigin} ${sentryOrigin} https://accounts.google.com`.trim(),
+      "frame-src https://accounts.google.com https://appleid.apple.com https://oauth.telegram.org",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+    ].join("; ");
+
     return [
+      {
+        source: "/:path*",
+        headers: [{ key: "Content-Security-Policy-Report-Only", value: csp }],
+      },
       {
         // Google Identity Services popup communication needs this fallback
         // when the browser is not using FedCM.

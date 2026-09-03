@@ -28,6 +28,32 @@ logger = logging.getLogger("words.api")
 
 STARTED_AT = time.time()
 
+
+class LatencyWindow:
+    """A fixed-size ring of recent request durations.
+
+    Deliberately not a full histogram: one box, one number worth alerting on,
+    and a bounded amount of memory that never needs pruning."""
+
+    __slots__ = ("_samples", "_next", "count")
+
+    def __init__(self, size: int = 1024) -> None:
+        self._samples = [0.0] * size
+        self._next = 0
+        self.count = 0
+
+    def observe(self, seconds: float) -> None:
+        self._samples[self._next] = seconds
+        self._next = (self._next + 1) % len(self._samples)
+        self.count += 1
+
+    def p95(self) -> float:
+        filled = min(self.count, len(self._samples))
+        if filled == 0:
+            return 0.0
+        ordered = sorted(self._samples[:filled])
+        return ordered[min(filled - 1, int(filled * 0.95))]
+
 SECURITY_HEADERS = {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
@@ -41,6 +67,7 @@ SECURITY_HEADERS = {
 async def lifespan(app: FastAPI):
     settings = get_settings()
     settings.validate_runtime()
+    app.state.request_latency = LatencyWindow()
     init_engine()
     if settings.REDIS_URL:
         app.state.rate_limit_storage = RedisStorage(settings.REDIS_URL)
@@ -141,6 +168,7 @@ def create_app() -> FastAPI:
             )
 
         elapsed_ms = (time.perf_counter() - start) * 1000
+        app.state.request_latency.observe(elapsed_ms / 1000)
         response.headers["X-Request-ID"] = request_id
         response.headers["X-Response-Time-ms"] = "{:.1f}".format(elapsed_ms)
         response.headers["Server-Timing"] = "app;dur={:.1f}".format(elapsed_ms)
