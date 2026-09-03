@@ -56,6 +56,7 @@ type NavKey =
   | "statistics"
   | "mastery"
   | "classes"
+  | "me"
   | "billing";
 
 interface NavItem {
@@ -68,19 +69,22 @@ interface NavItem {
 // restricts individual tabs/actions by role (see admin-dashboard.tsx).
 const STAFF_ROLES = new Set(["support", "content_manager", "admin", "super_admin"]);
 
+// Four destinations, and each one answers a different question: what do I do
+// now, what am I studying, how is the exam going, how am I doing. Everything
+// else is a section inside one of them — chiefly /me, which carries what used
+// to be the header's "More" dropdown. Premium sits beside these as its own
+// button rather than competing with them as a fifth tab.
 const PRIMARY_NAV: NavItem[] = [
-  { key: "dashboard", href: "dashboard", icon: Sparkles },
   { key: "today", href: "today", icon: CalendarCheck },
   { key: "decks", href: "decks", icon: LibraryBig },
   { key: "ielts", href: "ielts", icon: GraduationCap },
-  { key: "mastery", href: "mastery", icon: Map },
-  { key: "billing", href: "billing", icon: CreditCard },
+  { key: "me", href: "me", icon: UserRound },
 ];
 
-// The bottom bar is a fixed five-column grid; Premium lives in the desktop
-// header and the mobile drawer instead of squeezing a sixth column in.
-const MOBILE_BOTTOM_NAV: NavItem[] = PRIMARY_NAV.filter((item) => item.key !== "billing");
+const MOBILE_BOTTOM_NAV: NavItem[] = PRIMARY_NAV;
 
+// Still listed in the mobile drawer, which is a menu rather than a top-level
+// bar; on desktop these are reached through /me.
 const SECONDARY_NAV: NavItem[] = [
   { key: "games", href: "games", icon: Gamepad2 },
   { key: "grammar", href: "grammar", icon: Boxes },
@@ -89,6 +93,9 @@ const SECONDARY_NAV: NavItem[] = [
   { key: "leaderboard", href: "leaderboard", icon: Trophy },
   { key: "friends", href: "friends", icon: Users },
   { key: "classes", href: "classes", icon: Sparkles },
+  { key: "mastery", href: "mastery", icon: Map },
+  { key: "dashboard", href: "dashboard", icon: Sparkles },
+  { key: "billing", href: "billing", icon: CreditCard },
 ];
 
 function isActive(pathname: string, lang: string, href: string): boolean {
@@ -128,9 +135,14 @@ export function SiteHeader({ lang, nav }: { lang: Locale; nav: Dictionary["nav"]
               {PRIMARY_NAV.map((item) => (
                 <DesktopNavLink key={item.key} item={item} lang={lang} nav={nav} pathname={pathname} />
               ))}
-              <div className="flex shrink-0 items-center gap-1.5">
-                <DesktopNavGroup items={SECONDARY_NAV} lang={lang} nav={nav} pathname={pathname} />
-              </div>
+              <Link
+                href={`/${lang}/billing`}
+                aria-current={isActive(pathname, lang, "billing") ? "page" : undefined}
+                className="ml-1 inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-accent-500/50 bg-accent-400/12 px-3 text-sm font-bold text-accent-700 transition-colors hover:bg-accent-400/20 dark:text-accent-300"
+              >
+                <CreditCard className="size-4" aria-hidden />
+                {nav.billing}
+              </Link>
             </>
           ) : (
             <>
@@ -559,147 +571,6 @@ function DesktopNavLink({
   );
 }
 
-function DesktopNavGroup({
-  items,
-  lang,
-  nav,
-  pathname,
-}: {
-  items: NavItem[];
-  lang: Locale;
-  nav: Dictionary["nav"];
-  pathname: string;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const closeTimerRef = useRef<number | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const active = items.some((item) => isActive(pathname, lang, item.href));
-
-  const clearCloseTimer = () => {
-    if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  const openMenu = () => {
-    clearCloseTimer();
-    setExpanded(true);
-  };
-
-  const closeMenu = () => {
-    clearCloseTimer();
-    setExpanded(false);
-  };
-
-  const scheduleClose = () => {
-    clearCloseTimer();
-    closeTimerRef.current = window.setTimeout(() => {
-      setExpanded(false);
-      closeTimerRef.current = null;
-    }, 180);
-  };
-
-  useEffect(() => clearCloseTimer, []);
-
-  return (
-    <div
-      className="relative shrink-0"
-      onMouseEnter={openMenu}
-      onMouseLeave={scheduleClose}
-      onFocusCapture={openMenu}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          closeMenu();
-        }
-      }}
-    >
-      <button
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded={expanded}
-        onClick={() => setExpanded((value) => !value)}
-        onKeyDown={(event) => {
-          if (event.key === "Escape") {
-            closeMenu();
-          } else if (event.key === "ArrowDown") {
-            event.preventDefault();
-            openMenu();
-            window.requestAnimationFrame(() => {
-              menuRef.current?.querySelector<HTMLAnchorElement>('[role="menuitem"]')?.focus();
-            });
-          }
-        }}
-        className={cn(
-          "flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-bold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-          active
-            ? "bg-brand-600/10 text-brand-700 dark:bg-white/10 dark:text-ink"
-            : "text-ink-soft hover:bg-hover hover:text-ink"
-        )}
-      >
-        {getMoreLabel(lang)}
-        <ChevronDown
-          className={cn("size-3.5 transition-transform", expanded && "rotate-180")}
-          aria-hidden
-        />
-      </button>
-      <div
-        aria-hidden
-        className={cn(
-          "pointer-events-none absolute! left-0 top-full z-40 h-3 w-56",
-          expanded && "pointer-events-auto"
-        )}
-      />
-      <div
-        ref={menuRef}
-        role="menu"
-        onKeyDown={(event) => {
-          const links = Array.from(
-            menuRef.current?.querySelectorAll<HTMLAnchorElement>('[role="menuitem"]') ?? []
-          );
-          const currentIndex = links.indexOf(document.activeElement as HTMLAnchorElement);
-          if (event.key === "Escape") {
-            closeMenu();
-          } else if (event.key === "ArrowDown") {
-            event.preventDefault();
-            links[(currentIndex + 1) % links.length]?.focus();
-          } else if (event.key === "ArrowUp") {
-            event.preventDefault();
-            links[(currentIndex - 1 + links.length) % links.length]?.focus();
-          }
-        }}
-        className={cn(
-          "surface-panel invisible pointer-events-none absolute! left-0 top-[calc(100%+8px)] z-50 w-56 translate-y-1 rounded-lg p-2 opacity-0 shadow-raised backdrop-blur-2xl transition-all duration-200",
-          expanded && "visible pointer-events-auto translate-y-0 opacity-100"
-        )}
-      >
-        {items.map((item) => {
-          const Icon = item.icon;
-          const itemActive = isActive(pathname, lang, item.href);
-          return (
-            <Link
-              key={item.key}
-              href={`/${lang}/${item.href}`}
-              role="menuitem"
-              aria-current={itemActive ? "page" : undefined}
-              onClick={closeMenu}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus",
-                itemActive
-                  ? "bg-brand-600/12 text-brand-600 dark:text-brand-200"
-                  : "text-ink-soft hover:bg-hover hover:text-ink"
-              )}
-            >
-              <Icon className="size-4" aria-hidden />
-              {getPrimaryNavLabel(lang, item.key, nav)}
-            </Link>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function getMoreLabel(lang: Locale): string {
   return {
     uz: "Ko'proq",
@@ -757,6 +628,13 @@ function getPrimaryNavLabel(
     }[lang];
   }
   if (key === "ielts") return "IELTS";
+  if (key === "me") {
+    return {
+      uz: "Men",
+      ru: "Я",
+      en: "Me",
+    }[lang];
+  }
   return nav[key];
 }
 
@@ -771,7 +649,7 @@ function MobileBottomNav({
 }) {
   return (
     <nav
-      className="mobile-bottom-nav fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-5 rounded-[22px] border border-line bg-raised/94 p-1 shadow-[0_14px_42px_rgba(7,58,53,0.14)] backdrop-blur-md lg:hidden"
+      className="mobile-bottom-nav fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-40 grid grid-cols-4 rounded-[22px] border border-line bg-raised/94 p-1 shadow-[0_14px_42px_rgba(7,58,53,0.14)] backdrop-blur-md lg:hidden"
       aria-label={nav.menu}
     >
       {MOBILE_BOTTOM_NAV.map((item) => {

@@ -50,6 +50,7 @@ export const apiKeys = {
   learningPlan: "learning:plan",
   statistics: (days: number) => `statistics:overview:${days}`,
   subscription: "billing:subscription",
+  ieltsOverview: "ielts:overview",
 } as const;
 
 /** Drops a cached entry and refetches it wherever it is mounted. Use after a

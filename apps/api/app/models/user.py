@@ -1,8 +1,8 @@
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, JSON, String, UniqueConstraint, Uuid
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Index, Integer, JSON, String, UniqueConstraint, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.security import utcnow
@@ -56,10 +56,12 @@ class Profile(Base):
     daily_minutes: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
     learning_interests: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
     onboarding_completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    # IELTS goal band (0.5 steps, e.g. 7.0). Null until the learner sets one on
-    # the Master Writing hub — not part of onboarding, since only a fraction of
-    # users are IELTS-track.
+    # IELTS goal band (0.5 steps, e.g. 7.0) and the exam date it is for. Both
+    # are asked during onboarding when the learner picks the IELTS goal, and
+    # both stay null for everyone else. Everything the product says about
+    # being on track hangs off these two values.
     target_band_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    exam_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     starter_deck_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         Uuid, ForeignKey("decks.id", ondelete="SET NULL"), nullable=True
     )

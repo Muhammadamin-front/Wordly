@@ -20,6 +20,7 @@ import { useAuth } from "@/components/auth/auth-provider";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GoalStrip } from "@/components/learning/goal-strip";
 import { learningApi, type LearningPlan } from "@/lib/learning";
 import type { Dictionary } from "@/app/[lang]/dictionaries";
 
@@ -225,6 +226,10 @@ export function TodayView({
             <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-soft sm:text-base">
               {allDone ? t.planDoneDesc : t.todaySubtitle}
             </p>
+
+            {/* Why today's work matters, for the learners who set a target
+                band: the goal, where they stand, and how long is left. */}
+            <GoalStrip lang={lang} t={t.goalStrip} />
 
             {/* The plan itself, in one glance: what is left and what it
                 costs. Everything below is the detail behind these lines. */}

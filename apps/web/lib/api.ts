@@ -24,6 +24,7 @@ export interface Profile {
   onboarding_completed: boolean;
   starter_deck_id: string | null;
   target_band_score: number | null;
+  exam_date: string | null;
 }
 
 export interface User {
@@ -307,6 +308,6 @@ export const onboardingApi = {
 };
 
 export const profileApi = {
-  update: (body: { target_band_score?: number }) =>
+  update: (body: { target_band_score?: number; exam_date?: string | null }) =>
     apiFetch<User>("/users/me", { method: "PATCH", body, auth: true }),
 };

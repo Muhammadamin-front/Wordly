@@ -1,3 +1,4 @@
+from datetime import date
 from typing import List, Literal, Optional
 from uuid import UUID
 
@@ -74,6 +75,7 @@ class ProfileOut(BaseModel):
     onboarding_completed: bool
     starter_deck_id: Optional[UUID] = None
     target_band_score: Optional[float] = None
+    exam_date: Optional[date] = None
 
 
 class UserOut(BaseModel):
@@ -112,6 +114,7 @@ class ProfileUpdate(BaseModel):
     timezone: Optional[str] = Field(default=None, max_length=64)
     bio: Optional[str] = Field(default=None, max_length=500)
     target_band_score: Optional[float] = Field(default=None, ge=4.0, le=9.0)
+    exam_date: Optional[date] = None
 
     @field_validator("target_band_score")
     @classmethod

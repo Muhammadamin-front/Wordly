@@ -194,7 +194,13 @@
     "roadmapStep4Body": "Vocora separates mastered, strong, and needs-review words so your next step is obvious.",
     "readyTitle": "Your starter lesson is ready",
     "readyBody": "We'll add {count} high-frequency {level} words and start the first review now.",
-    "placementPracticeCap": "Reading, Writing and Grammar drills currently go up to {level}; the vocabulary library covers your level."
+    "placementPracticeCap": "Reading, Writing and Grammar drills currently go up to {level}; the vocabulary library covers your level.",
+    "ieltsGoalTitle": "Your IELTS goal",
+    "ieltsGoalBody": "Your plan and recommendations are built from these two answers.",
+    "bandLabel": "Band you need",
+    "examDateLabel": "Exam date",
+    "examDateHint": "An estimate is fine — you can change it later.",
+    "examDateSkip": "I don't know yet"
   },
   "ieltsHub": {
     "eyebrow": "IELTS vocabulary hub",
@@ -322,7 +328,23 @@
     "grammarStep": "Grammar lesson",
     "grammarStepDesc": "A short lesson and immediate practice, explained in your language.",
     "planDone": "Today's plan is done",
-    "planDoneDesc": "Keep going if you want — extra review is never wasted."
+    "planDoneDesc": "Keep going if you want — extra review is never wasted.",
+    "goalStrip": {
+      "goal": "Goal",
+      "lastMock": "Last mock",
+      "weeksLeft": "Weeks to exam",
+      "daysLeft": "Days to exam",
+      "weakest": "Weakest",
+      "noMockYet": "None yet",
+      "takeMock": "Take one",
+      "setGoal": "Set your IELTS goal",
+      "skills": {
+        "reading": "Reading",
+        "writing": "Writing",
+        "listening": "Listening",
+        "speaking": "Speaking"
+      }
+    }
   },
   "mastery": {
     "navTitle": "Word mastery map",

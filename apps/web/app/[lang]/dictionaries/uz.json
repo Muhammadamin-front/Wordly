@@ -194,7 +194,13 @@
     "roadmapStep4Body": "Vocora o'zlashtirilgan, mustahkam va qayta ko'rish kerak bo'lgan so'zlarni ajratib beradi.",
     "readyTitle": "Boshlang'ich darsingiz tayyor",
     "readyBody": "{count} ta eng foydali {level} so'zni qo'shamiz va birinchi takrorlashni hozir boshlaymiz.",
-    "placementPracticeCap": "Reading, Writing va Grammar mashqlari hozircha {level} gacha; lug'at kutubxonasi sizning darajangizni qamrab oladi."
+    "placementPracticeCap": "Reading, Writing va Grammar mashqlari hozircha {level} gacha; lug'at kutubxonasi sizning darajangizni qamrab oladi.",
+    "ieltsGoalTitle": "IELTS maqsadingiz",
+    "ieltsGoalBody": "Reja va tavsiyalar shu ikki javobdan chiqadi.",
+    "bandLabel": "Kerakli band",
+    "examDateLabel": "Imtihon sanasi",
+    "examDateHint": "Taxminiy bo'lsa ham bo'ladi — keyin o'zgartirasiz.",
+    "examDateSkip": "Hali bilmayman"
   },
   "ieltsHub": {
     "eyebrow": "IELTS lug'at markazi",
@@ -322,7 +328,23 @@
     "grammarStep": "Grammatika darsi",
     "grammarStepDesc": "Qisqa dars va darrov mashq — o'zbekcha izoh bilan.",
     "planDone": "Bugungi reja bajarildi",
-    "planDoneDesc": "Xohlasangiz davom eting — takrorlash hech qachon ortiqcha emas."
+    "planDoneDesc": "Xohlasangiz davom eting — takrorlash hech qachon ortiqcha emas.",
+    "goalStrip": {
+      "goal": "Maqsad",
+      "lastMock": "Oxirgi mock",
+      "weeksLeft": "Imtihonga hafta",
+      "daysLeft": "Imtihonga kun",
+      "weakest": "Eng zaif",
+      "noMockYet": "Hali yo'q",
+      "takeMock": "Topshirish",
+      "setGoal": "IELTS maqsadingizni belgilang",
+      "skills": {
+        "reading": "Reading",
+        "writing": "Writing",
+        "listening": "Listening",
+        "speaking": "Speaking"
+      }
+    }
   },
   "mastery": {
     "navTitle": "So'zlarni o'zlashtirish xaritasi",

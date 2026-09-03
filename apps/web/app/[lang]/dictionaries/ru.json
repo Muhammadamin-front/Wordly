@@ -194,7 +194,13 @@
     "roadmapStep4Body": "Vocora разделит слова на освоенные, сильные и те, которые нужно повторить.",
     "readyTitle": "Ваш стартовый урок готов",
     "readyBody": "Мы добавим {count} частотных слов уровня {level} и сразу начнём повторение.",
-    "placementPracticeCap": "Тренировки Reading, Writing и Grammar пока доходят до {level}; словарная библиотека охватывает ваш уровень."
+    "placementPracticeCap": "Тренировки Reading, Writing и Grammar пока доходят до {level}; словарная библиотека охватывает ваш уровень.",
+    "ieltsGoalTitle": "Ваша цель по IELTS",
+    "ieltsGoalBody": "План и рекомендации строятся на этих двух ответах.",
+    "bandLabel": "Нужный балл",
+    "examDateLabel": "Дата экзамена",
+    "examDateHint": "Можно примерную — потом измените.",
+    "examDateSkip": "Пока не знаю"
   },
   "ieltsHub": {
     "eyebrow": "Центр лексики IELTS",
@@ -322,7 +328,23 @@
     "grammarStep": "Урок грамматики",
     "grammarStepDesc": "Короткий урок и сразу практика — с объяснением на родном языке.",
     "planDone": "План на сегодня выполнен",
-    "planDoneDesc": "Можно продолжить — лишнего повторения не бывает."
+    "planDoneDesc": "Можно продолжить — лишнего повторения не бывает.",
+    "goalStrip": {
+      "goal": "Цель",
+      "lastMock": "Последний пробный",
+      "weeksLeft": "Недель до экзамена",
+      "daysLeft": "Дней до экзамена",
+      "weakest": "Самый слабый",
+      "noMockYet": "Пока нет",
+      "takeMock": "Пройти",
+      "setGoal": "Укажите цель по IELTS",
+      "skills": {
+        "reading": "Reading",
+        "writing": "Writing",
+        "listening": "Listening",
+        "speaking": "Speaking"
+      }
+    }
   },
   "mastery": {
     "navTitle": "Карта освоения слов",
