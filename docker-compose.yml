@@ -25,9 +25,6 @@ services:
       # before, so an existing deployment never breaks on upgrade. deploy.sh
       # generates one on a host that has none.
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-      # redis-cli reads this, so the healthcheck below needs no password on
-      # its command line (where it would show up in `ps`).
-      REDISCLI_AUTH: ${REDIS_PASSWORD:-}
     # The password is expanded by the container's own shell, not by compose,
     # so it never lands in `docker compose config` output.
     command: ["sh", "-c", "exec redis-server --appendonly yes $${REDIS_PASSWORD:+--requirepass \"$$REDIS_PASSWORD\"}"]
@@ -40,7 +37,10 @@ services:
       # Override with REDIS_PORT if 6379 is taken on the host.
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      # REDISCLI_AUTH is not used here: redis-cli sends AUTH whenever that
+      # variable is *set*, even to an empty string, which fails noisily on a
+      # server with no password. The flag is added only when there is one.
+      test: ["CMD-SHELL", "redis-cli $${REDIS_PASSWORD:+--no-auth-warning -a \"$$REDIS_PASSWORD\"} ping | grep -q PONG"]
       interval: 5s
       timeout: 3s
       retries: 10

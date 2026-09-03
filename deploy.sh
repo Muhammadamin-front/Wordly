@@ -71,6 +71,16 @@ else
   git pull --ff-only origin main
 fi
 
+# The checkout above may have replaced this script. Hand over to the version
+# that was just deployed, so a change to the deploy process applies on the
+# deploy that introduces it — not on the one after. VOCORA_DEPLOY_REEXEC stops
+# the handover from repeating.
+if [ -z "${VOCORA_DEPLOY_REEXEC:-}" ]; then
+  export VOCORA_DEPLOY_REEXEC=1
+  echo "=== Continuing with the deployed deploy.sh ==="
+  exec bash "$script_dir/deploy.sh" "$@"
+fi
+
 echo "=== Production preflight ==="
 node scripts/release-preflight.mjs --server-only
 

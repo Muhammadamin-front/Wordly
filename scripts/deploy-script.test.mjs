@@ -39,3 +39,13 @@ test("a normal deploy returns to the branch after a detached rollback", () => {
   const mergeIndex = deploy.indexOf("git merge --ff-only");
   assert.ok(checkoutIndex >= 0 && checkoutIndex < mergeIndex);
 });
+
+test("the deploy hands over to the version of itself it just checked out", () => {
+  const mergeIndex = deploy.indexOf("git merge --ff-only");
+  const reexecIndex = deploy.indexOf("VOCORA_DEPLOY_REEXEC");
+  const preflightIndex = deploy.indexOf("node scripts/release-preflight.mjs");
+
+  assert.ok(reexecIndex > mergeIndex, "the handover must follow the checkout");
+  assert.ok(reexecIndex < preflightIndex, "and precede the work the new script defines");
+  assert.match(deploy, /exec bash "\$script_dir\/deploy\.sh" "\$@"/);
+});

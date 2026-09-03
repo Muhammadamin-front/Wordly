@@ -22,4 +22,12 @@ jobs:
     timeout-minutes: 30
     steps:
       - name: Deploy CI-verified commit
-        run: /home/kitsune/Wordly/deploy.sh "${{ github.event.workflow_run.head_sha }}"
+        # Run a copy: the script updates its own file when it checks out the
+        # new commit, and bash reads a script incrementally — executing a file
+        # that changes underneath it is how a deploy runs half of one version
+        # and half of another. The copy also makes the script re-exec itself
+        # from the new checkout (see deploy.sh), so a change to the deploy
+        # process takes effect in the same run rather than the next one.
+        run: |
+          cp /home/kitsune/Wordly/deploy.sh /tmp/vocora-deploy-bootstrap.sh
+          bash /tmp/vocora-deploy-bootstrap.sh "${{ github.event.workflow_run.head_sha }}"
