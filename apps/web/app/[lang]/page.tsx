@@ -192,7 +192,7 @@ export default async function LandingPage({
                     <Reveal delay={index * 0.05} key={item.level}>
                       <Link
                         href={`/${lang}/preview/${item.slug}`}
-                        className="motion-border-card group flex h-full min-h-[258px] flex-col overflow-hidden rounded-xl border border-line/80 bg-raised/72 p-4 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
+                        className="motion-border-card group flex h-full flex-col rounded-xl border border-line/80 bg-raised/72 p-5 transition-all hover:-translate-y-1 hover:border-brand-400/60 hover:shadow-[0_18px_45px_rgba(24,63,57,0.1)]"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <span
@@ -202,16 +202,22 @@ export default async function LandingPage({
                           </span>
                           <ArchitecturalMotif tone={item.tone} />
                         </div>
-                        <p className="mt-4 text-base font-black text-ink">
+                        {/* Level names are display type by the design system,
+                            and long ones (Элементарный) must wrap rather than
+                            be clipped by the card. */}
+                        <p className="mt-4 font-display text-3xl leading-none tracking-wide text-ink [overflow-wrap:anywhere]">
                           {shelfLabels[item.slug].name.split("·").at(-1)?.trim()}
                         </p>
-                        <p className="mt-2 line-clamp-2 text-xs leading-5 text-ink-soft">
+                        <p className="mt-2.5 text-[0.8125rem] leading-6 text-ink-soft">
                           {shelfLabels[item.slug].desc}
                         </p>
                         <div className="mt-auto pt-5">
                           {catalog && (
-                            <p className="mb-5 text-[11px] font-bold text-ink-soft">
-                              {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)} {library.words}
+                            <p className="mb-5 flex items-baseline gap-1.5">
+                              <span className="font-display text-2xl leading-none tracking-wide text-brand-900 dark:text-brand-100">
+                                {new Intl.NumberFormat(lang).format(catalog.levels[item.level] ?? 0)}
+                              </span>
+                              <span className="text-xs font-bold text-ink-soft">{library.words}</span>
                             </p>
                           )}
                           <p className="flex items-center justify-end gap-1.5 text-xs font-black text-brand-900 dark:text-brand-200">
@@ -232,8 +238,8 @@ export default async function LandingPage({
                       <feature.icon className="size-4" aria-hidden />
                     </span>
                     <div>
-                      <p className="text-xs font-black text-ink">{feature.title}</p>
-                      <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-ink-soft">
+                      <p className="text-sm font-black text-ink">{feature.title}</p>
+                      <p className="mt-1.5 text-[0.8125rem] leading-6 text-ink-soft">
                         {feature.body}
                       </p>
                     </div>

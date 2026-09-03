@@ -120,7 +120,9 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
   return (
     <section className="mx-auto mt-5 max-w-370" aria-labelledby="proof-title">
       <div className="surface-panel rounded-[22px] p-5 sm:p-7">
-        <p className="text-xs font-black uppercase text-brand-600">{copy.kicker}</p>
+        <p className="print-label inline-flex border-accent-500 bg-accent-400/12 text-accent-700 dark:text-accent-300">
+          {copy.kicker}
+        </p>
         <h2 id="proof-title" className="sr-only">
           {copy.kicker}
         </h2>
@@ -134,8 +136,8 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
             <span className="icon-tile size-11 rounded-lg">
               <Trophy className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
-            <h3 className="text-lg font-black text-ink">{copy.mockTitle}</h3>
-            <p className="text-sm leading-6 text-ink-soft">{copy.mockBody}</p>
+            <h3 className="font-display text-2xl leading-tight tracking-wide text-ink">{copy.mockTitle}</h3>
+            <p className="text-[0.9375rem] leading-7 text-ink-soft">{copy.mockBody}</p>
             <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-black text-brand-700 dark:text-brand-200">
               {copy.mockCta}
               <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
@@ -151,10 +153,10 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
             <span className="icon-tile size-11 rounded-lg">
               <PenLine className="size-5 text-brand-600 dark:text-brand-300" aria-hidden />
             </span>
-            <h3 className="text-lg font-black text-ink">{copy.feedbackTitle}</h3>
-            <p className="text-sm leading-6 text-ink-soft">{copy.feedbackBody}</p>
+            <h3 className="font-display text-2xl leading-tight tracking-wide text-ink">{copy.feedbackTitle}</h3>
+            <p className="text-[0.9375rem] leading-7 text-ink-soft">{copy.feedbackBody}</p>
 
-            <figure className="mt-1 rounded-[12px] border border-line bg-raised/70 p-3">
+            <figure className="mt-1 rounded-[12px] border border-line bg-page/60 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.5)]">
               <figcaption className="flex flex-wrap items-center justify-between gap-2">
                 <span className="rounded-full border border-line px-2 py-0.5 text-[0.62rem] font-black uppercase tracking-wider text-ink-soft">
                   {copy.sampleLabel}
@@ -163,10 +165,10 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
                   {copy.sampleBand}
                 </span>
               </figcaption>
-              <blockquote className="mt-2 text-xs italic leading-5 text-ink-soft">
+              <blockquote className="mt-2.5 text-[0.8125rem] italic leading-6 text-ink-soft">
                 {copy.sampleQuote}
               </blockquote>
-              <p className="mt-1.5 text-xs leading-5 text-ink">{copy.sampleNote}</p>
+              <p className="mt-2 text-[0.8125rem] leading-6 text-ink">{copy.sampleNote}</p>
             </figure>
 
             <span className="mt-auto inline-flex items-center gap-1.5 pt-2 text-sm font-black text-brand-700 dark:text-brand-200">
@@ -185,7 +187,7 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
               {price ? (
                 <p className="mt-1 flex flex-wrap items-baseline gap-1.5">
                   <span className="text-sm font-bold text-ink-soft">{copy.priceFrom}</span>
-                  <span className="text-2xl font-black tabular-nums text-ink">{price}</span>
+                  <span className="font-display text-4xl leading-none tracking-wide tabular-nums text-ink">{price}</span>
                   <span className="text-sm font-bold text-ink-soft">{copy.priceMonth}</span>
                 </p>
               ) : (
@@ -193,10 +195,10 @@ export function ProofBand({ lang, priceSom }: { lang: Locale; priceSom: number |
               )}
             </div>
 
-            <p className="text-xs font-black uppercase text-ink-soft">{copy.freeTitle}</p>
-            <ul className="flex flex-col gap-1.5">
+            <p className="text-xs font-black uppercase tracking-wide text-ink-soft">{copy.freeTitle}</p>
+            <ul className="flex flex-col gap-2">
               {copy.freeItems.map((item) => (
-                <li key={item} className="flex items-start gap-2 text-sm leading-6 text-ink-soft">
+                <li key={item} className="flex items-start gap-2 text-[0.875rem] leading-6 text-ink">
                   <Check className="mt-1 size-3.5 shrink-0 text-success-text" aria-hidden />
                   <span>{item}</span>
                 </li>
